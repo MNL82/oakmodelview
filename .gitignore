@@ -1,0 +1,9 @@
+*.pro.user
+*.pro.user*
+*build-*
+*xml.temp
+*.lib
+*.pdb
+doc
+Lib/boost/
+license header.txt

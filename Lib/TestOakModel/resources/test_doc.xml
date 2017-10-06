@@ -1,0 +1,24 @@
+<oakModel>
+  <model>
+    <nodeDefinition name="root">
+      <valueDefinition idName="x">
+        <type>integer</type>
+        <value>34</value>
+      </valueDefinition>
+      <valueDefinition idName="y">
+        <type>integer</type>
+        <value>-7</value>
+      </valueDefinition>
+    </nodeDefinition>
+    <nodeDefinition name="class"/>
+    <nodeDefinition name="function"/>
+    <nodeDefinition name="variable"/>
+    <nodeDefinition name="description"/>
+  </model>
+  <data>
+    <node/>
+    <node/>
+    <node/>
+    <node/>
+  </data>
+</oakModel>
