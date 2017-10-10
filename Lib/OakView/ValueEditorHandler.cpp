@@ -214,7 +214,6 @@ void ValueEditorHandler::createEditor()
         checkBox->setObjectName("value");
         connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onEditingFinished()));
         layout->addWidget(checkBox, 1);
-        return;
     } else if (valueDef->hasOptions()) {
         QComboBox* comboBox = new QComboBox();
         comboBox->setObjectName("value");
