@@ -142,22 +142,6 @@ const Item* ItemValue::item() const
 
 // =============================================================================
 // (public)
-bool ItemValue::canGetValue(VariantRef value, bool useDefault) const
-{
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->canGetValue(m_node, value, useDefault, true);
-}
-
-// =============================================================================
-// (public)
-bool ItemValue::getValue(VariantRef value, bool useDefault) const
-{
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->getValue(m_node, value, useDefault, true);
-}
-
-// =============================================================================
-// (public)
 Variant ItemValue::value(bool useDefault) const
 {
     assert(m_valueDefinition != nullptr);
@@ -174,47 +158,19 @@ std::string ItemValue::toString(bool useDefault) const
 
 // =============================================================================
 // (public)
-bool ItemValue::canSetValue(VariantCRef value) const
-{
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->canSetValue(m_node, value, true);
-}
-
-// =============================================================================
-// (public)
-bool ItemValue::setValue(VariantCRef value) const
-{
-    assert(m_valueDefinition != nullptr);
-    bool result = m_valueDefinition->setValue(m_node, value, true);
-    if (result && m_item) {
-        m_item->model()->onItemValueChanged(*m_item, m_item->valueIndex(*this));
-    }
-    return result;
-}
-
-// =============================================================================
-// (public)
 bool ItemValue::hasDefaultValue() const
 {
     assert(m_valueDefinition != nullptr);
     return m_valueDefinition->hasDefaultValue();
 }
 
-// =============================================================================
-// (public)
-bool ItemValue::getDefaultValue(VariantRef value) const
-{
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->getDefaultValue(value);
-}
-
-// =============================================================================
-// (public)
-bool ItemValue::getOptions(std::vector<VariantCRef>& value) const
-{
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->getOptions(value);
-}
+//// =============================================================================
+//// (public)
+//bool ItemValue::getOptions(std::vector<VariantCRef>& value) const
+//{
+//    assert(m_valueDefinition != nullptr);
+//    return m_valueDefinition->getOptions(value);
+//}
 
 // =============================================================================
 // (public)
@@ -230,6 +186,13 @@ const ItemValue& ItemValue::emptyItemValue()
 {
     static ItemValue empty;
     return empty;
+}
+
+// =============================================================================
+// (public)
+void ItemValue::onItemValueChanged() const
+{
+    m_item->model()->onItemValueChanged(*m_item, m_item->valueIndex(*this));
 }
 
 } // namespace Model

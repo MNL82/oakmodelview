@@ -197,7 +197,9 @@ protected:
 public:
     virtual int containerCount() const;
     virtual const ContainerDefinition& container(int index) const;
-    virtual const ContainerDefinition& container(VariantCRef _primaryKey) const;
+    template <typename T>
+    const ContainerDefinition &container(const T& _primaryKey) const;
+
     virtual const ContainerDefinition& container(Node childNode) const;
 
     virtual void getContainerList(std::vector<const ContainerDefinition*> &list) const;
@@ -256,6 +258,26 @@ public:
     friend class NodeDefinitionBuilder;
     friend class ContainerDefinitionBuilder;
 };
+
+// =============================================================================
+// (public)
+template <typename T>
+const ContainerDefinition &NodeDefinition::container(const T& _primaryKey) const
+{
+    for (const auto& _child: m_containerList)
+    {
+        if (_child->containerDefinition()->primaryKey() == _primaryKey) {
+            return *_child.get();
+        }
+    }
+
+    if (hasDerivedBase()) {
+        return m_derivedBase.lock()->container(_primaryKey);
+    }
+
+    assert(false);
+    return ContainerDefinition::emptyChildNodeDefinition();
+}
 
 typedef NodeDefinition NodeDef;
 

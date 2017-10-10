@@ -579,25 +579,6 @@ const ContainerDefinition &NodeDefinition::container(int index) const
 
 // =============================================================================
 // (public)
-const ContainerDefinition &NodeDefinition::container(VariantCRef _primaryKey) const
-{
-    for (const auto& _child: m_containerList)
-    {
-        if (_child->containerDefinition()->primaryKey() == _primaryKey) {
-            return *_child.get();
-        }
-    }
-
-    if (hasDerivedBase()) {
-        return m_derivedBase.lock()->container(_primaryKey);
-    }
-
-    assert(false);
-    return ContainerDefinition::emptyChildNodeDefinition();
-}
-
-// =============================================================================
-// (public)
 const ContainerDefinition &NodeDefinition::container(Node childNode) const
 {
     if (childNode.isNull()) { return ContainerDefinition::emptyChildNodeDefinition(); }

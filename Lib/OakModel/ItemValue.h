@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "ValueDefinition.h"
 
 namespace Oak {
@@ -39,48 +41,46 @@ public:
     bool isNodeNull() const;
 
     VariantCRef valueId() const;
+    template<typename T>
+    T valueId() const;
+    template<typename T>
+    bool getValueId(T &value) const;
 
     const Node& node() const;
     const ValueDefinition* valueDefinition() const;
     const Item* item() const;
 
-    bool canGetValue(VariantRef value, bool useDefault = true) const;
-    bool getValue(VariantRef value, bool useDefault = true) const;
+    template<typename T>
+    bool canGetValue(T &value, bool useDefault = true) const;
+    template<typename T>
+    bool getValue(T &value, bool useDefault = true) const;
+
     Variant value(bool useDefault = true) const;
     std::string toString(bool useDefault = true) const;
 
-    bool canSetValue(VariantCRef value) const;
-    bool setValue(VariantCRef value) const;
+    template<typename T>
+    bool canSetValue(const T &value) const;
+    template<typename T>
+    bool setValue(const T &value) const;
 
     bool hasDefaultValue() const;
-    bool getDefaultValue(VariantRef value) const;
+    template<typename T>
+    bool getDefaultValue(T &value) const;
 
-    bool getOptions(std::vector<VariantCRef>& value) const;
+    //bool getOptions(std::vector<VariantCRef>& value) const;
 
     template<typename T>
-    bool getOptions(std::vector<T>& value) const
-    {
-        assert(m_valueDefinition != nullptr);
-        value.clear();
-        std::vector<VariantCRef> optionList;
-        if (!m_valueDefinition->getOptions(optionList)) { return false; }
-
-        for (const VariantCRef& option: optionList)
-        {
-            value.push_back(option.valueCRef<T>());
-        }
-        return true;
-    }
+    bool getOptions(std::vector<T>& value) const;
 
     const ValueSettings& settings();
 
     static const ItemValue& emptyItemValue();
 
     template<typename T>
-    bool operator<<(const T& value) const
-    {
-        return setValue(value);
-    }
+    bool operator<<(const T& value) const;
+
+protected:
+    void onItemValueChanged() const;
 
 protected:
     const ValueDefinition* m_valueDefinition;
@@ -88,12 +88,101 @@ protected:
     const Item* m_item;
 };
 
+// =============================================================================
+// (public)
+template<typename T>
+T ItemValue::valueId() const
+{
+    assert(m_valueDefinition != nullptr);
+    T value;
+    m_valueDefinition->valueId().get(value);
+    return std::move(value);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::getValueId(T &value) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->valueId().get(value);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::canGetValue(T &value, bool useDefault) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->canGetValue(m_node, value, useDefault, true);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::getValue(T &value, bool useDefault) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->getValue(m_node, value, useDefault, true);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::canSetValue(const T &value) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->canSetValue(m_node, value, true);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::setValue(const T &value) const
+{
+    assert(m_valueDefinition != nullptr);
+    bool result = m_valueDefinition->setValue(m_node, value, true);
+    if (result && m_item) {
+        onItemValueChanged();
+    }
+    return result;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::getDefaultValue(T &value) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->getDefaultValue(value);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::getOptions(std::vector<T>& value) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->getOptions(value);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ItemValue::operator<<(const T& value) const
+{
+    return setValue(value);
+}
+
+// =============================================================================
+// (free)
 template<typename T>
 bool operator<<(T & value, const ItemValue &item)
 {
     assert(!item.isNull());
     return item.getValue(value);
 }
+
 
 } // namespace Model
 } // namespace Oak

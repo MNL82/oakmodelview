@@ -47,6 +47,9 @@ void test_Item()
 
     Item niItem = item_model.lastChild();
 
+    std::vector<std::string> options;
+    niItem.value("name").getOptions(options);
+
     BOOST_CHECK(!niItem.isNull());
 
     std::string name;

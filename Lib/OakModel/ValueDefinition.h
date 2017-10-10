@@ -53,6 +53,8 @@ public:
     const ValueSettings& settings() const;
 
     bool hasOptions() const;
+    template<typename T>
+    bool getOptions(std::vector<T>& options, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
     bool getOptions(std::vector<VariantCRef>& options) const;
 
     virtual int compareValue(Node _node, VariantCRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
@@ -71,10 +73,7 @@ public:
 
     // Service functions
     template<class... _Types> inline
-    static typename ValueDefinitionUPtr MakeUPtr(_Types&&... _Args)
-    {
-        return (ValueDefinitionUPtr(new ValueDefinition(_STD forward<_Types>(_Args)...)));
-    }
+    static typename ValueDefinitionUPtr MakeUPtr(_Types&&... _Args);
 
     static ValueDefinition &emptyDefinition();
 
@@ -99,6 +98,31 @@ protected:
 
     friend class ValueDefinitionBuilder;
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ValueDefinition::getOptions(std::vector<T>& options, bool allowConversion, ConversionSPtr conversion) const
+{
+    options.resize(m_options.size());
+    if (m_options.empty()) { return false; }
+
+    if (!conversion) { conversion = m_defaultConversion; }
+
+    for (int i = 0; i < m_options.size(); i++)
+    {
+        m_options.at(i).get(options[i], allowConversion, conversion.get());
+    }
+    return true;
+}
+
+// =============================================================================
+// (public)
+template<class... _Types> inline
+static typename ValueDefinitionUPtr ValueDefinition::MakeUPtr(_Types&&... _Args)
+{
+    return (ValueDefinitionUPtr(new ValueDefinition(_STD forward<_Types>(_Args)...)));
+}
 
 typedef ValueDefinition ValueDef;
 
