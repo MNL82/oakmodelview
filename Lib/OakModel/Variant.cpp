@@ -110,6 +110,13 @@ bool Variant::isEqual(const VariantCRef& value, bool allowConversion, Conversion
 
 // =============================================================================
 // (public)
+bool Variant::isBaseTypeEqual(const VariantCRef &value) const
+{
+    return boost::apply_visitor(TypeIdBaseEqualVisitor(), m_value, value.m_value);
+}
+
+// =============================================================================
+// (public)
 bool Variant::isNull() const
 {
     return m_value.which() == 0;

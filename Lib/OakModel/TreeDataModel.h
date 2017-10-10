@@ -39,7 +39,8 @@ public:
 
     const Item& rootItem() const;
 
-    VariantCRef rootPrimaryKey() const;
+    template<typename T>
+    const T & rootPKey() const;
 
     const NodeDefinition* rootNodeDefinition() const;
     void setRootNodeDefinition(NodeDefinitionSPtr definition);
@@ -101,6 +102,14 @@ protected:
     friend class Item;
     friend class ItemValue;
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+const T &TreeDataModel::rootPKey() const
+{
+    return m_rootItem.definition()->primaryKey().valueCRef<T>();
+}
 
 } // namespace Model
 } // namespace Oak

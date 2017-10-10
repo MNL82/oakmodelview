@@ -44,7 +44,7 @@ MasterTreeDataModel::MasterTreeDataModel()
 std::string MasterTreeDataModel::designFilePath() const
 {
     if (isNull()) { return std::string(); }
-    Item designItem = rootItem().firstChild(m_designModel.rootPrimaryKey());
+    Item designItem = rootItem().firstChild(m_designModel.rootPKey<std::string>());
     if (designItem.isNull()) { return std::string(); }
     std::string filePath;
     designItem.value(s_filePath).getValue(filePath);
@@ -56,7 +56,7 @@ std::string MasterTreeDataModel::designFilePath() const
 bool MasterTreeDataModel::loadDesignFilePath(const std::string& filePath)
 {
     if (isNull()) { return false; }
-    Item designItem = rootItem().firstChild(m_designModel.rootPrimaryKey());
+    Item designItem = rootItem().firstChild(m_designModel.rootPKey<std::string>());
     if (designItem.isNull()) { return false; }
     if (designItem.value(s_filePath).setValue(filePath)) {
         return m_designModel.loadXMLRootNode(filePath);
@@ -129,7 +129,7 @@ void MasterTreeDataModel::generateDataNodeDefinition()
 void MasterTreeDataModel::createMasterModel()
 {
     auto nodeMaster = NDB::Make(s_master);
-    auto nodeDesign = NDB::Make(m_designModel.rootPrimaryKey());
+    auto nodeDesign = NDB::Make(m_designModel.rootPKey<std::string>());
     auto nodeData = NDB::Make(s_data);
     auto nodeFilter = NDB::Make(s_filter);
 
@@ -172,7 +172,7 @@ void MasterTreeDataModel::onRootItemChanged()
     std::string filePath;
 
     // Design model
-    Item designItem = item.childAt(m_designModel.rootPrimaryKey(), 0);
+    Item designItem = item.childAt(m_designModel.rootPKey<std::string>(), 0);
     if (!designItem.isNull()) {
         designItem.value(s_filePath).getValue(filePath);
         if (filePath.empty()) {
@@ -190,7 +190,7 @@ void MasterTreeDataModel::onRootItemChanged()
         dataItem.value(s_filePath).getValue(filePath);
         if (filePath.empty()) {
             if (!m_dataModel.isDefinitionNull()) {
-                const std::string& dataRootKey = m_dataModel.rootPrimaryKey().valueCRef<std::string>();
+                const std::string& dataRootKey = m_dataModel.rootPKey<std::string>();
                 if (dataItem.node().isXML()) {
                     XML::Element dataElement = dataItem.node().xmlNode();
                     XML::Element rootElement = dataElement.firstChild(dataRootKey);

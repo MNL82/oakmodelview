@@ -63,21 +63,6 @@ bool ValueDefinitionBuilder::addOption(ValueDefinition& valueDef, VariantCRef op
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<VariantCRef>& options)
-{
-    if (!options.empty() && options.front().isBaseTypeEqual(valueDef->m_valueTemplate)) {
-        valueDef->m_options.clear();
-        for (const auto& option: options)
-        {
-            valueDef->m_options.push_back(option);
-        }
-        return true;
-    }
-    return false;
-}
-
-// =============================================================================
-// (public)
 ValueSettings &ValueDefinitionBuilder::settings(const ValueDefinitionUPtr &valueDef)
 {
     return valueDef->m_settings;

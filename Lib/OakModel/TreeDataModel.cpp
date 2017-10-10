@@ -88,13 +88,6 @@ const Item &TreeDataModel::rootItem() const
 
 // =============================================================================
 // (public)
-VariantCRef TreeDataModel::rootPrimaryKey() const
-{
-    return m_rootItem.definition()->primaryKey();
-}
-
-// =============================================================================
-// (public)
 const NodeDefinition* TreeDataModel::rootNodeDefinition() const
 {
     return m_rootItem.definition();

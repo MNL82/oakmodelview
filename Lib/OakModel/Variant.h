@@ -52,6 +52,8 @@ public:
     bool isEqual(const T& value, bool allowConversion = true, Conversion* properties = nullptr) const;
     bool isEqual(const VariantCRef& value, bool allowConversion = true, Conversion* properties = nullptr) const;
 
+    bool isBaseTypeEqual(const VariantCRef& value) const;
+
     bool isNull() const;
 
     const std::type_info& typeId() const;

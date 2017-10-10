@@ -36,7 +36,10 @@ public:
     static bool setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion);
 
     static bool addOption(ValueDefinition &valueDef, VariantCRef option);
-    static bool setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<VariantCRef> &options);
+
+    template<typename T>
+    static bool setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options);
+
     static ValueSettings& settings(const ValueDefinitionUPtr& valueDef);
 
 #ifdef XML_BACKEND
@@ -97,6 +100,21 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string
 }
 #endif // XML_BACKEND
 
+// =============================================================================
+// (public)
+template<typename T>
+static bool ValueDefinitionBuilder::setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
+{
+    if (!options.empty() && valueDef->m_valueTemplate.isBaseTypeEqual(options.front())) {
+        valueDef->m_options.clear();
+        for (const auto& option: options)
+        {
+            valueDef->m_options.push_back(option);
+        }
+        return true;
+    }
+    return false;
+}
 
 typedef ValueDefinitionBuilder VDB;
 
