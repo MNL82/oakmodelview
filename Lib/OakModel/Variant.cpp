@@ -65,6 +65,13 @@ Variant::Variant(Variant&& move)
 
 // =============================================================================
 // (public)
+Variant& Variant::operator=(const char *value)
+{
+    return this->operator=(std::string(value));
+}
+
+// =============================================================================
+// (public)
 Variant& Variant::operator=(const VariantCRef &variant)
 {
     m_value = boost::apply_visitor(SetVariantVisitor(), variant.m_value);

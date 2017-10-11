@@ -36,6 +36,7 @@ public:
 
     template<typename T>
     Variant& operator=(const T& value);
+    Variant& operator=(const char* value);
     Variant& operator=(const VariantCRef& value);
     Variant& operator=(const VariantRef& value);
     Variant& operator=(const Variant& value);

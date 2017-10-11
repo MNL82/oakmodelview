@@ -118,8 +118,10 @@ bool convert(std::vector<T>& dest, const std::vector<Bool>& src, Conversion* pro
 }
 
 template<typename T1, typename T2>
-bool convert(T1&, const T2& , Conversion* properties = nullptr)
+bool convert(T1 &dest, const T2 &source, Conversion* properties = nullptr)
 {
+    UNUSED(dest);
+    UNUSED(source);
     UNUSED(properties);
     return false;
 }

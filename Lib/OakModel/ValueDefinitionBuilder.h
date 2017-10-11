@@ -22,20 +22,27 @@ class ValueDefinitionBuilder
 {
     ValueDefinitionBuilder() = delete;
 public:
-    template<class T>
-    static ValueDefinitionUPtr Make(T valueTemplate, VariantCRef valueId, VariantCRef defaultValue = VariantCRef(), ConversionSPtr conversion = ConversionSPtr());
+    template<typename T1, typename T2>
+    static ValueDefinitionUPtr Make(T1 valueTemplate, T2 valueId);
+    template<typename T1, typename T2>
+    static ValueDefinitionUPtr Make(T1 valueTemplate, T2 valueId, T1 defaultValue);
 #ifdef XML_BACKEND
-    template<class T>
-    static ValueDefinitionUPtr MakeXML(T valueTemplate, std::string tagName = std::string(), std::string attributeName = std::string(), VariantCRef defaultValue = VariantCRef(), ConversionSPtr conversion = ConversionSPtr());
+    template<typename T>
+    static ValueDefinitionUPtr MakeXML(T valueTemplate, std::string tagName = std::string(), std::string attributeName = std::string());
+    template<typename T>
+    static ValueDefinitionUPtr MakeXML(T valueTemplate, std::string tagName, std::string attributeName, T defaultValue);
 #endif // XML_BACKEND
 
-    static bool setValueId(ValueDefinitionUPtr& valueDef, VariantCRef valueId);
+    template<typename T>
+    static bool setValueId(ValueDefinitionUPtr& valueDef, T valueId);
 
-    static bool setDefaultValue(const ValueDefinitionUPtr& valueDef, VariantCRef defaultValue);
+    template<typename T>
+    static bool setDefaultValue(const ValueDefinitionUPtr& valueDef, T defaultValue);
 
     static bool setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion);
 
-    static bool addOption(ValueDefinition &valueDef, VariantCRef option);
+    template<typename T>
+    static bool addOption(ValueDefinition &valueDef, T option);
 
     template<typename T>
     static bool setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options);
@@ -45,27 +52,22 @@ public:
 #ifdef XML_BACKEND
     static bool setValueRef(const ValueDefinitionUPtr& valueDef, XML::ValueRefUPtr valueRef);
 
-    static Variant generateValueId(std::string tagName, std::string attributeName);
+    static std::string generateValueId(std::string tagName, std::string attributeName);
 #endif // XML_BACKEND
 };
 
 // =============================================================================
 // (public)
-template<class T>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, VariantCRef valueId, VariantCRef defaultValue, ConversionSPtr conversion)
+template<typename T1, typename T2>
+ValueDefinitionUPtr ValueDefinitionBuilder::Make(T1 valueTemplate, T2 valueId)
 {
-    if (!defaultValue.isNull()) {
-        assert(defaultValue.isBaseTypeEqual(VariantCRef(valueTemplate)));
-    }
     ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
-    valueDef->m_defaultValue = defaultValue;
     valueDef->m_valueId = valueId;
-    valueDef->m_defaultConversion = (conversion) ? conversion : Conversion::globalDefault();
+    valueDef->m_defaultConversion = Conversion::globalDefault();
 
 #ifdef XML_BACKEND
-    if (valueId.canGet(std::string(), true, valueDef->m_defaultConversion.get())) {
-        std::string tagName;
-        valueId.get(tagName, true, valueDef->m_defaultConversion.get());
+    std::string tagName;
+    if (convert(tagName, valueId)) {
         if (XML::Element::validateTagName(tagName)) {
             valueDef->m_valueRef = XML::ValueRef::MakeUPtr("", XML::ChildRef::MakeUPtr(tagName));
         }
@@ -75,19 +77,24 @@ ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, VariantCRef va
     return std::move(valueDef);
 }
 
+// =============================================================================
+// (public)
+template<typename T1, typename T2>
+ValueDefinitionUPtr ValueDefinitionBuilder::Make(T1 valueTemplate, T2 valueId, T1 defaultValue)
+{
+    auto vDef = Make(valueTemplate, valueId);
+    vDef->m_defaultValue = defaultValue;
+    return std::move(vDef);
+}
+
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-template<class T>
-ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string tagName, std::string attributeName, VariantCRef defaultValue, ConversionSPtr conversion)
+template<typename T>
+ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string tagName, std::string attributeName)
 {
-    if (!defaultValue.isNull()) {
-        assert(defaultValue.isBaseTypeEqual(VariantCRef(valueTemplate)));
-    }
-
     ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
-    valueDef->m_defaultValue = defaultValue;
-    valueDef->m_defaultConversion = (conversion) ? conversion : Conversion::globalDefault();
+    valueDef->m_defaultConversion = Conversion::globalDefault();
     valueDef->m_valueId = generateValueId(tagName, attributeName);
 
     if (tagName.empty()) {
@@ -98,7 +105,53 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string
 
     return std::move(valueDef);
 }
+
+// =============================================================================
+// (public)
+template<typename T>
+ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string tagName, std::string attributeName, T defaultValue)
+{
+    auto vDef = MakeXML(valueTemplate, tagName, attributeName);
+    vDef->m_defaultValue = defaultValue;
+    return std::move(vDef);
+}
 #endif // XML_BACKEND
+
+// =============================================================================
+// (public)
+template<typename T>
+static bool ValueDefinitionBuilder::setValueId(ValueDefinitionUPtr& valueDef, T valueId)
+{
+    if (!valueDef) { return false; }
+
+    valueDef->m_valueId = valueId;
+
+    return true;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+static bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& valueDef, T defaultValue)
+{
+    if (!valueDef) { return false; }
+
+    valueDef->m_defaultValue = defaultValue;
+
+    return true;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+static bool ValueDefinitionBuilder::addOption(ValueDefinition &valueDef, T option)
+{
+    if (option.isBaseTypeEqual(valueDef.m_valueTemplate)) {
+        valueDef.m_options.push_back(option);
+        return true;
+    }
+    return false;
+}
 
 // =============================================================================
 // (public)

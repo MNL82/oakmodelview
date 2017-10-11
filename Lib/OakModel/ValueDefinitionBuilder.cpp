@@ -17,29 +17,6 @@ namespace Model {
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setValueId(ValueDefinitionUPtr &valueDef, VariantCRef valueId)
-{
-    if (!valueDef) { return false; }
-    if (valueId.isNull()) { return false; }
-
-    valueDef->m_valueId = valueId;
-
-    return true;
-}
-
-// =============================================================================
-// (public)
-bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& valueDef, VariantCRef defaultValue)
-{
-    if (!valueDef) { return false; }
-
-    valueDef->m_defaultValue = defaultValue;
-
-    return true;
-}
-
-// =============================================================================
-// (public)
 bool ValueDefinitionBuilder::setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion)
 {
     if (!valueDef) { return false; }
@@ -48,17 +25,6 @@ bool ValueDefinitionBuilder::setDefaultConversion(const ValueDefinitionUPtr& val
     valueDef->m_defaultConversion = conversion;
 
     return true;
-}
-
-// =============================================================================
-// (public)
-bool ValueDefinitionBuilder::addOption(ValueDefinition& valueDef, VariantCRef option)
-{
-    if (option.isBaseTypeEqual(valueDef.m_valueTemplate)) {
-        valueDef.m_options.push_back(option);
-        return true;
-    }
-    return false;
 }
 
 // =============================================================================
@@ -82,25 +48,22 @@ bool ValueDefinitionBuilder::setValueRef(const ValueDefinitionUPtr& valueDef, XM
 
 // =============================================================================
 // (public)
-Variant ValueDefinitionBuilder::generateValueId(std::string tagName, std::string attributeName)
+std::string ValueDefinitionBuilder::generateValueId(std::string tagName, std::string attributeName)
 {
     // The value id is created from the tag name and the attribute name
-    Variant valueId;
-
     if (tagName.empty()) {
         if (attributeName.empty()) {
-            valueId = std::string("Body");
+            return std::string("Body");
         } else {
-            valueId = attributeName;
+            return attributeName;
         }
     } else {
         if (attributeName.empty()) {
-            valueId = tagName;
+            return tagName;
         } else {
-            valueId = tagName + "[" + attributeName + "]";
+            return tagName + "[" + attributeName + "]";
         }
     }
-    return std::move(valueId);
 }
 
 } // namespace Model
