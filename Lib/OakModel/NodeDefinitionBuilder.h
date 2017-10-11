@@ -23,17 +23,25 @@ class NodeDefinitionBuilder
     NodeDefinitionBuilder() = delete;
 
 public:
-    static NodeDefinitionSPtr Make(VariantCRef primaryKey);
-    static NodeDefinitionSPtr MakeRoot(VariantCRef primaryKey, VariantCRef derivedId);
-    static NodeDefinitionSPtr MakeDerived(NodeDefinitionSPtr derivedBase, VariantCRef derivedId);
+    template<typename T>
+    static NodeDefinitionSPtr Make(T primaryKey);
+
+    template<typename T1, typename T2>
+    static NodeDefinitionSPtr MakeRoot(T1 primaryKey, T2 derivedId);
+
+    template<typename T>
+    static NodeDefinitionSPtr MakeDerived(NodeDefinitionSPtr derivedBase, T derivedId);
+
 
     static bool addValueDef(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDef);
     static bool addValueDefAsKey(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDefKey);
     static bool addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDefDerivedId);
-    static ValueDefinitionUPtr takeValueDef(NodeDefinitionSPtr nodeDef, VariantCRef valueId);
+    template<typename T>
+    static ValueDefinitionUPtr takeValueDef(NodeDefinitionSPtr nodeDef, T valueId);
 
     static bool addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef);
-    static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, VariantCRef primaryKey);
+    template<typename T>
+    static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, T primaryKey);
 
     static bool setName(NodeDefinitionSPtr nodeDef, const std::string& name);
 
@@ -59,6 +67,127 @@ protected:
     static void setTagNameThisAndDerived(NodeDefinitionSPtr nodeDef, const std::string& tagName);
 #endif // XML_BACKEND
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+NodeDefinitionSPtr NodeDefinitionBuilder::Make(T primaryKey)
+{
+    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(primaryKey);
+
+#ifdef XML_BACKEND
+    convert(nodeDef->m_tagName, primaryKey);
+    if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
+        // Clear the tag name if it is not valid
+        nodeDef->m_tagName.clear();
+    }
+#endif // XML_BACKEND
+
+    return nodeDef;
+}
+
+// =============================================================================
+// (public)
+template<typename T1, typename T2>
+NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(T1 primaryKey, T2 derivedId)
+{
+    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(primaryKey, derivedId);
+
+#ifdef XML_BACKEND
+    convert(nodeDef->m_tagName, primaryKey);
+    if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
+        // Clear the tag name if it is not valid
+        nodeDef->m_tagName.clear();
+    }
+#endif // XML_BACKEND
+
+    return nodeDef;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerived(NodeDefinitionSPtr derivedBase, T derivedId)
+{
+    // derivedBase has to be a valid pointer
+    assert(derivedBase);
+
+    // derivedBase has to have an valid derivedId
+    assert(!derivedBase->derivedId().isNull());
+
+    // The derivedId's have to be unique
+    assert(!derivedBase->validateForAny(derivedId));
+
+    // DerivedId's of derived definitions have to be of the same derivedId type
+    assert(derivedBase->derivedId().isBaseTypeEqual(derivedId));
+
+    NodeDefinitionSPtr derivedDefinition = NodeDefinition::MakeSPtr(derivedBase->primaryKey(), derivedId);
+
+    // Adds the derived definition to the inheritance heiraki
+    derivedDefinition->m_derivedBase = derivedBase;
+    derivedBase->m_derivedDirectList.push_back(derivedDefinition);
+
+    // The primaryKey is the same for all definitions in the inheritance heiraki
+    derivedDefinition->m_primaryKey = derivedBase->m_primaryKey;
+
+    // The keyValue and derivedIdValue are the same for all definitions in the inheritance heiraki
+    derivedDefinition->m_keyValueDefIndex = derivedBase->m_keyValueDefIndex;
+    derivedDefinition->m_derivedIdValueDefIndex = derivedBase->m_derivedIdValueDefIndex;
+
+    if (derivedBase->hasDerivedId()) {
+        VDB::addOption(derivedBase->derivedIdValueDef(), derivedId);
+    }
+
+#ifdef XML_BACKEND
+    derivedDefinition->m_tagName = derivedBase->m_tagName;
+#endif // XML_BACKEND
+
+    return derivedDefinition;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+ValueDefinitionUPtr NodeDefinitionBuilder::takeValueDef(NodeDefinitionSPtr nodeDef, T valueId)
+{
+    if (!nodeDef || valueId.isNull()) { return ValueDefinitionUPtr(); }
+
+    auto it = nodeDef->m_valueList.begin();
+    while (it != nodeDef->m_valueList.end()) {
+        if ((*it)->valueId() == valueId) {
+            ValueDefinitionUPtr movedValue(std::move(*it));
+            nodeDef->m_valueList.erase(it);
+            return std::move(movedValue);
+        }
+    }
+
+    return ValueDefinitionUPtr();
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, T primaryKey)
+{
+    if (!nodeDef || primaryKey.isNull()) { return ContainerDefinitionUPtr(); }
+
+    auto it = nodeDef->m_containerList.begin();
+    while (it != nodeDef->m_containerList.end()) {
+        if ((*it)->containerDefinition()->primaryKey().isEqual(primaryKey)) {
+            ContainerDefinitionUPtr movedContainer(std::move(*it));
+            nodeDef->m_containerList.erase(it);
+
+            // Clear the list of existing containers
+            if (nodeDef->m_containerGroup) {
+                nodeDef->m_containerGroup->updateContainerList();
+            }
+
+            return std::move(movedContainer);
+        }
+    }
+
+    return ContainerDefinitionUPtr();
+}
 
 typedef NodeDefinitionBuilder NDB;
 

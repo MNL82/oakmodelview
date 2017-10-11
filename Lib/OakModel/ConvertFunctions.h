@@ -46,6 +46,15 @@ bool convert(std::string& dest, int src, Conversion* properties = nullptr);
 bool convert(double& dest, const std::string& src, Conversion* properties = nullptr);
 bool convert(std::string& dest, double src, Conversion* properties = nullptr);
 
+bool convert(std::string& dest, const char * source, Conversion* properties = nullptr);
+
+template<typename T>
+bool convert(T& dest, const char * source, Conversion* properties = nullptr)
+{
+    if (source == nullptr) { return false; }
+    return convert(dest, std::string(source), properties);
+}
+
 template<typename T1, typename T2>
 bool convert(std::vector<T1>&, const T2&, Conversion* properties = nullptr)
 {
@@ -142,6 +151,15 @@ bool canConvert(double& dest, int src, Conversion* properties = nullptr);
 
 bool canConvert(std::string& dest, const int& src, Conversion* properties = nullptr);
 bool canConvert(std::string& dest, const double& src, Conversion* properties = nullptr);
+
+bool canConvert(std::string& dest, const char * source, Conversion* properties = nullptr);
+
+template<typename T>
+bool canConvert(T& dest, const char * source, Conversion* properties = nullptr)
+{
+    if (source == nullptr) { return false; }
+    return canConvert(dest, std::string(source), properties);
+}
 
 template<typename T1, typename T2>
 bool canConvert(T1&, const T2& src, Conversion* properties = nullptr)

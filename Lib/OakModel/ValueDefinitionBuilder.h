@@ -146,7 +146,7 @@ static bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& v
 template<typename T>
 static bool ValueDefinitionBuilder::addOption(ValueDefinition &valueDef, T option)
 {
-    if (option.isBaseTypeEqual(valueDef.m_valueTemplate)) {
+    if (valueDef.m_valueTemplate.isBaseTypeEqual(option)) {
         valueDef.m_options.push_back(option);
         return true;
     }

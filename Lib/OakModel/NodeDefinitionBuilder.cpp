@@ -17,91 +17,6 @@ namespace Model {
 
 // =============================================================================
 // (public)
-NodeDefinitionSPtr NodeDefinitionBuilder::Make(VariantCRef primaryKey)
-{
-    // primaryKey must be valid
-    assert(!primaryKey.isNull());
-
-    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(primaryKey);
-
-#ifdef XML_BACKEND
-    primaryKey.get(nodeDef->m_tagName);
-    if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
-        // Clear the tag name if it is not valid
-        nodeDef->m_tagName.clear();
-    }
-#endif // XML_BACKEND
-
-    return nodeDef;
-}
-
-// =============================================================================
-// (public)
-NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(VariantCRef primaryKey, VariantCRef derivedId)
-{
-    // primaryKey must be valid
-    assert(!primaryKey.isNull());
-    // derivedId must be valid
-    assert(!derivedId.isNull());
-
-    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(primaryKey, derivedId);
-
-#ifdef XML_BACKEND
-    primaryKey.get(nodeDef->m_tagName);
-    if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
-        // Clear the tag name if it is not valid
-        nodeDef->m_tagName.clear();
-    }
-#endif // XML_BACKEND
-
-    return nodeDef;
-}
-
-// =============================================================================
-// (public)
-NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerived(NodeDefinitionSPtr derivedBase, VariantCRef derivedId)
-{
-    // derivedBase has to be a valid pointer
-    assert(derivedBase);
-
-    // derivedId must be valid
-    assert(!derivedId.isNull());
-
-    // derivedBase has to have an valid derivedId
-    assert(!derivedBase->derivedId().isNull());
-
-    // The derivedId's have to be unique
-    assert(!derivedBase->validateForAny(derivedId));
-
-    // DerivedId's of derived definitions have to be of the same derivedId type
-    assert(derivedBase->derivedId().isBaseTypeEqual(derivedId));
-
-    NodeDefinitionSPtr derivedDefinition = NodeDefinition::MakeSPtr(derivedBase->primaryKey(), derivedId);
-
-    // Adds the derived definition to the inheritance heiraki
-    derivedDefinition->m_derivedBase = derivedBase;
-    derivedBase->m_derivedDirectList.push_back(derivedDefinition);
-
-    // The primaryKey is the same for all definitions in the inheritance heiraki
-    derivedDefinition->m_primaryKey = derivedBase->m_primaryKey;
-
-    // The keyValue and derivedIdValue are the same for all definitions in the inheritance heiraki
-    derivedDefinition->m_keyValueDefIndex = derivedBase->m_keyValueDefIndex;
-    derivedDefinition->m_derivedIdValueDefIndex = derivedBase->m_derivedIdValueDefIndex;
-
-    if (derivedBase->hasDerivedId()) {
-        VDB::addOption(derivedBase->derivedIdValueDef(), derivedId);
-    }
-
-#ifdef XML_BACKEND
-    derivedDefinition->m_tagName = derivedBase->m_tagName;
-#endif // XML_BACKEND
-
-    return derivedDefinition;
-}
-
-// =============================================================================
-// (public)
 bool NodeDefinitionBuilder::addValueDef(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDef)
 {
     if (!nodeDef) { return false; }
@@ -165,24 +80,6 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
 
 // =============================================================================
 // (public)
-ValueDefinitionUPtr NodeDefinitionBuilder::takeValueDef(NodeDefinitionSPtr nodeDef, VariantCRef valueId)
-{
-    if (!nodeDef || valueId.isNull()) { return ValueDefinitionUPtr(); }
-
-    auto it = nodeDef->m_valueList.begin();
-    while (it != nodeDef->m_valueList.end()) {
-        if ((*it)->valueId() == valueId) {
-            ValueDefinitionUPtr movedValue(std::move(*it));
-            nodeDef->m_valueList.erase(it);
-            return std::move(movedValue);
-        }
-    }
-
-    return ValueDefinitionUPtr();
-}
-
-// =============================================================================
-// (public)
 bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef)
 {
     if (!nodeDef || !cDef) { return false; }
@@ -200,30 +97,6 @@ bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, Containe
     }
 
     return true;
-}
-
-// =============================================================================
-// (public)
-ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, VariantCRef primaryKey)
-{
-    if (!nodeDef || primaryKey.isNull()) { return ContainerDefinitionUPtr(); }
-
-    auto it = nodeDef->m_containerList.begin();
-    while (it != nodeDef->m_containerList.end()) {
-        if ((*it)->containerDefinition()->primaryKey().isEqual(primaryKey)) {
-            ContainerDefinitionUPtr movedContainer(std::move(*it));
-            nodeDef->m_containerList.erase(it);
-
-            // Clear the list of existing containers
-            if (nodeDef->m_containerGroup) {
-                nodeDef->m_containerGroup->updateContainerList();
-            }
-
-            return std::move(movedContainer);
-        }
-    }
-
-    return ContainerDefinitionUPtr();
 }
 
 // =============================================================================

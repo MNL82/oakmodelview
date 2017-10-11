@@ -141,6 +141,15 @@ bool convert(std::string& dest, double src, Conversion* )
 }
 
 // =============================================================================
+// (public)
+bool convert(std::string &dest, const char *source, Conversion* )
+{
+    if (source == nullptr) { return false; }
+    dest.assign(source);
+    return true;
+}
+
+// =============================================================================
 // canConvert()
 // =============================================================================
 
@@ -205,6 +214,13 @@ bool canConvert(std::string&, const int&, Conversion*)
 bool canConvert(std::string&, const double&, Conversion*)
 {
     return true;
+}
+
+// =============================================================================
+// (public)
+bool canConvert(std::string &, const char *source, Conversion*)
+{
+    return source != nullptr;
 }
 
 } // namespace Model
