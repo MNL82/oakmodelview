@@ -10,6 +10,9 @@
 
 #include "ConvertFunctions.h"
 
+#include <iomanip>
+#include <sstream>
+
 namespace Oak {
 namespace Model {
 
@@ -134,9 +137,26 @@ bool convert(double& dest, const std::string& src, Conversion* )
 
 // =============================================================================
 // (public)
-bool convert(std::string& dest, double src, Conversion* )
+bool convert(std::string& dest, double src, Conversion* properties)
 {
-    dest = std::to_string(src);
+    if (properties == nullptr) { properties = Conversion::globalDefault2(); }
+    std::stringstream stream;
+    switch (properties->doubleToStringMode()) {
+    case Conversion::DoubleToString_Default:
+        stream << std::defaultfloat;
+        break;
+    case Conversion::DoubleToString_Scientific:
+        stream << std::scientific;
+        break;
+    case Conversion::DoubleToString_Fixed:
+        stream << std::fixed;
+        break;
+    default:
+        assert(false);
+        break;
+    }
+    stream << std::setprecision(properties->doubleToStringPrecision()) << src;
+    dest = stream.str();
     return true;
 }
 

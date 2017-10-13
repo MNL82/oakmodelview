@@ -32,6 +32,8 @@ ConversionSPtr Conversion::globalDefault()
         globalDefault->m_listSeperator = ";";
         globalDefault->m_roundRules = DoubleToInt_Round;
         globalDefault->m_equalTolerance = 1.0e-12;
+        globalDefault->m_doubleToStringPrecision = 5;
+        globalDefault->m_doubleToStringMode = DoubleToString_Default;
     }
     return globalDefault;
 }
@@ -49,6 +51,8 @@ Conversion*Conversion::globalDefault2()
         s_default->m_listSeperator = ";";
         s_default->m_roundRules = DoubleToInt_Round;
         s_default->m_equalTolerance = 1.0e-12;
+        s_default->m_doubleToStringPrecision = 5;
+        s_default->m_doubleToStringMode = DoubleToString_Default;
     }
 
     return s_default;

@@ -30,10 +30,16 @@ class Conversion
 {
 public:
     enum DoubleToInt {
-        DoubleToInt_Round,
+        DoubleToInt_Round = 0,
         DoubleToInt_Floor,
         DoubleToInt_Ceil,
         DoubleToInt_Trunc
+    };
+
+    enum DoubleToString {
+        DoubleToString_Default = 0,
+        DoubleToString_Fixed,
+        DoubleToString_Scientific
     };
 
 public:
@@ -49,10 +55,15 @@ public:
 
     DoubleToInt roundRules() const { return m_roundRules; }
 
+    int doubleToStringPrecision() const { return m_doubleToStringPrecision; }
+    DoubleToString doubleToStringMode() const { return m_doubleToStringMode; }
 private:
     // Bool to string and back
     std::string m_boolTrue;
     std::string m_boolFalse;
+
+    int m_doubleToStringPrecision;
+    DoubleToString m_doubleToStringMode = DoubleToString_Default;
 
     // Double to integer
     DoubleToInt m_roundRules;
