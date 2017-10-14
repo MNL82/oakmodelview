@@ -16,7 +16,7 @@ using boost::unit_test_framework::test_suite;
 #include "Item.h"
 
 #include "Test_ServiceFunctions.h"
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 #ifdef XML_BACKEND
 
@@ -24,7 +24,7 @@ using namespace Oak::Model;
 
 void test_Item()
 {
-    TreeDataModel dataModel;
+    OakModel dataModel;
     dataModel.setRootNodeDefinition(createNodeDefinition());
     dataModel.loadXMLRootNode(std::string(RESOURCE_PATH)+"test_doc.xml");
 

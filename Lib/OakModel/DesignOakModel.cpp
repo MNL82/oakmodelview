@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "DesignTreeDataModel.h"
+#include "DesignOakModel.h"
 
 #include "NodeDefinitionBuilder.h"
 #include "ContainerDefinitionBuilder.h"
@@ -21,35 +21,35 @@
 namespace Oak {
 namespace Model {
 
-std::string DesignTreeDataModel::s_design        = "design";
-std::string DesignTreeDataModel::s_node          = "node";
-std::string DesignTreeDataModel::s_value         = "value";
-std::string DesignTreeDataModel::s_container     = "container";
-std::string DesignTreeDataModel::s_name          = "name";
-std::string DesignTreeDataModel::s_type          = "type";
-std::string DesignTreeDataModel::s_minCount      = "minCount";
-std::string DesignTreeDataModel::s_maxCount      = "maxCount";
-std::string DesignTreeDataModel::s_default       = "default";
-std::string DesignTreeDataModel::s_keyValue      = "keyValue";
-std::string DesignTreeDataModel::s_tagName       = "tagName";
-std::string DesignTreeDataModel::s_attributeName = "attributeName";
+std::string DesignOakModel::s_design        = "design";
+std::string DesignOakModel::s_node          = "node";
+std::string DesignOakModel::s_value         = "value";
+std::string DesignOakModel::s_container     = "container";
+std::string DesignOakModel::s_name          = "name";
+std::string DesignOakModel::s_type          = "type";
+std::string DesignOakModel::s_minCount      = "minCount";
+std::string DesignOakModel::s_maxCount      = "maxCount";
+std::string DesignOakModel::s_default       = "default";
+std::string DesignOakModel::s_keyValue      = "keyValue";
+std::string DesignOakModel::s_tagName       = "tagName";
+std::string DesignOakModel::s_attributeName = "attributeName";
 
 // Value types
-std::string DesignTreeDataModel::s_string        = "String";
-std::string DesignTreeDataModel::s_integer       = "Integer";
-std::string DesignTreeDataModel::s_decimal       = "Decimal";
+std::string DesignOakModel::s_string        = "String";
+std::string DesignOakModel::s_integer       = "Integer";
+std::string DesignOakModel::s_decimal       = "Decimal";
 
 // =============================================================================
 // (public)
-DesignTreeDataModel::DesignTreeDataModel()
-    : TreeDataModel()
+DesignOakModel::DesignOakModel()
+    : OakModel()
 {
     createDesignDefinition();
 }
 
 // =============================================================================
 // (public)
-NodeDefinitionSPtr DesignTreeDataModel::generateModelDefinition() const
+NodeDefinitionSPtr DesignOakModel::generateModelDefinition() const
 {
     std::string nodeName;
     Item designItem = rootItem();
@@ -101,7 +101,7 @@ NodeDefinitionSPtr DesignTreeDataModel::generateModelDefinition() const
 
 // =============================================================================
 // (protected)
-NodeDefinitionSPtr DesignTreeDataModel::createNodeDefinition(const Item& item) const
+NodeDefinitionSPtr DesignOakModel::createNodeDefinition(const Item& item) const
 {
     std::string name;
     std::string type;
@@ -139,7 +139,7 @@ NodeDefinitionSPtr DesignTreeDataModel::createNodeDefinition(const Item& item) c
 
 // =============================================================================
 // (protected)
-void DesignTreeDataModel::createDesignDefinition()
+void DesignOakModel::createDesignDefinition()
 {
     auto nodeDesign = NDB::Make(s_design);
     auto nodeNode = NDB::Make(s_node);

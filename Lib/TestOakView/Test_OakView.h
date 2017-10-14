@@ -12,22 +12,22 @@
 
 #include <QMainWindow>
 
-#include "TreeDataModel.h"
-#include "MasterTreeDataModel.h"
+#include "OakModel.h"
+#include "MasterOakModel.h"
 
 namespace Ui {
-class Test_TreeDataView;
+class Test_OakView;
 }
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Test_TreeDataView : public QMainWindow
+class Test_OakView : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit Test_TreeDataView(QWidget *parent = 0);
-    ~Test_TreeDataView();
+    explicit Test_OakView(QWidget *parent = 0);
+    ~Test_OakView();
 
 protected slots:
     void onMasterNewTriggered();
@@ -47,7 +47,7 @@ protected slots:
     void onGeneratePushed();
 
 private:
-    Ui::Test_TreeDataView *ui;
-    Oak::Model::MasterTreeDataModel* m_masterModel;
+    Ui::Test_OakView *ui;
+    Oak::Model::MasterOakModel* m_masterModel;
 };
 

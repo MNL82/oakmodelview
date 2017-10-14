@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 namespace Oak {
 namespace Model {
@@ -18,10 +18,10 @@ namespace Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class DesignTreeDataModel : public TreeDataModel
+class DesignOakModel : public OakModel
 {
 public:
-    DesignTreeDataModel();
+    DesignOakModel();
 
     NodeDefinitionSPtr generateModelDefinition() const;
 

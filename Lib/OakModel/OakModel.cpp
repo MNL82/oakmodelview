@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 #include <list>
 #include <QDebug>
@@ -18,43 +18,43 @@ namespace Model {
 
 // =============================================================================
 // (public)
-TreeDataModel::TreeDataModel()
+OakModel::OakModel()
 {
-    //qDebug() << "TreeDataModel()";
+    //qDebug() << "OakModel()";
 }
 
 // =============================================================================
 // (public)
-TreeDataModel::~TreeDataModel()
+OakModel::~OakModel()
 {
-    //qDebug() << "~TreeDataModel()";
+    //qDebug() << "~OakModel()";
     notifier_destroyed.trigger();
 }
 
 // =============================================================================
 // (public)
-bool TreeDataModel::isNull() const
+bool OakModel::isNull() const
 {
     return isDefinitionNull() || isNodeNull();
 }
 
 // =============================================================================
 // (public)
-bool TreeDataModel::isDefinitionNull() const
+bool OakModel::isDefinitionNull() const
 {
     return m_rootItem.isDefinitionNull();
 }
 
 // =============================================================================
 // (public)
-bool TreeDataModel::isNodeNull() const
+bool OakModel::isNodeNull() const
 {
     return m_rootItem.isNodeNull();
 }
 
 // =============================================================================
 // (public)
-bool TreeDataModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
+bool OakModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
 {
     if (m_rootItem.isDefinitionNull()) {
         return false;
@@ -74,28 +74,28 @@ bool TreeDataModel::createNewRootDocument(Node::Type backendType, bool setAsCurr
 
 // =============================================================================
 // (public)
-void TreeDataModel::clearRoot()
+void OakModel::clearRoot()
 {
     setRootNode(Node());
 }
 
 // =============================================================================
 // (public)
-const Item &TreeDataModel::rootItem() const
+const Item &OakModel::rootItem() const
 {
     return m_rootItem;
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* TreeDataModel::rootNodeDefinition() const
+const NodeDefinition* OakModel::rootNodeDefinition() const
 {
     return m_rootItem.definition();
 }
 
 // =============================================================================
 // (public)
-void TreeDataModel::setRootNodeDefinition(NodeDefinitionSPtr definition)
+void OakModel::setRootNodeDefinition(NodeDefinitionSPtr definition)
 {
     m_definition = definition; // Saved only to keep the definition alive (Smart Pointer)
     setRootNodeDefinition(definition.get());
@@ -103,7 +103,7 @@ void TreeDataModel::setRootNodeDefinition(NodeDefinitionSPtr definition)
 
 // =============================================================================
 // (public)
-void TreeDataModel::setRootNodeDefinition(const NodeDefinition *definition)
+void OakModel::setRootNodeDefinition(const NodeDefinition *definition)
 {
     if (m_rootItem.definition() != definition) {
         Node currentNode = m_currentItem.node();
@@ -127,7 +127,7 @@ void TreeDataModel::setRootNodeDefinition(const NodeDefinition *definition)
 
 // =============================================================================
 // (public)
-void TreeDataModel::setRootNode(Node node)
+void OakModel::setRootNode(Node node)
 {
     if (m_rootItem.node() != node) {
         setCurrentItem(Item());
@@ -140,7 +140,7 @@ void TreeDataModel::setRootNode(Node node)
 
 // =============================================================================
 // (public)
-void TreeDataModel::setRootItem(const Item& item)
+void OakModel::setRootItem(const Item& item)
 {
     setRootNodeDefinition(item.definition());
     setRootNode(item.node());
@@ -148,14 +148,14 @@ void TreeDataModel::setRootItem(const Item& item)
 
 // =============================================================================
 // (public)
-const Item& TreeDataModel::currentItem() const
+const Item& OakModel::currentItem() const
 {
     return m_currentItem;
 }
 
 // =============================================================================
 // (public)
-void TreeDataModel::setCurrentItem(Item item) const
+void OakModel::setCurrentItem(Item item) const
 {
     if (m_currentItem != item) {
         m_currentItem = item;
@@ -166,7 +166,7 @@ void TreeDataModel::setCurrentItem(Item item) const
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-void TreeDataModel::setXMLRootNode(Node rootNode, bool setAsCurrent)
+void OakModel::setXMLRootNode(Node rootNode, bool setAsCurrent)
 {
     m_XMLRootNode = rootNode;
 
@@ -175,7 +175,7 @@ void TreeDataModel::setXMLRootNode(Node rootNode, bool setAsCurrent)
 
 // =============================================================================
 // (public)
-bool TreeDataModel::loadXMLRootNode(const std::string& filePath, bool setAsCurrent)
+bool OakModel::loadXMLRootNode(const std::string& filePath, bool setAsCurrent)
 {
     if (!m_xmlDoc.load(filePath)) { return false; }
 
@@ -188,7 +188,7 @@ bool TreeDataModel::loadXMLRootNode(const std::string& filePath, bool setAsCurre
 
 // =============================================================================
 // (public)
-bool TreeDataModel::saveXMLRootNode(const std::string& filePath)
+bool OakModel::saveXMLRootNode(const std::string& filePath)
 {
     if (m_xmlDoc.isNull()) {
         // Implement this
@@ -208,7 +208,7 @@ bool TreeDataModel::saveXMLRootNode(const std::string& filePath)
 
 // =============================================================================
 // (public)
-const NodeDefinition* TreeDataModel::findNodeDefinition(Node node) const
+const NodeDefinition* OakModel::findNodeDefinition(Node node) const
 {
     if (m_rootItem.isDefinitionNull() || node.isNull()) { return 0; }
 
@@ -248,14 +248,14 @@ const NodeDefinition* TreeDataModel::findNodeDefinition(Node node) const
 
 // =============================================================================
 // (protected)
-void TreeDataModel::onItemInserted(const Item &parentItem, int index) const
+void OakModel::onItemInserted(const Item &parentItem, int index) const
 {
     notifier_itemInserted.trigger(parentItem, index);
 }
 
 // =============================================================================
 // (protected)
-void TreeDataModel::onItemMoved(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
+void OakModel::onItemMoved(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
 {
     // Notify the view
     notifier_itemMoved.trigger(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
@@ -281,7 +281,7 @@ void TreeDataModel::onItemMoved(const Item &sourceParentItem, int sourceIndex, c
 
 // =============================================================================
 // (protected)
-void TreeDataModel::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
+void OakModel::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
 {
     // Notify the view
     notifier_itemCloned.trigger(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
@@ -294,7 +294,7 @@ void TreeDataModel::onItemCloned(const Item &sourceParentItem, int sourceIndex, 
 
 // =============================================================================
 // (protected)
-void TreeDataModel::onItemRemoved(const Item &parentItem, int index) const
+void OakModel::onItemRemoved(const Item &parentItem, int index) const
 {
     // Notify the view
     notifier_itemRemoved.trigger(parentItem, index);
@@ -334,7 +334,7 @@ void TreeDataModel::onItemRemoved(const Item &parentItem, int index) const
 
 // =============================================================================
 // (protected)
-void TreeDataModel::onItemValueChanged(const Item &item, int valueIndex) const
+void OakModel::onItemValueChanged(const Item &item, int valueIndex) const
 {
     if (item.definition()->derivedIdValueDefIndex() == valueIndex) {
         const NodeDefinition* definition = findNodeDefinition(item.node());

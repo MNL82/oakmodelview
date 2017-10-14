@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "DesignTreeDataModel.h"
+#include "DesignOakModel.h"
 
 namespace Oak {
 namespace Model {
@@ -18,14 +18,14 @@ namespace Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class MasterTreeDataModel : public TreeDataModel
+class MasterOakModel : public OakModel
 {
 public:
-    MasterTreeDataModel();
+    MasterOakModel();
 
-    DesignTreeDataModel* designModel() { return &m_designModel; }
-    TreeDataModel* dataModel() { return &m_dataModel; }
-    TreeDataModel* filterModel() { return &m_filterModel; }
+    DesignOakModel* designModel() { return &m_designModel; }
+    OakModel* dataModel() { return &m_dataModel; }
+    OakModel* filterModel() { return &m_filterModel; }
 
     std::string designFilePath() const;
     bool loadDesignFilePath(const std::string& filePath);
@@ -44,9 +44,9 @@ protected:
     void onRootItemChanged();
 
 protected:
-    DesignTreeDataModel m_designModel;
-    TreeDataModel m_dataModel;
-    TreeDataModel m_filterModel;
+    DesignOakModel m_designModel;
+    OakModel m_dataModel;
+    OakModel m_filterModel;
 
     static std::string s_master;
     static std::string s_data;

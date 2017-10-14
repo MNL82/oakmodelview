@@ -10,7 +10,7 @@
 
 #include "ItemValue.h"
 #include "Item.h"
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 namespace Oak {
 namespace Model {

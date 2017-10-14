@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "TreeDataView.h"
+#include "OakView.h"
 
 #include <QVBoxLayout>
 #include <QStackedWidget>
@@ -27,10 +27,10 @@ namespace View {
 
 // =============================================================================
 // (public)
-TreeDataView::TreeDataView(QWidget* parent)
+OakView::OakView(QWidget* parent)
     : QTreeWidget(parent)
 {
-    //qDebug() << "TreeDataView()";
+    //qDebug() << "OakView()";
 
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -41,15 +41,15 @@ TreeDataView::TreeDataView(QWidget* parent)
 
 // =============================================================================
 // (public)
-TreeDataView::~TreeDataView()
+OakView::~OakView()
 {
-    //qDebug() << "~TreeDataView()";
+    //qDebug() << "~OakView()";
     setModel(nullptr);
 }
 
 // =============================================================================
 // (public)
-void TreeDataView::setModel(Model::TreeDataModel* model)
+void OakView::setModel(Model::OakModel* model)
 {
     if (m_model == model) { return; }
 
@@ -77,17 +77,17 @@ void TreeDataView::setModel(Model::TreeDataModel* model)
 
     if (m_model) {
         // connect the new mobel
-        m_model->notifier_currentItemChanged.add(this, &TreeDataView::currentItemChanged);
-        m_model->notifier_rootNodeDefinitionChanged.add(this, &TreeDataView::updateTreeStructure);
-        m_model->notifier_rootNodeChanged.add(this, &TreeDataView::updateTreeStructure);
-        m_model->notifier_destroyed.add(this, &TreeDataView::modelDestroyed);
+        m_model->notifier_currentItemChanged.add(this, &OakView::currentItemChanged);
+        m_model->notifier_rootNodeDefinitionChanged.add(this, &OakView::updateTreeStructure);
+        m_model->notifier_rootNodeChanged.add(this, &OakView::updateTreeStructure);
+        m_model->notifier_destroyed.add(this, &OakView::modelDestroyed);
 
-        m_model->notifier_itemInserted.add(this, &TreeDataView::onItemInserted);
-        m_model->notifier_itemMoved.add(this, &TreeDataView::onItemMoved);
-        m_model->notifier_itemCloned.add(this, &TreeDataView::onItemCloned);
-        m_model->notifier_itemRemoved.add(this, &TreeDataView::onItemRemoved);
+        m_model->notifier_itemInserted.add(this, &OakView::onItemInserted);
+        m_model->notifier_itemMoved.add(this, &OakView::onItemMoved);
+        m_model->notifier_itemCloned.add(this, &OakView::onItemCloned);
+        m_model->notifier_itemRemoved.add(this, &OakView::onItemRemoved);
 
-        m_model->notifier_itemValueChanged.add(this, &TreeDataView::onItemValueChanged);
+        m_model->notifier_itemValueChanged.add(this, &OakView::onItemValueChanged);
 
         createTreeStructure();
     }
@@ -95,7 +95,7 @@ void TreeDataView::setModel(Model::TreeDataModel* model)
 
 // =============================================================================
 // (public)
-void TreeDataView::currentItemChanged()
+void OakView::currentItemChanged()
 {
     if (m_model && !m_model->isNull()) {
         setCurrentItem(m_model->currentItem());
@@ -104,7 +104,7 @@ void TreeDataView::currentItemChanged()
 
 // =============================================================================
 // (public)
-void TreeDataView::setCurrentItem(const Model::Item& item)
+void OakView::setCurrentItem(const Model::Item& item)
 {
     if (item.isNull()) {
         clearSelection();
@@ -129,12 +129,12 @@ void TreeDataView::setCurrentItem(const Model::Item& item)
 
 // =============================================================================
 // (protected)
-void TreeDataView::keyPressEvent(QKeyEvent *event)
+void OakView::keyPressEvent(QKeyEvent *event)
 {
     if ((event->key() == Qt::Key_Up || event->key() == Qt::Key_Down)) {
         if (event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier)) {
             if (!m_model) {
-                qDebug() << "TreeDataView::keyPressEvent() Data model is not valid";
+                qDebug() << "OakView::keyPressEvent() Data model is not valid";
                 return;
             }
             QTreeWidgetItem * cItem = currentItem();
@@ -176,7 +176,7 @@ void TreeDataView::keyPressEvent(QKeyEvent *event)
 
 // =============================================================================
 // (protected)
-void TreeDataView::mousePressEvent(QMouseEvent *event)
+void OakView::mousePressEvent(QMouseEvent *event)
 {
 //    QTreeWidget::mousePressEvent(event);
 
@@ -186,7 +186,7 @@ void TreeDataView::mousePressEvent(QMouseEvent *event)
 
 // =============================================================================
 // (protected)
-void TreeDataView::dragEnterEvent(QDragEnterEvent * event)
+void OakView::dragEnterEvent(QDragEnterEvent * event)
 {
 //    QTreeWidget::dragEnterEvent(event);
     if (event->source() == this) {
@@ -207,7 +207,7 @@ void TreeDataView::dragEnterEvent(QDragEnterEvent * event)
 
 // =============================================================================
 // (protected)
-void TreeDataView::dragLeaveEvent(QDragLeaveEvent * event)
+void OakView::dragLeaveEvent(QDragLeaveEvent * event)
 {
 //    QTreeWidget::dragLeaveEvent(event);
     setDropIndicatorShown(false);
@@ -216,7 +216,7 @@ void TreeDataView::dragLeaveEvent(QDragLeaveEvent * event)
 
 // =============================================================================
 // (protected)
-void TreeDataView::dragMoveEvent(QDragMoveEvent * event)
+void OakView::dragMoveEvent(QDragMoveEvent * event)
 {
     if (event->source() != this) {
         event->ignore();
@@ -281,7 +281,7 @@ void TreeDataView::dragMoveEvent(QDragMoveEvent * event)
 
 // =============================================================================
 // (protected)
-void TreeDataView::dropEvent(QDropEvent * event)
+void OakView::dropEvent(QDropEvent * event)
 {
     // ignore the event prevents Qt from doing any default actions
     event->ignore();
@@ -323,7 +323,7 @@ void TreeDataView::dropEvent(QDropEvent * event)
 
 // =============================================================================
 // (protected)
-void TreeDataView::startDrag(Qt::DropActions supportedActions)
+void OakView::startDrag(Qt::DropActions supportedActions)
 {
     Q_UNUSED(supportedActions);
 
@@ -354,7 +354,7 @@ void TreeDataView::startDrag(Qt::DropActions supportedActions)
 
 // =============================================================================
 // (protected)
-void TreeDataView::modelDestroyed()
+void OakView::modelDestroyed()
 {
     m_model = nullptr;
     clearTreeStructure();
@@ -362,7 +362,7 @@ void TreeDataView::modelDestroyed()
 
 // =============================================================================
 // (protected)
-void TreeDataView::createTreeStructure()
+void OakView::createTreeStructure()
 {
     if (m_model && !m_model->isNull()) {
         addTopLevelItem(getTreeItems(m_model->rootItem()));
@@ -372,14 +372,14 @@ void TreeDataView::createTreeStructure()
 
 // =============================================================================
 // (protected)
-void TreeDataView::clearTreeStructure()
+void OakView::clearTreeStructure()
 {
     clear();
 }
 
 // =============================================================================
 // (protected)
-void TreeDataView::updateTreeStructure()
+void OakView::updateTreeStructure()
 {
     clearTreeStructure();
     createTreeStructure();
@@ -387,7 +387,7 @@ void TreeDataView::updateTreeStructure()
 
 // =============================================================================
 // (protected)
-QTreeWidgetItem * TreeDataView::getTreeItems(Model::Item item, QTreeWidgetItem *parentItem)
+QTreeWidgetItem * OakView::getTreeItems(Model::Item item, QTreeWidgetItem *parentItem)
 {
     if (item.isNull()) { return nullptr; }
 
@@ -409,7 +409,7 @@ QTreeWidgetItem * TreeDataView::getTreeItems(Model::Item item, QTreeWidgetItem *
 
 // =============================================================================
 // (protected)
-void TreeDataView::onItemInserted(const Model::Item &parentItem, int index)
+void OakView::onItemInserted(const Model::Item &parentItem, int index)
 {
     QTreeWidgetItem* pItem = NodeIndex(parentItem).qItem(this->topLevelItem(0));
     pItem->insertChild(index, getTreeItems(parentItem.childAt(index)));
@@ -417,7 +417,7 @@ void TreeDataView::onItemInserted(const Model::Item &parentItem, int index)
 
 // =============================================================================
 // (protected)
-void TreeDataView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
+void OakView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
     QTreeWidgetItem* sourceQItem = NodeIndex(sourceParentItem).qItem(topLevelItem(0));
     QTreeWidgetItem* targetQItem = NodeIndex(targetParentItem).qItem(topLevelItem(0));
@@ -429,7 +429,7 @@ void TreeDataView::onItemMoved(const Model::Item &sourceParentItem, int sourceIn
 
 // =============================================================================
 // (protected)
-void TreeDataView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
+void OakView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
     QTreeWidgetItem* sourceParentQItem = NodeIndex(sourceParentItem).qItem(topLevelItem(0));
     QTreeWidgetItem* targetParentQItem = NodeIndex(targetParentItem).qItem(topLevelItem(0));
@@ -441,7 +441,7 @@ void TreeDataView::onItemCloned(const Model::Item &sourceParentItem, int sourceI
 
 // =============================================================================
 // (protected)
-void TreeDataView::onItemRemoved(const Model::Item &parentItem, int index)
+void OakView::onItemRemoved(const Model::Item &parentItem, int index)
 {
     QTreeWidgetItem* parentQItem = NodeIndex(parentItem).qItem(topLevelItem(0));
     blockSignals(true);
@@ -451,7 +451,7 @@ void TreeDataView::onItemRemoved(const Model::Item &parentItem, int index)
 
 // =============================================================================
 // (protected)
-void TreeDataView::onItemValueChanged(const Model::Item &item, int valueIndex)
+void OakView::onItemValueChanged(const Model::Item &item, int valueIndex)
 {
     if (item.definition()->derivedIdValueDefIndex() == valueIndex) {
         // Child items can change when the derived definition change
@@ -470,7 +470,7 @@ void TreeDataView::onItemValueChanged(const Model::Item &item, int valueIndex)
 
 // =============================================================================
 // (protected slots)
-void TreeDataView::onCurrentQItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void OakView::onCurrentQItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     Q_UNUSED(previous);
     if (current) {

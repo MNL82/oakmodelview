@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "TreeDataModel.h"
+#include "OakModel.h"
 #include "NodeEditorHandler.h"
 
 #include <QStackedWidget>
@@ -29,7 +29,7 @@ public:
     NodeDataView(QWidget* parent = nullptr);
     virtual ~NodeDataView();
 
-    void setModel(Model::TreeDataModel* model);
+    void setModel(Model::OakModel* model);
 
     void clearEditorCash();
 
@@ -47,7 +47,7 @@ protected:
     void onItemValueChanged(const Model::Item& item, int valueIndex);
 
 protected:
-    Model::TreeDataModel* m_model = nullptr;
+    Model::OakModel* m_model = nullptr;
 
     QStackedWidget* m_stackedWidget;
     int initialWidgetCount;

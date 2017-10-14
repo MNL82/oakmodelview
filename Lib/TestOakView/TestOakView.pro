@@ -25,15 +25,15 @@ include(../OakView/configure.pri)
 
 SOURCES += \
     main.cpp\
-    Test_TreeDataView.cpp \
-    Test_ServiceFunctions.cpp
+    Test_ServiceFunctions.cpp \
+    Test_OakView.cpp
 
 HEADERS += \
-    Test_TreeDataView.h \
-    Test_ServiceFunctions.h
+    Test_ServiceFunctions.h \
+    Test_OakView.h
 
 FORMS += \
-    Test_TreeDataView.ui
+    Test_OakView.ui
 
 CONFIG(debug, debug|release) {
     TARGET = testd

@@ -8,23 +8,23 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "Test_TreeDataView.h"
-#include "ui_Test_TreeDataView.h"
+#include "Test_OakView.h"
+#include "ui_Test_OakView.h"
 
 #include "Test_ServiceFunctions.h"
 
-#include "TreeDataView.h"
+#include "OakView.h"
 #include "ParentDataView.h"
 
-#include "MasterTreeDataModel.h"
+#include "MasterOakModel.h"
 
 #include <QFileDialog>
 
 // =============================================================================
 // (public)
-Test_TreeDataView::Test_TreeDataView(QWidget *parent) :
+Test_OakView::Test_OakView(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::Test_TreeDataView)
+    ui(new Ui::Test_OakView)
 {
     ui->setupUi(this);
 
@@ -44,7 +44,7 @@ Test_TreeDataView::Test_TreeDataView(QWidget *parent) :
 
     connect(ui->pushButton, SIGNAL(pressed()), SLOT(onGeneratePushed()));
 
-    m_masterModel = new MasterTreeDataModel();
+    m_masterModel = new MasterOakModel();
     //m_masterModel->createNewRootDocument(Model::Node::Type::XML);
     ui->DesignView->setModel(m_masterModel->designModel());
     ui->DesignView_parent->setModel(m_masterModel->designModel());
@@ -56,7 +56,7 @@ Test_TreeDataView::Test_TreeDataView(QWidget *parent) :
 
 // =============================================================================
 // (public)
-Test_TreeDataView::~Test_TreeDataView()
+Test_OakView::~Test_OakView()
 {
     //m_masterModel->saveXMLRootNode("master.xml");
     delete m_masterModel;
@@ -66,14 +66,14 @@ Test_TreeDataView::~Test_TreeDataView()
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onMasterNewTriggered()
+void Test_OakView::onMasterNewTriggered()
 {
     m_masterModel->createNewRootDocument(Oak::Model::Node::Type::XML);
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onMasterLoadTriggered()
+void Test_OakView::onMasterLoadTriggered()
 {
     QString fileName = QString::fromStdString(m_masterModel->xmlDocFilePath());
     fileName = QFileDialog::getOpenFileName(this, "Load Master Database", fileName);
@@ -83,14 +83,14 @@ void Test_TreeDataView::onMasterLoadTriggered()
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onMasterSaveTriggered()
+void Test_OakView::onMasterSaveTriggered()
 {
     m_masterModel->saveXMLRootNode();
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onMasterSaveAsTriggered()
+void Test_OakView::onMasterSaveAsTriggered()
 {
     QString fileName = QString::fromStdString(m_masterModel->xmlDocFilePath());
     fileName = QFileDialog::getSaveFileName(this, "Save Master Database", fileName);
@@ -100,21 +100,21 @@ void Test_TreeDataView::onMasterSaveAsTriggered()
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onMasterCloseTriggered()
+void Test_OakView::onMasterCloseTriggered()
 {
     m_masterModel->clearRoot();
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onDataNewTriggered()
+void Test_OakView::onDataNewTriggered()
 {
 
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onDataLoadTriggered()
+void Test_OakView::onDataLoadTriggered()
 {
     if (m_masterModel->isNull()) { return; }
     QString fileName = QString::fromStdString(m_masterModel->dataFilePath());
@@ -125,35 +125,35 @@ void Test_TreeDataView::onDataLoadTriggered()
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onDataSaveTriggered()
+void Test_OakView::onDataSaveTriggered()
 {
 
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onDataSaveAsTriggered()
+void Test_OakView::onDataSaveAsTriggered()
 {
 
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onDataCloseTriggered()
+void Test_OakView::onDataCloseTriggered()
 {
 
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onExitTriggered()
+void Test_OakView::onExitTriggered()
 {
     close();
 }
 
 // =============================================================================
 // (protected slots)
-void Test_TreeDataView::onGeneratePushed()
+void Test_OakView::onGeneratePushed()
 {
     m_masterModel->generateDataNodeDefinition();
 }

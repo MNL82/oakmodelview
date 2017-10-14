@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "MasterTreeDataModel.h"
+#include "MasterOakModel.h"
 
 #include "NodeDefinitionBuilder.h"
 #include "ContainerDefinitionBuilder.h"
@@ -21,27 +21,27 @@
 namespace Oak {
 namespace Model {
 
-std::string MasterTreeDataModel::s_master    = "master";
-std::string MasterTreeDataModel::s_data      = "data";
-std::string MasterTreeDataModel::s_filter    = "filter";
-std::string MasterTreeDataModel::s_version   = "version";
-std::string MasterTreeDataModel::s_major     = "major";
-std::string MasterTreeDataModel::s_minor     = "minor";
-std::string MasterTreeDataModel::s_patch     = "patch";
-std::string MasterTreeDataModel::s_filePath  = "filePath";
+std::string MasterOakModel::s_master    = "master";
+std::string MasterOakModel::s_data      = "data";
+std::string MasterOakModel::s_filter    = "filter";
+std::string MasterOakModel::s_version   = "version";
+std::string MasterOakModel::s_major     = "major";
+std::string MasterOakModel::s_minor     = "minor";
+std::string MasterOakModel::s_patch     = "patch";
+std::string MasterOakModel::s_filePath  = "filePath";
 
 // =============================================================================
 // (public)
-MasterTreeDataModel::MasterTreeDataModel()
+MasterOakModel::MasterOakModel()
 {
     createMasterModel();
-    notifier_rootNodeChanged.add(this, &MasterTreeDataModel::onRootItemChanged);
-    notifier_rootNodeDefinitionChanged.add(this, &MasterTreeDataModel::onRootItemChanged);
+    notifier_rootNodeChanged.add(this, &MasterOakModel::onRootItemChanged);
+    notifier_rootNodeDefinitionChanged.add(this, &MasterOakModel::onRootItemChanged);
 }
 
 // =============================================================================
 // (public)
-std::string MasterTreeDataModel::designFilePath() const
+std::string MasterOakModel::designFilePath() const
 {
     if (isNull()) { return std::string(); }
     Item designItem = rootItem().firstChild(m_designModel.rootPKey<std::string>());
@@ -53,7 +53,7 @@ std::string MasterTreeDataModel::designFilePath() const
 
 // =============================================================================
 // (public)
-bool MasterTreeDataModel::loadDesignFilePath(const std::string& filePath)
+bool MasterOakModel::loadDesignFilePath(const std::string& filePath)
 {
     if (isNull()) { return false; }
     Item designItem = rootItem().firstChild(m_designModel.rootPKey<std::string>());
@@ -66,7 +66,7 @@ bool MasterTreeDataModel::loadDesignFilePath(const std::string& filePath)
 
 // =============================================================================
 // (public)
-std::string MasterTreeDataModel::dataFilePath() const
+std::string MasterOakModel::dataFilePath() const
 {
     if (isNull()) { return std::string(); }
     Item dataItem = rootItem().firstChild(s_data);
@@ -78,7 +78,7 @@ std::string MasterTreeDataModel::dataFilePath() const
 
 // =============================================================================
 // (public)
-bool MasterTreeDataModel::LoadDataFilePath(const std::string& filePath)
+bool MasterOakModel::LoadDataFilePath(const std::string& filePath)
 {
     if (isNull()) { return false; }
     Item dataItem = rootItem().firstChild(s_data);
@@ -91,7 +91,7 @@ bool MasterTreeDataModel::LoadDataFilePath(const std::string& filePath)
 
 // =============================================================================
 // (public)
-std::string MasterTreeDataModel::filterFilePath() const
+std::string MasterOakModel::filterFilePath() const
 {
     if (isNull()) { return std::string(); }
     Item filterItem = rootItem().firstChild(s_filter);
@@ -103,7 +103,7 @@ std::string MasterTreeDataModel::filterFilePath() const
 
 // =============================================================================
 // (public)
-bool MasterTreeDataModel::loadFilterFilePath(const std::string& filePath)
+bool MasterOakModel::loadFilterFilePath(const std::string& filePath)
 {
     if (isNull()) { return false; }
     Item filterItem = rootItem().firstChild(s_filter);
@@ -116,7 +116,7 @@ bool MasterTreeDataModel::loadFilterFilePath(const std::string& filePath)
 
 // =============================================================================
 // (public)
-void MasterTreeDataModel::generateDataNodeDefinition()
+void MasterOakModel::generateDataNodeDefinition()
 {
     NodeDefinitionSPtr nodeI = m_designModel.generateModelDefinition();
     if (nodeI) {
@@ -126,7 +126,7 @@ void MasterTreeDataModel::generateDataNodeDefinition()
 
 // =============================================================================
 // (protected)
-void MasterTreeDataModel::createMasterModel()
+void MasterOakModel::createMasterModel()
 {
     auto nodeMaster = NDB::Make(s_master);
     auto nodeDesign = NDB::Make(m_designModel.rootPKey<std::string>());
@@ -164,7 +164,7 @@ void MasterTreeDataModel::createMasterModel()
 
 // =============================================================================
 // (protected)
-void MasterTreeDataModel::onRootItemChanged()
+void MasterOakModel::onRootItemChanged()
 {
     Item item = rootItem();
     if (item.isNull()) { return; }

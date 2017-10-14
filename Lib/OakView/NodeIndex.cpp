@@ -9,7 +9,7 @@
  */
 
 #include "NodeIndex.h"
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 #include <assert.h>
 

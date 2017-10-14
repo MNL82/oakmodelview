@@ -10,7 +10,7 @@
 
 #include "Item.h"
 
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 #include <algorithm>
 
@@ -28,7 +28,7 @@ Item::Item()
 
 // =============================================================================
 // (public)
-Item::Item(const NodeDefinition* nodeDefinition, Node node, const TreeDataModel* model)
+Item::Item(const NodeDefinition* nodeDefinition, Node node, const OakModel* model)
     : m_definition(nodeDefinition),
       m_node(node),
       m_model(model)
@@ -126,7 +126,7 @@ bool Item::isNodeNull() const
 
 // =============================================================================
 // (public)
-const TreeDataModel* Item::model() const
+const OakModel* Item::model() const
 {
     return m_model;
 }

@@ -24,11 +24,11 @@ namespace Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class TreeDataModel
+class OakModel
 {
 public:
-    TreeDataModel();
-    virtual ~TreeDataModel();
+    OakModel();
+    virtual ~OakModel();
 
     bool isNull() const;
     bool isDefinitionNull() const;
@@ -106,7 +106,7 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-const T &TreeDataModel::rootPKey() const
+const T &OakModel::rootPKey() const
 {
     return m_rootItem.definition()->primaryKey().valueCRef<T>();
 }

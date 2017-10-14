@@ -26,7 +26,7 @@ ParentDataView::ParentDataView(QWidget* parent)
 
 // =============================================================================
 // (public)
-void ParentDataView::setModel(Model::TreeDataModel* model)
+void ParentDataView::setModel(Model::OakModel* model)
 {
     if (m_model == model) { return; }
 

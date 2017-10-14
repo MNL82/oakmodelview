@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "TreeDataModel.h"
+#include "OakModel.h"
 
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -27,7 +27,7 @@ class ParentDataView : public QWidget
 public:
     ParentDataView(QWidget* parent = nullptr);
 
-    void setModel(Model::TreeDataModel* model);
+    void setModel(Model::OakModel* model);
 
     void currentItemChanged();
 
@@ -37,7 +37,7 @@ protected slots:
     void onButtonClicked();
 
 protected:
-    Model::TreeDataModel* m_model = nullptr;
+    Model::OakModel* m_model = nullptr;
 
     QList<Model::Item> m_itemList;
     QHBoxLayout* m_layout;

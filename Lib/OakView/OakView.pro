@@ -27,8 +27,8 @@ SOURCES += \
     ContainerEditor.cpp \
     ServiceFunctions.cpp \
     NodeDataView.cpp \
-    TreeDataView.cpp \
-    NodeIndex.cpp
+    NodeIndex.cpp \
+    OakView.cpp
 
 HEADERS += \
     ValueEditorHandler.h \
@@ -38,8 +38,8 @@ HEADERS += \
     ContainerEditor.h \
     ServiceFunctions.h \
     NodeDataView.h \
-    TreeDataView.h \
-    NodeIndex.h
+    NodeIndex.h \
+    OakView.h
 
 
 CONFIG(debug, debug|release) {

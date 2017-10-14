@@ -17,7 +17,7 @@
 namespace Oak {
 namespace Model {
 
-class TreeDataModel;
+class OakModel;
 
 // =============================================================================
 // Class definition
@@ -26,7 +26,7 @@ class Item
 {
 public:
     Item();
-    Item(const NodeDefinition* definition, Node node, const TreeDataModel* model = nullptr);
+    Item(const NodeDefinition* definition, Node node, const OakModel* model = nullptr);
     Item(const Item& copy);
     Item(Item&& move);
 
@@ -47,7 +47,7 @@ public:
 
     Node node() const { return m_node; }
     const NodeDefinition* definition() const { return m_definition; }
-    const TreeDataModel* model() const;
+    const OakModel* model() const;
 
     void setCurrent();
 
@@ -146,7 +146,7 @@ protected:
 protected:
     const NodeDefinition* m_definition;
     Node m_node;
-    const TreeDataModel* m_model;
+    const OakModel* m_model;
 
     mutable std::vector<ItemValue> m_itemValueList;
 };

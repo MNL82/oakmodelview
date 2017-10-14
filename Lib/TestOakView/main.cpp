@@ -8,13 +8,13 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "Test_TreeDataView.h"
+#include "Test_OakView.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Test_TreeDataView w;
+    Test_OakView w;
     w.show();
 
     return a.exec();

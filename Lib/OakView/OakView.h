@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "TreeDataModel.h"
+#include "OakModel.h"
 #include "NodeEditorHandler.h"
 
 #include <QStackedWidget>
@@ -23,14 +23,14 @@ namespace View {
 // =============================================================================
 // Class definition
 // =============================================================================
-class TreeDataView : public QTreeWidget
+class OakView : public QTreeWidget
 {
     Q_OBJECT
 public:
-    TreeDataView(QWidget* parent = nullptr);
-    virtual ~TreeDataView();
+    OakView(QWidget* parent = nullptr);
+    virtual ~OakView();
 
-    void setModel(Model::TreeDataModel* model);
+    void setModel(Model::OakModel* model);
 
     void currentItemChanged();
 
@@ -64,7 +64,7 @@ protected slots:
     void onCurrentQItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
 protected:
-    Model::TreeDataModel* m_model = nullptr;
+    Model::OakModel* m_model = nullptr;
 
     // Drag & drop
     QStringList m_acceptedDropNames;

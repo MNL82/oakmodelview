@@ -28,7 +28,8 @@ NodeDataView::NodeDataView(QWidget* parent)
     layout->setMargin(0);
     m_stackedWidget = new QStackedWidget();
 
-    QLabel* emptyLabel = new QLabel("Tree Data Model not loaded");
+    QLabel* emptyLabel = new QLabel("Oak Model not Loaded");
+    emptyLabel->setAlignment(Qt::AlignCenter);
 
     m_stackedWidget->addWidget(emptyLabel);
     // remove all other widgets
@@ -52,7 +53,7 @@ NodeDataView::~NodeDataView()
 
 // =============================================================================
 // (public)
-void NodeDataView::setModel(Model::TreeDataModel* model)
+void NodeDataView::setModel(Model::OakModel* model)
 {
     if (m_model == model) { return; }
 

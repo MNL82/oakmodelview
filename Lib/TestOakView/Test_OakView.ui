@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Test_TreeDataView</class>
- <widget class="QMainWindow" name="Test_TreeDataView">
+ <class>Test_OakView</class>
+ <widget class="QMainWindow" name="Test_OakView">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Test_TreeDataView</string>
+   <string>Test_OakView</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -78,7 +78,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="Oak::View::TreeDataView" name="FilterView" native="true">
+             <widget class="Oak::View::OakView" name="FilterView" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -139,7 +139,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="Oak::View::TreeDataView" name="DataView" native="true">
+             <widget class="Oak::View::OakView" name="DataView" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -200,7 +200,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="Oak::View::TreeDataView" name="DesignView" native="true">
+             <widget class="Oak::View::OakView" name="DesignView" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -343,9 +343,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>Oak::View::TreeDataView</class>
+   <class>Oak::View::OakView</class>
    <extends>QWidget</extends>
-   <header>TreeDataView.h</header>
+   <header>OakView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
