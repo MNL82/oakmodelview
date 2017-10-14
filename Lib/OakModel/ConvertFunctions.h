@@ -49,6 +49,14 @@ bool convert(std::string& dest, double src, Conversion* properties = nullptr);
 bool convert(std::string& dest, const char * source, Conversion* properties = nullptr);
 
 template<typename T>
+bool convert(T& dest, const T& source, Conversion* properties = nullptr)
+{
+    UNUSED(properties);
+    dest = source;
+    return true;
+}
+
+template<typename T>
 bool convert(T& dest, const char * source, Conversion* properties = nullptr)
 {
     if (source == nullptr) { return false; }
