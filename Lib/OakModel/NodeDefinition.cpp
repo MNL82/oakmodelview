@@ -614,6 +614,15 @@ const ContainerDefinition &NodeDefinition::container(Node childNode) const
 
 // =============================================================================
 // (public)
+std::vector<const ContainerDefinition *> NodeDefinition::getContainerList() const
+{
+    std::vector<const ContainerDefinition *> cList;
+    getContainerList(cList);
+    return std::move(cList);
+}
+
+// =============================================================================
+// (public)
 void NodeDefinition::getContainerList(std::vector<const ContainerDefinition *> &list) const
 {
     if (hasDerivedBase()) {
@@ -814,8 +823,8 @@ bool NodeDefinition::isParent(Node node, Node refNode, bool recursive) const
 // (public)
 void NodeDefinition::onNodeCreated(Node _node) const
 {
-    std::vector<const ContainerDefinition*> cList;
-    this->getContainerList(cList);
+    // Get all containers also from derived nodes
+    auto cList = getContainerList();
     for (const ContainerDefinition* cDefinition: cList)
     {
         int count = cDefinition->nodeCount(_node);

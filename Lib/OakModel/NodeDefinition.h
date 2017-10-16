@@ -205,6 +205,7 @@ public:
 
     virtual const ContainerDefinition& container(Node childNode) const;
 
+    virtual std::vector<const ContainerDefinition*> getContainerList() const;
     virtual void getContainerList(std::vector<const ContainerDefinition*> &list) const;
 
     virtual const ContainerGroupDefinition& containerGroup() const;

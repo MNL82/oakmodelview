@@ -40,6 +40,10 @@ bool NodeDefinitionBuilder::addValueDefAsKey(NodeDefinitionSPtr nodeDef, ValueDe
     // Derived node definitions inherate its node id value from its base and can not have it's own
     if (nodeDef->hasDerivedBase()) { return false; }
 
+
+    if (!VDB::settings(valueDefKey).isUniqueSet()) {
+        VDB::settings(valueDefKey).setUnique(true);
+    }
     if (addValueDef(nodeDef, std::move(valueDefKey))) {
         int index = nodeDef->valueCount()-1;
         setKeyValueThisAndDerived(nodeDef, index);

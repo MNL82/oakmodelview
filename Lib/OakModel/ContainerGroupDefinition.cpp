@@ -382,8 +382,7 @@ bool ContainerGroupDefinition::removeNode(Node _node, int index) const
 // (protected)
 void ContainerGroupDefinition::updateContainerList() const
 {
-    m_containerList.clear();
-    m_hostDefinition->getContainerList(m_containerList);
+    m_containerList = m_hostDefinition->getContainerList();
 }
 
 } // namespace Model

@@ -150,9 +150,7 @@ void NodeEditorHandler::createEditor()
         vIt++;
     }
 
-    std::vector<const Model::ContainerDefinition*> cList;
-    m_item.definition()->getContainerList(cList);
-
+    auto cList = m_item.definition()->getContainerList();
     for (const Model::ContainerDefinition* containerPtr: cList)
     {
         Model::VariantCRef id = containerPtr->containerDefinition()->name();

@@ -32,7 +32,21 @@ public:
     const std::string& unit() const;
     void setUnit(const std::string value);
 
+    bool unique() const;
+    void setUnique(bool value);
+    bool isUniqueSet() const;
+
+    bool required() const;
+    void setRequired(bool value);
+    bool isRequiredSet() const;
+
 private:
+    // x < 0 => false
+    // x > 0 => true
+    // x == 0 => undefined (default is false)
+    int m_unique = 0;
+    int m_required = 0;
+
     bool m_optionsOnly = false;
     std::string m_unit;
 };

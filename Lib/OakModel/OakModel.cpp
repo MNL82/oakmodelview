@@ -232,8 +232,7 @@ const NodeDefinition* OakModel::findNodeDefinition(Node node) const
         ignoreList.push_back(currentDefinition);
 
         // Add child definitions to the list
-        std::vector<const ContainerDefinition*> cList;
-        currentDefinition->getContainerList(cList);
+        auto cList = currentDefinition->getContainerList();
         for(const ContainerDefinition* c: cList)
         {
             // Only add the definition if it is not in the ignore list

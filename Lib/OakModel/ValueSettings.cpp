@@ -64,5 +64,47 @@ void ValueSettings::setUnit(const std::string value)
     m_unit = value;
 }
 
+// =============================================================================
+// (public)
+bool ValueSettings::unique() const
+{
+    return m_unique > 0;
+}
+
+// =============================================================================
+// (public)
+void ValueSettings::setUnique(bool value)
+{
+    m_unique = value ? 1 : -1;
+}
+
+// =============================================================================
+// (public)
+bool ValueSettings::isUniqueSet() const
+{
+    return m_unique != 0;
+}
+
+// =============================================================================
+// (public)
+bool ValueSettings::required() const
+{
+    return m_required > 0;
+}
+
+// =============================================================================
+// (public)
+void ValueSettings::setRequired(bool value)
+{
+    m_required = value ? 1 : -1;
+}
+
+// =============================================================================
+// (public)
+bool ValueSettings::isRequiredSet() const
+{
+    return m_required != 0;
+}
+
 } // namespace Model
 } // namespace Oak
