@@ -19,21 +19,21 @@ namespace Model {
 // The derivedId is used to identify the correct NodeDefinition in a inheritance hierarchy
 // The NodeDefinition can not be part of a inheritance hierarchy if the derivedId is null.
 // The NodeDefinition has a derivedId but no base definition, so it is the root NodeDefinition of a inheritance hierarchy
-NodeDefinition::NodeDefinition(VariantCRef _primaryKey)
+NodeDefinition::NodeDefinition(VariantCRef _name)
 {
-    assert(!_primaryKey.isNull());
+    assert(!_name.isNull());
 
-    m_primaryKey = _primaryKey;
+    m_name = _name;
 }
 
 // =============================================================================
 // (public)
-NodeDefinition::NodeDefinition(VariantCRef _primaryKey, VariantCRef _derivedId)
+NodeDefinition::NodeDefinition(VariantCRef _name, VariantCRef _derivedId)
 {
-    assert(!_primaryKey.isNull());
+    assert(!_name.isNull());
     assert(!_derivedId.isNull());
 
-    m_primaryKey = _primaryKey;
+    m_name = _name;
     m_derivedId = _derivedId;
 }
 
@@ -65,7 +65,7 @@ NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
     // Copy of self is not allowed
     assert(this != &copy);
 
-    m_primaryKey = copy.m_primaryKey;
+    m_name = copy.m_name;
     m_tagName = copy.m_tagName;
     m_derivedId = copy.m_derivedId;
     m_displayName = copy.m_displayName;
@@ -102,7 +102,7 @@ NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
 // (public)
 NodeDefinition &NodeDefinition::operator=(NodeDefinition &&move)
 {
-    m_primaryKey = std::move(move.m_primaryKey);
+    m_name = std::move(move.m_name);
     m_displayName = std::move(move.m_displayName);
     m_tagName = std::move(move.m_tagName);
     m_derivedId = std::move(move.m_derivedId);
@@ -125,14 +125,14 @@ NodeDefinition &NodeDefinition::operator=(NodeDefinition &&move)
 // (public)
 bool NodeDefinition::isNull() const
 {
-    return m_primaryKey.isNull();
+    return m_name.isNull();
 }
 
 // =============================================================================
 // (public)
-VariantCRef NodeDefinition::primaryKey() const
+VariantCRef NodeDefinition::name() const
 {
-    return m_primaryKey;
+    return m_name;
 }
 
 // =============================================================================
@@ -141,10 +141,10 @@ std::string NodeDefinition::displayName() const
 {
     if (!m_displayName.empty()) { return m_displayName; }
 
-    if (m_primaryKey.isNull()) { return std::string(); }
+    if (m_name.isNull()) { return std::string(); }
 
     std::string nodeStr;
-    if (!m_primaryKey.get(nodeStr)) { return std::string(); }
+    if (!m_name.get(nodeStr)) { return std::string(); }
 
     if (m_derivedId.isNull()) { return nodeStr; }
 
@@ -643,9 +643,9 @@ const NodeDefinition* NodeDefinition::childDefinition(int index) const
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::childDefinition(VariantCRef _primaryKey) const
+const NodeDefinition* NodeDefinition::childDefinition(VariantCRef _name) const
 {
-    return container(_primaryKey).containerDefinition();
+    return container(_name).containerDefinition();
 }
 
 // =============================================================================
@@ -716,17 +716,17 @@ const ContainerDefinition *NodeDefinition::parentContainer(int index) const
 
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainer(VariantCRef _primaryKey) const
+const ContainerDefinition *NodeDefinition::parentContainer(VariantCRef _name) const
 {
     for (const ContainerDefinition* parentContainer: m_parentContainerDefinitions)
     {
-        if (parentContainer->hostDefinition()->primaryKey() == _primaryKey) {
+        if (parentContainer->hostDefinition()->name() == _name) {
             return parentContainer;
         }
     }
 
     if (hasDerivedBase()) {
-        return derivedBase()->parentContainer(_primaryKey);
+        return derivedBase()->parentContainer(_name);
     }
 
     return NULL;

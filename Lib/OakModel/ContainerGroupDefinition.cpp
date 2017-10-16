@@ -71,9 +71,9 @@ ContainerGroupDefinitionUPtr ContainerGroupDefinition::copy() const
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerGroupDefinition::containerDefinition(VariantCRef primaryKey, VariantCRef derivedId) const
+const NodeDefinition* ContainerGroupDefinition::containerDefinition(VariantCRef name, VariantCRef derivedId) const
 {
-    return m_hostDefinition->container(primaryKey).containerDefinition(derivedId);
+    return m_hostDefinition->container(name).containerDefinition(derivedId);
 }
 
 // =============================================================================
@@ -244,34 +244,34 @@ Node ContainerGroupDefinition::previousNode(Node _node, Node refNode, const Node
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::canInsertNode(Node _node, VariantCRef primaryKey, int &index) const
+bool ContainerGroupDefinition::canInsertNode(Node _node, VariantCRef name, int &index) const
 {
     for (auto container: m_containerList)
     {
-        if (primaryKey == container->containerDefinition()->primaryKey()) {
+        if (name == container->containerDefinition()->name()) {
             return container->canInsertNode(_node, index);
         } else {
             index -= container->nodeCount(_node);
         }
     }
-    // Failed to find a Container with the given primaryKey
+    // Failed to find a Container with the given name
     assert(false);
     return false;
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::insertNode(Node _node, VariantCRef primaryKey, int &index) const
+Node ContainerGroupDefinition::insertNode(Node _node, VariantCRef name, int &index) const
 {
     for (auto container: m_containerList)
     {
-        if (primaryKey == container->containerDefinition()->primaryKey()) {
+        if (name == container->containerDefinition()->name()) {
             return container->insertNode(_node, index);
         } else {
             index -= container->nodeCount(_node);
         }
     }
-    // Failed to find a Container with the given primaryKey
+    // Failed to find a Container with the given name
     assert(false);
     return Node();
 }
@@ -288,7 +288,7 @@ bool ContainerGroupDefinition::canCloneNode(Node _node, int &index, Node cloneNo
             index -= container->nodeCount(_node);
         }
     }
-    // Failed to find a Container with the given primaryKey
+    // Failed to find a Container with the given name
     return false;
 }
 
@@ -304,7 +304,7 @@ Node ContainerGroupDefinition::cloneNode(Node _node, int &index, Node cloneNode)
             index -= container->nodeCount(_node);
         }
     }
-    // Failed to find a Container with the given primaryKey
+    // Failed to find a Container with the given name
     assert(false);
     return Node();
 }
@@ -321,7 +321,7 @@ bool ContainerGroupDefinition::canMoveNode(Node _node, int &index, Node moveNode
             index -= container->nodeCount(_node);
         }
     }
-    // Failed to find a Container with the given primaryKey
+    // Failed to find a Container with the given name
     return false;
 }
 
@@ -337,7 +337,7 @@ Node ContainerGroupDefinition::moveNode(Node _node, int &index, Node moveNode) c
             index -= container->nodeCount(_node);
         }
     }
-    // Failed to find a Container with the given primaryKey
+    // Failed to find a Container with the given name
     assert(false);
     return Node();
 }

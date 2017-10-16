@@ -52,7 +52,7 @@ public:
     void setCurrent();
 
 //    std::vector<VariantCRef> valueIdList() const;
-//    std::vector<VariantCRef> childPrimaryKeyList() const;
+//    std::vector<VariantCRef> childNameList() const;
 
     // ************* ItemValue access *************
     int valueCount() const;
@@ -76,28 +76,28 @@ public:
     // ************* Child Item access *************
     int childCount() const;
     template<typename T>
-    int childCount(const T &primaryKey) const;
+    int childCount(const T &name) const;
     int childIndex(const Item &refChild) const;
     template<typename T>
-    int childIndex(const T &primaryKey, const Item &refChild) const;
+    int childIndex(const T &name, const Item &refChild) const;
     Item childAt(int index) const;
     template<typename T>
-    Item childAt(const T &primaryKey, int index) const;
+    Item childAt(const T &name, int index) const;
     Item firstChild() const;
     template<typename T>
-    Item firstChild(const T &primaryKey) const;
+    Item firstChild(const T &name) const;
 
     Item lastChild() const;
     template<typename T>
-    Item lastChild(const T &primaryKey) const;
+    Item lastChild(const T &name) const;
 
     Item nextChild(const Item& refChild) const;
     template<typename T>
-    Item nextChild(const T &primaryKey, const Item& refChild) const;
+    Item nextChild(const T &name, const Item& refChild) const;
 
     Item previousChild(const Item& refChild) const;
     template<typename T>
-    Item previousChild(const T &primaryKey, const Item& refChild) const;
+    Item previousChild(const T &name, const Item& refChild) const;
 
     // ************* Parent Item access *************
     Item parent() const;
@@ -105,35 +105,35 @@ public:
     // ************* Child Item edit *************
     //bool canInsertChild(int &index) const;
     template<typename T>
-    bool canInsertChild(const T &primaryKey, int &index) const;
+    bool canInsertChild(const T &name, int &index) const;
 
     //Item insertChild(int &index) const;
     template<typename T>
-    Item insertChild(const T &primaryKey, int &index) const;
+    Item insertChild(const T &name, int &index) const;
 
     bool canCloneChild(int &index, Item cloneItem) const;
     template<typename T>
-    bool canCloneChild(const T &primaryKey, int &index, Item cloneItem) const;
+    bool canCloneChild(const T &name, int &index, Item cloneItem) const;
 
     Item cloneChild(int &index, Item cloneItem) const;
     template<typename T>
-    Item cloneChild(const T &primaryKey, int &index, Item cloneItem) const;
+    Item cloneChild(const T &name, int &index, Item cloneItem) const;
 
     bool canMoveChild(int &index, Item moveItem) const;
     template<typename T>
-    bool canMoveChild(const T &primaryKey, int &index, Item moveItem) const;
+    bool canMoveChild(const T &name, int &index, Item moveItem) const;
 
     Item moveChild(int &index, Item moveItem) const;
     template<typename T>
-    Item moveChild(const T &primaryKey, int &index, Item moveItem) const;
+    Item moveChild(const T &name, int &index, Item moveItem) const;
 
     bool canRemoveChild(int index) const;
     template<typename T>
-    bool canRemoveChild(const T &primaryKey, int index) const;
+    bool canRemoveChild(const T &name, int index) const;
 
     bool removeChild(int index) const;
     template<typename T>
-    bool removeChild(const T &primaryKey, int index) const;
+    bool removeChild(const T &name, int index) const;
 
 protected:
     inline void initItemValueList() const;
@@ -177,83 +177,83 @@ const ItemValue& Item::value(const T &valueId) const
 // =============================================================================
 // (public)
 template<typename T>
-int Item::childCount(const T &primaryKey) const
+int Item::childCount(const T &name) const
 {
-    return m_definition->container(primaryKey).nodeCount(m_node);
+    return m_definition->container(name).nodeCount(m_node);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-int Item::childIndex(const T &primaryKey, const Item &refChild) const
+int Item::childIndex(const T &name, const Item &refChild) const
 {
-    return m_definition->container(primaryKey).nodeIndex(m_node, refChild.node());
+    return m_definition->container(name).nodeIndex(m_node, refChild.node());
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::childAt(const T &primaryKey, int index) const
+Item Item::childAt(const T &name, int index) const
 {
     const NodeDefinition* childeNodeDefinition;
-    Node childNode = m_definition->container(primaryKey).node(m_node, index, &childeNodeDefinition);
+    Node childNode = m_definition->container(name).node(m_node, index, &childeNodeDefinition);
     return Item(childeNodeDefinition, childNode, m_model);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::firstChild(const T &primaryKey) const
+Item Item::firstChild(const T &name) const
 {
     const NodeDefinition* childNodeDefinition;
-    Node childNode = m_definition->container(primaryKey).firstNode(m_node, &childNodeDefinition);
+    Node childNode = m_definition->container(name).firstNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::lastChild(const T &primaryKey) const
+Item Item::lastChild(const T &name) const
 {
     const NodeDefinition* childNodeDefinition;
-    Node childNode = m_definition->container(primaryKey).lastNode(m_node, &childNodeDefinition);
+    Node childNode = m_definition->container(name).lastNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::nextChild(const T &primaryKey, const Item& refChild) const
+Item Item::nextChild(const T &name, const Item& refChild) const
 {
     const NodeDefinition* childNodeDefinition;
-    Node childNode = m_definition->container(primaryKey).nextNode(refChild.m_node, &childNodeDefinition);
+    Node childNode = m_definition->container(name).nextNode(refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::previousChild(const T &primaryKey, const Item& refChild) const
+Item Item::previousChild(const T &name, const Item& refChild) const
 {
     const NodeDefinition* childNodeDefinition;
-    Node childNode = m_definition->container(primaryKey).previousNode(refChild.m_node, &childNodeDefinition);
+    Node childNode = m_definition->container(name).previousNode(refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Item::canInsertChild(const T &primaryKey, int &index) const
+bool Item::canInsertChild(const T &name, int &index) const
 {
-    return m_definition->container(primaryKey).canInsertNode(m_node, index);
+    return m_definition->container(name).canInsertNode(m_node, index);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::insertChild(const T &primaryKey, int &index) const
+Item Item::insertChild(const T &name, int &index) const
 {
-    const auto& container = m_definition->container(primaryKey);
+    const auto& container = m_definition->container(name);
     Item childItem(container.containerDefinition(), container.insertNode(m_node, index), m_model);
     if (m_model && !childItem.isNull()) {
         onItemInserted(*this, childIndex(childItem));
@@ -264,76 +264,76 @@ Item Item::insertChild(const T &primaryKey, int &index) const
 // =============================================================================
 // (public)
 template<typename T>
-bool Item::canCloneChild(const T &primaryKey, int &index, Item cloneItem) const
+bool Item::canCloneChild(const T &name, int &index, Item cloneItem) const
 {
-    return m_definition->container(primaryKey).canCloneNode(m_node, index, cloneItem.m_node);
+    return m_definition->container(name).canCloneNode(m_node, index, cloneItem.m_node);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::cloneChild(const T &primaryKey, int &index, Item cloneItem) const
+Item Item::cloneChild(const T &name, int &index, Item cloneItem) const
 {
     if (m_model) {
         // Cash data needed to notify change
         Item sourceParentItem = cloneItem.parent();
         int sourceIndex = sourceParentItem.childIndex(cloneItem);
         // Perform the cloneing
-        Item item = Item(cloneItem.m_definition, m_definition->container(primaryKey).cloneNode(m_node, index, cloneItem.m_node), m_model);
+        Item item = Item(cloneItem.m_definition, m_definition->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
         // Notify everyone if cloning did not fail
         if (!item.isNull()) {
             onItemCloned(sourceParentItem, sourceIndex, *this, childIndex(item));
         }
         return std::move(item);
     } else {
-        return Item(cloneItem.m_definition, m_definition->container(primaryKey).cloneNode(m_node, index, cloneItem.m_node), m_model);
+        return Item(cloneItem.m_definition, m_definition->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
     }
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Item::canMoveChild(const T &primaryKey, int &index, Item moveItem) const
+bool Item::canMoveChild(const T &name, int &index, Item moveItem) const
 {
-    return m_definition->container(primaryKey).canMoveNode(m_node, index, moveItem.m_node);
+    return m_definition->container(name).canMoveNode(m_node, index, moveItem.m_node);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-Item Item::moveChild(const T &primaryKey, int &index, Item moveItem) const
+Item Item::moveChild(const T &name, int &index, Item moveItem) const
 {
     if (m_model) {
         // Cash data needed to notify change
         Item sourceParentItem = moveItem.parent();
         int sourceIndex = sourceParentItem.childIndex(moveItem);
         // Perform the cloneing
-        Item item = Item(moveItem.m_definition, m_definition->container(primaryKey).moveNode(m_node, index, moveItem.m_node), m_model);
+        Item item = Item(moveItem.m_definition, m_definition->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
         // Notify everyone if cloning did not fail
         if (!item.isNull()) {
             onItemMoved(sourceParentItem, sourceIndex, *this, childIndex(item));
         }
         return std::move(item);
     } else {
-        return Item(moveItem.m_definition, m_definition->container(primaryKey).moveNode(m_node, index, moveItem.m_node), m_model);
+        return Item(moveItem.m_definition, m_definition->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
     }
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Item::canRemoveChild(const T &primaryKey, int index) const
+bool Item::canRemoveChild(const T &name, int index) const
 {
-    return m_definition->container(primaryKey).canRemoveNode(m_node, index);
+    return m_definition->container(name).canRemoveNode(m_node, index);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Item::removeChild(const T &primaryKey, int index) const
+bool Item::removeChild(const T &name, int index) const
 {
-    int index2 = childIndex(childAt(primaryKey, index));
-    if (m_definition->container(primaryKey).removeNode(m_node, index)) {
+    int index2 = childIndex(childAt(name, index));
+    if (m_definition->container(name).removeNode(m_node, index)) {
         if (m_model) {
             onItemRemoved(*this, index2);
         }

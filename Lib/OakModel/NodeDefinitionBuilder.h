@@ -24,10 +24,10 @@ class NodeDefinitionBuilder
 
 public:
     template<typename T>
-    static NodeDefinitionSPtr Make(T primaryKey);
+    static NodeDefinitionSPtr Make(T name);
 
     template<typename T1, typename T2>
-    static NodeDefinitionSPtr MakeRoot(T1 primaryKey, T2 derivedId);
+    static NodeDefinitionSPtr MakeRoot(T1 name, T2 derivedId);
 
     template<typename T>
     static NodeDefinitionSPtr MakeDerived(NodeDefinitionSPtr derivedBase, T derivedId);
@@ -41,7 +41,7 @@ public:
 
     static bool addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef);
     template<typename T>
-    static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, T primaryKey);
+    static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, T name);
 
     static bool setDisplayName(NodeDefinitionSPtr nodeDef, const std::string& displayName);
 
@@ -71,12 +71,12 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-NodeDefinitionSPtr NodeDefinitionBuilder::Make(T primaryKey)
+NodeDefinitionSPtr NodeDefinitionBuilder::Make(T name)
 {
-    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(primaryKey);
+    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name);
 
 #ifdef XML_BACKEND
-    convert(nodeDef->m_tagName, primaryKey);
+    convert(nodeDef->m_tagName, name);
     if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
         // Clear the tag name if it is not valid
         nodeDef->m_tagName.clear();
@@ -89,12 +89,12 @@ NodeDefinitionSPtr NodeDefinitionBuilder::Make(T primaryKey)
 // =============================================================================
 // (public)
 template<typename T1, typename T2>
-NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(T1 primaryKey, T2 derivedId)
+NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(T1 name, T2 derivedId)
 {
-    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(primaryKey, derivedId);
+    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name, derivedId);
 
 #ifdef XML_BACKEND
-    convert(nodeDef->m_tagName, primaryKey);
+    convert(nodeDef->m_tagName, name);
     if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
         // Clear the tag name if it is not valid
         nodeDef->m_tagName.clear();
@@ -121,14 +121,14 @@ NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerived(NodeDefinitionSPtr derived
     // DerivedId's of derived definitions have to be of the same derivedId type
     assert(derivedBase->derivedId().isBaseTypeEqual(derivedId));
 
-    NodeDefinitionSPtr derivedDefinition = NodeDefinition::MakeSPtr(derivedBase->primaryKey(), derivedId);
+    NodeDefinitionSPtr derivedDefinition = NodeDefinition::MakeSPtr(derivedBase->name(), derivedId);
 
     // Adds the derived definition to the inheritance heiraki
     derivedDefinition->m_derivedBase = derivedBase;
     derivedBase->m_derivedDirectList.push_back(derivedDefinition);
 
-    // The primaryKey is the same for all definitions in the inheritance heiraki
-    derivedDefinition->m_primaryKey = derivedBase->m_primaryKey;
+    // The name is the same for all definitions in the inheritance heiraki
+    derivedDefinition->m_name = derivedBase->m_name;
 
     // The keyValue and derivedIdValue are the same for all definitions in the inheritance heiraki
     derivedDefinition->m_keyValueDefIndex = derivedBase->m_keyValueDefIndex;
@@ -167,13 +167,13 @@ ValueDefinitionUPtr NodeDefinitionBuilder::takeValueDef(NodeDefinitionSPtr nodeD
 // =============================================================================
 // (public)
 template<typename T>
-ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, T primaryKey)
+ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, T name)
 {
-    if (!nodeDef || primaryKey.isNull()) { return ContainerDefinitionUPtr(); }
+    if (!nodeDef || name.isNull()) { return ContainerDefinitionUPtr(); }
 
     auto it = nodeDef->m_containerList.begin();
     while (it != nodeDef->m_containerList.end()) {
-        if ((*it)->containerDefinition()->primaryKey().isEqual(primaryKey)) {
+        if ((*it)->containerDefinition()->name().isEqual(name)) {
             ContainerDefinitionUPtr movedContainer(std::move(*it));
             nodeDef->m_containerList.erase(it);
 

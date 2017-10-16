@@ -155,14 +155,14 @@ void Item::setCurrent()
 
 //// =============================================================================
 //// (public)
-//std::vector<VariantCRef> Item::childPrimaryKeyList() const
+//std::vector<VariantCRef> Item::childNameList() const
 //{
 //    std::vector<const ContainerDefinition*> containerList;
 //    m_definition->getContainerList(containerList);
 //    std::vector<VariantCRef> idList;
 //    for (const ContainerDefinition* container: containerList)
 //    {
-//        idList.push_back(container->containerDefinition()->primaryKey());
+//        idList.push_back(container->containerDefinition()->name());
 //    }
 //    return idList;
 //}

@@ -19,8 +19,8 @@ namespace View {
 
 // =============================================================================
 // (public)
-ContainerEditorHandler::ContainerEditorHandler(Model::Item item, Model::VariantCRef primaryKey, QObject* parent)
-    : QObject(parent), m_item(item), m_primaryKey(primaryKey)
+ContainerEditorHandler::ContainerEditorHandler(Model::Item item, Model::VariantCRef name, QObject* parent)
+    : QObject(parent), m_item(item), m_name(name)
 {
 
 }
@@ -29,28 +29,28 @@ ContainerEditorHandler::ContainerEditorHandler(Model::Item item, Model::VariantC
 // (public)
 QString ContainerEditorHandler::listDisplayName() const
 {
-    return QString::fromStdString(m_item.definition()->childDefinition(m_primaryKey)->displayName());
+    return QString::fromStdString(m_item.definition()->childDefinition(m_name)->displayName());
 }
 
 // =============================================================================
 // (public)
 int ContainerEditorHandler::entryCount() const
 {
-    return m_item.childCount(m_primaryKey);
+    return m_item.childCount(m_name);
 }
 
 // =============================================================================
 // (public)
 QStringList ContainerEditorHandler::entryList() const
 {
-    int count = m_item.childCount(m_primaryKey);
+    int count = m_item.childCount(m_name);
     QStringList eList;
     std::string keyValue;
     QString lName = listDisplayName();
     QString entryId;
     for (int i = 0; i < count; i++)
     {
-        Model::Item cItem = m_item.childAt(m_primaryKey, i);
+        Model::Item cItem = m_item.childAt(m_name, i);
         if (cItem.hasKey()) {
             cItem.valueKey().value().get(keyValue);
             entryId = QString::fromStdString(keyValue);
@@ -68,14 +68,14 @@ QStringList ContainerEditorHandler::entryList() const
 // (public)
 bool ContainerEditorHandler::canInsert(int index) const
 {
-    return m_item.canInsertChild(m_primaryKey, index);
+    return m_item.canInsertChild(m_name, index);
 }
 
 // =============================================================================
 // (public)
 bool ContainerEditorHandler::canRemove(int index) const
 {
-    return m_item.canRemoveChild(m_primaryKey, index);
+    return m_item.canRemoveChild(m_name, index);
 }
 
 // =============================================================================
@@ -155,14 +155,14 @@ void ContainerEditorHandler::onEditorDestroyed()
 // (protected slots)
 void ContainerEditorHandler::onEntryClicked(int index)
 {
-    m_item.childAt(m_primaryKey, index).setCurrent();
+    m_item.childAt(m_name, index).setCurrent();
 }
 
 // =============================================================================
 // (protected slots)
 void ContainerEditorHandler::onEntryInsert(int index)
 {
-    m_item.insertChild(m_primaryKey, index);
+    m_item.insertChild(m_name, index);
     updateEditor();
 }
 
@@ -170,7 +170,7 @@ void ContainerEditorHandler::onEntryInsert(int index)
 // (protected slots)
 void ContainerEditorHandler::onEntryRemove(int index)
 {
-    m_item.removeChild(m_primaryKey, index);
+    m_item.removeChild(m_name, index);
     updateEditor();
 }
 

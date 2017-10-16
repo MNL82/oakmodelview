@@ -58,8 +58,8 @@ enum ValidationState {
 class NodeDefinition
 {
 protected:
-    NodeDefinition(VariantCRef _primaryKey);
-    NodeDefinition(VariantCRef _primaryKey, VariantCRef _derivedId);
+    NodeDefinition(VariantCRef _name);
+    NodeDefinition(VariantCRef _name, VariantCRef _derivedId);
 
 public:
     virtual ~NodeDefinition();
@@ -72,7 +72,7 @@ public:
 
     bool isNull() const;
 
-    VariantCRef primaryKey() const;
+    VariantCRef name() const;
 
     virtual std::string displayName() const;
 
@@ -89,8 +89,8 @@ public:
 protected:
     NodeDefinitionWPtr m_thisWPtr;
 
-    /// The 'm_primaryKey' is a unike identifier for the node definition
-    Variant m_primaryKey;
+    /// The 'm_name' is a unike identifier for the node definition
+    Variant m_name;
 
     std::string m_displayName;
 
@@ -106,7 +106,7 @@ protected:
 // *****************************************************************************
 public:
     /// 'NodeDefinitions' can be part of an inheritance hieraki with derived and base nodes in a tree like structure.
-    /// All 'NodeDefinition's in the same hieraki will have the same 'primaryKey' but different 'derivedId'.
+    /// All 'NodeDefinition's in the same hieraki will have the same 'name' but different 'derivedId'.
     /// Derived 'NodeDefinition's will inherate all 'ValueDefinition's and "ContainerDefinition's of its base 'NodeDefinition'.
     /// The 'derivedId' of a node is stored as a 'ValueDefinition' belonging to the derivedRoot so all 'NodeDefinition's
     /// of the inheritance hieraki will have the value.
@@ -201,7 +201,7 @@ public:
     virtual int containerCount() const;
     virtual const ContainerDefinition& container(int index) const;
     template <typename T>
-    const ContainerDefinition &container(const T& _primaryKey) const;
+    const ContainerDefinition &container(const T& _name) const;
 
     virtual const ContainerDefinition& container(Node childNode) const;
 
@@ -210,7 +210,7 @@ public:
     virtual const ContainerGroupDefinition& containerGroup() const;
 
     virtual const NodeDefinition* childDefinition(int index) const;
-    virtual const NodeDefinition* childDefinition(VariantCRef _primaryKey) const;
+    virtual const NodeDefinition* childDefinition(VariantCRef _name) const;
     virtual const NodeDefinition* childDefinition(Node childNode) const;
 
 protected:
@@ -227,7 +227,7 @@ public:
 
     virtual int parentContainerCount() const;
     virtual const ContainerDefinition* parentContainer(int index) const;
-    virtual const ContainerDefinition* parentContainer(VariantCRef _primaryKey) const;
+    virtual const ContainerDefinition* parentContainer(VariantCRef _name) const;
     virtual const ContainerDefinition* parentContainer(Node parentNode) const;
 #ifdef XML_BACKEND
     virtual const ContainerDefinition* parentContainer(const std::string& tagName)const;
@@ -265,17 +265,17 @@ public:
 // =============================================================================
 // (public)
 template <typename T>
-const ContainerDefinition &NodeDefinition::container(const T& _primaryKey) const
+const ContainerDefinition &NodeDefinition::container(const T& _name) const
 {
     for (const auto& _child: m_containerList)
     {
-        if (_child->containerDefinition()->primaryKey() == _primaryKey) {
+        if (_child->containerDefinition()->name() == _name) {
             return *_child.get();
         }
     }
 
     if (hasDerivedBase()) {
-        return m_derivedBase.lock()->container(_primaryKey);
+        return m_derivedBase.lock()->container(_name);
     }
 
     assert(false);

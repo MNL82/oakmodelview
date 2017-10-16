@@ -155,7 +155,7 @@ void NodeEditorHandler::createEditor()
 
     for (const Model::ContainerDefinition* containerPtr: cList)
     {
-        Model::VariantCRef id = containerPtr->containerDefinition()->primaryKey();
+        Model::VariantCRef id = containerPtr->containerDefinition()->name();
         if (!m_containerEditorMap.contains(id)) {
             auto cHandler = new ContainerEditorHandler(m_item, id, this);
             m_containerEditorMap.insert(id, cHandler);

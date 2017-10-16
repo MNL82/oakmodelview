@@ -108,7 +108,7 @@ protected:
 template<typename T>
 const T &OakModel::rootPKey() const
 {
-    return m_rootItem.definition()->primaryKey().valueCRef<T>();
+    return m_rootItem.definition()->name().valueCRef<T>();
 }
 
 } // namespace Model

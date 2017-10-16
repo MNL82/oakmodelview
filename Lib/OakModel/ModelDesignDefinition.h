@@ -22,10 +22,8 @@ public:
     static std::string Node;
     static std::string Value;
     static std::string Container;
-    static std::string PrimaryKey;
 
     // Value tag and attribute names
-    static std::string DesignKey;
     static std::string Name;
     static std::string Key;
     static std::string Type;

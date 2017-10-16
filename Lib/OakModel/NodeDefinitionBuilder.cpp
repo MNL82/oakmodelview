@@ -212,7 +212,7 @@ bool NodeDefinitionBuilder::hasContainerI(NodeDefinitionSPtr nodeDef, const Cont
         ni = ni->derivedBase();
         for (const auto& ci: nodeDef->m_containerList)
         {
-            if (ci->m_containerDefinition->primaryKey() == cDefinition->m_containerDefinition->primaryKey()) {
+            if (ci->m_containerDefinition->name() == cDefinition->m_containerDefinition->name()) {
                 return true;
             }
         }
@@ -228,7 +228,7 @@ bool NodeDefinitionBuilder::hasContainerIThisAndDerived(NodeDefinitionSPtr nodeD
 {
     for (const auto& ci: nodeDef->m_containerList)
     {
-        if (ci->m_containerDefinition->primaryKey() == cDefinition->m_containerDefinition->primaryKey()) {
+        if (ci->m_containerDefinition->name() == cDefinition->m_containerDefinition->name()) {
             return true;
         }
     }

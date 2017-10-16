@@ -22,10 +22,8 @@ std::string DesignStr::Design = "Design";
 std::string DesignStr::Node = "Node";
 std::string DesignStr::Value = "Value";
 std::string DesignStr::Container = "Container";
-std::string DesignStr::PrimaryKey = "PrimaryKey";
 
 // Value tag and attribute names
-std::string DesignStr::DesignKey = "DesignKey";
 std::string DesignStr::Name = "Name";
 std::string DesignStr::Key = "Key";
 std::string DesignStr::Type = "Type";
@@ -43,23 +41,22 @@ ModelDesignDefinition::ModelDesignDefinition()
 void ModelDesignDefinition::createModelDesign()
 {
     auto NodeDef = NDB::Make(DesignStr::Node);
-    NDB::addValueDefAsKey(NodeDef, VDB::MakeXML("", "", DesignStr::DesignKey, "Noname"));
-    NDB::addValueDef(NodeDef, VDB::MakeXML("", DesignStr::PrimaryKey, "", "Noname"));
+    NDB::addValueDefAsKey(NodeDef, VDB::MakeXML("", DesignStr::Name, "", "Noname"));
 
-    auto KeyTypeDef = VDB::MakeXML("", DesignStr::PrimaryKey, "Type", "String");
+    auto NameTypeDef = VDB::MakeXML("", DesignStr::Name, "Type", "String");
     std::vector<std::string> optionsKyeTypes = {"String", "Number"};
-    VDB::setOptions(KeyTypeDef, optionsKyeTypes);
-    NDB::addValueDef(NodeDef, std::move(KeyTypeDef));
+    VDB::setOptions(NameTypeDef, optionsKyeTypes);
+    NDB::addValueDef(NodeDef, std::move(NameTypeDef));
 
     NDB::addContainerDef(sPtr(), CDB::Make(NodeDef));
 
     auto ValueDef = NDB::Make(DesignStr::Value);
-    NDB::addValueDefAsKey(ValueDef, VDB::MakeXML("", "", DesignStr::DesignKey , "Noname"));
+    NDB::addValueDefAsKey(ValueDef, VDB::MakeXML("", "", DesignStr::Name , "Noname"));
     NDB::addContainerDef(NodeDef, CDB::Make(ValueDef));
 
 
     auto ContainerDef = NDB::Make(DesignStr::Container);
-    NDB::addValueDefAsKey(ContainerDef, VDB::MakeXML("", "", DesignStr::DesignKey , "Noname"));
+    NDB::addValueDefAsKey(ContainerDef, VDB::MakeXML("", "", DesignStr::Name , "Noname"));
     NDB::addContainerDef(NodeDef, CDB::Make(ContainerDef));
 }
 
