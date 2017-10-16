@@ -392,7 +392,7 @@ QTreeWidgetItem * OakView::getTreeItems(Model::Item item, QTreeWidgetItem *paren
     if (item.isNull()) { return nullptr; }
 
     std::vector<std::string> values;
-    values.push_back(item.definition()->name());
+    values.push_back(item.definition()->displayName());
     if (item.definition()->hasKey()) { values.push_back(item.valueKey().toString()); }
 
     QTreeWidgetItem * elementItem;

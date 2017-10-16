@@ -15,7 +15,7 @@
 namespace Oak {
 namespace Model {
 
-std::vector<std::string> VariantRelations::s_nameArray;
+std::vector<std::string> VariantRelations::s_displayNameArray;
 std::vector<const std::type_info*> VariantRelations::s_typeArray;
 std::string VariantRelations::s_emptyName;
 
@@ -37,22 +37,22 @@ void VariantRelations::createRelationMaps()
 
 // =============================================================================
 // (private)
-void VariantRelations::addRelation(const std::type_info& type, const std::string& name)
+void VariantRelations::addRelation(const std::type_info& type, const std::string& displayName)
 {
-    if (!s_nameArray.empty()) {
+    if (!s_displayNameArray.empty()) {
         assert(!hasTypeId(type));
         if (hasTypeId(type)) {
             return;
         }
-        if (!name.empty()) {
-            assert(!hasDisplayName(name));
-            if (hasTypeId(type) || hasDisplayName(name)) {
+        if (!displayName.empty()) {
+            assert(!hasDisplayName(displayName));
+            if (hasTypeId(type) || hasDisplayName(displayName)) {
                 return;
             }
         }
     }
 
-    s_nameArray.push_back(name);
+    s_displayNameArray.push_back(displayName);
     s_typeArray.push_back(&type);
 }
 
@@ -60,16 +60,16 @@ void VariantRelations::addRelation(const std::type_info& type, const std::string
 // (public)
 bool VariantRelations::hasWitch(int w)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
-    return w >= 0 && w < (int)s_nameArray.size();
+    return w >= 0 && w < (int)s_displayNameArray.size();
 }
 
 // =============================================================================
 // (public)
 bool VariantRelations::hasTypeId(const std::type_info& type)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
     for (const std::type_info* t: s_typeArray)
     {
@@ -80,30 +80,30 @@ bool VariantRelations::hasTypeId(const std::type_info& type)
 
 // =============================================================================
 // (public)
-bool VariantRelations::hasDisplayName(const std::string& name)
+bool VariantRelations::hasDisplayName(const std::string& displayName)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
-    return std::find(s_nameArray.begin(), s_nameArray.end(), name) != s_nameArray.end();
+    return std::find(s_displayNameArray.begin(), s_displayNameArray.end(), displayName) != s_displayNameArray.end();
 }
 
 // =============================================================================
 // (public)
 const std::string& VariantRelations::displayName(int w)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
     if (!hasWitch(w)) { return s_emptyName; }
-    return s_nameArray[w];
+    return s_displayNameArray[w];
 }
 
 // =============================================================================
 // (public)
 const std::string& VariantRelations::displayName(const std::type_info& type)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
-    auto it = s_nameArray.begin();
+    auto it = s_displayNameArray.begin();
     for (const std::type_info* t: s_typeArray)
     {
         if (*t == type) { return *it; }
@@ -116,7 +116,7 @@ const std::string& VariantRelations::displayName(const std::type_info& type)
 // (public)
 const std::type_info& VariantRelations::typeId(int w)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
     if (!hasWitch(w)) { return typeid(VariantRelations); }
     return *s_typeArray[w];
@@ -124,14 +124,14 @@ const std::type_info& VariantRelations::typeId(int w)
 
 // =============================================================================
 // (public)
-const std::type_info& VariantRelations::typeId(const std::string& name)
+const std::type_info& VariantRelations::typeId(const std::string& displayName)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
     auto it = s_typeArray.begin();
-    for (const std::string& s: s_nameArray)
+    for (const std::string& s: s_displayNameArray)
     {
-        if (s == name) { return *(*it); }
+        if (s == displayName) { return *(*it); }
         it++;
     }
     return typeid(VariantRelations);
@@ -141,7 +141,7 @@ const std::type_info& VariantRelations::typeId(const std::string& name)
 // (public)
 int VariantRelations::witch(const std::type_info& type)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
     int w = 0;
     for (const std::type_info* t: s_typeArray)
@@ -156,22 +156,22 @@ int VariantRelations::witch(const std::type_info& type)
 
 // =============================================================================
 // (public)
-int VariantRelations::witch(const std::string& name)
+int VariantRelations::witch(const std::string& displayName)
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
-    auto it = std::find(s_nameArray.begin(), s_nameArray.end(), name);
-    if (it == s_nameArray.end()) { return -1; }
-    return (int)(it - s_nameArray.begin());
+    auto it = std::find(s_displayNameArray.begin(), s_displayNameArray.end(), displayName);
+    if (it == s_displayNameArray.end()) { return -1; }
+    return (int)(it - s_displayNameArray.begin());
 }
 
 // =============================================================================
 // (public)
 std::vector<std::string> VariantRelations::displayNameArray()
 {
-    if (s_nameArray.empty()) { createRelationMaps(); }
+    if (s_displayNameArray.empty()) { createRelationMaps(); }
 
-    return s_nameArray;
+    return s_displayNameArray;
 }
 
 } // namespace Model

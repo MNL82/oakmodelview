@@ -64,8 +64,8 @@ ContainerEditor::ContainerEditor(ContainerEditorHandler* eHandler, QWidget *pare
 // (public)
 void ContainerEditor::updateEditor()
 {
-    QString name = m_eHandler->listName();
-    QString labelTitle = QString("%1 List:").arg(name);
+    QString displayName = m_eHandler->listDisplayName();
+    QString labelTitle = QString("%1 List:").arg(displayName);
     m_groupBox->setTitle(labelTitle);
 
     QStringList entryList = m_eHandler->entryList();

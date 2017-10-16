@@ -43,7 +43,7 @@ public:
     template<typename T>
     static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, T primaryKey);
 
-    static bool setName(NodeDefinitionSPtr nodeDef, const std::string& name);
+    static bool setDisplayName(NodeDefinitionSPtr nodeDef, const std::string& displayName);
 
 #ifdef XML_BACKEND
     static bool setTagName(NodeDefinitionSPtr nodeDef, const std::string& tagName);

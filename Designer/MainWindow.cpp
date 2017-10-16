@@ -8,6 +8,8 @@
 #include "ValueDefinitionBuilder.h"
 #include "XMLRefFactory.h"
 
+#include "ModelDesignDefinition.h"
+
 using namespace Oak::Model;
 
 std::string MainWindow::s_master    = "master";
@@ -36,7 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->splitter->setSizes(QList<int>() << 300 << 700);
 
-    createMasterModel();
+    //createMasterModel();
+    m_oakModel->setRootNodeDefinition(ModelDesignDefinition::MakeSPtr());
 }
 
 MainWindow::~MainWindow()
@@ -47,7 +50,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionNew_triggered()
 {
     m_oakModel->createNewRootDocument(Node::Type::XML);
-    m_oakModel->setRootItem(m_oakModel->rootItem().firstChild("process"));
+    m_oakModel->setRootItem(m_oakModel->rootItem());
     ui->OakView->expandAll();
 }
 
@@ -57,7 +60,7 @@ void MainWindow::on_actionOpen_triggered()
     fileName = QFileDialog::getOpenFileName(this, "Load Database", fileName);
     if (fileName.isEmpty()) { return; }
     m_oakModel->loadXMLRootNode(fileName.toStdString());
-    m_oakModel->setRootItem(m_oakModel->rootItem().firstChild("process"));
+    m_oakModel->setRootItem(m_oakModel->rootItem());
     ui->OakView->expandAll();
 }
 

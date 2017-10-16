@@ -54,6 +54,9 @@ public:
     void add(ChildRefUPtr eRef);
     void clear();
 
+    virtual const std::string& firstTagName() const override { return m_references.front()->firstTagName(); }
+    virtual const std::string& lastTagName() const override { return m_references.back()->lastTagName(); }
+
     template<class... _Types> inline
     static typename ChildRefGroupUPtr MakeUPtr(_Types&&... _Args)
     {

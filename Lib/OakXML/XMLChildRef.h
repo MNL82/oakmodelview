@@ -49,6 +49,9 @@ public:
     const std::string& tagName() const { return m_tagName; }
     void setTagName(std::string tagName) { m_tagName = tagName; }
 
+    virtual const std::string& firstTagName() const override { return m_tagName; }
+    virtual const std::string& lastTagName() const override { return m_tagName; }
+
     template<class... _Types> inline
     static typename ChildRefUPtr MakeUPtr(_Types&&... _Args)
     {

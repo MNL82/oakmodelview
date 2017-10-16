@@ -54,6 +54,9 @@ public:
 
     virtual bool isNull() const { return false; }
 
+    virtual const std::string& firstTagName() const override { return emptyStr; }
+    virtual const std::string& lastTagName() const override { return emptyStr; }
+
     template<class... _Types> inline
     static typename ParentRefUPtr MakeUPtr(_Types&&... _Args)
     {

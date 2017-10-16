@@ -25,7 +25,7 @@ std::string DesignOakModel::s_design        = "design";
 std::string DesignOakModel::s_node          = "node";
 std::string DesignOakModel::s_value         = "value";
 std::string DesignOakModel::s_container     = "container";
-std::string DesignOakModel::s_name          = "name";
+std::string DesignOakModel::s_displayName   = "displayName";
 std::string DesignOakModel::s_type          = "type";
 std::string DesignOakModel::s_minCount      = "minCount";
 std::string DesignOakModel::s_maxCount      = "maxCount";
@@ -60,7 +60,7 @@ NodeDefinitionSPtr DesignOakModel::generateModelDefinition() const
     while (!nodeItem.isNull()) {
         auto node = createNodeDefinition(nodeItem);
         if (node) {
-            nodeItem.value(s_name).getValue(nodeName);
+            nodeItem.value(s_displayName).getValue(nodeName);
             m_nodeMap[nodeName] = node;
         }
         nodeItem = designItem.nextChild(s_node, nodeItem);
@@ -68,12 +68,12 @@ NodeDefinitionSPtr DesignOakModel::generateModelDefinition() const
 
     nodeItem = designItem.firstChild(s_node);
     while (!nodeItem.isNull()) {
-        nodeItem.value(s_name).getValue(nodeName);
+        nodeItem.value(s_displayName).getValue(nodeName);
         auto node = m_nodeMap[nodeName];
         if (node) {
             Item nodeContainer = nodeItem.firstChild(s_container);
             while (!nodeContainer.isNull()) {
-                nodeContainer.value(s_name).getValue(nodeName);
+                nodeContainer.value(s_displayName).getValue(nodeName);
                 auto containerNode = m_nodeMap[nodeName];
                 if (containerNode) {
                     int minCount, maxCount;
@@ -103,28 +103,28 @@ NodeDefinitionSPtr DesignOakModel::generateModelDefinition() const
 // (protected)
 NodeDefinitionSPtr DesignOakModel::createNodeDefinition(const Item& item) const
 {
-    std::string name;
+    std::string displayName;
     std::string type;
     std::string tagName;
     std::string attributeName;
-    name << item(s_name);
-    if (!name.empty()) {
-        auto nodeDefinition = NDB::Make(name);
-        std::string keyValue;
-        keyValue << item(s_keyValue);
+    displayName << item(s_displayName);
+    if (!displayName.empty()) {
+        auto nodeDefinition = NDB::Make(displayName);
+        std::string name;
+        name << item(s_keyValue);
         Item valueItem = item.firstChild(s_value);
         while (!valueItem.isNull()) {
-            name << valueItem(s_name);
+            displayName << valueItem(s_displayName);
             type << valueItem(s_type);
             tagName << valueItem(s_tagName);
             attributeName << valueItem(s_attributeName);
             if (tagName.empty() && attributeName.empty()) {
-                tagName = name;
+                tagName = displayName;
             }
-            if (!name.empty()) {
+            if (!displayName.empty()) {
                 auto valueI = VDB::MakeXML(std::string(), tagName, attributeName);
-                VDB::setValueId(valueI, name);
-                if (name == keyValue) {
+                VDB::setValueId(valueI, displayName);
+                if (displayName == name) {
                     NDB::addValueDefAsKey(nodeDefinition, std::move(valueI));
                 } else {
                     NDB::addValueDef(nodeDefinition, std::move(valueI));
@@ -150,14 +150,14 @@ void DesignOakModel::createDesignDefinition()
     NDB::addContainerDef(nodeDesign, CDB::Make(nodeNode));
 
     // Setup node "node"
-    NDB::addValueDefAsKey(nodeNode, VDB::MakeXML(std::string(), std::string(), s_name));
+    NDB::addValueDefAsKey(nodeNode, VDB::MakeXML(std::string(), std::string(), s_displayName));
     NDB::addValueDef(nodeNode, VDB::Make(std::string(), s_keyValue));
 
     NDB::addContainerDef(nodeNode, CDB::Make(nodeValue));
     NDB::addContainerDef(nodeNode, CDB::Make(nodeContainer));
 
     // Setup node "Value"
-    NDB::addValueDefAsKey(nodeValue, VDB::MakeXML(std::string(), std::string(), s_name));
+    NDB::addValueDefAsKey(nodeValue, VDB::MakeXML(std::string(), std::string(), s_displayName));
     ValueDefinitionUPtr valueType = VDB::Make(std::string(), s_type);
     std::vector<std::string> options = {s_string, s_integer, s_decimal};
     VDB::setOptions(valueType, options);
@@ -167,7 +167,7 @@ void DesignOakModel::createDesignDefinition()
     NDB::addValueDef(nodeValue, VDB::Make(std::string(), s_attributeName));
 
     // Setup node "Container"
-    NDB::addValueDefAsKey(nodeContainer, VDB::Make(std::string(), s_name));
+    NDB::addValueDefAsKey(nodeContainer, VDB::Make(std::string(), s_displayName));
     NDB::addValueDef(nodeContainer, VDB::Make(0, s_minCount, 0));
     NDB::addValueDef(nodeContainer, VDB::Make(0, s_maxCount, std::numeric_limits<int>::max()));
 

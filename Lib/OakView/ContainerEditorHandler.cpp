@@ -27,9 +27,9 @@ ContainerEditorHandler::ContainerEditorHandler(Model::Item item, Model::VariantC
 
 // =============================================================================
 // (public)
-QString ContainerEditorHandler::listName() const
+QString ContainerEditorHandler::listDisplayName() const
 {
-    return QString::fromStdString(m_item.definition()->childDefinition(m_primaryKey)->name());
+    return QString::fromStdString(m_item.definition()->childDefinition(m_primaryKey)->displayName());
 }
 
 // =============================================================================
@@ -46,7 +46,7 @@ QStringList ContainerEditorHandler::entryList() const
     int count = m_item.childCount(m_primaryKey);
     QStringList eList;
     std::string keyValue;
-    QString lName = listName();
+    QString lName = listDisplayName();
     QString entryId;
     for (int i = 0; i < count; i++)
     {

@@ -15,6 +15,8 @@
 namespace Oak {
 namespace XML {
 
+std::string Ref::emptyStr = "";
+
 // =============================================================================
 // (public)
 RefUPtr Ref::copy() const

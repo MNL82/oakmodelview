@@ -34,7 +34,7 @@ protected:
     static std::string s_node;
     static std::string s_value;
     static std::string s_container;
-    static std::string s_name;
+    static std::string s_displayName;
     static std::string s_type;
     static std::string s_minCount;
     static std::string s_maxCount;

@@ -48,11 +48,17 @@ public:
 
     virtual bool isNull() const { return true; }
 
+    virtual const std::string& firstTagName() const { return emptyStr; }
+    virtual const std::string& lastTagName() const { return emptyStr; }
+
     template<class... _Types> inline
     static typename RefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (RefUPtr(new Ref(_STD forward<_Types>(_Args)...)));
     }
+
+protected:
+    static std::string emptyStr;
 };
 
 } // namespace XML

@@ -165,7 +165,7 @@ void NodeEditorHandler::createEditor()
     }
 
     if (row == 0) {
-        std::string nodeName = m_item.definition()->name();
+        std::string nodeName = m_item.definition()->displayName();
         QLabel* emptyLabel = new QLabel(QString("Item %1 is empty").arg(QString::fromStdString(nodeName)));
         layout->addWidget(emptyLabel);
     } else {

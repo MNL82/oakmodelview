@@ -11,6 +11,8 @@
 #pragma once
 
 #include "ValueDefinition.h"
+#include "XMLRefFactory.h"
+#include "XMLValueRef.h"
 
 namespace Oak {
 namespace Model {
@@ -28,9 +30,9 @@ public:
     static ValueDefinitionUPtr Make(T1 valueTemplate, T2 valueId, T1 defaultValue);
 #ifdef XML_BACKEND
     template<typename T>
-    static ValueDefinitionUPtr MakeXML(T valueTemplate, std::string tagName = std::string(), std::string attributeName = std::string());
+    static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef = "", const std::string& attributeName = "");
     template<typename T>
-    static ValueDefinitionUPtr MakeXML(T valueTemplate, std::string tagName, std::string attributeName, T defaultValue);
+    static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef, const std::string& attributeName, T defaultValue);
 #endif // XML_BACKEND
 
     template<typename T>
@@ -91,17 +93,13 @@ ValueDefinitionUPtr ValueDefinitionBuilder::Make(T1 valueTemplate, T2 valueId, T
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string tagName, std::string attributeName)
+ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::string &elementRef, const std::string &attributeName)
 {
     ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
     valueDef->m_defaultConversion = Conversion::globalDefault();
-    valueDef->m_valueId = generateValueId(tagName, attributeName);
 
-    if (tagName.empty()) {
-        valueDef->m_valueRef = XML::ValueRef::MakeUPtr(attributeName);
-    } else {
-        valueDef->m_valueRef = XML::ValueRef::MakeUPtr(attributeName, XML::ChildRef::MakeUPtr(tagName));
-    }
+    valueDef->m_valueRef = XML::RefFactory::MakeValueRef(elementRef, attributeName);
+    valueDef->m_valueId = generateValueId(valueDef->m_valueRef->elementRef()->lastTagName(), attributeName);
 
     return std::move(valueDef);
 }
@@ -109,9 +107,9 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, std::string tagName, std::string attributeName, T defaultValue)
+ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::string &elementRef, const std::string &attributeName, T defaultValue)
 {
-    auto vDef = MakeXML(valueTemplate, tagName, attributeName);
+    auto vDef = MakeXML(valueTemplate, elementRef, attributeName);
     vDef->m_defaultValue = defaultValue;
     return std::move(vDef);
 }

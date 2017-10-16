@@ -68,7 +68,7 @@ NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
     m_primaryKey = copy.m_primaryKey;
     m_tagName = copy.m_tagName;
     m_derivedId = copy.m_derivedId;
-    m_name = copy.m_name;
+    m_displayName = copy.m_displayName;
 
     m_derivedBase = copy.m_derivedBase;
     m_derivedDirectList.clear();
@@ -103,7 +103,7 @@ NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
 NodeDefinition &NodeDefinition::operator=(NodeDefinition &&move)
 {
     m_primaryKey = std::move(move.m_primaryKey);
-    m_name = std::move(move.m_name);
+    m_displayName = std::move(move.m_displayName);
     m_tagName = std::move(move.m_tagName);
     m_derivedId = std::move(move.m_derivedId);
 
@@ -137,9 +137,9 @@ VariantCRef NodeDefinition::primaryKey() const
 
 // =============================================================================
 // (public)
-std::string NodeDefinition::name() const
+std::string NodeDefinition::displayName() const
 {
-    if (!m_name.empty()) { return m_name; }
+    if (!m_displayName.empty()) { return m_displayName; }
 
     if (m_primaryKey.isNull()) { return std::string(); }
 
@@ -159,6 +159,21 @@ std::string NodeDefinition::name() const
 const NodeSettings &NodeDefinition::settings() const
 {
     return m_settings;
+}
+
+// =============================================================================
+// (public)
+NodeDefinitionSPtr NodeDefinition::sPtr() const
+{
+    return m_thisWPtr.lock();
+}
+
+// =============================================================================
+// (public)
+void NodeDefinition::setWPtr(NodeDefinitionSPtr sPtr)
+{
+    assert(sPtr.get() == this);
+    m_thisWPtr = sPtr;
 }
 
 // =============================================================================

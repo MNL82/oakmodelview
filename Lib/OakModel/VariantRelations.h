@@ -59,27 +59,27 @@ typedef boost::variant<InvalidVariant, Bool, int, double, const std::string&, co
 // =============================================================================
 class VariantRelations
 {
-    static std::vector<std::string> s_nameArray;
+    static std::vector<std::string> s_displayNameArray;
     static std::vector<const std::type_info*> s_typeArray;
 
     static std::string s_emptyName;
 
     static void createRelationMaps();
-    static void addRelation(const std::type_info& type, const std::string& name);
+    static void addRelation(const std::type_info& type, const std::string& displayName);
 
 public:
     static bool hasWitch(int w);
     static bool hasTypeId(const std::type_info& type);
-    static bool hasDisplayName(const std::string& name);
+    static bool hasDisplayName(const std::string& displayName);
 
     static const std::string& displayName(int w);
     static const std::string& displayName(const std::type_info& type);
 
     static const std::type_info& typeId(int w);
-    static const std::type_info& typeId(const std::string& name);
+    static const std::type_info& typeId(const std::string& displayName);
 
     static int witch(const std::type_info& type);
-    static int witch(const std::string& name);
+    static int witch(const std::string& displayName);
 
     static std::vector<std::string> displayNameArray();
 };

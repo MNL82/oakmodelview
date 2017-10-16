@@ -82,7 +82,10 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
 // (public)
 bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef)
 {
-    if (!nodeDef || !cDef) { return false; }
+    if (!nodeDef || !cDef) {
+        assert(false);
+        return false;
+    }
 
     // Check if the NodeDefinition will be referenced twice (Not sure this is needed)
     if (hasContainerI(nodeDef, cDef)) { return false; }
@@ -101,11 +104,11 @@ bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, Containe
 
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::setName(NodeDefinitionSPtr nodeDef, const std::string& name)
+bool NodeDefinitionBuilder::setDisplayName(NodeDefinitionSPtr nodeDef, const std::string& displayName)
 {
     if (!nodeDef) { return false; }
 
-    nodeDef->m_name = name;
+    nodeDef->m_displayName = displayName;
 
     return true;
 }

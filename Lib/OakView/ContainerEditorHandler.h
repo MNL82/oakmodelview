@@ -29,7 +29,7 @@ class ContainerEditorHandler : public QObject
 public:
     ContainerEditorHandler(Model::Item item, Model::VariantCRef primaryKey, QObject *parent = 0);
 
-    QString listName() const;
+    QString listDisplayName() const;
     int entryCount() const;
     QStringList entryList() const;
 

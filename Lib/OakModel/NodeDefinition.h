@@ -74,10 +74,13 @@ public:
 
     VariantCRef primaryKey() const;
 
-    /// The 'nodeName' is the displayed name of the node
-    virtual std::string name() const;
+    virtual std::string displayName() const;
 
     const NodeSettings& settings() const;
+
+    NodeDefinitionSPtr sPtr() const;
+
+    void setWPtr(NodeDefinitionSPtr sPtr);
 
 #ifdef XML_BACKEND
     const std::string &tagName() const;
@@ -89,7 +92,7 @@ protected:
     /// The 'm_primaryKey' is a unike identifier for the node definition
     Variant m_primaryKey;
 
-    std::string m_name;
+    std::string m_displayName;
 
     NodeSettings m_settings;
 
