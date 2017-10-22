@@ -22,6 +22,7 @@ include(Definitions.pri)
 include(Builders.pri)
 include(Reference.pri)
 include(Models.pri)
+include(Query.pri)
 
 SOURCES += \
     Conversion.cpp \

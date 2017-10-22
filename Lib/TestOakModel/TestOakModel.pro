@@ -30,7 +30,8 @@ HEADERS += \
     Test_ServiceFunctions.h \
     Test_Variant.h \
     Test_NodeDefinition.h \
-    Test_ValueDefinition.h
+    Test_ValueDefinition.h \
+    Test_ItemQuery.h
 
 win32:QMAKE_CXXFLAGS_EXCEPTIONS_ON = /EHa
 win32:QMAKE_CXXFLAGS_STL_ON = /EHa

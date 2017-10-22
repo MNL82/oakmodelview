@@ -20,6 +20,7 @@ using boost::unit_test_framework::test_suite;
 #include "Test_ValueDefinition.h"
 #include "Test_NodeDefinition.h"
 #include "Test_Item.h"
+#include "Test_ItemQuery.h"
 
 test_suite* Test_XML()
 {
@@ -30,6 +31,7 @@ test_suite* Test_XML()
     test->add(Test_ValueDefinition());
     test->add(Test_NodeDefinition());
     test->add(Test_Item());
+    test->add(Test_ItemQuery());
 
     return test;
 }
