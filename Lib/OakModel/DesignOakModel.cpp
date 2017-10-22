@@ -123,7 +123,7 @@ NodeDefinitionSPtr DesignOakModel::createNodeDefinition(const Item& item) const
             }
             if (!displayName.empty()) {
                 auto valueI = VDB::MakeXML(std::string(), tagName, attributeName);
-                VDB::setValueId(valueI, displayName);
+                VDB::setName(valueI, displayName);
                 if (displayName == name) {
                     NDB::addValueDefAsKey(nodeDefinition, std::move(valueI));
                 } else {

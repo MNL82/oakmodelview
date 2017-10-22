@@ -27,7 +27,7 @@ class ContainerEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    ContainerEditorHandler(Model::Item item, Model::VariantCRef name, QObject *parent = 0);
+    ContainerEditorHandler(Model::Item item, const std::string &name, QObject *parent = 0);
 
     QString listDisplayName() const;
     int entryCount() const;
@@ -53,7 +53,7 @@ protected slots:
 protected:
 
     Model::Item m_item;
-    Model::VariantCRef m_name;
+    std::string m_name;
     QWidget* m_editor = nullptr;
 };
 

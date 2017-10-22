@@ -41,7 +41,7 @@ public:
 
     virtual ContainerGroupDefinitionUPtr copy() const;
 
-    virtual const NodeDefinition* containerDefinition(VariantCRef name, VariantCRef derivedId = VariantCRef()) const;
+    virtual const NodeDefinition* containerDefinition(const std::string &name, VariantCRef derivedId = VariantCRef()) const;
     virtual const NodeDefinition* containerDefinition(Node _node) const;
 
     virtual bool validate(Node _node) const;

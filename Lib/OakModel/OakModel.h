@@ -39,8 +39,7 @@ public:
 
     const Item& rootItem() const;
 
-    template<typename T>
-    const T & rootPKey() const;
+    const std::string &rootDefName() const;
 
     const NodeDefinition* rootNodeDefinition() const;
     void setRootNodeDefinition(NodeDefinitionSPtr definition);
@@ -102,14 +101,6 @@ protected:
     friend class Item;
     friend class ItemValue;
 };
-
-// =============================================================================
-// (public)
-template<typename T>
-const T &OakModel::rootPKey() const
-{
-    return m_rootItem.definition()->name().valueCRef<T>();
-}
 
 } // namespace Model
 } // namespace Oak

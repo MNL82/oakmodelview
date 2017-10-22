@@ -57,7 +57,7 @@ protected:
     Model::Item m_item;
     QWidget* m_editor = nullptr;
     QMap<Model::VariantCRef, ValueEditorHandler*> m_valueEditorMap;
-    QMap<Model::VariantCRef, ContainerEditorHandler*> m_containerEditorMap;
+    QMap<std::string, ContainerEditorHandler*> m_containerEditorMap;
 };
 
 } // namespace View

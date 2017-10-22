@@ -111,10 +111,10 @@ bool ItemValue::isNodeNull() const
 
 // =============================================================================
 // (public)
-VariantCRef ItemValue::valueId() const
+const std::string &ItemValue::name() const
 {
     assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->valueId();
+    return m_valueDefinition->name();
 }
 
 // =============================================================================

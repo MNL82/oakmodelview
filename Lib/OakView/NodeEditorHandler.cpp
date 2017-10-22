@@ -132,13 +132,12 @@ void NodeEditorHandler::createEditor()
     Model::Item::ValueIterator vIt = m_item.valueBegin();
     Model::Item::ValueIterator vItEnd = m_item.valueEnd();
     while (vIt != vItEnd) {
-        Model::VariantCRef id = vIt->valueId();
-        if (!m_valueEditorMap.contains(id)) {
+        if (!m_valueEditorMap.contains(vIt->name())) {
             auto vEditor = new ValueEditorHandler(this, *vIt);
-            m_valueEditorMap.insert(id, vEditor);
+            m_valueEditorMap.insert(vIt->name(), vEditor);
             // TODO: Connect signals
         }
-        ValueEditorHandler* vEditor = m_valueEditorMap[id];
+        ValueEditorHandler* vEditor = m_valueEditorMap[vIt->name()];
 
         if (vEditor->getLabel()) {
             layout->addWidget(vEditor->getLabel(), row, 0);
@@ -150,10 +149,10 @@ void NodeEditorHandler::createEditor()
         vIt++;
     }
 
-    auto cList = m_item.definition()->getContainerList();
+    auto cList = m_item.definition()->containerList();
     for (const Model::ContainerDefinition* containerPtr: cList)
     {
-        Model::VariantCRef id = containerPtr->containerDefinition()->name();
+        std::string id = containerPtr->containerDefinition()->name();
         if (!m_containerEditorMap.contains(id)) {
             auto cHandler = new ContainerEditorHandler(m_item, id, this);
             m_containerEditorMap.insert(id, cHandler);

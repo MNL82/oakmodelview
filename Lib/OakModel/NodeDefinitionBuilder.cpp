@@ -17,6 +17,21 @@ namespace Model {
 
 // =============================================================================
 // (public)
+NodeDefinitionSPtr NodeDefinitionBuilder::Make(const std::string & name)
+{
+    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name);
+
+#ifdef XML_BACKEND
+    if (XML::Element::validateTagName(name)) {
+        nodeDef->m_tagName = name;
+    }
+#endif // XML_BACKEND
+
+    return nodeDef;
+}
+
+// =============================================================================
+// (public)
 bool NodeDefinitionBuilder::addValueDef(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDef)
 {
     if (!nodeDef) { return false; }
@@ -40,10 +55,14 @@ bool NodeDefinitionBuilder::addValueDefAsKey(NodeDefinitionSPtr nodeDef, ValueDe
     // Derived node definitions inherate its node id value from its base and can not have it's own
     if (nodeDef->hasDerivedBase()) { return false; }
 
-
-    if (!VDB::settings(valueDefKey).isUniqueSet()) {
-        VDB::settings(valueDefKey).setUnique(true);
+    ValueSettings &settings = VDB::settings(valueDefKey);
+    if (!settings.isUniqueSet()) {
+        settings.setUnique(true);
     }
+    if (!settings.isRequiredSet()) {
+        settings.setRequired(true);
+    }
+
     if (addValueDef(nodeDef, std::move(valueDefKey))) {
         int index = nodeDef->valueCount()-1;
         setKeyValueThisAndDerived(nodeDef, index);
@@ -84,6 +103,24 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
 
 // =============================================================================
 // (public)
+ValueDefinitionUPtr NodeDefinitionBuilder::takeValueDef(NodeDefinitionSPtr nodeDef, const std::string &valueName)
+{
+    if (!nodeDef || valueName.empty()) { return ValueDefinitionUPtr(); }
+
+    auto it = nodeDef->m_valueList.begin();
+    while (it != nodeDef->m_valueList.end()) {
+        if ((*it)->name() == valueName) {
+            ValueDefinitionUPtr movedValue(std::move(*it));
+            nodeDef->m_valueList.erase(it);
+            return std::move(movedValue);
+        }
+    }
+
+    return ValueDefinitionUPtr();
+}
+
+// =============================================================================
+// (public)
 bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef)
 {
     if (!nodeDef || !cDef) {
@@ -104,6 +141,30 @@ bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, Containe
     }
 
     return true;
+}
+
+// =============================================================================
+// (public)
+ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, const std::string &name)
+{
+    if (!nodeDef || name.empty()) { return ContainerDefinitionUPtr(); }
+
+    auto it = nodeDef->m_containerList.begin();
+    while (it != nodeDef->m_containerList.end()) {
+        if ((*it)->containerDefinition()->name() == name) {
+            ContainerDefinitionUPtr movedContainer(std::move(*it));
+            nodeDef->m_containerList.erase(it);
+
+            // Clear the list of existing containers
+            if (nodeDef->m_containerGroup) {
+                nodeDef->m_containerGroup->updateContainerList();
+            }
+
+            return std::move(movedContainer);
+        }
+    }
+
+    return ContainerDefinitionUPtr();
 }
 
 // =============================================================================
@@ -149,7 +210,7 @@ bool NodeDefinitionBuilder::hasValueI(NodeDefinitionSPtr nodeDef, const ValueDef
         ni = ni->derivedBase();
         for (const auto& vi: nodeDef->m_valueList)
         {
-            if (vi->valueId() == valueDef->valueId()) {
+            if (vi->name() == valueDef->name()) {
                 return true;
             }
         }
@@ -165,7 +226,7 @@ bool NodeDefinitionBuilder::hasValueIThisAndDerived(NodeDefinitionSPtr nodeDef, 
 {
     for (const auto& vi: nodeDef->m_valueList)
     {
-        if (vi->valueId() == valueDef->valueId()) {
+        if (vi->name() == valueDef->name()) {
             return true;
         }
     }

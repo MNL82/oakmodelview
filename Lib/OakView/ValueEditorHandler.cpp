@@ -183,9 +183,7 @@ void ValueEditorHandler::createLabel()
 {
     if (m_label != nullptr) { return; }
 
-    std::string labelStr;
-    m_itemValue.valueId().get(labelStr);
-    m_label = new QLabel(QString::fromStdString(labelStr));
+    m_label = new QLabel(QString::fromStdString(m_itemValue.name()));
     connect(m_label, SIGNAL(destroyed(QObject*)), this, SLOT(onLabelDestroyed()));
 
     updateLabelValue();

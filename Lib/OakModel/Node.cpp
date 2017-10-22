@@ -82,6 +82,24 @@ bool Node::operator!=(const Node& _node) const
 
 // =============================================================================
 // (public)
+void Node::clear()
+{
+    switch (m_type) {
+    case Type::UNDEFINED:
+        return;
+#ifdef XML_BACKEND
+    case Type::XML:
+         m_xmlNode.clear();
+#endif // XML_BACKEND
+    default:
+        // m_type contains an unhandled type that needs to be implemented
+        assert(false);
+    }
+    m_type = Type::UNDEFINED;
+}
+
+// =============================================================================
+// (public)
 bool Node::isNull() const
 {
     if (m_type == Type::UNDEFINED) { return true; }

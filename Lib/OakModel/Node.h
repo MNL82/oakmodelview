@@ -37,6 +37,8 @@ public:
     bool operator==(const Node& _node) const;
     bool operator!=(const Node& _node) const;
 
+    void clear();
+
     bool isNull() const;
 
     Type type() const;

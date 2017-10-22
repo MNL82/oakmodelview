@@ -88,6 +88,13 @@ const Item &OakModel::rootItem() const
 
 // =============================================================================
 // (public)
+const std::string &OakModel::rootDefName() const
+{
+    return m_rootItem.definition()->name();
+}
+
+// =============================================================================
+// (public)
 const NodeDefinition* OakModel::rootNodeDefinition() const
 {
     return m_rootItem.definition();
@@ -232,7 +239,7 @@ const NodeDefinition* OakModel::findNodeDefinition(Node node) const
         ignoreList.push_back(currentDefinition);
 
         // Add child definitions to the list
-        auto cList = currentDefinition->getContainerList();
+        auto cList = currentDefinition->containerList();
         for(const ContainerDefinition* c: cList)
         {
             // Only add the definition if it is not in the ignore list

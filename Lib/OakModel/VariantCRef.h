@@ -69,6 +69,9 @@ public:
 
     Variant value() const;
 
+    template<typename T>
+    T value(bool allowConversion = true, Conversion* properties = nullptr) const;
+
 private:
     BaseTypeCRef m_value;
 
@@ -138,6 +141,16 @@ const T& VariantCRef::valueCRef() const
         const T& vRef = boost::get<const T&>(m_value);
         return vRef;
     }
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+T VariantCRef::value(bool allowConversion, Conversion* properties) const
+{
+    T v;
+    get(v, allowConversion, properties);
+    return v;
 }
 
 } // namespace Model

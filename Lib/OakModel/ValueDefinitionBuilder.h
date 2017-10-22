@@ -24,10 +24,10 @@ class ValueDefinitionBuilder
 {
     ValueDefinitionBuilder() = delete;
 public:
-    template<typename T1, typename T2>
-    static ValueDefinitionUPtr Make(T1 valueTemplate, T2 valueId);
-    template<typename T1, typename T2>
-    static ValueDefinitionUPtr Make(T1 valueTemplate, T2 valueId, T1 defaultValue);
+    template<typename T>
+    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &valueName);
+    template<typename T>
+    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &valueName, T defaultValue);
 #ifdef XML_BACKEND
     template<typename T>
     static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef = "", const std::string& attributeName = "");
@@ -35,8 +35,7 @@ public:
     static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef, const std::string& attributeName, T defaultValue);
 #endif // XML_BACKEND
 
-    template<typename T>
-    static bool setValueId(ValueDefinitionUPtr& valueDef, T valueId);
+    static bool setName(ValueDefinitionUPtr& valueDef, const std::string &valueName);
 
     template<typename T>
     static bool setDefaultValue(const ValueDefinitionUPtr& valueDef, T defaultValue);
@@ -60,19 +59,16 @@ public:
 
 // =============================================================================
 // (public)
-template<typename T1, typename T2>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T1 valueTemplate, T2 valueId)
+template<typename T>
+ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &valueName)
 {
     ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
-    valueDef->m_valueId = valueId;
+    valueDef->m_name = valueName;
     valueDef->m_defaultConversion = Conversion::globalDefault();
 
 #ifdef XML_BACKEND
-    std::string tagName;
-    if (convert(tagName, valueId)) {
-        if (XML::Element::validateTagName(tagName)) {
-            valueDef->m_valueRef = XML::ValueRef::MakeUPtr("", XML::ChildRef::MakeUPtr(tagName));
-        }
+    if (XML::Element::validateTagName(valueName)) {
+        valueDef->m_valueRef = XML::ValueRef::MakeUPtr("", XML::ChildRef::MakeUPtr(valueName));
     }
 #endif // XML_BACKEND
 
@@ -81,10 +77,10 @@ ValueDefinitionUPtr ValueDefinitionBuilder::Make(T1 valueTemplate, T2 valueId)
 
 // =============================================================================
 // (public)
-template<typename T1, typename T2>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T1 valueTemplate, T2 valueId, T1 defaultValue)
+template<typename T>
+ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &valueName, T defaultValue)
 {
-    auto vDef = Make(valueTemplate, valueId);
+    auto vDef = Make(valueTemplate, valueName);
     vDef->m_defaultValue = defaultValue;
     return std::move(vDef);
 }
@@ -99,7 +95,7 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::
     valueDef->m_defaultConversion = Conversion::globalDefault();
 
     valueDef->m_valueRef = XML::RefFactory::MakeValueRef(elementRef, attributeName);
-    valueDef->m_valueId = generateValueId(valueDef->m_valueRef->elementRef()->lastTagName(), attributeName);
+    valueDef->m_name = generateValueId(valueDef->m_valueRef->elementRef()->lastTagName(), attributeName);
 
     return std::move(valueDef);
 }
@@ -114,18 +110,6 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::
     return std::move(vDef);
 }
 #endif // XML_BACKEND
-
-// =============================================================================
-// (public)
-template<typename T>
-static bool ValueDefinitionBuilder::setValueId(ValueDefinitionUPtr& valueDef, T valueId)
-{
-    if (!valueDef) { return false; }
-
-    valueDef->m_valueId = valueId;
-
-    return true;
-}
 
 // =============================================================================
 // (public)

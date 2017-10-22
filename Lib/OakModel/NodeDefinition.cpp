@@ -9,6 +9,7 @@
  */
 
 #include "NodeDefinition.h"
+#include "ValueDefinitionBuilder.h"
 
 namespace Oak {
 namespace Model {
@@ -19,18 +20,18 @@ namespace Model {
 // The derivedId is used to identify the correct NodeDefinition in a inheritance hierarchy
 // The NodeDefinition can not be part of a inheritance hierarchy if the derivedId is null.
 // The NodeDefinition has a derivedId but no base definition, so it is the root NodeDefinition of a inheritance hierarchy
-NodeDefinition::NodeDefinition(VariantCRef _name)
+NodeDefinition::NodeDefinition(const std::string &_name)
 {
-    assert(!_name.isNull());
+    assert(!_name.empty());
 
     m_name = _name;
 }
 
 // =============================================================================
 // (public)
-NodeDefinition::NodeDefinition(VariantCRef _name, VariantCRef _derivedId)
+NodeDefinition::NodeDefinition(const std::string &_name, VariantCRef _derivedId)
 {
-    assert(!_name.isNull());
+    assert(!_name.empty());
     assert(!_derivedId.isNull());
 
     m_name = _name;
@@ -125,12 +126,12 @@ NodeDefinition &NodeDefinition::operator=(NodeDefinition &&move)
 // (public)
 bool NodeDefinition::isNull() const
 {
-    return m_name.isNull();
+    return m_name.empty();
 }
 
 // =============================================================================
 // (public)
-VariantCRef NodeDefinition::name() const
+const std::string& NodeDefinition::name() const
 {
     return m_name;
 }
@@ -141,17 +142,14 @@ std::string NodeDefinition::displayName() const
 {
     if (!m_displayName.empty()) { return m_displayName; }
 
-    if (m_name.isNull()) { return std::string(); }
+    if (m_name.empty()) { return std::string(); }
 
-    std::string nodeStr;
-    if (!m_name.get(nodeStr)) { return std::string(); }
-
-    if (m_derivedId.isNull()) { return nodeStr; }
+    if (m_derivedId.isNull()) { return m_name; }
 
     std::string inheritanceStr;
-    if (!m_derivedId.get(inheritanceStr)) { return nodeStr; }
+    if (!m_derivedId.get(inheritanceStr)) { return m_name; }
 
-    return nodeStr + "(" + inheritanceStr + ")";
+    return m_name + "(" + inheritanceStr + ")";
 }
 
 // =============================================================================
@@ -462,16 +460,16 @@ const ValueDefinition &NodeDefinition::value(int index) const
 
 // =============================================================================
 // (public)
-const ValueDefinition &NodeDefinition::value(VariantCRef valueId) const
+const ValueDefinition &NodeDefinition::value(const std::string &valueName) const
 {
     for (const auto &value: m_valueList) {
-        if (value->valueId() == valueId) {
+        if (value->name() == valueName) {
             return *value.get();
         }
     }
 
     if (hasDerivedBase()) {
-        return m_derivedBase.lock()->value(valueId);
+        return m_derivedBase.lock()->value(valueName);
     }
 
     return ValueDefinition::emptyDefinition();
@@ -493,19 +491,28 @@ ValueDefinition &NodeDefinition::value(int index)
 
 // =============================================================================
 // (public)
-ValueDefinition &NodeDefinition::value(VariantCRef valueId)
+ValueDefinition &NodeDefinition::value(const std::string &valueName)
 {
     for (const auto &value: m_valueList) {
-        if (value->valueId() == valueId) {
+        if (value->name() == valueName) {
             return *value.get();
         }
     }
 
     if (hasDerivedBase()) {
-        return m_derivedBase.lock()->value(valueId);
+        return m_derivedBase.lock()->value(valueName);
     }
 
     return ValueDefinition::emptyDefinition();
+}
+
+// =============================================================================
+// (public)
+std::vector<const ValueDefinition *> NodeDefinition::valueList() const
+{
+    std::vector<const ValueDefinition *> vList;
+    getValueList(vList);
+    return std::move(vList);
 }
 
 // =============================================================================
@@ -594,6 +601,25 @@ const ContainerDefinition &NodeDefinition::container(int index) const
 
 // =============================================================================
 // (public)
+const ContainerDefinition &NodeDefinition::container(const std::string& _name) const
+{
+    for (const auto& _child: m_containerList)
+    {
+        if (_child->containerDefinition()->name() == _name) {
+            return *_child.get();
+        }
+    }
+
+    if (hasDerivedBase()) {
+        return m_derivedBase.lock()->container(_name);
+    }
+
+    assert(false);
+    return ContainerDefinition::emptyChildNodeDefinition();
+}
+
+// =============================================================================
+// (public)
 const ContainerDefinition &NodeDefinition::container(Node childNode) const
 {
     if (childNode.isNull()) { return ContainerDefinition::emptyChildNodeDefinition(); }
@@ -614,7 +640,7 @@ const ContainerDefinition &NodeDefinition::container(Node childNode) const
 
 // =============================================================================
 // (public)
-std::vector<const ContainerDefinition *> NodeDefinition::getContainerList() const
+std::vector<const ContainerDefinition *> NodeDefinition::containerList() const
 {
     std::vector<const ContainerDefinition *> cList;
     getContainerList(cList);
@@ -652,7 +678,7 @@ const NodeDefinition* NodeDefinition::childDefinition(int index) const
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::childDefinition(VariantCRef _name) const
+const NodeDefinition* NodeDefinition::childDefinition(const std::string &_name) const
 {
     return container(_name).containerDefinition();
 }
@@ -725,7 +751,7 @@ const ContainerDefinition *NodeDefinition::parentContainer(int index) const
 
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainer(VariantCRef _name) const
+const ContainerDefinition *NodeDefinition::parentContainer(const std::string &_name) const
 {
     for (const ContainerDefinition* parentContainer: m_parentContainerDefinitions)
     {
@@ -763,7 +789,7 @@ const ContainerDefinition *NodeDefinition::parentContainer(Node parentNode) cons
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainer(const std::string &tagName) const
+const ContainerDefinition *NodeDefinition::parentContainerTagName(const std::string &tagName) const
 {
     for (const ContainerDefinition* parent: m_parentContainerDefinitions) {
         if (parent->hostDefinition()->tagName().compare(tagName) == 0) {
@@ -824,14 +850,40 @@ bool NodeDefinition::isParent(Node node, Node refNode, bool recursive) const
 void NodeDefinition::onNodeCreated(Node _node) const
 {
     // Get all containers also from derived nodes
-    auto cList = getContainerList();
-    for (const ContainerDefinition* cDefinition: cList)
+    auto cList = containerList();
+    for (const ContainerDefinition* cDef: cList)
     {
-        int count = cDefinition->nodeCount(_node);
-        while (count < cDefinition->minCount()) {
-            cDefinition->insertNode(_node, count);
+        int count = cDef->nodeCount(_node);
+        while (count < cDef->minCount()) {
+            cDef->insertNode(_node, count);
             count++;
         }
+    }
+
+    auto vList = valueList();
+    for (const ValueDefinition* vDef: vList)
+    {
+        if (vDef->settings().required() &&
+            vDef->settings().unique() &&
+            vDef->hasDefaultValue()) {
+            const NodeDefinition* pNodeDef;
+            Node pNode = parentNode(_node, &pNodeDef);
+            const ContainerDefinition &container = pNodeDef->container(_node);
+
+            std::vector<std::string> valueList;
+            Node nodeSibling = container.firstNode(pNode);
+            while (!nodeSibling.isNull()) {
+                if (vDef->hasValue(_node)) {
+                    valueList.push_back("");
+                    vDef->getValue(nodeSibling, valueList.back(), true, true, vDef->defaultConversion());
+                }
+            }
+            std::string value = vDef->defaultValue().value<std::string>();
+            //Variant value(vDef->defaultValue());
+
+            //
+        }
+
     }
 }
 

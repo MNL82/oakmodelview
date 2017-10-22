@@ -40,11 +40,7 @@ public:
     bool isDefinitionNull() const;
     bool isNodeNull() const;
 
-    VariantCRef valueId() const;
-    template<typename T>
-    T valueId() const;
-    template<typename T>
-    bool getValueId(T &value) const;
+    const std::string &name() const;
 
     const Node& node() const;
     const ValueDefinition* valueDefinition() const;
@@ -87,26 +83,6 @@ protected:
     Node m_node;
     const Item* m_item;
 };
-
-// =============================================================================
-// (public)
-template<typename T>
-T ItemValue::valueId() const
-{
-    assert(m_valueDefinition != nullptr);
-    T value;
-    m_valueDefinition->valueId().get(value);
-    return std::move(value);
-}
-
-// =============================================================================
-// (public)
-template<typename T>
-bool ItemValue::getValueId(T &value) const
-{
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->valueId().get(value);
-}
 
 // =============================================================================
 // (public)

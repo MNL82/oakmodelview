@@ -71,7 +71,7 @@ ContainerGroupDefinitionUPtr ContainerGroupDefinition::copy() const
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerGroupDefinition::containerDefinition(VariantCRef name, VariantCRef derivedId) const
+const NodeDefinition* ContainerGroupDefinition::containerDefinition(const std::string &name, VariantCRef derivedId) const
 {
     return m_hostDefinition->container(name).containerDefinition(derivedId);
 }
@@ -382,7 +382,7 @@ bool ContainerGroupDefinition::removeNode(Node _node, int index) const
 // (protected)
 void ContainerGroupDefinition::updateContainerList() const
 {
-    m_containerList = m_hostDefinition->getContainerList();
+    m_containerList = m_hostDefinition->containerList();
 }
 
 } // namespace Model

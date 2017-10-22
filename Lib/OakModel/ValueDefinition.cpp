@@ -35,7 +35,7 @@ ValueDefinition::ValueDefinition(const ValueDefinition &copy)
     : m_valueTemplate(copy.m_valueTemplate)
 {
     m_defaultValue = copy.m_defaultValue;
-    m_valueId = copy.m_valueId;
+    m_name = copy.m_name;
     m_defaultConversion = copy.m_defaultConversion;
 
 #ifdef XML_BACKEND
@@ -49,7 +49,7 @@ ValueDefinition::ValueDefinition(ValueDefinition&& move)
     : m_valueTemplate(move.m_valueTemplate)
 {
     m_defaultValue = std::move(move.m_defaultValue);
-    m_valueId = std::move(move.m_valueId);
+    m_name = std::move(move.m_name);
     m_defaultConversion = move.m_defaultConversion;
 
 #ifdef XML_BACKEND
@@ -73,16 +73,16 @@ const std::type_info& ValueDefinition::valueTypeId() const
 
 // =============================================================================
 // (public)
-Variant ValueDefinition::valueTemplate() const
+VariantCRef ValueDefinition::valueTemplate() const
 {
     return m_valueTemplate;
 }
 
 // =============================================================================
 // (public)
-VariantCRef ValueDefinition::valueId() const
+const std::string &ValueDefinition::name() const
 {
-    return m_valueId;
+    return m_name;
 }
 
 // =============================================================================
@@ -168,6 +168,25 @@ int ValueDefinition::compareValue(Node _node, VariantCRef value, bool useDefault
     }
 
     return -2;
+}
+
+// =============================================================================
+// (public)
+bool ValueDefinition::hasValue(Node _node) const
+{
+    if (_node.isNull()) { return false; }
+
+    switch (_node.type()) {
+#ifdef XML_BACKEND
+    case Node::Type::XML: {
+        return m_valueRef->hasValue(_node.xmlNode());
+    }
+#endif // XML_BACKENDvalue
+    }
+
+    // _node.type() returns an unhandled type that needs to be implemented
+    assert(false);
+    return false;
 }
 
 // =============================================================================
@@ -332,6 +351,13 @@ bool ValueDefinition::setValue(Node _node, VariantCRef value, bool allowConversi
 bool ValueDefinition::hasDefaultValue() const
 {
     return !m_defaultValue.isNull();
+}
+
+// =============================================================================
+// (public)
+VariantCRef ValueDefinition::defaultValue() const
+{
+    return m_defaultValue;
 }
 
 // =============================================================================

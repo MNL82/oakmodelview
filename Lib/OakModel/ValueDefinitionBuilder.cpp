@@ -17,6 +17,17 @@ namespace Model {
 
 // =============================================================================
 // (public)
+bool ValueDefinitionBuilder::setName(ValueDefinitionUPtr& valueDef, const std::string &valueName)
+{
+    if (!valueDef) { return false; }
+
+    valueDef->m_name = valueName;
+
+    return true;
+}
+
+// =============================================================================
+// (public)
 bool ValueDefinitionBuilder::setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion)
 {
     if (!valueDef) { return false; }

@@ -58,21 +58,21 @@ enum ValidationState {
 class NodeDefinition
 {
 protected:
-    NodeDefinition(VariantCRef _name);
-    NodeDefinition(VariantCRef _name, VariantCRef _derivedId);
+    NodeDefinition(const std::string& _name);
+    NodeDefinition(const std::string& _name, VariantCRef _derivedId);
 
 public:
     virtual ~NodeDefinition();
 
-    NodeDefinition(const NodeDefinition &copy);
-    NodeDefinition(NodeDefinition &&move);
+    NodeDefinition(const NodeDefinition& copy);
+    NodeDefinition(NodeDefinition&& move);
 
     NodeDefinition& operator=(const NodeDefinition &copy);
     NodeDefinition& operator=(NodeDefinition&& move);
 
     bool isNull() const;
 
-    VariantCRef name() const;
+    const std::string &name() const;
 
     virtual std::string displayName() const;
 
@@ -90,7 +90,7 @@ protected:
     NodeDefinitionWPtr m_thisWPtr;
 
     /// The 'm_name' is a unike identifier for the node definition
-    Variant m_name;
+    std::string m_name;
 
     std::string m_displayName;
 
@@ -171,10 +171,11 @@ public:
 public:
     virtual int valueCount() const;
     virtual const ValueDefinition& value(int index) const;
-    virtual const ValueDefinition& value(VariantCRef valueId) const;
+    virtual const ValueDefinition& value(const std::string &valueName) const;
     virtual ValueDefinition& value(int index);
-    virtual ValueDefinition& value(VariantCRef valueId);
+    virtual ValueDefinition& value(const std::string &valueName);
 
+    std::vector<const ValueDefinition*> valueList() const;
     void getValueList(std::vector<const ValueDefinition*>& vList) const;
 
     bool hasKey() const;
@@ -200,18 +201,17 @@ protected:
 public:
     virtual int containerCount() const;
     virtual const ContainerDefinition& container(int index) const;
-    template <typename T>
-    const ContainerDefinition &container(const T& _name) const;
+    const ContainerDefinition &container(const std::string &_name) const;
 
     virtual const ContainerDefinition& container(Node childNode) const;
 
-    virtual std::vector<const ContainerDefinition*> getContainerList() const;
+    virtual std::vector<const ContainerDefinition*> containerList() const;
     virtual void getContainerList(std::vector<const ContainerDefinition*> &list) const;
 
     virtual const ContainerGroupDefinition& containerGroup() const;
 
     virtual const NodeDefinition* childDefinition(int index) const;
-    virtual const NodeDefinition* childDefinition(VariantCRef _name) const;
+    virtual const NodeDefinition* childDefinition(const std::string &_name) const;
     virtual const NodeDefinition* childDefinition(Node childNode) const;
 
 protected:
@@ -228,10 +228,10 @@ public:
 
     virtual int parentContainerCount() const;
     virtual const ContainerDefinition* parentContainer(int index) const;
-    virtual const ContainerDefinition* parentContainer(VariantCRef _name) const;
+    virtual const ContainerDefinition* parentContainer(const std::string& _name) const;
     virtual const ContainerDefinition* parentContainer(Node parentNode) const;
 #ifdef XML_BACKEND
-    virtual const ContainerDefinition* parentContainer(const std::string& tagName)const;
+    virtual const ContainerDefinition* parentContainerTagName(const std::string& tagName)const;
 #endif // XML_BACKEND
 
     virtual bool hasParent(const NodeDefinition* nodeDefinition) const;
@@ -262,26 +262,6 @@ public:
     friend class NodeDefinitionBuilder;
     friend class ContainerDefinitionBuilder;
 };
-
-// =============================================================================
-// (public)
-template <typename T>
-const ContainerDefinition &NodeDefinition::container(const T& _name) const
-{
-    for (const auto& _child: m_containerList)
-    {
-        if (_child->containerDefinition()->name() == _name) {
-            return *_child.get();
-        }
-    }
-
-    if (hasDerivedBase()) {
-        return m_derivedBase.lock()->container(_name);
-    }
-
-    assert(false);
-    return ContainerDefinition::emptyChildNodeDefinition();
-}
 
 typedef NodeDefinition NodeDef;
 

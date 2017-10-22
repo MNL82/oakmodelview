@@ -98,6 +98,13 @@ bool Item::operator!=(const Item& _item) const
 
 // =============================================================================
 // (public)
+const ItemValue& Item::operator()(const std::string &valueName) const
+{
+    return value(valueName);
+}
+
+// =============================================================================
+// (public)
 Item Item::operator[](int index) const
 {
     return childAt(index);
@@ -126,6 +133,16 @@ bool Item::isNodeNull() const
 
 // =============================================================================
 // (public)
+void Item::clear()
+{
+    m_definition = nullptr;
+    m_node.clear();
+    m_model = nullptr;
+    m_itemValueList.clear();
+}
+
+// =============================================================================
+// (public)
 const OakModel* Item::model() const
 {
     return m_model;
@@ -140,32 +157,32 @@ void Item::setCurrent()
     }
 }
 
-//// =============================================================================
-//// (public)
-//std::vector<VariantCRef> Item::valueIdList() const
-//{
-//    initItemValueList();
-//    std::vector<VariantCRef> idList;
-//    for (const ItemValue& iv: m_itemValueList)
-//    {
-//        idList.push_back(iv.valueId());
-//    }
-//    return idList;
-//}
+// =============================================================================
+// (public)
+std::vector<std::string> Item::valueNameList() const
+{
+    initItemValueList();
+    std::vector<std::string> nameList;
+    for (const ItemValue& iv: m_itemValueList)
+    {
+        nameList.push_back(iv.name());
+    }
+    return std::move(nameList);
+}
 
-//// =============================================================================
-//// (public)
-//std::vector<VariantCRef> Item::childNameList() const
-//{
-//    std::vector<const ContainerDefinition*> containerList;
-//    m_definition->getContainerList(containerList);
-//    std::vector<VariantCRef> idList;
-//    for (const ContainerDefinition* container: containerList)
-//    {
-//        idList.push_back(container->containerDefinition()->name());
-//    }
-//    return idList;
-//}
+// =============================================================================
+// (public)
+std::vector<std::string> Item::childNameList() const
+{
+    std::vector<const ContainerDefinition*> containerList;
+    m_definition->getContainerList(containerList);
+    std::vector<std::string> nameList;
+    for (const ContainerDefinition* container: containerList)
+    {
+        nameList.push_back(container->containerDefinition()->name());
+    }
+    return std::move(nameList);
+}
 
 // =============================================================================
 // (public)
@@ -194,6 +211,20 @@ const ItemValue& Item::valueAt(int index) const
 {
     initItemValueList();
     return m_itemValueList.at(index);
+}
+
+// =============================================================================
+// (public)
+const ItemValue& Item::value(const std::string &valueName) const
+{
+    initItemValueList();
+    for (const ItemValue& iv: m_itemValueList)
+    {
+        if (iv.name() == valueName) {
+            return iv;
+        }
+    }
+    return ItemValue::emptyItemValue();
 }
 
 // =============================================================================
@@ -253,9 +284,23 @@ int Item::childCount() const
 
 // =============================================================================
 // (public)
+int Item::childCount(const std::string &name) const
+{
+    return m_definition->container(name).nodeCount(m_node);
+}
+
+// =============================================================================
+// (public)
 int Item::childIndex(const Item& refChild) const
 {
     return m_definition->containerGroup().nodeIndex(m_node, refChild.node());
+}
+
+// =============================================================================
+// (public)
+int Item::childIndex(const std::string &name, const Item &refChild) const
+{
+    return m_definition->container(name).nodeIndex(m_node, refChild.node());
 }
 
 // =============================================================================
@@ -264,6 +309,15 @@ Item Item::childAt(int index) const
 {
     const NodeDefinition* childeNodeDefinition;
     Node childNode = m_definition->containerGroup().node(m_node, index, &childeNodeDefinition);
+    return Item(childeNodeDefinition, childNode, m_model);
+}
+
+// =============================================================================
+// (public)
+Item Item::childAt(const std::string &name, int index) const
+{
+    const NodeDefinition* childeNodeDefinition;
+    Node childNode = m_definition->container(name).node(m_node, index, &childeNodeDefinition);
     return Item(childeNodeDefinition, childNode, m_model);
 }
 
@@ -278,10 +332,28 @@ Item Item::firstChild() const
 
 // =============================================================================
 // (public)
+Item Item::firstChild(const std::string &name) const
+{
+    const NodeDefinition* childNodeDefinition;
+    Node childNode = m_definition->container(name).firstNode(m_node, &childNodeDefinition);
+    return Item(childNodeDefinition, childNode, m_model);
+}
+
+// =============================================================================
+// (public)
 Item Item::lastChild() const
 {
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->containerGroup().lastNode(m_node, &childNodeDefinition);
+    return Item(childNodeDefinition, childNode, m_model);
+}
+
+// =============================================================================
+// (public)
+Item Item::lastChild(const std::string &name) const
+{
+    const NodeDefinition* childNodeDefinition;
+    Node childNode = m_definition->container(name).lastNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
 }
 
@@ -296,10 +368,28 @@ Item Item::nextChild(const Item& refChild) const
 
 // =============================================================================
 // (public)
+Item Item::nextChild(const std::string &name, const Item& refChild) const
+{
+    const NodeDefinition* childNodeDefinition;
+    Node childNode = m_definition->container(name).nextNode(refChild.m_node, &childNodeDefinition);
+    return Item(childNodeDefinition, childNode, m_model);
+}
+
+// =============================================================================
+// (public)
 Item Item::previousChild(const Item& refChild) const
 {
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->containerGroup().previousNode(m_node, refChild.m_node, &childNodeDefinition);
+    return Item(childNodeDefinition, childNode, m_model);
+}
+
+// =============================================================================
+// (public)
+Item Item::previousChild(const std::string &name, const Item& refChild) const
+{
+    const NodeDefinition* childNodeDefinition;
+    Node childNode = m_definition->container(name).previousNode(refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
 }
 
@@ -312,23 +402,37 @@ Item Item::parent() const
     return Item(parentNodeDefinition, parentNode, m_model);
 }
 
-//// =============================================================================
-//// (public)
-//bool Item::canInsertChild(int& index) const
-//{
-//}
+// =============================================================================
+// (public)
+bool Item::canInsertChild(const std::string &name, int &index) const
+{
+    return m_definition->container(name).canInsertNode(m_node, index);
+}
 
-//// =============================================================================
-//// (public)
-//Item Item::insertChild(int& index) const
-//{
-//}
+// =============================================================================
+// (public)
+Item Item::insertChild(const std::string &name, int &index) const
+{
+    const auto& container = m_definition->container(name);
+    Item childItem(container.containerDefinition(), container.insertNode(m_node, index), m_model);
+    if (m_model && !childItem.isNull()) {
+        onItemInserted(*this, childIndex(childItem));
+    }
+    return std::move(childItem);
+}
 
 // =============================================================================
 // (public)
 bool Item::canCloneChild(int& index, Item cloneItem) const
 {
     return m_definition->containerGroup().canCloneNode(m_node, index, cloneItem.m_node);
+}
+
+// =============================================================================
+// (public)
+bool Item::canCloneChild(const std::string &name, int &index, Item cloneItem) const
+{
+    return m_definition->container(name).canCloneNode(m_node, index, cloneItem.m_node);
 }
 
 // =============================================================================
@@ -353,9 +457,36 @@ Item Item::cloneChild(int& index, Item cloneItem) const
 
 // =============================================================================
 // (public)
+Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
+{
+    if (m_model) {
+        // Cash data needed to notify change
+        Item sourceParentItem = cloneItem.parent();
+        int sourceIndex = sourceParentItem.childIndex(cloneItem);
+        // Perform the cloneing
+        Item item = Item(cloneItem.m_definition, m_definition->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
+        // Notify everyone if cloning did not fail
+        if (!item.isNull()) {
+            onItemCloned(sourceParentItem, sourceIndex, *this, childIndex(item));
+        }
+        return std::move(item);
+    } else {
+        return Item(cloneItem.m_definition, m_definition->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
+    }
+}
+
+// =============================================================================
+// (public)
 bool Item::canMoveChild(int& index, Item moveItem) const
 {
     return m_definition->containerGroup().canMoveNode(m_node, index, moveItem.m_node);
+}
+
+// =============================================================================
+// (public)
+bool Item::canMoveChild(const std::string &name, int &index, Item moveItem) const
+{
+    return m_definition->container(name).canMoveNode(m_node, index, moveItem.m_node);
 }
 
 // =============================================================================
@@ -380,9 +511,36 @@ Item Item::moveChild(int& index, Item moveItem) const
 
 // =============================================================================
 // (public)
+Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
+{
+    if (m_model) {
+        // Cash data needed to notify change
+        Item sourceParentItem = moveItem.parent();
+        int sourceIndex = sourceParentItem.childIndex(moveItem);
+        // Perform the cloneing
+        Item item = Item(moveItem.m_definition, m_definition->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
+        // Notify everyone if cloning did not fail
+        if (!item.isNull()) {
+            onItemMoved(sourceParentItem, sourceIndex, *this, childIndex(item));
+        }
+        return std::move(item);
+    } else {
+        return Item(moveItem.m_definition, m_definition->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
+    }
+}
+
+// =============================================================================
+// (public)
 bool Item::canRemoveChild(int index) const
 {
     return m_definition->containerGroup().canRemoveNode(m_node, index);
+}
+
+// =============================================================================
+// (public)
+bool Item::canRemoveChild(const std::string &name, int index) const
+{
+    return m_definition->container(name).canRemoveNode(m_node, index);
 }
 
 // =============================================================================
@@ -399,12 +557,25 @@ bool Item::removeChild(int index) const
 }
 
 // =============================================================================
+// (public)
+bool Item::removeChild(const std::string &name, int index) const
+{
+    int index2 = childIndex(childAt(name, index));
+    if (m_definition->container(name).removeNode(m_node, index)) {
+        if (m_model) {
+            onItemRemoved(*this, index2);
+        }
+        return true;
+    }
+    return false;
+}
+
+// =============================================================================
 // (protected)
 void Item::initItemValueList() const
 {
     if (m_itemValueList.empty() && m_definition && !m_node.isNull()) {
-        std::vector<const ValueDefinition*> vList;
-        m_definition->getValueList(vList);
+        auto vList = m_definition->valueList();
         for (const ValueDefinition* vi: vList) {
             m_itemValueList.push_back(ItemValue(vi, m_node, this));
         }

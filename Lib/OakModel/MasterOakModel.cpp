@@ -44,7 +44,7 @@ MasterOakModel::MasterOakModel()
 std::string MasterOakModel::designFilePath() const
 {
     if (isNull()) { return std::string(); }
-    Item designItem = rootItem().firstChild(m_designModel.rootPKey<std::string>());
+    Item designItem = rootItem().firstChild(m_designModel.rootDefName());
     if (designItem.isNull()) { return std::string(); }
     std::string filePath;
     designItem.value(s_filePath).getValue(filePath);
@@ -56,7 +56,7 @@ std::string MasterOakModel::designFilePath() const
 bool MasterOakModel::loadDesignFilePath(const std::string& filePath)
 {
     if (isNull()) { return false; }
-    Item designItem = rootItem().firstChild(m_designModel.rootPKey<std::string>());
+    Item designItem = rootItem().firstChild(m_designModel.rootDefName());
     if (designItem.isNull()) { return false; }
     if (designItem.value(s_filePath).setValue(filePath)) {
         return m_designModel.loadXMLRootNode(filePath);
@@ -129,7 +129,7 @@ void MasterOakModel::generateDataNodeDefinition()
 void MasterOakModel::createMasterModel()
 {
     auto nodeMaster = NDB::Make(s_master);
-    auto nodeDesign = NDB::Make(m_designModel.rootPKey<std::string>());
+    auto nodeDesign = NDB::Make(m_designModel.rootDefName());
     auto nodeData = NDB::Make(s_data);
     auto nodeFilter = NDB::Make(s_filter);
 
@@ -172,7 +172,7 @@ void MasterOakModel::onRootItemChanged()
     std::string filePath;
 
     // Design model
-    Item designItem = item.childAt(m_designModel.rootPKey<std::string>(), 0);
+    Item designItem = item.childAt(m_designModel.rootDefName(), 0);
     if (!designItem.isNull()) {
         designItem.value(s_filePath).getValue(filePath);
         if (filePath.empty()) {
@@ -190,7 +190,7 @@ void MasterOakModel::onRootItemChanged()
         dataItem.value(s_filePath).getValue(filePath);
         if (filePath.empty()) {
             if (!m_dataModel.isDefinitionNull()) {
-                const std::string& dataRootKey = m_dataModel.rootPKey<std::string>();
+                const std::string& dataRootKey = m_dataModel.rootDefName();
                 if (dataItem.node().isXML()) {
                     XML::Element dataElement = dataItem.node().xmlNode();
                     XML::Element rootElement = dataElement.firstChild(dataRootKey);

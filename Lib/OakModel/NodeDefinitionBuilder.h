@@ -23,11 +23,10 @@ class NodeDefinitionBuilder
     NodeDefinitionBuilder() = delete;
 
 public:
-    template<typename T>
-    static NodeDefinitionSPtr Make(T name);
+    static NodeDefinitionSPtr Make(const std::string &name);
 
-    template<typename T1, typename T2>
-    static NodeDefinitionSPtr MakeRoot(T1 name, T2 derivedId);
+    template<typename T>
+    static NodeDefinitionSPtr MakeRoot(const std::string &name, T derivedId);
 
     template<typename T>
     static NodeDefinitionSPtr MakeDerived(NodeDefinitionSPtr derivedBase, T derivedId);
@@ -36,12 +35,10 @@ public:
     static bool addValueDef(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDef);
     static bool addValueDefAsKey(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDefKey);
     static bool addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDefDerivedId);
-    template<typename T>
-    static ValueDefinitionUPtr takeValueDef(NodeDefinitionSPtr nodeDef, T valueId);
+    static ValueDefinitionUPtr takeValueDef(NodeDefinitionSPtr nodeDef, const std::string &valueName);
 
     static bool addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef);
-    template<typename T>
-    static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, T name);
+    static ContainerDefinitionUPtr takeContainerDef(NodeDefinitionSPtr nodeDef, const std::string &name);
 
     static bool setDisplayName(NodeDefinitionSPtr nodeDef, const std::string& displayName);
 
@@ -71,33 +68,13 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-NodeDefinitionSPtr NodeDefinitionBuilder::Make(T name)
-{
-    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name);
-
-#ifdef XML_BACKEND
-    convert(nodeDef->m_tagName, name);
-    if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
-        // Clear the tag name if it is not valid
-        nodeDef->m_tagName.clear();
-    }
-#endif // XML_BACKEND
-
-    return nodeDef;
-}
-
-// =============================================================================
-// (public)
-template<typename T1, typename T2>
-NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(T1 name, T2 derivedId)
+NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(const std::string &name, T derivedId)
 {
     NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name, derivedId);
 
 #ifdef XML_BACKEND
-    convert(nodeDef->m_tagName, name);
-    if (!XML::Element::validateTagName(nodeDef->m_tagName)) {
-        // Clear the tag name if it is not valid
-        nodeDef->m_tagName.clear();
+    if (XML::Element::validateTagName(name)) {
+        nodeDef->m_tagName = name;
     }
 #endif // XML_BACKEND
 
@@ -143,50 +120,6 @@ NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerived(NodeDefinitionSPtr derived
 #endif // XML_BACKEND
 
     return derivedDefinition;
-}
-
-// =============================================================================
-// (public)
-template<typename T>
-ValueDefinitionUPtr NodeDefinitionBuilder::takeValueDef(NodeDefinitionSPtr nodeDef, T valueId)
-{
-    if (!nodeDef || valueId.isNull()) { return ValueDefinitionUPtr(); }
-
-    auto it = nodeDef->m_valueList.begin();
-    while (it != nodeDef->m_valueList.end()) {
-        if ((*it)->valueId() == valueId) {
-            ValueDefinitionUPtr movedValue(std::move(*it));
-            nodeDef->m_valueList.erase(it);
-            return std::move(movedValue);
-        }
-    }
-
-    return ValueDefinitionUPtr();
-}
-
-// =============================================================================
-// (public)
-template<typename T>
-ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, T name)
-{
-    if (!nodeDef || name.isNull()) { return ContainerDefinitionUPtr(); }
-
-    auto it = nodeDef->m_containerList.begin();
-    while (it != nodeDef->m_containerList.end()) {
-        if ((*it)->containerDefinition()->name().isEqual(name)) {
-            ContainerDefinitionUPtr movedContainer(std::move(*it));
-            nodeDef->m_containerList.erase(it);
-
-            // Clear the list of existing containers
-            if (nodeDef->m_containerGroup) {
-                nodeDef->m_containerGroup->updateContainerList();
-            }
-
-            return std::move(movedContainer);
-        }
-    }
-
-    return ContainerDefinitionUPtr();
 }
 
 typedef NodeDefinitionBuilder NDB;

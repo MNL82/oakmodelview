@@ -44,8 +44,8 @@ public:
     virtual ~ValueDefinition() {}
 
     const type_info& valueTypeId() const;
-    Variant valueTemplate() const;
-    VariantCRef valueId() const;
+    VariantCRef valueTemplate() const;
+    const std::string &name() const;
 
     bool isNull() const;
     ConversionSPtr defaultConversion() const;
@@ -59,6 +59,7 @@ public:
 
     virtual int compareValue(Node _node, VariantCRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
+    virtual bool hasValue(Node _node) const;
     virtual bool canGetValue(Node _node, VariantRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
     virtual bool getValue(Node _node, VariantRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
     virtual Variant value(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
@@ -69,6 +70,7 @@ public:
     virtual bool setValue(Node _node, VariantCRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     virtual bool hasDefaultValue() const;
+    virtual VariantCRef defaultValue() const;
     virtual bool getDefaultValue(VariantRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     // Service functions
@@ -80,7 +82,7 @@ public:
 protected:
     Variant m_valueTemplate;
     ValueSettings m_settings;
-    Variant m_valueId;
+    std::string m_name;
     Variant m_defaultValue;
     ConversionSPtr m_defaultConversion;
     std::vector<Variant> m_options;

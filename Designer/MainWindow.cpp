@@ -104,7 +104,7 @@ void MainWindow::createMasterModel()
     NDB::addValueDefAsDerivedId(nodeStep, VDB::MakeXML("", "", "Type", "Wash"));
 
     auto valueFlowrate = VDB::MakeXML(0.0, "Flowrate","");
-    VDB::setValueId(valueFlowrate, "Flow rate");
+    VDB::setName(valueFlowrate, "Flow rate");
     VDB::settings(valueFlowrate).setUnit("mL/min");
     NDB::addValueDef(nodeStep, std::move(valueFlowrate));
 
@@ -121,7 +121,7 @@ void MainWindow::createMasterModel()
     NDB::addValueDef(nodeStep, VDB::MakeXML(Bool(), "PumpWash","", Bool(true)));
 
     auto valuePctB = VDB::MakeXML(0.0, "pctB","");
-    VDB::setValueId(valuePctB, "%B");
+    VDB::setName(valuePctB, "%B");
     NDB::addValueDef(nodeStep, std::move(valuePctB));
 
     NDB::addValueDef(nodeStep, VDB::MakeXML(0.0, "CV",""));
