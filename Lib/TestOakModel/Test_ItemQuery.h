@@ -32,9 +32,13 @@ void test_ItemQuery()
 
     BOOST_CHECK(item_oakModel.childCount() == 2);
 
-    int count = QueryBase::MakeSPtr(item_oakModel)->children("model")->children("nodeDefinition")->count();
+    auto query = QueryBase::MakeSPtr(item_oakModel)->children("model")->children("nodeDefinition");
+    BOOST_CHECK(query->count() == 5);
 
-    BOOST_CHECK(count == 5);
+    std::vector<int> list = query->children("valueDefinition")->list<int>("value");
+    BOOST_CHECK(list.size() == 2);
+    BOOST_CHECK(list[0] == 34);
+    BOOST_CHECK(list[1] == -7);
 }
 
 test_suite* Test_ItemQuery()

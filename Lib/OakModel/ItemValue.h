@@ -52,6 +52,9 @@ public:
     bool getValue(T &value, bool useDefault = true) const;
 
     Variant value(bool useDefault = true) const;
+    template<typename T>
+    T value(bool useDefault = true) const;
+
     std::string toString(bool useDefault = true) const;
 
     template<typename T>
@@ -100,6 +103,15 @@ bool ItemValue::getValue(T &value, bool useDefault) const
 {
     assert(m_valueDefinition != nullptr);
     return m_valueDefinition->getValue(m_node, value, useDefault, true);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+T ItemValue::value(bool useDefault) const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->value<T>(m_node, useDefault, true);
 }
 
 // =============================================================================

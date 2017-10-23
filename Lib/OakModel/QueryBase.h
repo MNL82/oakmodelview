@@ -34,6 +34,9 @@ public:
 
     int count();
 
+    template<typename T>
+    std::vector<T> list(const std::string &valueName);
+
     static QueryBaseSPtr MakeSPtr(Item item);
 
 protected:
@@ -45,6 +48,22 @@ protected:
 
     QueryBaseWPtr m_thisWPtr;
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+std::vector<T> QueryBase::list(const std::string &valueName)
+{
+    std::vector<T> valueList;
+    if (!m_queryPtr) { return valueList; }
+
+    m_queryPtr->reset(m_item);
+    while(m_queryPtr->moveNext()) {
+        valueList.push_back(m_queryPtr->current().value(valueName).value<T>());
+    }
+
+    return valueList;
+}
 
 } // namespace Model
 } // namespace Oak

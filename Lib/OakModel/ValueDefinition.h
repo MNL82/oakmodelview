@@ -65,6 +65,9 @@ public:
     virtual Variant value(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
     virtual std::string toString(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
+    template<typename T>
+    T value(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+
     // TODO: Different error states
     virtual bool canSetValue(Node _node, VariantCRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
     virtual bool setValue(Node _node, VariantCRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
@@ -116,6 +119,16 @@ bool ValueDefinition::getOptions(std::vector<T>& options, bool allowConversion, 
         m_options.at(i).get(options[i], allowConversion, conversion.get());
     }
     return true;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+T ValueDefinition::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+{
+    T val;
+    getValue(_node, val, useDefault, allowConversion, conversion);
+    return std::move(val);
 }
 
 // =============================================================================
