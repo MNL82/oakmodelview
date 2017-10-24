@@ -11,6 +11,8 @@
 #include "Item.h"
 
 #include "OakModel.h"
+#include "QueryBase.h"
+#include "ServiceFunctions.h"
 
 #include <algorithm>
 
@@ -449,6 +451,8 @@ Item Item::cloneChild(int& index, Item cloneItem) const
         if (!item.isNull()) {
             m_model->onItemCloned(sourceParentItem, sourceIndex, *this, index);
         }
+        updateUniqueValues(item);
+
         return std::move(item);
     } else {
         return Item(cloneItem.m_definition, m_definition->containerGroup().cloneNode(m_node, index, cloneItem.m_node), m_model);
@@ -469,6 +473,8 @@ Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
         if (!item.isNull()) {
             onItemCloned(sourceParentItem, sourceIndex, *this, childIndex(item));
         }
+        updateUniqueValues(item);
+
         return std::move(item);
     } else {
         return Item(cloneItem.m_definition, m_definition->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
@@ -503,6 +509,8 @@ Item Item::moveChild(int& index, Item moveItem) const
         if (!item.isNull()) {
             m_model->onItemMoved(sourceParentItem, sourceIndex, *this, index);
         }
+        updateUniqueValues(item);
+
         return std::move(item);
     } else {
         return Item(moveItem.m_definition, m_definition->containerGroup().moveNode(m_node, index, moveItem.m_node), m_model);
@@ -523,6 +531,8 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
         if (!item.isNull()) {
             onItemMoved(sourceParentItem, sourceIndex, *this, childIndex(item));
         }
+        updateUniqueValues(item);
+
         return std::move(item);
     } else {
         return Item(moveItem.m_definition, m_definition->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
@@ -608,6 +618,36 @@ void Item::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Ite
 void Item::onItemRemoved(const Item &parentItem, int index) const
 {
     m_model->onItemRemoved(parentItem, index);
+}
+
+// =============================================================================
+// (protected)
+void Item::updateUniqueValues(Item item) const
+{
+    Model::Item::ValueIterator vIt = item.valueBegin();
+    Model::Item::ValueIterator vItEnd = item.valueEnd();
+    while (vIt != vItEnd) {
+        if (vIt->settings().required() &&
+            vIt->settings().unique() &&
+            vIt->hasDefaultValue()) {
+
+            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(item.definition()->name())->list<std::string>(vIt->name());
+            std::string value = vIt->value<std::string>();
+            if (count(valueList, value) == 1) {
+                return;
+            }
+
+            std::string defaultValue = vIt->defaultValue<std::string>();
+            value = defaultValue;
+            int i = 1;
+            while (contains(valueList, value)) {
+                value = defaultValue + "_" + std::to_string(i++);
+            }
+            vIt->setValue(value);
+        }
+
+        vIt++;
+    }
 }
 
 } // namespace Model

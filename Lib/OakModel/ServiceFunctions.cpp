@@ -201,13 +201,23 @@ bool compare(std::string s1, std::string s2, bool caseSensitive)
 
 // =============================================================================
 // (public)
-bool contains(const std::vector<const std::string *> &strList, const std::string &str)
+bool contains(const std::vector<std::string> &strList, const std::string &str)
 {
-    for (const std::string * s: strList)
+    return std::find(strList.begin(), strList.end(), str) != strList.end();
+}
+
+// =============================================================================
+// (public)
+int count(const std::vector<std::string> &strList, const std::string &str)
+{
+    auto it = std::find(strList.begin(), strList.end(), str);
+    int c = 0;
+    while (it != strList.end())
     {
-        if (*s == str) { return true; }
+        c++;
+        it = std::find(++it, strList.end(), str);
     }
-    return false;
+    return c;
 }
 
 // =============================================================================

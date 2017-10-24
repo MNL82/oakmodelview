@@ -129,6 +129,8 @@ protected:
     void onItemCloned(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
     void onItemRemoved(const Item& parentItem, int index) const;
 
+    void updateUniqueValues(Item item) const;
+
 protected:
     const NodeDefinition* m_definition;
     Node m_node;

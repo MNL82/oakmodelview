@@ -50,7 +50,7 @@ protected:
     Model::OakModel* m_model = nullptr;
 
     QStackedWidget* m_stackedWidget;
-    int initialWidgetCount;
+    int m_initialWidgetCount;
 
     std::vector<NodeEditorHandlerUPtr> m_editorList;
 };

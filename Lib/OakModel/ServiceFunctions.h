@@ -52,7 +52,8 @@ std::string toLower(const std::string &str);
 std::string fromDouble(double value, char f='g', int prec=6);
 
 bool compare(std::string s1, std::string s2, bool caseSensitive = true);
-bool contains(const std::vector<const std::string *> &strList, const std::string &str);
+bool contains(const std::vector<std::string> &strList, const std::string &str);
+int count(const std::vector<std::string> &strList, const std::string &str);
 
 // trim from start (in place)
 void ltrim(std::string &s);

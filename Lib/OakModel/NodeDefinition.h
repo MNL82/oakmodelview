@@ -247,8 +247,9 @@ protected:
 // Service functions
 // *****************************************************************************
 public:
-    virtual void onNodeCreated(Node _node) const;
     virtual void onNodeInserted(Node _node) const;
+    virtual void onNodeMoved(Node _node) const;
+    virtual void onNodeCloned(Node _node) const;
 // *****************************************************************************
 
     template<class... _Types> inline

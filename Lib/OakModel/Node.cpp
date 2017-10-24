@@ -89,7 +89,8 @@ void Node::clear()
         return;
 #ifdef XML_BACKEND
     case Type::XML:
-         m_xmlNode.clear();
+        m_xmlNode = XML::Element();
+        break;
 #endif // XML_BACKEND
     default:
         // m_type contains an unhandled type that needs to be implemented

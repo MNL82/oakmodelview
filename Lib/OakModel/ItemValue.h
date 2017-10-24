@@ -66,12 +66,15 @@ public:
     template<typename T>
     bool getDefaultValue(T &value) const;
 
+    template<typename T>
+    T defaultValue() const;
+
     //bool getOptions(std::vector<VariantCRef>& value) const;
 
     template<typename T>
     bool getOptions(std::vector<T>& value) const;
 
-    const ValueSettings& settings();
+    const ValueSettings& settings() const;
 
     static const ItemValue& emptyItemValue();
 
@@ -143,6 +146,17 @@ bool ItemValue::getDefaultValue(T &value) const
 {
     assert(m_valueDefinition != nullptr);
     return m_valueDefinition->getDefaultValue(value);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+T ItemValue::defaultValue() const
+{
+    assert(m_valueDefinition != nullptr);
+    T value;
+    m_valueDefinition->getDefaultValue(value);
+    return std::move(value);
 }
 
 // =============================================================================

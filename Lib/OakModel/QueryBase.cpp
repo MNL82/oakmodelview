@@ -11,6 +11,7 @@
 #include "QueryBase.h"
 
 #include "QueryChildren.h"
+#include "QueryParent.h"
 
 namespace Oak {
 namespace Model {
@@ -38,6 +39,14 @@ QueryBase::~QueryBase()
 QueryBaseSPtr QueryBase::children(const std::string nodeName)
 {
     add(new QueryChildren(nodeName));
+    return m_thisWPtr.lock();
+}
+
+// =============================================================================
+// (public)
+QueryBaseSPtr QueryBase::parent()
+{
+    add(new QueryParent());
     return m_thisWPtr.lock();
 }
 

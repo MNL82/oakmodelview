@@ -63,7 +63,7 @@ bool OakModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
     if (backendType == Node::Type::XML) {
         m_xmlDoc.clear();
         Node documentNode(m_xmlDoc.appendChild(m_rootItem.definition()->tagName()));
-        m_rootItem.definition()->onNodeCreated(documentNode);
+        m_rootItem.definition()->onNodeInserted(documentNode);
         setXMLRootNode(documentNode, setAsCurrent);
         return true;
     }

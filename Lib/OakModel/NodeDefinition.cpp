@@ -8,8 +8,12 @@
  * See accompanying file LICENSE in the root folder.
  */
 
+#include <algorithm>
+
 #include "NodeDefinition.h"
 #include "ValueDefinitionBuilder.h"
+#include "QueryBase.h"
+#include "ServiceFunctions.h"
 
 namespace Oak {
 namespace Model {
@@ -847,7 +851,7 @@ bool NodeDefinition::isParent(Node node, Node refNode, bool recursive) const
 
 // =============================================================================
 // (public)
-void NodeDefinition::onNodeCreated(Node _node) const
+void NodeDefinition::onNodeInserted(Node _node) const
 {
     // Get all containers also from derived nodes
     auto cList = containerList();
@@ -860,36 +864,43 @@ void NodeDefinition::onNodeCreated(Node _node) const
         }
     }
 
+    Item item(this, _node);
     auto vList = valueList();
     for (const ValueDefinition* vDef: vList)
     {
         if (vDef->settings().required() &&
             vDef->settings().unique() &&
             vDef->hasDefaultValue()) {
-            const NodeDefinition* pNodeDef;
-            Node pNode = parentNode(_node, &pNodeDef);
-            const ContainerDefinition &container = pNodeDef->container(_node);
 
-            std::vector<std::string> valueList;
-            Node nodeSibling = container.firstNode(pNode);
-            while (!nodeSibling.isNull()) {
-                if (vDef->hasValue(_node)) {
-                    valueList.push_back("");
-                    vDef->getValue(nodeSibling, valueList.back(), true, true, vDef->defaultConversion());
-                }
+            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(m_name)->list<std::string>(vDef->name());
+
+            std::string defaultValue = vDef->defaultValue().value<std::string>();
+            if (count(valueList, defaultValue) <= 1) {
+                vDef->setValue(_node, vDef->defaultValue());
+                return;
             }
-            std::string value = vDef->defaultValue().value<std::string>();
-            //Variant value(vDef->defaultValue());
 
-            //
+            std::string value;
+            int count = 1;
+            do {
+                value = defaultValue + "_" + std::to_string(count++);
+            } while (contains(valueList, value));
+
+            vDef->setValue(_node, value);
         }
-
     }
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::onNodeInserted(Node _node) const
+void NodeDefinition::onNodeMoved(Node _node) const
+{
+    UNUSED(_node);
+}
+
+// =============================================================================
+// (public)
+void NodeDefinition::onNodeCloned(Node _node) const
 {
     UNUSED(_node);
 }

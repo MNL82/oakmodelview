@@ -9,9 +9,11 @@
 SOURCES += \
     $$PWD/Query.cpp \
     $$PWD/QueryBase.cpp \
-    $$PWD/QueryChildren.cpp
+    $$PWD/QueryChildren.cpp \
+    $$PWD/QueryParent.cpp
 
 HEADERS += \
     $$PWD/Query.h \
     $$PWD/QueryBase.h \
-    $$PWD/QueryChildren.h
+    $$PWD/QueryChildren.h \
+    $$PWD/QueryParent.h

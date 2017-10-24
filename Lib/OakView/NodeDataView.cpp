@@ -40,7 +40,7 @@ NodeDataView::NodeDataView(QWidget* parent)
     layout->addWidget(m_stackedWidget);
     setLayout(layout);
 
-    initialWidgetCount = m_stackedWidget->count();
+    m_initialWidgetCount = m_stackedWidget->count();
 }
 
 // =============================================================================
@@ -92,7 +92,7 @@ void NodeDataView::clearEditorCash()
 {
     setCurrentWidget(0);
     m_editorList.clear();
-    for(int i = m_stackedWidget->count()-1; i >= initialWidgetCount; i--)
+    for(int i = m_stackedWidget->count()-1; i >= m_initialWidgetCount; i--)
     {
         QWidget* widget = m_stackedWidget->widget(i);
         m_stackedWidget->removeWidget(widget);
@@ -185,6 +185,8 @@ void NodeDataView::onItemValueChanged(const Model::Item &item, int valueIndex)
                 m_model->setCurrentItem(Model::Item(definition, node, m_model));
             }
         }
+        // Pass on the event to the current editor
+        getEditorHandler(item)->updateEditorValue(item.definition()->value(valueIndex).name());
     }
 }
 

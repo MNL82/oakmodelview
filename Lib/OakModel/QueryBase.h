@@ -31,6 +31,7 @@ public:
     ~QueryBase();
 
     QueryBaseSPtr children(const std::string nodeName);
+    QueryBaseSPtr parent();
 
     int count();
 

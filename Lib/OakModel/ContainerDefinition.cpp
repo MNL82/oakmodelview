@@ -378,19 +378,22 @@ bool ContainerDefinition::canInsertNode(Node _node, int &index) const
 // (public)
 Node ContainerDefinition::insertNode(Node _node, int &index) const
 {
+    Node newNode;
     if (canInsertNode(_node, index)) {
         switch (_node.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML: {
-            return m_elementListRef.insert(_node.xmlNode(), index);
-        }
+        case Node::Type::XML:
+            newNode = m_elementListRef.insert(_node.xmlNode(), index);
+            break;
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
             assert(false);
+            return newNode;
         }
     }
-    return Node();
+    m_containerDefinition->onNodeInserted(newNode);
+    return newNode;
 }
 
 // =============================================================================
@@ -414,19 +417,23 @@ bool ContainerDefinition::canCloneNode(Node _node, int &index, Node cloneNode) c
 // (public)
 Node ContainerDefinition::cloneNode(Node _node, int &index, Node cloneNode) const
 {
+    Node newNode;
     if (canCloneNode(_node, index, cloneNode)) {
         switch (_node.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML: {
-            return m_elementListRef.clone(_node.xmlNode(), index, cloneNode.xmlNode());
-        }
+        case Node::Type::XML:
+            newNode = m_elementListRef.clone(_node.xmlNode(), index, cloneNode.xmlNode());
+            break;
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
             assert(false);
+            return newNode;
         }
     }
-    return Node();
+
+    m_containerDefinition->onNodeCloned(newNode);
+    return newNode;
 }
 
 // =============================================================================
@@ -478,19 +485,23 @@ bool ContainerDefinition::canMoveNode(Node _node, int &index, Node moveNode) con
 // (public)
 Node ContainerDefinition::moveNode(Node _node, int &index, Node moveNode) const
 {
+    Node newNode;
     if (canMoveNode(_node, index, moveNode)) {
         switch (_node.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML: {
-            return m_elementListRef.move(_node.xmlNode(), index, moveNode.xmlNode());
-        }
+        case Node::Type::XML:
+            newNode = m_elementListRef.move(_node.xmlNode(), index, moveNode.xmlNode());
+            break;
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
             assert(false);
+            return newNode;
         }
     }
-    return Node();
+    m_containerDefinition->onNodeMoved(newNode);
+
+    return newNode;
 }
 
 // =============================================================================

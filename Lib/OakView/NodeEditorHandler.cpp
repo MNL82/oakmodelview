@@ -81,6 +81,13 @@ bool NodeEditorHandler::setNode(Model::Node node)
 
 // =============================================================================
 // (public)
+void NodeEditorHandler::updateEditorValue(const std::string &name)
+{
+    m_valueEditorMap[name]->updateEditorValue();
+}
+
+// =============================================================================
+// (public)
 void NodeEditorHandler::updateEditorValues()
 {
     foreach (ValueEditorHandler* vHandler, m_valueEditorMap) {

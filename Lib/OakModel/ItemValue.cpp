@@ -174,7 +174,7 @@ bool ItemValue::hasDefaultValue() const
 
 // =============================================================================
 // (public)
-const ValueSettings &ItemValue::settings()
+const ValueSettings &ItemValue::settings() const
 {
     assert(m_valueDefinition != nullptr);
     return m_valueDefinition->settings();

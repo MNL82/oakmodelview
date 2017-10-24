@@ -42,6 +42,7 @@ public:
 
     bool setNode(Model::Node node);
 
+    void updateEditorValue(const std::string &name);
     void updateEditorValues();
     void getEditorValues();
 
@@ -56,7 +57,7 @@ protected slots:
 protected:
     Model::Item m_item;
     QWidget* m_editor = nullptr;
-    QMap<Model::VariantCRef, ValueEditorHandler*> m_valueEditorMap;
+    QMap<std::string, ValueEditorHandler*> m_valueEditorMap;
     QMap<std::string, ContainerEditorHandler*> m_containerEditorMap;
 };
 
