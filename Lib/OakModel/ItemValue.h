@@ -41,6 +41,7 @@ public:
     bool isNodeNull() const;
 
     const std::string &name() const;
+    const std::string &displayName() const;
 
     const Node& node() const;
     const ValueDefinition* valueDefinition() const;

@@ -26,7 +26,7 @@ public:
     static NodeDefinitionSPtr Make(const std::string &name);
 
     template<typename T>
-    static NodeDefinitionSPtr MakeRoot(const std::string &name, T derivedId);
+    static NodeDefinitionSPtr MakeDerivedRoot(const std::string &name, T derivedId);
 
     template<typename T>
     static NodeDefinitionSPtr MakeDerived(NodeDefinitionSPtr derivedBase, T derivedId);
@@ -68,7 +68,7 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-NodeDefinitionSPtr NodeDefinitionBuilder::MakeRoot(const std::string &name, T derivedId)
+NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerivedRoot(const std::string &name, T derivedId)
 {
     NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name, derivedId);
 

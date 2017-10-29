@@ -92,6 +92,9 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
     nodeDef->derivedIdListAll(optionList);
     VDB::setOptions(valueDefDerivedId, optionList);
     VDB::settings(valueDefDerivedId).setOptionsOnly(true);
+    if (!valueDefDerivedId->hasDefaultValue()) {
+        VDB::setDefaultValue(valueDefDerivedId, nodeDef->derivedId());
+    }
 
     if (addValueDef(nodeDef, std::move(valueDefDerivedId))) {
         int index = nodeDef->valueCount()-1;

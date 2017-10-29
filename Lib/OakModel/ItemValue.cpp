@@ -119,6 +119,14 @@ const std::string &ItemValue::name() const
 
 // =============================================================================
 // (public)
+const std::string & ItemValue::displayName() const
+{
+    assert(m_valueDefinition != nullptr);
+    return m_valueDefinition->displayName();
+}
+
+// =============================================================================
+// (public)
 const Node& ItemValue::node() const
 {
     assert(m_valueDefinition != nullptr);

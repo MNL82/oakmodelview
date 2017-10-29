@@ -25,9 +25,9 @@ class ValueDefinitionBuilder
     ValueDefinitionBuilder() = delete;
 public:
     template<typename T>
-    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &valueName);
+    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &name, const std::string &displayName = std::string());
     template<typename T>
-    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &valueName, T defaultValue);
+    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &name, const std::string &displayName, T defaultValue);
 #ifdef XML_BACKEND
     template<typename T>
     static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef = "", const std::string& attributeName = "");
@@ -60,15 +60,16 @@ public:
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &valueName)
+ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &name, const std::string &displayName)
 {
     ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
-    valueDef->m_name = valueName;
+    valueDef->m_name = name;
+    valueDef->m_displayName = displayName;
     valueDef->m_defaultConversion = Conversion::globalDefault();
 
 #ifdef XML_BACKEND
-    if (XML::Element::validateTagName(valueName)) {
-        valueDef->m_valueRef = XML::ValueRef::MakeUPtr("", XML::ChildRef::MakeUPtr(valueName));
+    if (XML::Element::validateTagName(name)) {
+        valueDef->m_valueRef = XML::ValueRef::MakeUPtr("", XML::ChildRef::MakeUPtr(name));
     }
 #endif // XML_BACKEND
 
@@ -78,9 +79,9 @@ ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::str
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &valueName, T defaultValue)
+ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &name, const std::string &displayName, T defaultValue)
 {
-    auto vDef = Make(valueTemplate, valueName);
+    auto vDef = Make(valueTemplate, name, displayName);
     vDef->m_defaultValue = defaultValue;
     return std::move(vDef);
 }

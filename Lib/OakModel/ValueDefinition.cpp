@@ -87,6 +87,17 @@ const std::string &ValueDefinition::name() const
 
 // =============================================================================
 // (public)
+const std::string &ValueDefinition::displayName() const
+{
+    if (m_displayName.empty()) {
+        return m_name;
+    } else {
+        return m_displayName;
+    }
+}
+
+// =============================================================================
+// (public)
 bool ValueDefinition::isNull() const
 {
     return m_valueTemplate.witch() == 0;

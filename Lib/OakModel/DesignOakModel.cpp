@@ -169,7 +169,7 @@ void DesignOakModel::createDesignDefinition()
     // Setup node "Container"
     NDB::addValueDefAsKey(nodeContainer, VDB::Make(std::string(), s_displayName));
     NDB::addValueDef(nodeContainer, VDB::Make(0, s_minCount, 0));
-    NDB::addValueDef(nodeContainer, VDB::Make(0, s_maxCount, std::numeric_limits<int>::max()));
+    NDB::addValueDef(nodeContainer, VDB::Make(0, s_maxCount, std::string(), std::numeric_limits<int>::max()));
 
     setRootNodeDefinition(nodeDesign);
 }

@@ -25,8 +25,13 @@ std::string DesignStr::Container = "Container";
 
 // Value tag and attribute names
 std::string DesignStr::Name = "Name";
+std::string DesignStr::DisplayName = "DisplayName";
 std::string DesignStr::Key = "Key";
 std::string DesignStr::Type = "Type";
+
+std::string DesignStr::DerivedId = "DerivedId";
+std::string DesignStr::DerivedValue = "DerivedValue";
+std::string DesignStr::DerivedBase = "DerivedBase";
 
 // =============================================================================
 // (protected)
@@ -40,23 +45,47 @@ ModelDesignDefinition::ModelDesignDefinition()
 // (protected)
 void ModelDesignDefinition::createModelDesign()
 {
-    auto NodeDef = NDB::Make(DesignStr::Node);
-    NDB::addValueDefAsKey(NodeDef, VDB::MakeXML("", DesignStr::Name, "", "Noname"));
+    /************************** Node(Standard) **************************/
+    auto NodeDef = NDB::MakeDerivedRoot(DesignStr::Node, "Standard");
+    NDB::addValueDefAsKey(NodeDef, VDB::Make("", DesignStr::Name, "", "Noname"));
+    NDB::addValueDef(NodeDef, VDB::Make("", DesignStr::DisplayName, "Display Name"));
 
-    auto NameTypeDef = VDB::MakeXML("", DesignStr::Name, "Type", "String");
-    std::vector<std::string> optionsKyeTypes = {"String", "Number"};
-    VDB::setOptions(NameTypeDef, optionsKyeTypes);
-    NDB::addValueDef(NodeDef, std::move(NameTypeDef));
+    NDB::addValueDefAsDerivedId(NodeDef, VDB::Make(std::string(), DesignStr::Type));
 
     NDB::addContainerDef(sPtr(), CDB::Make(NodeDef));
 
-    auto ValueDef = NDB::Make(DesignStr::Value);
-    NDB::addValueDefAsKey(ValueDef, VDB::MakeXML("", "", DesignStr::Name , "Noname"));
+    /************************** Node(DerivedRoot) **************************/
+    auto NodeRootDef = NDB::MakeDerived(NodeDef, "DerivedRoot");
+    NDB::addValueDef(NodeRootDef, VDB::Make("", DesignStr::DerivedId, "Derived ID"));
+    NDB::addValueDef(NodeRootDef, VDB::Make("", DesignStr::DerivedValue, "Derived Value"));
+
+    /************************** Node(Rerived) **************************/
+    auto NodeDerivedDef = NDB::MakeDerived(NodeDef, "Derived");
+    NDB::addValueDef(NodeDerivedDef, VDB::Make("", DesignStr::DerivedBase, "Derived Base"));
+
+    /************************** Value(String) **************************/
+    auto ValueDef = NDB::MakeDerivedRoot(DesignStr::Value, "String");
+    NDB::addValueDefAsKey(ValueDef, VDB::Make("", DesignStr::Name, "", "Noname"));
+    NDB::addValueDef(ValueDef, VDB::Make("", DesignStr::DisplayName, "Display Name"));
+    NDB::addValueDefAsDerivedId(ValueDef, VDB::Make("", DesignStr::Type));
+
     NDB::addContainerDef(NodeDef, CDB::Make(ValueDef));
 
+    /************************** Value(Integer) **************************/
+    auto ValueDefInt = NDB::MakeDerived(ValueDef, "Integer");
+    NDB::addValueDef(ValueDefInt, VDB::Make(0, "Min", "", -std::numeric_limits<int>::max()));
+    NDB::addValueDef(ValueDefInt, VDB::Make(0, "Max", "", std::numeric_limits<int>::max()));
 
+    /************************** Value(Double) **************************/
+    auto ValueDefReal = NDB::MakeDerived(ValueDef, "Real");
+    NDB::addValueDef(ValueDefReal, VDB::Make(0.0, "Min", "", -std::numeric_limits<double>::max()));
+    NDB::addValueDef(ValueDefReal, VDB::Make(0.0, "Max", "", std::numeric_limits<double>::max()));
+
+    /************************** Container **************************/
     auto ContainerDef = NDB::Make(DesignStr::Container);
-    NDB::addValueDefAsKey(ContainerDef, VDB::MakeXML("", "", DesignStr::Name , "Noname"));
+    NDB::addValueDefAsKey(ContainerDef, VDB::Make("", DesignStr::Name, "", "Noname"));
+    NDB::addValueDef(ContainerDef, VDB::Make(0, "Min", "", 0));
+    NDB::addValueDef(ContainerDef, VDB::Make(0, "Max", "", std::numeric_limits<int>::max()));
     NDB::addContainerDef(NodeDef, CDB::Make(ContainerDef));
 }
 

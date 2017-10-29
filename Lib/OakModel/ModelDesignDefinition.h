@@ -25,8 +25,14 @@ public:
 
     // Value tag and attribute names
     static std::string Name;
+    static std::string DisplayName;
     static std::string Key;
     static std::string Type;
+
+
+    static std::string DerivedId;
+    static std::string DerivedValue;
+    static std::string DerivedBase;
 };
 
 class ModelDesignDefinition;

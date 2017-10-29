@@ -46,6 +46,7 @@ public:
     const type_info& valueTypeId() const;
     VariantCRef valueTemplate() const;
     const std::string &name() const;
+    const std::string &displayName() const;
 
     bool isNull() const;
     ConversionSPtr defaultConversion() const;
@@ -86,6 +87,7 @@ protected:
     Variant m_valueTemplate;
     ValueSettings m_settings;
     std::string m_name;
+    std::string m_displayName;
     Variant m_defaultValue;
     ConversionSPtr m_defaultConversion;
     std::vector<Variant> m_options;

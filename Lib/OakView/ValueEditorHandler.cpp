@@ -183,7 +183,7 @@ void ValueEditorHandler::createLabel()
 {
     if (m_label != nullptr) { return; }
 
-    m_label = new QLabel(QString::fromStdString(m_itemValue.name()));
+    m_label = new QLabel(QString::fromStdString(m_itemValue.displayName()));
     connect(m_label, SIGNAL(destroyed(QObject*)), this, SLOT(onLabelDestroyed()));
 
     updateLabelValue();
@@ -206,6 +206,7 @@ void ValueEditorHandler::createEditor()
 
     m_editor = new QWidget();
     QHBoxLayout* layout = new QHBoxLayout(m_editor);
+    layout->setMargin(0);
 
     if (valueDef->valueTypeId() == typeid(Model::Bool)) {
         QCheckBox* checkBox = new QCheckBox();

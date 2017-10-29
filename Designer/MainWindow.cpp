@@ -99,7 +99,7 @@ void MainWindow::createMasterModel()
 
     NDB::addValueDef(nodeColumn, VDB::MakeXML("", "ColumnPosition", ""));
 
-    auto nodeStep = NDB::MakeRoot("Step", "");
+    auto nodeStep = NDB::MakeDerivedRoot("Step", "");
     NDB::addValueDefAsKey(nodeStep, VDB::MakeXML("", "", "Name", "Noname"));
     NDB::addValueDefAsDerivedId(nodeStep, VDB::MakeXML("", "", "Type", "Wash"));
 

@@ -133,6 +133,7 @@ void NodeEditorHandler::createEditor()
 
     m_editor = new QWidget();
     QGridLayout* layout = new QGridLayout();
+    layout->setSpacing(6);
 
     int row = 0;
 
