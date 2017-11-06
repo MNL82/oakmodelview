@@ -36,7 +36,7 @@ public:
     int count();
 
     template<typename T>
-    std::vector<T> list(const std::string &valueName);
+    std::vector<T> toList(const std::string &valueName);
 
     static QueryBaseSPtr MakeSPtr(Item item);
 
@@ -53,7 +53,7 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-std::vector<T> QueryBase::list(const std::string &valueName)
+std::vector<T> QueryBase::toList(const std::string &valueName)
 {
     std::vector<T> valueList;
     if (!m_queryPtr) { return valueList; }

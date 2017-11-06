@@ -872,7 +872,7 @@ void NodeDefinition::onNodeInserted(Node _node) const
             vDef->settings().unique() &&
             vDef->hasDefaultValue()) {
 
-            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(m_name)->list<std::string>(vDef->name());
+            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(m_name)->toList<std::string>(vDef->name());
 
             std::string defaultValue = vDef->defaultValue().value<std::string>();
             if (count(valueList, defaultValue) <= 1) {

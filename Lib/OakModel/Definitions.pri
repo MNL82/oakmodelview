@@ -13,6 +13,7 @@ SOURCES += \
     $$PWD/ContainerDefinition.cpp \
     $$PWD/NodeDefinition.cpp \
     $$PWD/ValueDefinition.cpp \
+    $$PWD/ValueOptions.cpp \
     $$PWD/ValueListDefinition.cpp \
     $$PWD/ModelDesignDefinition.cpp
 
@@ -23,5 +24,6 @@ HEADERS += \
     $$PWD/ContainerDefinition.h \
     $$PWD/NodeDefinition.h \
     $$PWD/ValueDefinition.h \
+    $$PWD/ValueOptions.h \
     $$PWD/ValueListDefinition.h \
     $$PWD/ModelDesignDefinition.h

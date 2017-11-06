@@ -42,7 +42,7 @@ FORMS    += MainWindow.ui
 
 
 CONFIG(debug, debug|release) {
-    TARGET = testd
+    TARGET = OakModelDesignerd
     win32:POST_TARGETDEPS = \
         ../Lib/OakXMLd.lib \
         ../Lib/OakModeld.lib \
@@ -54,7 +54,7 @@ CONFIG(debug, debug|release) {
     OBJECTS_DIR = ./debug
 
 } else {
-    TARGET = test
+    TARGET = OakModelDesigner
     win32:POST_TARGETDEPS = \
         ../Lib/OakXML.lib \
         ../Lib/OakModel.lib \

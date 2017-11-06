@@ -631,7 +631,7 @@ void Item::updateUniqueValues(Item item) const
             vIt->settings().unique() &&
             vIt->hasDefaultValue()) {
 
-            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(item.definition()->name())->list<std::string>(vIt->name());
+            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(item.definition()->name())->toList<std::string>(vIt->name());
             std::string value = vIt->value<std::string>();
             if (count(valueList, value) == 1) {
                 return;

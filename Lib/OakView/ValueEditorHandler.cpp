@@ -17,6 +17,7 @@
 #include <QHBoxLayout>
 #include <QCheckBox>
 
+#include "ValueOptions.h"
 #include "ServiceFunctions.h"
 
 namespace Oak {
@@ -213,7 +214,7 @@ void ValueEditorHandler::createEditor()
         checkBox->setObjectName("value");
         connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onEditingFinished()));
         layout->addWidget(checkBox, 1);
-    } else if (valueDef->hasOptions()) {
+    } else if (valueDef->options().isUsed()) {
         QComboBox* comboBox = new QComboBox();
         comboBox->setObjectName("value");
         connect(comboBox, SIGNAL(editTextChanged(QString)), this, SLOT(onValueEdited()));

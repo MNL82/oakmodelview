@@ -10,6 +10,7 @@
 
 #include "ValueDefinition.h"
 
+#include "ValueOptions.h"
 #include "XMLChildRef.h"
 
 #include "assert.h"
@@ -24,7 +25,7 @@ ValueDefinition ValueDefinition::s_emptyDefinition = ValueDefinition(InvalidVari
 // =============================================================================
 // (public)
 ValueDefinition::ValueDefinition(VariantCRef valueTemplate)
-    : m_valueTemplate(valueTemplate)
+    : m_valueTemplate(valueTemplate), m_options(nullptr)
 {
 
 }
@@ -37,6 +38,9 @@ ValueDefinition::ValueDefinition(const ValueDefinition &copy)
     m_defaultValue = copy.m_defaultValue;
     m_name = copy.m_name;
     m_defaultConversion = copy.m_defaultConversion;
+    if (m_options) {
+        m_options = new ValueOptions(*copy.m_options);
+    }
 
 #ifdef XML_BACKEND
     m_valueRef = copy.m_valueRef->copy();
@@ -51,6 +55,8 @@ ValueDefinition::ValueDefinition(ValueDefinition&& move)
     m_defaultValue = std::move(move.m_defaultValue);
     m_name = std::move(move.m_name);
     m_defaultConversion = move.m_defaultConversion;
+    m_options = move.m_options;
+    move.m_options = nullptr;
 
 #ifdef XML_BACKEND
     m_valueRef = std::move(move.m_valueRef);
@@ -62,6 +68,16 @@ ValueDefinition::ValueDefinition(ValueDefinition&& move)
 ValueDefinitionUPtr ValueDefinition::copy() const
 {
     return MakeUPtr(*this);
+}
+
+// =============================================================================
+// (public)
+ValueDefinition::~ValueDefinition()
+{
+    if (m_options) {
+        delete m_options;
+        m_options = nullptr;
+    }
 }
 
 // =============================================================================
@@ -110,6 +126,8 @@ ConversionSPtr ValueDefinition::defaultConversion() const
     return m_defaultConversion;
 }
 
+// =============================================================================
+// (public)
 const ValueSettings& ValueDefinition::settings() const
 {
     return m_settings;
@@ -117,22 +135,13 @@ const ValueSettings& ValueDefinition::settings() const
 
 // =============================================================================
 // (public)
-bool ValueDefinition::hasOptions() const
+const ValueOptions &ValueDefinition::options() const
 {
-    return !m_options.empty();
-}
-
-// =============================================================================
-// (public)
-bool ValueDefinition::getOptions(std::vector<VariantCRef>& options) const
-{
-    options.clear();
-    if (m_options.empty()) { return false; }
-
-    for (const auto& option: m_options) {
-        options.push_back(option);
+    if (m_options) {
+        return *m_options;
+    } else {
+        return ValueOptions::empty();
     }
-    return true;
 }
 
 // =============================================================================

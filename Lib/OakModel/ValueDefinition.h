@@ -24,6 +24,8 @@
 namespace Oak {
 namespace Model {
 
+class ValueOptions;
+
 class ValueDefinition;
 typedef std::unique_ptr<ValueDefinition> ValueDefinitionUPtr;
 typedef std::unique_ptr<ValueDefinition> ValueDefUPtr;
@@ -41,7 +43,7 @@ public:
 
     virtual ValueDefinitionUPtr copy() const;
 
-    virtual ~ValueDefinition() {}
+    virtual ~ValueDefinition();
 
     const type_info& valueTypeId() const;
     VariantCRef valueTemplate() const;
@@ -53,10 +55,7 @@ public:
 
     const ValueSettings& settings() const;
 
-    bool hasOptions() const;
-    template<typename T>
-    bool getOptions(std::vector<T>& options, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    bool getOptions(std::vector<VariantCRef>& options) const;
+    const ValueOptions &options() const;
 
     virtual int compareValue(Node _node, VariantCRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
@@ -90,7 +89,9 @@ protected:
     std::string m_displayName;
     Variant m_defaultValue;
     ConversionSPtr m_defaultConversion;
-    std::vector<Variant> m_options;
+    ValueOptions *m_options;
+    //std::vector<Variant> m_options;
+
 
 #ifdef XML_BACKEND
     XML::ValueRefUPtr m_valueRef;
@@ -105,23 +106,6 @@ protected:
 
     friend class ValueDefinitionBuilder;
 };
-
-// =============================================================================
-// (public)
-template<typename T>
-bool ValueDefinition::getOptions(std::vector<T>& options, bool allowConversion, ConversionSPtr conversion) const
-{
-    options.resize(m_options.size());
-    if (m_options.empty()) { return false; }
-
-    if (!conversion) { conversion = m_defaultConversion; }
-
-    for (int i = 0; i < m_options.size(); i++)
-    {
-        m_options.at(i).get(options[i], allowConversion, conversion.get());
-    }
-    return true;
-}
 
 // =============================================================================
 // (public)

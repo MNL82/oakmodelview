@@ -13,6 +13,7 @@
 #include "ValueDefinition.h"
 #include "XMLRefFactory.h"
 #include "XMLValueRef.h"
+#include "ValueOptions.h"
 
 namespace Oak {
 namespace Model {
@@ -130,7 +131,10 @@ template<typename T>
 static bool ValueDefinitionBuilder::addOption(ValueDefinition &valueDef, T option)
 {
     if (valueDef.m_valueTemplate.isBaseTypeEqual(option)) {
-        valueDef.m_options.push_back(option);
+        if (!valueDef.m_options) {
+            valueDef.m_options = new ValueOptions();
+        }
+        valueDef.m_options->m_options.push_back(option);
         return true;
     }
     return false;
@@ -142,10 +146,13 @@ template<typename T>
 static bool ValueDefinitionBuilder::setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
 {
     if (!options.empty() && valueDef->m_valueTemplate.isBaseTypeEqual(options.front())) {
-        valueDef->m_options.clear();
+        if (!valueDef->m_options) {
+            valueDef->m_options = new ValueOptions();
+        }
+        valueDef->m_options->m_options.clear();
         for (const auto& option: options)
         {
-            valueDef->m_options.push_back(option);
+            valueDef->m_options->m_options.push_back(option);
         }
         return true;
     }

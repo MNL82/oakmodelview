@@ -23,24 +23,19 @@ include(Builders.pri)
 include(Reference.pri)
 include(Models.pri)
 include(Query.pri)
+include(Items.pri)
 
 SOURCES += \
     Conversion.cpp \
     ServiceFunctions.cpp \
     Node.cpp \
-    Item.cpp \
-    ItemValue.cpp \
-    CallbackFunctions.cpp \
-    InputOptions.cpp
+    CallbackFunctions.cpp
 
 HEADERS += \
     Conversion.h \
     ServiceFunctions.h \
     Node.h \
-    Item.h \
-    ItemValue.h \
-    CallbackFunctions.h \
-    InputOptions.h
+    CallbackFunctions.h
 
 CONFIG(debug, debug|release) {
     TARGET = ../../OakModeld
