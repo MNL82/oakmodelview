@@ -160,7 +160,7 @@ void DesignOakModel::createDesignDefinition()
     NDB::addValueDefAsKey(nodeValue, VDB::MakeXML(std::string(), std::string(), s_displayName));
     ValueDefinitionUPtr valueType = VDB::Make(std::string(), s_type);
     std::vector<std::string> options = {s_string, s_integer, s_decimal};
-    VDB::setOptions(valueType, options);
+    VDB::setStaticOptions(valueType, options);
     VDB::settings(valueType).setOptionsOnly(true);
     NDB::addValueDef(nodeValue, std::move(valueType));
     NDB::addValueDef(nodeValue, VDB::Make(std::string(), s_tagName));

@@ -112,7 +112,7 @@ NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerived(NodeDefinitionSPtr derived
     derivedDefinition->m_derivedIdValueDefIndex = derivedBase->m_derivedIdValueDefIndex;
 
     if (derivedBase->hasDerivedId()) {
-        VDB::addOption(derivedBase->derivedIdValueDef(), derivedId);
+        VDB::addStaticOption(derivedBase->derivedIdValueDef(), derivedId);
     }
 
 #ifdef XML_BACKEND

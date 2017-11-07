@@ -166,7 +166,7 @@ template<typename T>
 bool ItemValue::getOptions(std::vector<T>& value) const
 {
     assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->options().getOptions(value);
+    return m_valueDefinition->options().getOptions(value, m_item);
 }
 
 // =============================================================================

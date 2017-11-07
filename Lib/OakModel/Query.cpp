@@ -80,9 +80,9 @@ bool Query::moveNext()
 
 // =============================================================================
 // (public)
-const Item& Query::current() const
+const Item& Query::current(bool recursive) const
 {
-    if (m_childQuery) {
+    if (recursive && m_childQuery) {
         return m_childQuery->current();
     }
     return m_currentItem;
@@ -97,6 +97,13 @@ void Query::add(Query *query)
     } else {
         m_childQuery = query;
     }
+}
+
+// =============================================================================
+// (public)
+Query *Query::childQuery()
+{
+    return m_childQuery;
 }
 
 } // namespace Model

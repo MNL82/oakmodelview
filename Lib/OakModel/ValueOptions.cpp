@@ -34,7 +34,7 @@ ValueOptions::ValueOptions(const ValueOptions &copy)
 // (public)
 bool ValueOptions::isUsed() const
 {
-    return !m_options.empty();
+    return !m_options.empty() || m_query;
 }
 
 // =============================================================================

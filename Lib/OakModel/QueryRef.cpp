@@ -8,7 +8,8 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QueryBase.h"
+
+#include "QueryRef.h"
 
 #include "QueryChildren.h"
 #include "QueryParent.h"
@@ -19,15 +20,14 @@ namespace Model {
 
 // =============================================================================
 // (protected)
-QueryBase::QueryBase(Item item)
-    : m_item(item)
+QueryRef::QueryRef()
 {
 
 }
 
 // =============================================================================
 // (public)
-QueryBase::~QueryBase()
+QueryRef::~QueryRef()
 {
     if (m_queryPtr) {
         delete m_queryPtr;
@@ -37,7 +37,15 @@ QueryBase::~QueryBase()
 
 // =============================================================================
 // (public)
-QueryBaseSPtr QueryBase::children(const std::string nodeName)
+QueryRefSPtr QueryRef::setValueName(const std::string &valueName)
+{
+    m_valueName = valueName;
+    return m_thisWPtr.lock();
+}
+
+// =============================================================================
+// (public)
+QueryRefSPtr QueryRef::children(const std::string nodeName)
 {
     add(new QueryChildren(nodeName));
     return m_thisWPtr.lock();
@@ -45,7 +53,7 @@ QueryBaseSPtr QueryBase::children(const std::string nodeName)
 
 // =============================================================================
 // (public)
-QueryBaseSPtr QueryBase::parent()
+QueryRefSPtr QueryRef::parent()
 {
     add(new QueryParent());
     return m_thisWPtr.lock();
@@ -53,7 +61,7 @@ QueryBaseSPtr QueryBase::parent()
 
 // =============================================================================
 // (public)
-QueryBaseSPtr QueryBase::ignore()
+QueryRefSPtr QueryRef::ignore()
 {
     add(new QueryIgnore());
     return m_thisWPtr.lock();
@@ -61,11 +69,11 @@ QueryBaseSPtr QueryBase::ignore()
 
 // =============================================================================
 // (public)
-int QueryBase::count()
+int QueryRef::count(const Item &item)
 {
     if (!m_queryPtr) { return -1; }
 
-    m_queryPtr->reset(m_item);
+    m_queryPtr->reset(item);
     int count = 0;
     while(m_queryPtr->moveNext()) {
         count++;
@@ -74,17 +82,32 @@ int QueryBase::count()
 }
 
 // =============================================================================
-// (public static)
-QueryBaseSPtr QueryBase::MakeSPtr(Item item)
+// (public)
+std::vector<Item> QueryRef::toItemList(Item item)
 {
-    QueryBaseSPtr sPtr = QueryBaseSPtr(new QueryBase(item));
+    std::vector<Item> itemList;
+    if (!m_queryPtr) { return itemList; }
+
+    m_queryPtr->reset(item);
+    while(m_queryPtr->moveNext()) {
+        itemList.push_back(m_queryPtr->current());
+    }
+
+    return itemList;
+}
+
+// =============================================================================
+// (public static)
+QueryRefSPtr QueryRef::MakeSPtr()
+{
+    QueryRefSPtr sPtr = QueryRefSPtr(new QueryRef());
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
 
 // =============================================================================
 // (protected)
-void QueryBase::add(Query *query)
+void QueryRef::add(Query *query)
 {
     if (m_queryPtr) {
         m_queryPtr->add(query);

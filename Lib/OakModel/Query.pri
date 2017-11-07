@@ -10,10 +10,14 @@ SOURCES += \
     $$PWD/Query.cpp \
     $$PWD/QueryBase.cpp \
     $$PWD/QueryChildren.cpp \
-    $$PWD/QueryParent.cpp
+    $$PWD/QueryParent.cpp \
+    $$PWD/QueryRef.cpp \
+    $$PWD/QueryIgnore.cpp
 
 HEADERS += \
     $$PWD/Query.h \
     $$PWD/QueryBase.h \
     $$PWD/QueryChildren.h \
-    $$PWD/QueryParent.h
+    $$PWD/QueryParent.h \
+    $$PWD/QueryRef.h \
+    $$PWD/QueryIgnore.h

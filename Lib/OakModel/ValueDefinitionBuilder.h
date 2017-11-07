@@ -44,10 +44,13 @@ public:
     static bool setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion);
 
     template<typename T>
-    static bool addOption(ValueDefinition &valueDef, T option);
+    static bool addStaticOption(ValueDefinition &valueDef, T option);
 
     template<typename T>
-    static bool setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options);
+    static bool setStaticOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options);
+
+    static bool setQueryOptions(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef);
+    static bool setQueryOptionsExcluded(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef);
 
     static ValueSettings& settings(const ValueDefinitionUPtr& valueDef);
 
@@ -128,7 +131,7 @@ static bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& v
 // =============================================================================
 // (public)
 template<typename T>
-static bool ValueDefinitionBuilder::addOption(ValueDefinition &valueDef, T option)
+static bool ValueDefinitionBuilder::addStaticOption(ValueDefinition &valueDef, T option)
 {
     if (valueDef.m_valueTemplate.isBaseTypeEqual(option)) {
         if (!valueDef.m_options) {
@@ -143,7 +146,7 @@ static bool ValueDefinitionBuilder::addOption(ValueDefinition &valueDef, T optio
 // =============================================================================
 // (public)
 template<typename T>
-static bool ValueDefinitionBuilder::setOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
+static bool ValueDefinitionBuilder::setStaticOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
 {
     if (!options.empty() && valueDef->m_valueTemplate.isBaseTypeEqual(options.front())) {
         if (!valueDef->m_options) {

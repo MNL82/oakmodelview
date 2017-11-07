@@ -90,7 +90,7 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
     //
     std::vector<VariantCRef> optionList;
     nodeDef->derivedIdListAll(optionList);
-    VDB::setOptions(valueDefDerivedId, optionList);
+    VDB::setStaticOptions(valueDefDerivedId, optionList);
     VDB::settings(valueDefDerivedId).setOptionsOnly(true);
     if (!valueDefDerivedId->hasDefaultValue()) {
         VDB::setDefaultValue(valueDefDerivedId, nodeDef->derivedId());

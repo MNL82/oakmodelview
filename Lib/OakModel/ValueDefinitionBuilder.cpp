@@ -40,6 +40,34 @@ bool ValueDefinitionBuilder::setDefaultConversion(const ValueDefinitionUPtr& val
 
 // =============================================================================
 // (public)
+bool ValueDefinitionBuilder::setQueryOptions(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef)
+{
+    if (!valueDef) { return false; }
+
+    if (!valueDef->m_options) {
+        valueDef->m_options = new ValueOptions();
+    }
+    valueDef->m_options->m_query = queryRef;
+
+    return true;
+}
+
+// =============================================================================
+// (public)
+bool ValueDefinitionBuilder::setQueryOptionsExcluded(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef)
+{
+    if (!valueDef) { return false; }
+
+    if (!valueDef->m_options) {
+        valueDef->m_options = new ValueOptions();
+    }
+    valueDef->m_options->m_queryExcluded = queryRef;
+
+    return true;
+}
+
+// =============================================================================
+// (public)
 ValueSettings &ValueDefinitionBuilder::settings(const ValueDefinitionUPtr &valueDef)
 {
     return valueDef->m_settings;

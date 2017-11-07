@@ -15,53 +15,59 @@
 namespace Oak {
 namespace Model {
 
-class QueryBase;
-typedef std::shared_ptr<QueryBase> QueryBaseSPtr;
-typedef std::weak_ptr<QueryBase> QueryBaseWPtr;
+class QueryRef;
+typedef std::shared_ptr<QueryRef> QueryRefSPtr;
+typedef std::weak_ptr<QueryRef> QueryRefWPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QueryBase
+class QueryRef
 {
 protected:
-    QueryBase(Item item);
+    QueryRef();
 
 public:
-    ~QueryBase();
+    ~QueryRef();
 
-    QueryBaseSPtr children(const std::string nodeName);
-    QueryBaseSPtr parent();
-    QueryBaseSPtr ignore();
+    QueryRefSPtr setValueName(const std::string &valueName);
 
-    int count();
+    QueryRefSPtr children(const std::string nodeName);
+    QueryRefSPtr parent();
+    QueryRefSPtr ignore();
+
+    int count(const Item &item);
 
     template<typename T>
-    std::vector<T> toList(const std::string &valueName);
+    std::vector<T> toValueList(Item item);
 
-    static QueryBaseSPtr MakeSPtr(Item item);
+    std::vector<Item> toItemList(Item item);
+
+    static QueryRefSPtr MakeSPtr();
 
 protected:
     void add(Query * query);
 
 protected:
-    Item m_item;
+    std::string m_valueName;
     Query *m_queryPtr = nullptr;
 
-    QueryBaseWPtr m_thisWPtr;
+    QueryRefWPtr m_thisWPtr;
 };
 
 // =============================================================================
 // (public)
 template<typename T>
-std::vector<T> QueryBase::toList(const std::string &valueName)
+std::vector<T> QueryRef::toValueList(Item item)
 {
+    assert(!m_valueName.empty());
+
     std::vector<T> valueList;
     if (!m_queryPtr) { return valueList; }
 
-    m_queryPtr->reset(m_item);
+    m_queryPtr->reset(item);
     while(m_queryPtr->moveNext()) {
-        valueList.push_back(m_queryPtr->current().value(valueName).value<T>());
+        valueList.push_back(m_queryPtr->current().value(m_valueName).value<T>());
     }
 
     return valueList;

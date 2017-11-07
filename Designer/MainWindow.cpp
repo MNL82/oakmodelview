@@ -110,12 +110,12 @@ void MainWindow::createMasterModel()
 
     auto valueInletA = VDB::MakeXML("", "InletA", "", "A1");
     std::vector<std::string> optionsA = {"A1","A2","A3","A4","A5","A6","A7","A8"};
-    VDB::setOptions(valueInletA, optionsA);
+    VDB::setStaticOptions(valueInletA, optionsA);
     NDB::addValueDef(nodeStep, std::move(valueInletA));
 
     auto valueInletB = VDB::MakeXML("", "InletB", "", "B1");
     std::vector<std::string> optionsB = {"B1","B2","B3","B4","B5","B6","B7","B8"};
-    VDB::setOptions(valueInletB, optionsB);
+    VDB::setStaticOptions(valueInletB, optionsB);
     NDB::addValueDef(nodeStep, std::move(valueInletB));
 
     NDB::addValueDef(nodeStep, VDB::MakeXML(Bool(), "PumpWash","", Bool(true)));
