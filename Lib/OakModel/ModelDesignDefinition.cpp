@@ -83,7 +83,7 @@ void ModelDesignDefinition::createModelDesign()
     /************************** Container **************************/
     auto ContainerDef = NDB::Make("Container");
     auto cNameValueDef = VDB::Make("", "Name", "", "Noname");
-    VDB::setQueryOptions(cNameValueDef, QueryRef::MakeSPtr()->parent()->ignore()->parent()->children("Node")->setValueName("Name"));
+    VDB::setQueryOptions(cNameValueDef, QueryRef::MakeSPtr()->parent()->parent()->children("Node")->setValueName("Name"));
     VDB::setQueryOptionsExcluded(cNameValueDef, QueryRef::MakeSPtr()->ignore()->parent()->children("Container")->setValueName("Name"));
     NDB::addValueDefAsKey(ContainerDef, std::move(cNameValueDef));
     NDB::addValueDef(ContainerDef, VDB::Make(0, "Min", "", 0));
