@@ -13,6 +13,8 @@
 #include <assert.h>
 
 #include "NodeDefinition.h"
+#include "Item.h"
+#include "ValueOptions.h"
 
 namespace Oak {
 namespace Model {
@@ -364,13 +366,19 @@ bool ContainerDefinition::canInsertNode(Node _node, int &index) const
     int count = nodeCount(_node);
     if (count < 0) { return false; }
 
+    // Check if there are room for one more child node
     if (count >= maxCount()) { return false; }
 
+    // Check if a unique options only list do not have any options left
+    if (!checkUniqueOptionValues(_node)) { return false; }
+
+    // if index is -1 then the child node is added to the end
     if (index == -1) {
         index = count;
         return true;
     }
 
+    // Check if the index is out of bounds
     return index <= count;
 }
 
@@ -548,6 +556,33 @@ const ContainerDefinition &ContainerDefinition::emptyChildNodeDefinition()
 {
     static ContainerDefinition emptyChild;
     return emptyChild;
+}
+
+// =============================================================================
+// (public)
+bool ContainerDefinition::checkUniqueOptionValues(Node _node) const
+{
+    // Check if a unique options only list do not have any options left
+    auto vList = m_containerDefinition->valueList();
+    for (const ValueDefinition* vDef: vList)
+    {
+        if (vDef->settings().unique() &&
+            vDef->options().isUsed() &&
+            vDef->settings().optionsOnly()) {
+            Node firstSibling = firstNode(_node);
+            if (firstSibling.isNull()) {
+                break;
+            }
+            Item item(m_containerDefinition.get(), firstSibling);
+            std::vector<std::string> optionList;
+            if (vDef->options().getOptions(optionList, &item)) {
+                if (optionList.size() <= 1) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 } // namespace Model

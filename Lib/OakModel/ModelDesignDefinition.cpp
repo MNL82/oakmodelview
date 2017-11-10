@@ -48,6 +48,7 @@ void ModelDesignDefinition::createModelDesign()
 {
     /************************** Node(Standard) **************************/
     auto NodeDef = NDB::MakeDerivedRoot("Node", "Standard");
+    NDB::setDisplayName(NodeDef, "Node");
     NDB::addValueDefAsKey(NodeDef, VDB::Make("", "Name", "", "Noname"));
     NDB::addValueDef(NodeDef, VDB::Make("", "DisplayName", "Display Name"));
     NDB::addValueDefAsDerivedId(NodeDef, VDB::Make(std::string(), "Type"));
@@ -82,7 +83,7 @@ void ModelDesignDefinition::createModelDesign()
 
     /************************** Container **************************/
     auto ContainerDef = NDB::Make("Container");
-    auto cNameValueDef = VDB::Make("", "Name", "", "Noname");
+    auto cNameValueDef = VDB::Make("", "Name");
     VDB::setQueryOptions(cNameValueDef, QueryRef::MakeSPtr()->parent()->parent()->children("Node")->setValueName("Name"));
     VDB::setQueryOptionsExcluded(cNameValueDef, QueryRef::MakeSPtr()->ignore()->parent()->children("Container")->setValueName("Name"));
     VDB::settings(cNameValueDef).setOptionsOnly(true);

@@ -872,12 +872,6 @@ void NodeDefinition::onNodeInserted(Node _node) const
             vDef->settings().unique()) {
             std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->ignore()->parent()->children(m_name)->toList<std::string>(vDef->name());
 
-            std::string defaultValue = vDef->defaultValue().value<std::string>();
-            if (std::find(valueList.begin(), valueList.end(), defaultValue) == valueList.end()) {
-                vDef->setValue(_node, vDef->defaultValue());
-                return;
-            }
-
             if (vDef->options().isUsed() && vDef->settings().optionsOnly()) {
                 std::vector<std::string> optionList;
                 if (vDef->options().getOptions(optionList, &item)) {
@@ -889,6 +883,12 @@ void NodeDefinition::onNodeInserted(Node _node) const
 
                 }
             } else if (vDef->hasDefaultValue()) {
+                std::string defaultValue = vDef->defaultValue().value<std::string>();
+                if (std::find(valueList.begin(), valueList.end(), defaultValue) == valueList.end()) {
+                    vDef->setValue(_node, vDef->defaultValue());
+                    return;
+                }
+
                 std::string value;
                 int count = 1;
                 do {

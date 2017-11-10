@@ -142,6 +142,9 @@ public:
     static const ContainerDefinition &emptyChildNodeDefinition();
 
 protected:
+    bool checkUniqueOptionValues(Node _node) const;
+
+protected:
     NodeDefinitionWPtr m_hostDefinition;
     NodeDefinitionSPtr m_containerDefinition;
     int m_minCount;
