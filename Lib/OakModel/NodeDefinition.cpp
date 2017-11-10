@@ -869,24 +869,34 @@ void NodeDefinition::onNodeInserted(Node _node) const
     for (const ValueDefinition* vDef: vList)
     {
         if (vDef->settings().required() &&
-            vDef->settings().unique() &&
-            vDef->hasDefaultValue()) {
-
-            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(m_name)->toList<std::string>(vDef->name());
+            vDef->settings().unique()) {
+            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->ignore()->parent()->children(m_name)->toList<std::string>(vDef->name());
 
             std::string defaultValue = vDef->defaultValue().value<std::string>();
-            if (count(valueList, defaultValue) <= 1) {
+            if (std::find(valueList.begin(), valueList.end(), defaultValue) == valueList.end()) {
                 vDef->setValue(_node, vDef->defaultValue());
                 return;
             }
 
-            std::string value;
-            int count = 1;
-            do {
-                value = defaultValue + "_" + std::to_string(count++);
-            } while (contains(valueList, value));
+            if (vDef->options().isUsed() && vDef->settings().optionsOnly()) {
+                std::vector<std::string> optionList;
+                if (vDef->options().getOptions(optionList, &item)) {
+                    for (const std::string &option: optionList) {
+                        if (std::find(valueList.begin(), valueList.end(), option) == valueList.end()) {
+                            vDef->setValue(_node, option);
+                        }
+                    }
 
-            vDef->setValue(_node, value);
+                }
+            } else if (vDef->hasDefaultValue()) {
+                std::string value;
+                int count = 1;
+                do {
+                    value = defaultValue + "_" + std::to_string(count++);
+                } while (contains(valueList, value));
+
+                vDef->setValue(_node, value);
+            }
         }
     }
 }
