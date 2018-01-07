@@ -154,6 +154,7 @@ const OakModel* Item::model() const
 // (public)
 void Item::setCurrent()
 {
+    assert(m_definition);
     if (m_model) {
         m_model->setCurrentItem(*this);
     }
@@ -176,6 +177,7 @@ std::vector<std::string> Item::valueNameList() const
 // (public)
 std::vector<std::string> Item::childNameList() const
 {
+    assert(m_definition);
     std::vector<const ContainerDefinition*> containerList;
     m_definition->getContainerList(containerList);
     std::vector<std::string> nameList;
@@ -192,6 +194,13 @@ int Item::valueCount() const
 {
     initItemValueList();
     return (int)m_itemValueList.size();
+}
+
+// =============================================================================
+// (public)
+const bool Item::hasValue(const std::string &valueName) const
+{
+    return m_definition->hasValue(valueName);
 }
 
 // =============================================================================
@@ -249,6 +258,7 @@ Item::ValueIterator Item::valueEnd() const
 // (public)
 bool Item::hasKey() const
 {
+    assert(m_definition);
     return m_definition->hasKey();
 }
 
@@ -265,6 +275,7 @@ const ItemValue& Item::valueKey() const
 // (public)
 bool Item::hasDerivedId() const
 {
+    assert(m_definition);
     return m_definition->hasDerivedId();
 }
 
@@ -281,6 +292,7 @@ const ItemValue& Item::valueDerivedId() const
 // (public)
 int Item::childCount() const
 {
+    assert(m_definition);
     return m_definition->containerGroup().nodeCount(m_node);
 }
 
@@ -288,6 +300,7 @@ int Item::childCount() const
 // (public)
 int Item::childCount(const std::string &name) const
 {
+    assert(m_definition);
     return m_definition->container(name).nodeCount(m_node);
 }
 
@@ -295,6 +308,7 @@ int Item::childCount(const std::string &name) const
 // (public)
 int Item::childIndex(const Item& refChild) const
 {
+    assert(m_definition);
     return m_definition->containerGroup().nodeIndex(m_node, refChild.node());
 }
 
@@ -302,6 +316,7 @@ int Item::childIndex(const Item& refChild) const
 // (public)
 int Item::childIndex(const std::string &name, const Item &refChild) const
 {
+    assert(m_definition);
     return m_definition->container(name).nodeIndex(m_node, refChild.node());
 }
 
@@ -309,6 +324,7 @@ int Item::childIndex(const std::string &name, const Item &refChild) const
 // (public)
 Item Item::childAt(int index) const
 {
+    assert(m_definition);
     const NodeDefinition* childeNodeDefinition;
     Node childNode = m_definition->containerGroup().node(m_node, index, &childeNodeDefinition);
     return Item(childeNodeDefinition, childNode, m_model);
@@ -318,6 +334,7 @@ Item Item::childAt(int index) const
 // (public)
 Item Item::childAt(const std::string &name, int index) const
 {
+    assert(m_definition);
     const NodeDefinition* childeNodeDefinition;
     Node childNode = m_definition->container(name).node(m_node, index, &childeNodeDefinition);
     return Item(childeNodeDefinition, childNode, m_model);
@@ -327,6 +344,7 @@ Item Item::childAt(const std::string &name, int index) const
 // (public)
 Item Item::firstChild() const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->containerGroup().firstNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -336,6 +354,7 @@ Item Item::firstChild() const
 // (public)
 Item Item::firstChild(const std::string &name) const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->container(name).firstNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -345,6 +364,7 @@ Item Item::firstChild(const std::string &name) const
 // (public)
 Item Item::lastChild() const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->containerGroup().lastNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -354,6 +374,7 @@ Item Item::lastChild() const
 // (public)
 Item Item::lastChild(const std::string &name) const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->container(name).lastNode(m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -363,6 +384,7 @@ Item Item::lastChild(const std::string &name) const
 // (public)
 Item Item::nextChild(const Item& refChild) const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->containerGroup().nextNode(m_node, refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -372,6 +394,7 @@ Item Item::nextChild(const Item& refChild) const
 // (public)
 Item Item::nextChild(const std::string &name, const Item& refChild) const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->container(name).nextNode(refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -381,6 +404,7 @@ Item Item::nextChild(const std::string &name, const Item& refChild) const
 // (public)
 Item Item::previousChild(const Item& refChild) const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->containerGroup().previousNode(m_node, refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -390,6 +414,7 @@ Item Item::previousChild(const Item& refChild) const
 // (public)
 Item Item::previousChild(const std::string &name, const Item& refChild) const
 {
+    assert(m_definition);
     const NodeDefinition* childNodeDefinition;
     Node childNode = m_definition->container(name).previousNode(refChild.m_node, &childNodeDefinition);
     return Item(childNodeDefinition, childNode, m_model);
@@ -399,6 +424,7 @@ Item Item::previousChild(const std::string &name, const Item& refChild) const
 // (public)
 Item Item::parent() const
 {
+    assert(m_definition);
     const NodeDefinition* parentNodeDefinition;
     Node parentNode = m_definition->parentNode(m_node, &parentNodeDefinition);
     return Item(parentNodeDefinition, parentNode, m_model);
@@ -408,6 +434,7 @@ Item Item::parent() const
 // (public)
 bool Item::canInsertChild(const std::string &name, int &index) const
 {
+    assert(m_definition);
     return m_definition->container(name).canInsertNode(m_node, index);
 }
 
@@ -415,6 +442,7 @@ bool Item::canInsertChild(const std::string &name, int &index) const
 // (public)
 Item Item::insertChild(const std::string &name, int &index) const
 {
+    assert(m_definition);
     const auto& container = m_definition->container(name);
     Item childItem(container.containerDefinition(), container.insertNode(m_node, index), m_model);
     if (m_model && !childItem.isNull()) {
@@ -427,6 +455,7 @@ Item Item::insertChild(const std::string &name, int &index) const
 // (public)
 bool Item::canCloneChild(int& index, Item cloneItem) const
 {
+    assert(m_definition);
     return m_definition->containerGroup().canCloneNode(m_node, index, cloneItem.m_node);
 }
 
@@ -434,6 +463,7 @@ bool Item::canCloneChild(int& index, Item cloneItem) const
 // (public)
 bool Item::canCloneChild(const std::string &name, int &index, Item cloneItem) const
 {
+    assert(m_definition);
     return m_definition->container(name).canCloneNode(m_node, index, cloneItem.m_node);
 }
 
@@ -441,6 +471,7 @@ bool Item::canCloneChild(const std::string &name, int &index, Item cloneItem) co
 // (public)
 Item Item::cloneChild(int& index, Item cloneItem) const
 {
+    assert(m_definition);
     if (m_model) {
         // Cash data needed to notify change
         Item sourceParentItem = cloneItem.parent();
@@ -463,6 +494,7 @@ Item Item::cloneChild(int& index, Item cloneItem) const
 // (public)
 Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
 {
+    assert(m_definition);
     if (m_model) {
         // Cash data needed to notify change
         Item sourceParentItem = cloneItem.parent();
@@ -485,6 +517,7 @@ Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
 // (public)
 bool Item::canMoveChild(int& index, Item moveItem) const
 {
+    assert(m_definition);
     return m_definition->containerGroup().canMoveNode(m_node, index, moveItem.m_node);
 }
 
@@ -492,6 +525,7 @@ bool Item::canMoveChild(int& index, Item moveItem) const
 // (public)
 bool Item::canMoveChild(const std::string &name, int &index, Item moveItem) const
 {
+    assert(m_definition);
     return m_definition->container(name).canMoveNode(m_node, index, moveItem.m_node);
 }
 
@@ -499,6 +533,7 @@ bool Item::canMoveChild(const std::string &name, int &index, Item moveItem) cons
 // (public)
 Item Item::moveChild(int& index, Item moveItem) const
 {
+    assert(m_definition);
     if (m_model) {
         // Cash data needed to notify change
         Item sourceParentItem = moveItem.parent();
@@ -521,6 +556,7 @@ Item Item::moveChild(int& index, Item moveItem) const
 // (public)
 Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
 {
+    assert(m_definition);
     if (m_model) {
         // Cash data needed to notify change
         Item sourceParentItem = moveItem.parent();
@@ -543,6 +579,7 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
 // (public)
 bool Item::canRemoveChild(int index) const
 {
+    assert(m_definition);
     return m_definition->containerGroup().canRemoveNode(m_node, index);
 }
 
@@ -550,6 +587,7 @@ bool Item::canRemoveChild(int index) const
 // (public)
 bool Item::canRemoveChild(const std::string &name, int index) const
 {
+    assert(m_definition);
     return m_definition->container(name).canRemoveNode(m_node, index);
 }
 
@@ -557,6 +595,7 @@ bool Item::canRemoveChild(const std::string &name, int index) const
 // (public)
 bool Item::removeChild(int index) const
 {
+    assert(m_definition);
     if (m_definition->containerGroup().removeNode(m_node, index)) {
         if (m_model) {
             m_model->onItemRemoved(*this, index);
@@ -570,6 +609,7 @@ bool Item::removeChild(int index) const
 // (public)
 bool Item::removeChild(const std::string &name, int index) const
 {
+    assert(m_definition);
     int index2 = childIndex(childAt(name, index));
     if (m_definition->container(name).removeNode(m_node, index)) {
         if (m_model) {
@@ -584,6 +624,7 @@ bool Item::removeChild(const std::string &name, int index) const
 // (protected)
 void Item::initItemValueList() const
 {
+    assert(m_definition);
     if (m_itemValueList.empty() && m_definition && !m_node.isNull()) {
         auto vList = m_definition->valueList();
         for (const ValueDefinition* vi: vList) {
@@ -596,6 +637,7 @@ void Item::initItemValueList() const
 // (protected)
 void Item::onItemInserted(const Item &parentItem, int index) const
 {
+    assert(m_model);
     m_model->onItemInserted(parentItem, index);
 }
 
@@ -603,6 +645,7 @@ void Item::onItemInserted(const Item &parentItem, int index) const
 // (protected)
 void Item::onItemMoved(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
 {
+    assert(m_model);
     m_model->onItemMoved(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
 }
 
@@ -610,6 +653,7 @@ void Item::onItemMoved(const Item &sourceParentItem, int sourceIndex, const Item
 // (protected)
 void Item::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
 {
+    assert(m_model);
     m_model->onItemCloned(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
 }
 
@@ -617,12 +661,13 @@ void Item::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Ite
 // (protected)
 void Item::onItemRemoved(const Item &parentItem, int index) const
 {
+    assert(m_model);
     m_model->onItemRemoved(parentItem, index);
 }
 
 // =============================================================================
 // (protected)
-void Item::updateUniqueValues(Item item) const
+void Item::updateUniqueValues(Item item)
 {
     Model::Item::ValueIterator vIt = item.valueBegin();
     Model::Item::ValueIterator vItEnd = item.valueEnd();

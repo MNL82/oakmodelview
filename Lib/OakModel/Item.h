@@ -57,9 +57,9 @@ public:
 
     // ************* ItemValue access *************
     int valueCount() const;
+    const bool hasValue(const std::string &valueName) const;
     int valueIndex(const ItemValue& value) const;
     const ItemValue& valueAt(int index) const;
-
     const ItemValue& value(const std::string &valueName) const;
 
     typedef std::vector<ItemValue>::const_iterator ValueIterator;
@@ -129,7 +129,7 @@ protected:
     void onItemCloned(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
     void onItemRemoved(const Item& parentItem, int index) const;
 
-    void updateUniqueValues(Item item) const;
+    static void updateUniqueValues(Item item);
 
 protected:
     const NodeDefinition* m_definition;

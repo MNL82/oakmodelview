@@ -63,11 +63,18 @@ std::vector<T> QueryRef::toValueList(Item item)
     assert(!m_valueName.empty());
 
     std::vector<T> valueList;
-    if (!m_queryPtr) { return valueList; }
-
-    m_queryPtr->reset(item);
-    while(m_queryPtr->moveNext()) {
-        valueList.push_back(m_queryPtr->current().value(m_valueName).value<T>());
+    if (m_queryPtr) {
+        m_queryPtr->reset(item);
+        while(m_queryPtr->moveNext()) {
+            Item tempItem = m_queryPtr->current();
+            if (tempItem.hasValue(m_valueName)) {
+                valueList.push_back(tempItem.value(m_valueName).value<T>());
+            }
+        }
+    } else {
+        if (item.hasValue(m_valueName)) {
+            valueList.push_back(item.value(m_valueName).value<T>());
+        }
     }
 
     return valueList;

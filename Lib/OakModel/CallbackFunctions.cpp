@@ -11,6 +11,7 @@
 #include "CallbackFunctions.h"
 
 #include <assert.h>
+//#include <QDebug>
 
 namespace Oak {
 namespace Model {
@@ -43,6 +44,7 @@ void Callback::trigger() const
 {
     for (auto func: m_functionMap)
     {
+        //qDebug() << "Callback::trigger()";
         func.second();
     }
 }
@@ -75,6 +77,7 @@ void Callback_ItemIntItemInt::trigger(const Item &sourceItem, int sourceIndex, c
 {
     for (auto func: m_functionMap)
     {
+        //qDebug() << "Callback_ItemIntItemInt::trigger()";
         func.second(sourceItem, sourceIndex, targetItem, targetIndex);
     }
 }
@@ -107,6 +110,7 @@ void Callback_ItemInt::trigger(const Item &parentItem, int index) const
 {
     for (auto func: m_functionMap)
     {
+        //qDebug() << "Callback_ItemInt::trigger()";
         func.second(parentItem, index);
     }
 }

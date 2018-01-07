@@ -51,13 +51,26 @@ void ModelDesignDefinition::createModelDesign()
     NDB::setDisplayName(NodeDef, "Node");
     NDB::addValueDefAsKey(NodeDef, VDB::Make("", "Name", "", "Noname"));
     NDB::addValueDef(NodeDef, VDB::Make("", "DisplayName", "Display Name"));
+
+    auto keyValueDef = VDB::Make("", "KeyValue", "Key Value", "");
+    VDB::setStaticOptions(keyValueDef, std::vector<std::string>{""});
+    VDB::setQueryOptions(keyValueDef, QueryRef::MakeSPtr()->children("Value")->setValueName("Name"));
+    VDB::setQueryOptionsExcluded(keyValueDef, QueryRef::MakeSPtr()->setValueName("DerivedIDValue"));
+    VDB::settings(keyValueDef).setOptionsOnly(true);
+    NDB::addValueDef(NodeDef, std::move(keyValueDef));
+
     NDB::addValueDefAsDerivedId(NodeDef, VDB::Make(std::string(), "Type"));
     NDB::addContainerDef(sPtr(), CDB::Make(NodeDef));
 
     /************************** Node(DerivedRoot) **************************/
     auto NodeRootDef = NDB::MakeDerived(NodeDef, "DerivedRoot");
     NDB::addValueDef(NodeRootDef, VDB::Make("", "DerivedId", "Derived ID"));
-    NDB::addValueDef(NodeRootDef, VDB::Make("", "DerivedValue", "Derived Value"));
+
+    auto DerivedIDValueDef = VDB::Make("", "DerivedIDValue", "Derived ID Value");
+    VDB::setQueryOptions(DerivedIDValueDef, QueryRef::MakeSPtr()->children("Value")->setValueName("Name"));
+    VDB::setQueryOptionsExcluded(DerivedIDValueDef, QueryRef::MakeSPtr()->setValueName("KeyValue"));
+    VDB::settings(DerivedIDValueDef).setOptionsOnly(true);
+    NDB::addValueDef(NodeRootDef, std::move(DerivedIDValueDef));
 
     /************************** Node(Rerived) **************************/
     auto NodeDerivedDef = NDB::MakeDerived(NodeDef, "Derived");
@@ -65,7 +78,7 @@ void ModelDesignDefinition::createModelDesign()
 
     /************************** Value(String) **************************/
     auto ValueDef = NDB::MakeDerivedRoot("Value", "String");
-    NDB::addValueDefAsKey(ValueDef, VDB::Make("", "Name", "", "Noname"));
+    NDB::addValueDefAsKey(ValueDef, VDB::Make("", "Name", "", "Value"));
     NDB::addValueDef(ValueDef, VDB::Make("", "DisplayName", "Display Name"));
     NDB::addValueDefAsDerivedId(ValueDef, VDB::Make("", "Type"));
 

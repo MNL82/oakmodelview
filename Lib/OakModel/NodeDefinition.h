@@ -170,6 +170,7 @@ public:
 // *****************************************************************************
 public:
     virtual int valueCount() const;
+    virtual bool hasValue(const std::string &valueName) const;
     virtual const ValueDefinition& value(int index) const;
     virtual const ValueDefinition& value(const std::string &valueName) const;
     virtual ValueDefinition& value(int index);

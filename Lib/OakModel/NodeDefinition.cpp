@@ -450,6 +450,23 @@ int NodeDefinition::valueCount() const
 
 // =============================================================================
 // (public)
+bool NodeDefinition::hasValue(const std::string &valueName) const
+{
+    for (const auto &value: m_valueList) {
+        if (value->name() == valueName) {
+            return true;
+        }
+    }
+
+    if (hasDerivedBase()) {
+        return m_derivedBase.lock()->hasValue(valueName);
+    }
+
+    return false;
+}
+
+// =============================================================================
+// (public)
 const ValueDefinition &NodeDefinition::value(int index) const
 {
     if (hasDerivedBase()) {
