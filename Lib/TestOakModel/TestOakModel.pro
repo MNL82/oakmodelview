@@ -9,7 +9,7 @@
 CONFIG += \
     debug_and_release
 
-DEFINES += RESOURCE_PATH=\\\"E:/dev/oakmodelview/Lib/TestOakModel/resources/\\\"
+DEFINES += RESOURCE_PATH=\\\"D:/dev/oakmodelview/Lib/TestOakModel/resources/\\\"
 
 INCLUDEPATH +=  \
     .. \
@@ -31,7 +31,8 @@ HEADERS += \
     Test_Variant.h \
     Test_NodeDefinition.h \
     Test_ValueDefinition.h \
-    Test_ItemQuery.h
+    Test_ItemQuery.h \
+    Test_Union.h
 
 win32:QMAKE_CXXFLAGS_EXCEPTIONS_ON = /EHa
 win32:QMAKE_CXXFLAGS_STL_ON = /EHa

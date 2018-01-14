@@ -132,15 +132,13 @@ bool VariantCRef::get(T& value, bool allowConversion, Conversion* properties) co
 template<class T>
 const T& VariantCRef::valueCRef() const
 {
-//    static T v;
-//    return v;
-    if (m_value.which() == 9) {
-        const T* vPtr = boost::get<const T*>(m_value);
-        return *vPtr;
-    } else {
+//    if (m_value.which() == 9) {
+//        const T* vPtr = boost::get<const T*>(m_value);
+//        return *vPtr;
+//    } else {
         const T& vRef = boost::get<const T&>(m_value);
         return vRef;
-    }
+//    }
 }
 
 // =============================================================================

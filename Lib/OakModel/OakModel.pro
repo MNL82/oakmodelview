@@ -24,6 +24,7 @@ include(Reference.pri)
 include(Models.pri)
 include(Query.pri)
 include(Items.pri)
+include(Union.pri)
 
 SOURCES += \
     Conversion.cpp \
