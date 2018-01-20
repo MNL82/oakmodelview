@@ -125,6 +125,13 @@ bool VariantCRef::get(VariantRef& value, bool allowConversion, Conversion* prope
 
 // =============================================================================
 // (public)
+const char& VariantCRef::valueCRef() const
+{
+    return *boost::get<const char*>(m_value);
+}
+
+// =============================================================================
+// (public)
 Variant VariantCRef::value() const
 {
     return Variant(*this);

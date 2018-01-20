@@ -66,6 +66,7 @@ public:
 
     template<class T>
     const T& valueCRef() const;
+    const char& valueCRef() const;
 
     Variant value() const;
 

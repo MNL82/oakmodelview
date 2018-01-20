@@ -140,7 +140,8 @@ bool Variant::canGet(T& value, bool allowConversion, Conversion* properties) con
 template<typename T>
 bool Variant::get(T& value, bool allowConversion, Conversion* properties) const
 {
-    return get(VariantRef(value), allowConversion, properties);
+    VariantRef vRef(value);
+    return get(vRef, allowConversion, properties);
 }
 
 // =============================================================================
