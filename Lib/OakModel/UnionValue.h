@@ -34,13 +34,23 @@ public:
     UnionValue(const double &d);
     UnionValue(const std::string &s);
 
+    UnionValue(const UnionRef& uRef);
+
     UnionValue(const UnionValue& copy);
     UnionValue(UnionValue&& move);
 
     ~UnionValue();
 
+    UnionValue& operator=(const UnionRef& value);
     UnionValue& operator=(const UnionValue& copy);
     UnionValue& operator=(UnionValue&& move);
+
+    bool operator==(const UnionRef& value) const;
+    bool operator!=(const UnionRef& value) const;
+
+    bool isEqual(const UnionRef& value, bool allowConversion = true, Conversion* properties = nullptr) const;
+
+    bool isNull() const;
 
     UnionType type() const;
 
@@ -53,9 +63,18 @@ public:
     const std::string& getString() const;
 
     template<typename T>
-    bool canConvertTo(T& value, Conversion* properties = nullptr) const;
+    bool canGet(T& target, bool allowConversion = true, Conversion* properties = nullptr) const;
     template<typename T>
-    bool convertTo(T& value, Conversion* properties = nullptr) const;
+    bool get(T& target, bool allowConversion = true, Conversion* properties = nullptr) const;
+
+    bool canGet(UnionRef& target, bool allowConversion = true, Conversion* properties = nullptr) const;
+    bool get(UnionRef& target, bool allowConversion = true, Conversion* properties = nullptr) const;
+
+//    bool canConvertTo(UnionValue& target, Conversion* properties = nullptr) const;
+//    bool convertTo(UnionValue& target, Conversion* properties = nullptr) const;
+
+    template<typename T>
+    T value(bool allowConversion = true, Conversion* properties = nullptr) const;
 
 protected:
     UValue v;
@@ -67,47 +86,30 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-bool UnionValue::canConvertTo(T &value, Conversion *properties) const
+bool UnionValue::canGet(T &target, bool allowConversion, Conversion *properties) const
 {
-    switch (t) {
-        case UnionType::Undefined:
-            return false;
-        case UnionType::Bool:
-            return canConvert(value, v.b, properties);
-        case UnionType::Integer:
-            return canConvert(value, v.i, properties);
-        case UnionType::Double:
-            return canConvert(value, v.d, properties);
-        case UnionType::String:
-            return canConvert(value, v.s, properties);
-        default:
-            assert(false);
-            return false;
-    }
+    UnionRef sourceRef(*this);
+    return sourceRef.canGet(target, allowConversion, properties);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool UnionValue::convertTo(T &value, Conversion *properties) const
+bool UnionValue::get(T &target, bool allowConversion, Conversion *properties) const
 {
-    switch (t) {
-        case UnionType::Undefined:
-            return false;
-        case UnionType::Bool:
-            return convert(value, v.b, properties);
-        case UnionType::Integer:
-            return convert(value, v.i, properties);
-        case UnionType::Double:
-            return convert(value, v.d, properties);
-        case UnionType::String:
-            return convert(value, v.s, properties);
-        default:
-            assert(false);
-            return false;
-    }
+    UnionRef sourceRef(*this);
+    return sourceRef.get(target, allowConversion, properties);
 }
 
+// =============================================================================
+// (public)
+template<typename T>
+T UnionValue::value(bool allowConversion, Conversion *properties) const
+{
+    T v;
+    get(v, allowConversion, properties);
+    return std::move(v);
+}
 
 } // namespace Model
 } // namespace Oak

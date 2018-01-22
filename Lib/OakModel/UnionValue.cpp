@@ -66,6 +66,13 @@ UnionValue::UnionValue(const std::string &s)
 
 // =============================================================================
 // (public)
+UnionValue::UnionValue(const UnionRef &uRef)
+{
+    *this = uRef;
+}
+
+// =============================================================================
+// (public)
 UnionValue::UnionValue(const UnionValue &copy)
     : t(UnionType::Undefined)
 {
@@ -92,27 +99,80 @@ UnionValue::~UnionValue()
 
 // =============================================================================
 // (public)
-UnionValue &UnionValue::operator=(const UnionValue &copy)
+UnionValue &UnionValue::operator=(const UnionRef &value)
 {
-    if (t == copy.t) {
-        if (t == UnionType::String) {
-            *v.s = *copy.v.s;
+    if (t == UnionType::String) {
+        if (value.t == UnionType::String) {
+            *v.s = *value.r.s;
+            return *this;
         } else {
-            v = copy.v;
-        }
-    } else {
-        if (t == UnionType::String) {
             delete v.s;
         }
-        if (copy.t == UnionType::String) {
-            v.s = new std::string(*copy.v.s);
-        } else {
-            memcpy(&v, &copy.v, sizeof(v));
-        }
-        t = copy.t;
     }
+    switch (value.t) {
+        case UnionType::Undefined:
+            v.i = 0;
+            break;
+        case UnionType::Char:
+            v.s = new std::string(value.r.c);
+            break;
+        case UnionType::Bool:
+            v.b = *value.r.b;
+            break;
+        case UnionType::Integer:
+            v.i = *value.r.i;
+            break;
+        case UnionType::Double:
+            v.d = *value.r.d;
+            break;
+        case UnionType::String:
+            v.s = new std::string(*value.r.s);
+            break;
+        default:
+            assert(false);
+    }
+    t = value.t;
 
     return *this;
+}
+
+// =============================================================================
+// (public)
+UnionValue &UnionValue::operator=(const UnionValue &copy)
+{
+    UnionRef uRef(copy);
+    return *this = uRef;
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::operator==(const UnionRef &value) const
+{
+    UnionRef uRef(*this);
+    return uRef == value;
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::operator!=(const UnionRef &value) const
+{
+    UnionRef uRef(*this);
+    return uRef != value;
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::isEqual(const UnionRef &value, bool allowConversion, Conversion *properties) const
+{
+    UnionRef uRef(*this);
+    return uRef.isEqual(value, allowConversion, properties);
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::isNull() const
+{
+    return t == UnionType::Undefined;
 }
 
 // =============================================================================
@@ -183,6 +243,40 @@ const std::string& UnionValue::getString() const
     assert(t == UnionType::String);
     return *v.s;
 }
+
+// =============================================================================
+// (public)
+bool UnionValue::canGet(UnionRef &target, bool allowConversion, Conversion *properties) const
+{
+    UnionRef sourceRef(*this);
+    return sourceRef.canGet(target, allowConversion, properties);
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::get(UnionRef &target, bool allowConversion, Conversion *properties) const
+{
+    UnionRef sourceRef(*this);
+    return sourceRef.get(target, allowConversion, properties);
+}
+
+//// =============================================================================
+//// (public)
+//bool UnionValue::canConvertTo(UnionValue &target, Conversion *properties) const
+//{
+//    UnionRef sourceRef(*this);
+//    UnionRef targetRef(target);
+//    return sourceRef.canGet(targetRef, properties);
+//}
+
+//// =============================================================================
+//// (public)
+//bool UnionValue::convertTo(UnionValue &target, Conversion *properties) const
+//{
+//    UnionRef sourceRef(*this);
+//    UnionRef targetRef(target);
+//    return sourceRef.get(targetRef, properties);
+//}
 
 } // namespace Model
 } // namespace Oak

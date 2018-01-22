@@ -99,6 +99,72 @@ UnionRef::~UnionRef()
 
 // =============================================================================
 // (public)
+UnionRef &UnionRef::operator=(const UnionRef &copy)
+{
+    bool result = copy.get(*this);
+    assert(result);
+    return *this;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::operator==(const UnionRef &value) const
+{
+    assert(value.t == t);
+    switch (t) {
+        case UnionType::Undefined:
+            return true;
+        case UnionType::Char:
+            return strcmp(r.c, value.r.c) == 0;
+        case UnionType::Bool:
+            return *r.b == *value.r.b;
+        case UnionType::Integer:
+            return *r.i == *value.r.i;
+        case UnionType::Double:
+            return *r.d == *value.r.d;
+        case UnionType::String:
+            return *r.s == *value.r.s;
+        default:
+            assert(false);
+            return false;
+    }
+    return false;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::operator!=(const UnionRef &value) const
+{
+    return !(*this == value);
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::isEqual(const UnionRef &value, bool allowConversion, Conversion *properties) const
+{
+    if (value.t == t) {
+        return *this == value;
+    } else if (!allowConversion) {
+        return false;
+    }
+
+    UnionValue uValue(*this);
+    UnionRef uRef(uValue);
+    if (value.get(uRef, properties)) {
+        return *this == uRef;
+    }
+    return true;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::isNull() const
+{
+    return t == UnionType::Undefined;
+}
+
+// =============================================================================
+// (public)
 UnionType UnionRef::type() const
 {
     return t;
@@ -138,23 +204,24 @@ const std::string& UnionRef::getString() const
 
 // =============================================================================
 // (public)
-bool UnionRef::canConvertTo(UnionRef &uRef, Conversion *properties) const
+bool UnionRef::canGet(UnionRef &target, bool allowConversion, Conversion *properties) const
 {
     if (t == UnionType::Undefined) { return false; }
+    if (!allowConversion && target.t != t) { return false; }
 
-    switch (uRef.t) {
+    switch (target.t) {
         case UnionType::Undefined:
             return false;
         case UnionType::Char:
             return false;
         case UnionType::Bool:
-            return canConvertTo(static_cast<bool>(*uRef.r.b), properties);
+            return canGet(*const_cast<bool*>(target.r.b), properties);
         case UnionType::Integer:
-            return canConvertTo(static_cast<int>(*uRef.r.i), properties);
+            return canGet(*const_cast<int*>(target.r.i), properties);
         case UnionType::Double:
-            return canConvertTo(static_cast<double>(*uRef.r.d), properties);
+            return canGet(*const_cast<double*>(target.r.d), properties);
         case UnionType::String:
-            return canConvertTo(static_cast<std::string>(*uRef.r.s), properties);
+            return canGet(*const_cast<std::string*>(target.r.s), properties);
         default:
             assert(false);
             return false;
@@ -163,70 +230,24 @@ bool UnionRef::canConvertTo(UnionRef &uRef, Conversion *properties) const
 
 // =============================================================================
 // (public)
-bool UnionRef::convertTo(UnionRef &uRef, Conversion *properties) const
+bool UnionRef::get(UnionRef &target, bool allowConversion, Conversion *properties) const
 {
     if (t == UnionType::Undefined) { return false; }
+    if (!allowConversion && target.t != t) { return false; }
 
-    switch (uRef.t) {
+    switch (target.t) {
         case UnionType::Undefined:
             return false;
         case UnionType::Char:
             return false;
         case UnionType::Bool:
-            return convertTo(static_cast<bool>(*uRef.r.b), properties);
+            return get(*const_cast<bool*>(target.r.b), properties);
         case UnionType::Integer:
-            return convertTo(static_cast<int>(*uRef.r.i), properties);
+            return get(*const_cast<int*>(target.r.i), properties);
         case UnionType::Double:
-            return convertTo(static_cast<double>(*uRef.r.d), properties);
+            return get(*const_cast<double*>(target.r.d), properties);
         case UnionType::String:
-            return convertTo(static_cast<std::string>(*uRef.r.s), properties);
-        default:
-            assert(false);
-            return false;
-    }
-}
-
-// =============================================================================
-// (public)
-bool UnionRef::canConvertTo(UnionValue &target, Conversion *properties) const
-{
-    return canConvertTo(UnionRef(target), properties);
-//    if (t == UnionType::Undefined) { return false; }
-
-//    switch (uValue.t) {
-//        case UnionType::Undefined:
-//            return false;
-//        case UnionType::Bool:
-//            return canConvert(static_cast<bool>(uValue.v.b), properties);
-//        case UnionType::Integer:
-//            return canConvert(static_cast<int>(uValue.v.i), properties);
-//        case UnionType::Double:
-//            return canConvert(static_cast<double>(uValue.v.d), properties);
-//        case UnionType::String:
-//            return canConvert(static_cast<std::string>(*uValue.v.s), properties);
-//        default:
-//            assert(false);
-//            return false;
-//    }
-}
-
-// =============================================================================
-// (public)
-bool UnionRef::convertTo(UnionValue &uValue, Conversion *properties) const
-{
-    if (t == UnionType::Undefined) { return false; }
-
-    switch (uValue.t) {
-        case UnionType::Undefined:
-            return false;
-        case UnionType::Bool:
-            return convert(static_cast<bool>(uValue.v.b), properties);
-        case UnionType::Integer:
-            return convert(static_cast<int>(uValue.v.i), properties);
-        case UnionType::Double:
-            return convert(static_cast<double>(uValue.v.d), properties);
-        case UnionType::String:
-            return convert(static_cast<std::string>(*uValue.v.s), properties);
+            return get(*const_cast<std::string*>(target.r.s), properties);
         default:
             assert(false);
             return false;

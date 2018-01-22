@@ -55,10 +55,22 @@ void test_Union()
     BOOST_CHECK(uvs.type() == UnionType::String);
     BOOST_CHECK(uvs.getString() == s);
 
+    UnionRef ur;
+    UnionRef urc(c);
+    UnionRef urb(b);
+    UnionRef uri(i);
+    UnionRef urd(d);
     UnionRef urs(s);
-    UnionRef uri(uvi);
-    BOOST_CHECK(uri.canConvertTo(urs));
-    BOOST_CHECK(!urs.canConvertTo(uri));
+
+    BOOST_CHECK(uri.canGet(urs));
+    BOOST_CHECK(!urs.canGet(uri));
+
+    BOOST_CHECK(uri.canGet(s));
+    BOOST_CHECK(!urs.canGet(i));
+
+    BOOST_CHECK(urd.canGet(uvc));
+    BOOST_CHECK(!ur.canGet(uvb));
+
 }
 
 test_suite* Test_Union()
