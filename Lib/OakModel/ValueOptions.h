@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "VariantRef.h"
+#include "UnionRef.h"
 #include "QueryRef.h"
 
 #include <algorithm>
@@ -35,8 +35,8 @@ public:
     static const ValueOptions& empty();
 
 protected:
-    std::vector<Variant> m_options;
-    std::vector<Variant> m_excluded;
+    std::vector<UnionValue> m_options;
+    std::vector<UnionValue> m_excluded;
 
     QueryRefSPtr m_query;
     QueryRefSPtr m_queryExcluded;
@@ -85,7 +85,7 @@ bool ValueOptions::getOptions(std::vector<T>& options, const Item *item, bool al
 
     // Remove excluded options
     T option;
-    for (const Variant & vo: m_excluded)
+    for (const UnionValue& vo: m_excluded)
     {
         if (vo.get(option, allowConversion, conversion.get())) {
             it = std::find(options.begin(), options.end(), option);

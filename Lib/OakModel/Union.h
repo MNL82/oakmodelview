@@ -19,6 +19,9 @@ enum class UnionType { Undefined = -1, Char = 0, Bool = 1, Integer = 2, Double =
 typedef union UValue { bool b; int i; double d; std::string *s; } UValue;
 typedef union UPtr { const char *c; const bool *b; const int *i; const double *d; const std::string *s; } UPtr;
 
+class UnionRef;
+class UnionValue;
+
 // =============================================================================
 // Class definition
 // =============================================================================
@@ -31,6 +34,8 @@ public:
     static UnionType GetType(const int&);
     static UnionType GetType(const double&);
     static UnionType GetType(const std::string&);
+    static UnionType GetType(const UnionRef& ur);
+    static UnionType GetType(const UnionValue& uv);
 };
 
 } // namespace Model

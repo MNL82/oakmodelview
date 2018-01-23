@@ -82,13 +82,13 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
     if (nodeDef->derivedId().isNull()) { return false; }
 
     // The value type of the derivedId and the derivedIdValue must match
-    if (!nodeDef->derivedId().isBaseTypeEqual(valueDefDerivedId->valueTemplate())) { return false; }
+    if (nodeDef->derivedId().type() != valueDefDerivedId->valueTemplate().type()) { return false; }
 
     // Derived node definitions inherate its derived id value from its base and can not have it's own
     if (nodeDef->hasDerivedBase()) { return false; }
 
     //
-    std::vector<VariantCRef> optionList;
+    std::vector<UnionRef> optionList;
     nodeDef->derivedIdListAll(optionList);
     VDB::setStaticOptions(valueDefDerivedId, optionList);
     VDB::settings(valueDefDerivedId).setOptionsOnly(true);

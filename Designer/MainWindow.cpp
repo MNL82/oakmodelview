@@ -118,7 +118,7 @@ void MainWindow::createMasterModel()
     VDB::setStaticOptions(valueInletB, optionsB);
     NDB::addValueDef(nodeStep, std::move(valueInletB));
 
-    NDB::addValueDef(nodeStep, VDB::MakeXML(Bool(), "PumpWash","", Bool(true)));
+    NDB::addValueDef(nodeStep, VDB::MakeXML(true, "PumpWash","", true));
 
     auto valuePctB = VDB::MakeXML(0.0, "pctB","");
     VDB::setName(valuePctB, "%B");

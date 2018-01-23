@@ -24,7 +24,7 @@ typedef std::unique_ptr<ValueListDefinition> ValueListDefinitionUPtr;
 class ValueListDefinition : public ValueDefinition
 {
 public:
-    ValueListDefinition(VariantCRef valueTemplate);
+    ValueListDefinition(const UnionRef& valueTemplate);
 
     ValueListDefinition(const ValueListDefinition &copy);
     ValueListDefinition(ValueListDefinition &&move);

@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <Node.h>
 
-#include "VariantCRef.h"
+#include "UnionRef.h"
 
 #ifdef XML_BACKEND
 #include "XMLListRef.h"
@@ -55,7 +55,7 @@ public:
     bool isNull() const;
 
     virtual const NodeDefinition* containerDefinition() const;
-    virtual const NodeDefinition* containerDefinition(VariantCRef derivedId) const;
+    virtual const NodeDefinition* containerDefinition(const UnionRef& derivedId) const;
     virtual const NodeDefinition* containerDefinition(Node _node) const;
 
     virtual bool validate(Node _node) const;

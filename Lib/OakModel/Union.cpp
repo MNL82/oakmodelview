@@ -10,6 +10,9 @@
 
 #include "Union.h"
 
+#include "UnionRef.h"
+#include "UnionValue.h"
+
 namespace Oak {
 namespace Model {
 
@@ -68,6 +71,20 @@ UnionType Union::GetType(const double &)
 UnionType Union::GetType(const std::string &)
 {
     return UnionType::String;
+}
+
+// =============================================================================
+// (public)
+UnionType Union::GetType(const UnionRef &ur)
+{
+    return ur.type();
+}
+
+// =============================================================================
+// (public)
+UnionType Union::GetType(const UnionValue &uv)
+{
+    return uv.type();
 }
 
 

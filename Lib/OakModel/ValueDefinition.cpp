@@ -20,11 +20,11 @@
 namespace Oak {
 namespace Model {
 
-ValueDefinition ValueDefinition::s_emptyDefinition = ValueDefinition(InvalidVariant());
+ValueDefinition ValueDefinition::s_emptyDefinition = ValueDefinition(UnionRef());
 
 // =============================================================================
 // (public)
-ValueDefinition::ValueDefinition(VariantCRef valueTemplate)
+ValueDefinition::ValueDefinition(const UnionRef &valueTemplate)
     : m_valueTemplate(valueTemplate), m_options(nullptr)
 {
 
@@ -82,14 +82,14 @@ ValueDefinition::~ValueDefinition()
 
 // =============================================================================
 // (public)
-const std::type_info& ValueDefinition::valueTypeId() const
+UnionType ValueDefinition::valueType() const
 {
-    return m_valueTemplate.typeId();
+    return m_valueTemplate.type();
 }
 
 // =============================================================================
 // (public)
-VariantCRef ValueDefinition::valueTemplate() const
+const UnionRef ValueDefinition::valueTemplate() const
 {
     return m_valueTemplate;
 }
@@ -116,7 +116,7 @@ const std::string &ValueDefinition::displayName() const
 // (public)
 bool ValueDefinition::isNull() const
 {
-    return m_valueTemplate.witch() == 0;
+    return m_valueTemplate.isNull();
 }
 
 // =============================================================================
@@ -146,7 +146,7 @@ const ValueOptions &ValueDefinition::options() const
 
 // =============================================================================
 // (public)
-int ValueDefinition::compareValue(Node _node, VariantCRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+int ValueDefinition::compareValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return -2; }
 
@@ -155,12 +155,12 @@ int ValueDefinition::compareValue(Node _node, VariantCRef value, bool useDefault
     switch (_node.type()) {
 #ifdef XML_BACKEND
     case Node::Type::XML: {
-        if (m_valueTemplate.typeId() == typeid(std::string)) {
-            if (value.typeId() == typeid(std::string)) {
-                int result = m_valueRef->compareValue(_node.xmlNode(), value.valueCRef<std::string>());
+        if (m_valueTemplate.type() == UnionType::String) {
+            if (value.type() == UnionType::String) {
+                int result = m_valueRef->compareValue(_node.xmlNode(), value.getCString());
                 if (useDefault && hasDefaultValue() && result == -2) {
                     // Value is not defined in the XML
-                    return m_defaultValue.valueCRef<std::string>().compare(value.valueCRef<std::string>());
+                    return m_defaultValue.getCString().compare(value.getCString());
                 }
                 return result;
             } else if (allowConversion) {
@@ -173,8 +173,9 @@ int ValueDefinition::compareValue(Node _node, VariantCRef value, bool useDefault
         } else {
             // Values needs to be compared after they are converted to its value type
             // Read the value stored in the xml document
-            Variant tempValue(m_valueTemplate);
-            if (getValue(_node.xmlNode(), tempValue, useDefault, allowConversion, conversion)) {
+            UnionValue tempValue(m_valueTemplate);
+            UnionRef tempRef(tempValue);
+            if (getValue(_node.xmlNode(), tempRef, useDefault, allowConversion, conversion)) {
                 // Compare the to values
                 return tempValue.isEqual(value, allowConversion, conversion.get()) ? 0 : 1;
             }
@@ -211,15 +212,16 @@ bool ValueDefinition::hasValue(Node _node) const
 
 // =============================================================================
 // (public)
-bool ValueDefinition::canGetValue(Node _node, VariantRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDefinition::canGetValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
     case Node::Type::XML: {
-        Variant tempValue(value);
-        return getValue(_node.xmlNode(), tempValue, useDefault, allowConversion, (conversion) ? conversion : m_defaultConversion);
+        UnionValue tempValue(value);
+        UnionRef tempRef(tempValue);
+        return getValue(_node.xmlNode(), tempRef, useDefault, allowConversion, (conversion) ? conversion : m_defaultConversion);
     }
 #endif // XML_BACKENDvalue
     }
@@ -231,7 +233,7 @@ bool ValueDefinition::canGetValue(Node _node, VariantRef value, bool useDefault,
 
 // =============================================================================
 // (public)
-bool ValueDefinition::getValue(Node _node, VariantRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDefinition::getValue(Node _node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -244,12 +246,13 @@ bool ValueDefinition::getValue(Node _node, VariantRef value, bool useDefault, bo
         if (m_valueRef->hasValue(_node.xmlNode())) {
             // Check if the returned value type is string or string list
             // Strings can always be returned
-            if (value.typeId() == typeid(std::string)) {
-                m_valueRef->getValue(_node.xmlNode(), value.valueRef<std::string>());
+            if (value.type() == UnionType::String) {
+                m_valueRef->getValue(_node.xmlNode(), value.getString());
             } else {
                 std::string string;
                 m_valueRef->getValue(_node.xmlNode(), string);
-                value.set(string, true, conversion.get());
+                UnionRef(string).get(value);
+                //value.set(string, true, conversion.get());
             }
             return true;
         }
@@ -270,10 +273,11 @@ bool ValueDefinition::getValue(Node _node, VariantRef value, bool useDefault, bo
 
 // =============================================================================
 // (public)
-Variant ValueDefinition::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+UnionValue ValueDefinition::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
-    Variant val(m_valueTemplate);
-    getValue(_node, val, useDefault, allowConversion, conversion);
+    UnionValue val(m_valueTemplate);
+    UnionRef uRef(val);
+    getValue(_node, uRef, useDefault, allowConversion, conversion);
     return std::move(val);
 }
 
@@ -282,13 +286,14 @@ Variant ValueDefinition::value(Node _node, bool useDefault, bool allowConversion
 std::string ValueDefinition::toString(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     std::string str;
-    getValue(_node, str, useDefault, allowConversion, conversion);
+    UnionRef uRef(str);
+    getValue(_node, uRef, useDefault, allowConversion, conversion);
     return std::move(str);
 }
 
 // =============================================================================
 // (public)
-bool ValueDefinition::canSetValue(Node _node, VariantCRef value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDefinition::canSetValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -298,8 +303,8 @@ bool ValueDefinition::canSetValue(Node _node, VariantCRef value, bool allowConve
     switch (_node.type()) {
 #ifdef XML_BACKEND
     case Node::Type::XML: {
-        if (value.typeId() == m_valueTemplate.typeId()) {
-            if (m_valueTemplate.typeId() == typeid(std::string)) {
+        if (value.type() == m_valueTemplate.type()) {
+            if (m_valueTemplate.type() == UnionType::String) {
                 return true;
             } else {
                 std::string tempStr;
@@ -308,8 +313,8 @@ bool ValueDefinition::canSetValue(Node _node, VariantCRef value, bool allowConve
                 }
             }
         } else if (allowConversion) {
-            Variant tempVariant(m_valueTemplate);
-            if (tempVariant.set(value, allowConversion, conversion.get())) {
+            UnionValue tempVariant(m_valueTemplate);
+            if (value.get(tempVariant, allowConversion, conversion.get())) {
                 std::string tempStr;
                 if (value.canGet(tempStr, true, conversion.get())) {
                     return true;
@@ -328,7 +333,7 @@ bool ValueDefinition::canSetValue(Node _node, VariantCRef value, bool allowConve
 
 // =============================================================================
 // (public)
-bool ValueDefinition::setValue(Node _node, VariantCRef value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDefinition::setValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (value.isNull()) { return false; }
     if (_node.isNull()) { return false; }
@@ -338,9 +343,9 @@ bool ValueDefinition::setValue(Node _node, VariantCRef value, bool allowConversi
     switch (_node.type()) {
 #ifdef XML_BACKEND
     case Node::Type::XML: {
-        if (value.typeId() == m_valueTemplate.typeId()) {
-            if (m_valueTemplate.typeId() == typeid(std::string)) {
-                return m_valueRef->setValue(_node.xmlNode(), value.valueCRef<std::string>());
+        if (value.type() == m_valueTemplate.type()) {
+            if (m_valueTemplate.type() == UnionType::String) {
+                return m_valueRef->setValue(_node.xmlNode(), value.getCString());
             } else {
                 std::string tempStr;
                 if (value.get(tempStr, true, conversion.get())) {
@@ -348,8 +353,8 @@ bool ValueDefinition::setValue(Node _node, VariantCRef value, bool allowConversi
                 }
             }
         } else if (allowConversion) {
-            Variant tempVariant(m_valueTemplate);
-            if (tempVariant.set(value, allowConversion, conversion.get())) {
+            UnionValue tempVariant(m_valueTemplate);
+            if (value.get(tempVariant, allowConversion, conversion.get())) {
                 std::string tempStr;
                 if (tempVariant.get(tempStr, true, conversion.get())) {
                     return m_valueRef->setValue(_node.xmlNode(), tempStr);
@@ -375,16 +380,16 @@ bool ValueDefinition::hasDefaultValue() const
 
 // =============================================================================
 // (public)
-VariantCRef ValueDefinition::defaultValue() const
+const UnionRef ValueDefinition::defaultValue() const
 {
     return m_defaultValue;
 }
 
 // =============================================================================
 // (public)
-bool ValueDefinition::getDefaultValue(VariantRef value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDefinition::getDefaultValue(const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
-    return value.set(m_defaultValue, allowConversion, (conversion) ? conversion.get() : m_defaultConversion.get());
+    return m_defaultValue.get(value, allowConversion, (conversion) ? conversion.get() : m_defaultConversion.get());
 }
 
 // =============================================================================

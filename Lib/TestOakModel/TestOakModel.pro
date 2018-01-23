@@ -28,7 +28,7 @@ HEADERS += \
     Test_XMLDoc.h \
     Test_Item.h \
     Test_ServiceFunctions.h \
-    Test_Variant.h \
+#    Test_Variant.h \
     Test_NodeDefinition.h \
     Test_ValueDefinition.h \
     Test_ItemQuery.h \

@@ -114,7 +114,7 @@ const NodeDefinition* ContainerDefinition::containerDefinition() const
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerDefinition::containerDefinition(VariantCRef derivedId) const
+const NodeDefinition* ContainerDefinition::containerDefinition(const UnionRef &derivedId) const
 {
     if (derivedId.isNull() || derivedId.isEqual(m_containerDefinition->derivedId())) {
         return m_containerDefinition.get();

@@ -96,7 +96,7 @@ NodeDefinitionSPtr NodeDefinitionBuilder::MakeDerived(NodeDefinitionSPtr derived
     assert(!derivedBase->validateForAny(derivedId));
 
     // DerivedId's of derived definitions have to be of the same derivedId type
-    assert(derivedBase->derivedId().isBaseTypeEqual(derivedId));
+    assert(derivedBase->derivedId().type() == Union::GetType(derivedId));
 
     NodeDefinitionSPtr derivedDefinition = NodeDefinition::MakeSPtr(derivedBase->name(), derivedId);
 

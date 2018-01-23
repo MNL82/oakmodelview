@@ -47,7 +47,7 @@ public:
 protected:
     virtual void createLabel();
     virtual void createEditor();
-    void setItemValue(const Model::VariantCRef& value);
+    void setItemValue(const Model::UnionRef& value);
 
 protected slots:
     void onValueEdited();

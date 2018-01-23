@@ -14,8 +14,8 @@
 
 #include "Node.h"
 
-#include "VariantRef.h"
-#include "VariantCRef.h"
+#include "UnionRef.h"
+#include "UnionValue.h"
 
 #ifdef XML_BACKEND
 #include "XMLValueRef.h"
@@ -36,7 +36,7 @@ typedef std::unique_ptr<ValueDefinition> ValueDefUPtr;
 class ValueDefinition
 {
 public:
-    ValueDefinition(VariantCRef valueTemplate);
+    ValueDefinition(const UnionRef& valueTemplate);
 
     ValueDefinition(const ValueDefinition &copy);
     ValueDefinition(ValueDefinition &&move);
@@ -45,8 +45,8 @@ public:
 
     virtual ~ValueDefinition();
 
-    const type_info& valueTypeId() const;
-    VariantCRef valueTemplate() const;
+    UnionType valueType() const;
+    const UnionRef valueTemplate() const;
     const std::string &name() const;
     const std::string &displayName() const;
 
@@ -57,24 +57,24 @@ public:
 
     const ValueOptions &options() const;
 
-    virtual int compareValue(Node _node, VariantCRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual int compareValue(Node _node, const UnionRef& value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     virtual bool hasValue(Node _node) const;
-    virtual bool canGetValue(Node _node, VariantRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual bool getValue(Node _node, VariantRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual Variant value(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool canGetValue(Node _node, const UnionRef& value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool getValue(Node _node, UnionRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual UnionValue value(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
     virtual std::string toString(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     template<typename T>
     T value(Node _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     // TODO: Different error states
-    virtual bool canSetValue(Node _node, VariantCRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual bool setValue(Node _node, VariantCRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool canSetValue(Node _node, const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool setValue(Node _node, const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     virtual bool hasDefaultValue() const;
-    virtual VariantCRef defaultValue() const;
-    virtual bool getDefaultValue(VariantRef value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual const UnionRef defaultValue() const;
+    virtual bool getDefaultValue(const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     // Service functions
     template<class... _Types> inline
@@ -83,11 +83,11 @@ public:
     static ValueDefinition &emptyDefinition();
 
 protected:
-    Variant m_valueTemplate;
+    UnionValue m_valueTemplate;
     ValueSettings m_settings;
     std::string m_name;
     std::string m_displayName;
-    Variant m_defaultValue;
+    UnionValue m_defaultValue;
     ConversionSPtr m_defaultConversion;
     ValueOptions *m_options;
     //std::vector<Variant> m_options;

@@ -52,7 +52,7 @@ public:
     template<typename T>
     bool getValue(T &value, bool useDefault = true) const;
 
-    Variant value(bool useDefault = true) const;
+    UnionValue value(bool useDefault = true) const;
     template<typename T>
     T value(bool useDefault = true) const;
 

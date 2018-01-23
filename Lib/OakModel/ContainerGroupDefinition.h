@@ -10,7 +10,9 @@
 
 #pragma once
 
-#include "VariantCRef.h"
+#include <memory>
+
+#include "UnionRef.h"
 #include "Node.h"
 
 namespace Oak {
@@ -41,7 +43,7 @@ public:
 
     virtual ContainerGroupDefinitionUPtr copy() const;
 
-    virtual const NodeDefinition* containerDefinition(const std::string &name, VariantCRef derivedId = VariantCRef()) const;
+    virtual const NodeDefinition* containerDefinition(const std::string &name, const UnionRef& derivedId = UnionRef()) const;
     virtual const NodeDefinition* containerDefinition(Node _node) const;
 
     virtual bool validate(Node _node) const;
@@ -70,13 +72,13 @@ public:
 // *****************************************************************************
 public:
     /// Se the function 'insertChildDataNode' bellow
-    virtual bool canInsertNode(Node _node, VariantCRef name, int &index) const;
+    virtual bool canInsertNode(Node _node, const UnionRef& name, int &index) const;
 
     /// Parameter 'node' must match this definition and will be the parent node of the new data Node.
     /// Parameter 'index' is the index of new new data node. The new node will be appended after the last sibling if
     ///  'index' is -1. 'index' in updated with the actual index.
     /// The return value is the inserted data node, or an empty Node if the operation failed
-    virtual Node insertNode(Node _node, VariantCRef name, int &index) const;
+    virtual Node insertNode(Node _node, const UnionRef& name, int &index) const;
 
     /// Se the function 'cloneChildDataNode' bellow
     virtual bool canCloneNode(Node _node, int &index, Node cloneNode) const;

@@ -150,7 +150,7 @@ const Item* ItemValue::item() const
 
 // =============================================================================
 // (public)
-Variant ItemValue::value(bool useDefault) const
+UnionValue ItemValue::value(bool useDefault) const
 {
     assert(m_valueDefinition != nullptr);
     return m_valueDefinition->value(m_node, useDefault);

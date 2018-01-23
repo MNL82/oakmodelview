@@ -71,7 +71,7 @@ ContainerGroupDefinitionUPtr ContainerGroupDefinition::copy() const
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerGroupDefinition::containerDefinition(const std::string &name, VariantCRef derivedId) const
+const NodeDefinition* ContainerGroupDefinition::containerDefinition(const std::string &name, const UnionRef& derivedId) const
 {
     return m_hostDefinition->container(name).containerDefinition(derivedId);
 }
@@ -244,7 +244,7 @@ Node ContainerGroupDefinition::previousNode(Node _node, Node refNode, const Node
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::canInsertNode(Node _node, VariantCRef name, int &index) const
+bool ContainerGroupDefinition::canInsertNode(Node _node, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
@@ -261,7 +261,7 @@ bool ContainerGroupDefinition::canInsertNode(Node _node, VariantCRef name, int &
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::insertNode(Node _node, VariantCRef name, int &index) const
+Node ContainerGroupDefinition::insertNode(Node _node, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {

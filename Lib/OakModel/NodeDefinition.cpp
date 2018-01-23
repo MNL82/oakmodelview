@@ -33,7 +33,7 @@ NodeDefinition::NodeDefinition(const std::string &_name)
 
 // =============================================================================
 // (public)
-NodeDefinition::NodeDefinition(const std::string &_name, VariantCRef _derivedId)
+NodeDefinition::NodeDefinition(const std::string &_name, const UnionRef &_derivedId)
 {
     assert(!_name.empty());
     assert(!_derivedId.isNull());
@@ -187,21 +187,21 @@ const std::string& NodeDefinition::tagName() const
 
 // =============================================================================
 // (public)
-VariantCRef NodeDefinition::derivedId() const
+const UnionRef NodeDefinition::derivedId() const
 {
     return m_derivedId;
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::derivedIdListAll(std::vector<VariantCRef>& idList) const
+void NodeDefinition::derivedIdListAll(std::vector<UnionRef> &idList) const
 {
     derivedRoot()->derivedIdListFromThisAndDerived(idList);
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::derivedIdListFromDerived(std::vector<VariantCRef>& idList) const
+void NodeDefinition::derivedIdListFromDerived(std::vector<UnionRef> &idList) const
 {
     for (NodeDefinitionSPtr derivedNode: m_derivedDirectList) {
         derivedNode->derivedIdListFromThisAndDerived(idList);
@@ -210,7 +210,7 @@ void NodeDefinition::derivedIdListFromDerived(std::vector<VariantCRef>& idList) 
 
 // =============================================================================
 // (public)
-void NodeDefinition::derivedIdListFromThisAndDerived(std::vector<VariantCRef>& idList) const
+void NodeDefinition::derivedIdListFromThisAndDerived(std::vector<UnionRef> &idList) const
 {
     idList.push_back(m_derivedId);
     derivedIdListFromDerived(idList);
@@ -228,7 +228,7 @@ const NodeDefinition* NodeDefinition::derivedRoot() const
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerivedAny(VariantCRef derivedId) const
+const NodeDefinition* NodeDefinition::getDerivedAny(const UnionRef &derivedId) const
 {
     return derivedRoot()->getDerivedOrThis(derivedId);
 }
@@ -242,7 +242,7 @@ const NodeDefinition* NodeDefinition::getDerivedAny(Node node) const
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerived(VariantCRef derivedId, const NodeDefinition* excluding) const
+const NodeDefinition* NodeDefinition::getDerived(const UnionRef &derivedId, const NodeDefinition* excluding) const
 {
     for (NodeDefinitionSPtr dDefinition: m_derivedDirectList) {
         const NodeDefinition* dDefinition2 = dDefinition->getDerivedOrThis(derivedId, excluding);
@@ -264,7 +264,7 @@ const NodeDefinition* NodeDefinition::getDerived(Node node, const NodeDefinition
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerivedOrThis(VariantCRef derivedId, const NodeDefinition* excluding) const
+const NodeDefinition* NodeDefinition::getDerivedOrThis(const UnionRef &derivedId, const NodeDefinition* excluding) const
 {
     if (excluding == this) { return 0; }
     if (validateForThis(derivedId)) { return this; }
@@ -282,7 +282,7 @@ const NodeDefinition* NodeDefinition::getDerivedOrThis(Node node, const NodeDefi
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForThis(VariantCRef derivedId) const
+bool NodeDefinition::validateForThis(const UnionRef &derivedId) const
 {
     return m_derivedId.isEqual(derivedId);
 }
@@ -327,7 +327,7 @@ bool NodeDefinition::validateForThis(Node _node) const
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForDerived(VariantCRef derivedId, const NodeDefinition* excluding) const
+bool NodeDefinition::validateForDerived(const UnionRef &derivedId, const NodeDefinition* excluding) const
 {
     for (NodeDefinitionSPtr derivedDefinition: m_derivedDirectList) {
         if (derivedDefinition->validateForThisOrDerived(derivedId, excluding)) {
@@ -351,7 +351,7 @@ bool NodeDefinition::validateForDerived(Node node, const NodeDefinition* excludi
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForThisOrDerived(VariantCRef derivedId, const NodeDefinition* excluding) const
+bool NodeDefinition::validateForThisOrDerived(const UnionRef &derivedId, const NodeDefinition* excluding) const
 {
     if (excluding == this) { return false; }
     return validateForThis(derivedId) || validateForDerived(derivedId, excluding);
@@ -367,7 +367,7 @@ bool NodeDefinition::validateForThisOrDerived(Node node, const NodeDefinition* e
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForAny(VariantCRef derivedId) const
+bool NodeDefinition::validateForAny(const UnionRef &derivedId) const
 {
     return derivedRoot()->validateForThisOrDerived(derivedId);
 }
@@ -382,7 +382,7 @@ bool NodeDefinition::validateForAny(Node node) const
 
 // =============================================================================
 // (public)
-ValidationState NodeDefinition::validationState(VariantCRef _derivedId) const
+ValidationState NodeDefinition::validationState(const UnionRef &_derivedId) const
 {
     if (m_derivedId == _derivedId) {
         return VALIDATION_STATE_VALID;

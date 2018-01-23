@@ -84,9 +84,9 @@ void ValueEditorHandler::updateEditorValue()
             checkBox->setChecked(false);
             return;
         }
-        Model::Bool value;
+        bool value;
         m_itemValue.getValue(value);
-        checkBox->setChecked(value.value());
+        checkBox->setChecked(value);
         return;
     }
 
@@ -199,9 +199,9 @@ void ValueEditorHandler::createEditor()
     QValidator * validator = nullptr;
 
     auto valueDef = m_itemValue.valueDefinition();
-    if (valueDef->valueTypeId() == typeid(int)) {
+    if (valueDef->valueType() == Model::UnionType::Integer) {
         validator = new QIntValidator();
-    } else if (valueDef->valueTypeId() == typeid(double)) {
+    } else if (valueDef->valueType() == Model::UnionType::Double) {
         validator = new QDoubleValidator();
     }
 
@@ -209,7 +209,7 @@ void ValueEditorHandler::createEditor()
     QHBoxLayout* layout = new QHBoxLayout(m_editor);
     layout->setMargin(0);
 
-    if (valueDef->valueTypeId() == typeid(Model::Bool)) {
+    if (valueDef->valueType() == Model::UnionType::Bool) {
         QCheckBox* checkBox = new QCheckBox();
         checkBox->setObjectName("value");
         connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(onEditingFinished()));
@@ -231,8 +231,8 @@ void ValueEditorHandler::createEditor()
         if (validator) {
             lineEdit->setValidator(validator);
         }
-        if (valueDef->valueTypeId() == typeid(int) ||
-            valueDef->valueTypeId() == typeid(double)) {
+        if (valueDef->valueType() == Model::UnionType::Integer ||
+            valueDef->valueType() == Model::UnionType::Double) {
             lineEdit->setAlignment(Qt::AlignRight);
         }
         layout->addWidget(lineEdit, 1);
@@ -252,7 +252,7 @@ void ValueEditorHandler::createEditor()
 
 // =============================================================================
 // (protected)
-void ValueEditorHandler::setItemValue(const Model::VariantCRef &value)
+void ValueEditorHandler::setItemValue(const Model::UnionRef &value)
 {
     // TODO: Add undo/redo stuff here...
 
@@ -278,8 +278,7 @@ void ValueEditorHandler::onEditingFinished()
 {
     QCheckBox* checkBox = m_editor->findChild<QCheckBox*>("value");
     if (checkBox) {
-        Model::Bool value(checkBox->isChecked());
-        setItemValue(value);
+        setItemValue(checkBox->isChecked());
         emit valueEditedFinished();
         return;
     }

@@ -14,28 +14,21 @@
 #include <vector>
 
 #include "Conversion.h"
-#include "VariantRelations.h"
 
 namespace Oak {
 namespace Model {
 
-template<typename T> bool convert(InvalidVariant&, const InvalidVariant&, Conversion* properties = nullptr) { UNUSED(properties); return false; }
-template<typename T> bool convert(InvalidVariant&, const T&, Conversion* properties = nullptr)              { UNUSED(properties); return false; }
-template<typename T> bool convert(T&, const InvalidVariant&, Conversion* properties = nullptr)              { UNUSED(properties); return false; }
-template<typename T> bool convert(std::vector<T>&, const InvalidVariant&, Conversion* properties = nullptr) { UNUSED(properties); return false; }
-template<typename T> bool convert(InvalidVariant&, const std::vector<T>&, Conversion* properties = nullptr) { UNUSED(properties); return false; }
-
 // =============================================================================
 // convert()
 // =============================================================================
-bool convert(Bool& dest, int src, Conversion* properties = nullptr);
-bool convert(int& dest, Bool src, Conversion* properties = nullptr);
+bool convert(bool& dest, int src, Conversion* properties = nullptr);
+bool convert(int& dest, bool src, Conversion* properties = nullptr);
 
-bool convert(Bool&, double, Conversion* properties = nullptr);
-bool convert(double&, Bool, Conversion* properties = nullptr);
+bool convert(bool&, double, Conversion* properties = nullptr);
+bool convert(double&, bool, Conversion* properties = nullptr);
 
-bool convert(Bool& dest, const std::string& src, Conversion* properties = nullptr);
-bool convert(std::string& dest, Bool src, Conversion* properties = nullptr);
+bool convert(bool& dest, const std::string& src, Conversion* properties = nullptr);
+bool convert(std::string& dest, bool src, Conversion* properties = nullptr);
 
 bool convert(int& dest, double src, Conversion* properties = nullptr);
 bool convert(double& dest, int src, Conversion* properties = nullptr);
@@ -96,7 +89,7 @@ bool convert(std::vector<T1>& dest, const std::vector<T2>& src, Conversion* prop
 }
 
 template<typename T>
-bool convert(std::vector<Bool>& dest, const std::vector<T>& src, Conversion* properties = nullptr)
+bool convert(std::vector<bool>& dest, const std::vector<T>& src, Conversion* properties = nullptr)
 {
     const int size = static_cast<int>(src.size());
     dest.resize(size);
@@ -116,7 +109,7 @@ bool convert(std::vector<Bool>& dest, const std::vector<T>& src, Conversion* pro
 }
 
 template<typename T>
-bool convert(std::vector<T>& dest, const std::vector<Bool>& src, Conversion* properties = nullptr)
+bool convert(std::vector<T>& dest, const std::vector<bool>& src, Conversion* properties = nullptr)
 {
     const int size = static_cast<int>(src.size());
     dest.resize(size);
@@ -146,13 +139,13 @@ bool convert(T1 &dest, const T2 &source, Conversion* properties = nullptr)
 // =============================================================================
 // canConvert()
 // =============================================================================
-bool canConvert(Bool& dest, int& src, Conversion* properties = nullptr);
-bool canConvert(int& dest, const Bool& src, Conversion* properties = nullptr);
+bool canConvert(bool& dest, int& src, Conversion* properties = nullptr);
+bool canConvert(int& dest, const bool& src, Conversion* properties = nullptr);
 
-bool canConvert(Bool& dest, double src, Conversion* properties = nullptr);
-bool canConvert(double& dest, Bool src, Conversion* properties = nullptr);
+bool canConvert(bool& dest, double src, Conversion* properties = nullptr);
+bool canConvert(double& dest, bool src, Conversion* properties = nullptr);
 
-bool canConvert(std::string& dest, Bool src, Conversion* properties = nullptr);
+bool canConvert(std::string& dest, bool src, Conversion* properties = nullptr);
 
 bool canConvert(int& dest, double src, Conversion* properties = nullptr);
 bool canConvert(double& dest, int src, Conversion* properties = nullptr);

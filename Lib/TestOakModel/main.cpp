@@ -14,7 +14,7 @@
 // 3. require
 
 #include "Test_XML.h"
-#include "Test_Variant.h"
+//#include "Test_Variant.h"
 #include "Test_Union.h"
 
 test_suite* init_unit_test_suite( int argc, char* argv[] )
@@ -23,7 +23,6 @@ test_suite* init_unit_test_suite( int argc, char* argv[] )
     UNUSED(argv);
     test_suite* test = BOOST_TEST_SUITE( "Master test suite" );
 
-    test->add(Test_Variant());
     test->add(Test_Union());
 #ifdef XML_BACKEND
     test->add(Test_XML());

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "Union.h"
 #include "ConvertFunctions.h"
 
@@ -50,7 +52,8 @@ public:
     bool getBool() const;
     int getInt() const;
     double getDouble() const;
-    const std::string& getString() const;
+    const std::string& getCString() const;
+    std::string& getString();
 
     template<typename T>
     bool canGet(T& target, bool allowConversion = true, Conversion* properties = nullptr) const;

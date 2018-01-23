@@ -57,13 +57,13 @@ void test_nodeDef()
     BOOST_CHECK(tempNI->valueCount() == 1);
     const ValueDefinition& tempVDef = tempNI->value(std::string("name"));
 
-    Variant tempV = tempVDef.value(tempN);
+    UnionValue tempV = tempVDef.value(tempN);
 
     BOOST_CHECK(!tempV.isNull());
 
     BOOST_CHECK(tempV == std::string("root"));
 
-    std::string tempStr = tempVDef.value(tempN).valueCRef<std::string>();
+    std::string tempStr = tempVDef.value(tempN).getCString();
 
     BOOST_CHECK(tempV == tempStr);
 }

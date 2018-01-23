@@ -15,7 +15,7 @@ namespace Model {
 
 // =============================================================================
 // (public)
-ValueListDefinition::ValueListDefinition(VariantCRef valueTemplate)
+ValueListDefinition::ValueListDefinition(const UnionRef &valueTemplate)
     : ValueDefinition(valueTemplate)
 {
 }

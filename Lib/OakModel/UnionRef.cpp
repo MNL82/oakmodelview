@@ -196,10 +196,18 @@ double UnionRef::getDouble() const
 
 // =============================================================================
 // (public)
-const std::string& UnionRef::getString() const
+const std::string& UnionRef::getCString() const
 {
     assert(t == UnionType::String);
     return *r.s;
+}
+
+// =============================================================================
+// (public)
+std::string &UnionRef::getString()
+{
+    assert(t == UnionType::String);
+    return *const_cast<std::string*>(r.s);
 }
 
 // =============================================================================

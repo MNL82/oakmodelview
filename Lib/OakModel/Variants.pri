@@ -7,16 +7,7 @@
 # See accompanying file LICENSE in the root folder.
 
 HEADERS += \
-    $$PWD/Variant.h \
-    $$PWD/VariantRef.h \
-    $$PWD/Visitor.h \
-    $$PWD/ConvertFunctions.h \
-    $$PWD/VariantCRef.h \
-    $$PWD/VariantRelations.h
+    $$PWD/ConvertFunctions.h
 
 SOURCES += \
-    $$PWD/Variant.cpp \
-    $$PWD/VariantRef.cpp \
-    $$PWD/ConvertFunctions.cpp \
-    $$PWD/VariantCRef.cpp \
-    $$PWD/VariantRelations.cpp
+    $$PWD/ConvertFunctions.cpp

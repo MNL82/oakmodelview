@@ -59,7 +59,7 @@ class NodeDefinition
 {
 protected:
     NodeDefinition(const std::string& _name);
-    NodeDefinition(const std::string& _name, VariantCRef _derivedId);
+    NodeDefinition(const std::string& _name, const UnionRef& _derivedId);
 
 public:
     virtual ~NodeDefinition();
@@ -110,11 +110,11 @@ public:
     /// Derived 'NodeDefinition's will inherate all 'ValueDefinition's and "ContainerDefinition's of its base 'NodeDefinition'.
     /// The 'derivedId' of a node is stored as a 'ValueDefinition' belonging to the derivedRoot so all 'NodeDefinition's
     /// of the inheritance hieraki will have the value.
-    VariantCRef derivedId() const;
+    const UnionRef derivedId() const;
 
-    void derivedIdListAll(std::vector<VariantCRef> &idList) const;
-    void derivedIdListFromDerived(std::vector<VariantCRef> &idList) const;
-    void derivedIdListFromThisAndDerived(std::vector<VariantCRef> &idList) const;
+    void derivedIdListAll(std::vector<UnionRef> &idList) const;
+    void derivedIdListFromDerived(std::vector<UnionRef> &idList) const;
+    void derivedIdListFromThisAndDerived(std::vector<UnionRef> &idList) const;
 
     inline bool hasDerivedBase() const    { return !m_derivedBase.expired(); }
     inline bool hasDerivedDiviations() const { return !m_derivedDirectList.empty(); }
@@ -124,21 +124,21 @@ public:
     const NodeDefinition* derivedRoot() const;
 
     // Returns the valid NodeDefinition in the inheritance hierarki if any otherwise it returns 0.
-    virtual const NodeDefinition* getDerivedAny(VariantCRef derivedId) const;
+    virtual const NodeDefinition* getDerivedAny(const UnionRef& derivedId) const;
     virtual const NodeDefinition* getDerivedAny(Node node) const;
 
     // Returns the valid NodeDefinition in the inheritance hierarki if any otherwise it returns 0.
     // Only test derived definitions.
-    virtual const NodeDefinition* getDerived(VariantCRef derivedId, const NodeDefinition* excluding = nullptr) const;
+    virtual const NodeDefinition* getDerived(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
     virtual const NodeDefinition* getDerived(Node node, const NodeDefinition* excluding = nullptr) const;
 
     // Returns the valid NodeDefinition in the inheritance hierarki if any otherwise it returns 0.
     // Only test this definition and its derived definitions.
-    virtual const NodeDefinition* getDerivedOrThis(VariantCRef derivedId, const NodeDefinition* excluding = nullptr) const;
+    virtual const NodeDefinition* getDerivedOrThis(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
     virtual const NodeDefinition* getDerivedOrThis(Node node, const NodeDefinition* excluding = nullptr) const;
 
 protected:
-    Variant m_derivedId;
+    UnionValue m_derivedId;
     NodeDefinitionWPtr m_derivedBase = NodeDefinitionWPtr();
     std::vector<NodeDefinitionSPtr> m_derivedDirectList;
 // *****************************************************************************
@@ -148,19 +148,19 @@ protected:
 // Validation of data nodes
 // *****************************************************************************
 public:
-    virtual bool validateForThis(VariantCRef derivedId) const;
+    virtual bool validateForThis(const UnionRef& derivedId) const;
     virtual bool validateForThis(Node _node) const;
 
-    virtual bool validateForDerived(VariantCRef derivedId, const NodeDefinition* excluding = nullptr) const;
+    virtual bool validateForDerived(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
     virtual bool validateForDerived(Node node, const NodeDefinition* excluding = nullptr) const;
 
-    virtual bool validateForThisOrDerived(VariantCRef derivedId, const NodeDefinition* excluding = nullptr) const;
+    virtual bool validateForThisOrDerived(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
     virtual bool validateForThisOrDerived(Node node, const NodeDefinition* excluding = nullptr) const;
 
-    virtual bool validateForAny(VariantCRef derivedId) const;
+    virtual bool validateForAny(const UnionRef& derivedId) const;
     virtual bool validateForAny(Node node) const;
 
-    virtual ValidationState validationState(VariantCRef _derivedId) const;
+    virtual ValidationState validationState(const UnionRef& _derivedId) const;
     virtual ValidationState validationState(Node node) const;
 // *****************************************************************************
 

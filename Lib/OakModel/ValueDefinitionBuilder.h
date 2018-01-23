@@ -134,7 +134,7 @@ static bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& v
 template<typename T>
 static bool ValueDefinitionBuilder::addStaticOption(ValueDefinition &valueDef, T option)
 {
-    if (valueDef.m_valueTemplate.isBaseTypeEqual(option)) {
+    if (valueDef.valueType() == Union::GetType(option)) {
         if (!valueDef.m_options) {
             valueDef.m_options = new ValueOptions();
         }
@@ -149,7 +149,7 @@ static bool ValueDefinitionBuilder::addStaticOption(ValueDefinition &valueDef, T
 template<typename T>
 static bool ValueDefinitionBuilder::setStaticOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
 {
-    if (!options.empty() && valueDef->m_valueTemplate.isBaseTypeEqual(options.front())) {
+    if (!options.empty() && valueDef->m_valueTemplate.type() == Union::GetType(options.front())) {
         if (!valueDef->m_options) {
             valueDef->m_options = new ValueOptions();
         }

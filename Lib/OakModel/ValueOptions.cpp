@@ -10,7 +10,7 @@
 
 #include "ValueOptions.h"
 
-#include "VariantCRef.h"
+#include "UnionRef.h"
 
 namespace Oak {
 namespace Model {

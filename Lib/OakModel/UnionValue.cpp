@@ -238,7 +238,15 @@ double UnionValue::getDouble() const
 
 // =============================================================================
 // (public)
-const std::string& UnionValue::getString() const
+const std::string& UnionValue::getCString() const
+{
+    assert(t == UnionType::String);
+    return *v.s;
+}
+
+// =============================================================================
+// (public)
+std::string& UnionValue::getString()
 {
     assert(t == UnionType::String);
     return *v.s;

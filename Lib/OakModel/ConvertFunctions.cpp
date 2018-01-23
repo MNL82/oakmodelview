@@ -12,6 +12,7 @@
 
 #include <iomanip>
 #include <sstream>
+#include <assert.h>
 
 namespace Oak {
 namespace Model {
@@ -22,7 +23,7 @@ namespace Model {
 
 // =============================================================================
 // (public)
-bool convert(Bool& dest, int src, Conversion* )
+bool convert(bool& dest, int src, Conversion* )
 {
     dest = src != 0;
     return true;
@@ -30,7 +31,7 @@ bool convert(Bool& dest, int src, Conversion* )
 
 // =============================================================================
 // (public)
-bool convert(int& dest, Bool src, Conversion* )
+bool convert(int& dest, bool src, Conversion* )
 {
     dest = src ? 1 : 0;
     return true;
@@ -38,21 +39,21 @@ bool convert(int& dest, Bool src, Conversion* )
 
 // =============================================================================
 // (public)
-bool convert(Bool&, double, Conversion* )
+bool convert(bool&, double, Conversion* )
 {
     return false;
 }
 
 // =============================================================================
 // (public)
-bool convert(double&, Bool, Conversion* )
+bool convert(double&, bool, Conversion* )
 {
     return false;
 }
 
 // =============================================================================
 // (public)
-bool convert(Bool& dest, const std::string& src, Conversion* properties)
+bool convert(bool& dest, const std::string& src, Conversion* properties)
 {
     if (properties == nullptr) { properties = Conversion::globalDefault2(); }
     if (src.compare(properties->boolTrue()) == 0) {
@@ -67,12 +68,12 @@ bool convert(Bool& dest, const std::string& src, Conversion* properties)
 
 // =============================================================================
 // (public)
-bool convert(std::string& dest, Bool src, Conversion* properties)
+bool convert(std::string& dest, bool src, Conversion* properties)
 {
     if (properties == nullptr) { properties = Conversion::globalDefault2(); }
     if (src) {
-        dest = properties->boolTrue(); }
-    else {
+        dest = properties->boolTrue();
+    } else {
         dest = properties->boolFalse();
     }
     return true;
@@ -175,35 +176,35 @@ bool convert(std::string &dest, const char *source, Conversion* )
 
 // =============================================================================
 // (public)
-bool canConvert(Bool&, int, Conversion*)
+bool canConvert(bool&, int, Conversion*)
 {
     return true;
 }
 
 // =============================================================================
 // (public)
-bool canConvert(int&, const Bool&, Conversion*)
+bool canConvert(int&, const bool&, Conversion*)
 {
     return true;
 }
 
 // =============================================================================
 // (public)
-bool canConvert(Bool&, double, Conversion*)
+bool canConvert(bool &, double, Conversion*)
 {
     return false;
 }
 
 // =============================================================================
 // (public)
-bool canConvert(double&, Bool, Conversion*)
+bool canConvert(double&, bool, Conversion*)
 {
     return false;
 }
 
 // =============================================================================
 // (public)
-bool canConvert(std::string&, Bool, Conversion*)
+bool canConvert(std::string&, bool, Conversion*)
 {
     return true;
 }
