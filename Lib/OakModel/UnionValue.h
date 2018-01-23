@@ -77,12 +77,23 @@ public:
     template<typename T>
     T value(bool allowConversion = true, Conversion* properties = nullptr) const;
 
+    template<typename T>
+    static UnionType GetType(const T &v);
 protected:
     UValue v;
     UnionType t;
 
     friend class UnionRef;
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+UnionType UnionValue::GetType(const T &v)
+{
+    UnionType type = Union::GetType(v);
+    return (type == UnionType::Char) ? UnionType::String : type;
+}
 
 // =============================================================================
 // (public)

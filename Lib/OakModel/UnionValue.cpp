@@ -109,12 +109,15 @@ UnionValue &UnionValue::operator=(const UnionRef &value)
             delete v.s;
         }
     }
+
+    t = value.t;
     switch (value.t) {
         case UnionType::Undefined:
             v.i = 0;
             break;
         case UnionType::Char:
             v.s = new std::string(value.r.c);
+            t = UnionType::String;
             break;
         case UnionType::Bool:
             v.b = *value.r.b;
@@ -131,7 +134,6 @@ UnionValue &UnionValue::operator=(const UnionRef &value)
         default:
             assert(false);
     }
-    t = value.t;
 
     return *this;
 }

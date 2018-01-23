@@ -67,7 +67,9 @@ UnionRef::UnionRef(const std::string &s)
 UnionRef::UnionRef(const UnionValue &v)
     : t(v.type())
 {
-    if (t == UnionType::Bool) {
+    if (t == UnionType::Undefined) {
+       r.i = nullptr;
+    } else if (t == UnionType::Bool) {
         r.b = const_cast<bool*>(&v.v.b);
     } else if (t == UnionType::Integer) {
         r.i = const_cast<int*>(&v.v.i);
@@ -75,8 +77,6 @@ UnionRef::UnionRef(const UnionValue &v)
         r.d = const_cast<double*>(&v.v.d);
     } else if (t == UnionType::String) {
         r.s = v.v.s;
-    } else if (t == UnionType::Undefined) {
-        r.i = nullptr;
     } else {
         assert(false);
     }
@@ -150,7 +150,7 @@ bool UnionRef::isEqual(const UnionRef &value, bool allowConversion, Conversion *
 
     UnionValue uValue(*this);
     UnionRef uRef(uValue);
-    if (value.get(uRef, properties)) {
+    if (value.get(uRef, allowConversion, properties)) {
         return *this == uRef;
     }
     return true;
@@ -223,13 +223,13 @@ bool UnionRef::canGet(UnionRef &target, bool allowConversion, Conversion *proper
         case UnionType::Char:
             return false;
         case UnionType::Bool:
-            return canGet(*const_cast<bool*>(target.r.b), properties);
+            return canGet(*const_cast<bool*>(target.r.b), allowConversion, properties);
         case UnionType::Integer:
-            return canGet(*const_cast<int*>(target.r.i), properties);
+            return canGet(*const_cast<int*>(target.r.i), allowConversion, properties);
         case UnionType::Double:
-            return canGet(*const_cast<double*>(target.r.d), properties);
+            return canGet(*const_cast<double*>(target.r.d), allowConversion, properties);
         case UnionType::String:
-            return canGet(*const_cast<std::string*>(target.r.s), properties);
+            return canGet(*const_cast<std::string*>(target.r.s), allowConversion, properties);
         default:
             assert(false);
             return false;
@@ -249,13 +249,13 @@ bool UnionRef::get(UnionRef &target, bool allowConversion, Conversion *propertie
         case UnionType::Char:
             return false;
         case UnionType::Bool:
-            return get(*const_cast<bool*>(target.r.b), properties);
+            return get(*const_cast<bool*>(target.r.b), allowConversion, properties);
         case UnionType::Integer:
-            return get(*const_cast<int*>(target.r.i), properties);
+            return get(*const_cast<int*>(target.r.i), allowConversion, properties);
         case UnionType::Double:
-            return get(*const_cast<double*>(target.r.d), properties);
+            return get(*const_cast<double*>(target.r.d), allowConversion, properties);
         case UnionType::String:
-            return get(*const_cast<std::string*>(target.r.s), properties);
+            return get(*const_cast<std::string*>(target.r.s), allowConversion, properties);
         default:
             assert(false);
             return false;
