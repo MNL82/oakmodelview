@@ -63,6 +63,9 @@ public:
     bool canGet(UnionRef& target, bool allowConversion = true, Conversion* properties = nullptr) const;
     bool get(UnionRef& target, bool allowConversion = true, Conversion* properties = nullptr) const;
 
+    bool canGet(UnionValue& target, bool allowConversion = true, Conversion* properties = nullptr) const;
+    bool get(UnionValue& target, bool allowConversion = true, Conversion* properties = nullptr) const;
+
     template<typename T>
     T value(bool allowConversion = true, Conversion* properties = nullptr) const;
 

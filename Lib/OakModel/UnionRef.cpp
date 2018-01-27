@@ -262,5 +262,21 @@ bool UnionRef::get(UnionRef &target, bool allowConversion, Conversion *propertie
     }
 }
 
+// =============================================================================
+// (public)
+bool UnionRef::canGet(UnionValue &target, bool allowConversion, Conversion *properties) const
+{
+    UnionRef uRef(target);
+    return canGet(uRef, allowConversion, properties);
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::get(UnionValue &target, bool allowConversion, Conversion *properties) const
+{
+    UnionRef uRef(target);
+    return get(uRef, allowConversion, properties);
+}
+
 } // namespace Model
 } // namespace Oak

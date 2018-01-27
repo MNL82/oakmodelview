@@ -270,23 +270,23 @@ bool UnionValue::get(UnionRef &target, bool allowConversion, Conversion *propert
     return sourceRef.get(target, allowConversion, properties);
 }
 
-//// =============================================================================
-//// (public)
-//bool UnionValue::canConvertTo(UnionValue &target, Conversion *properties) const
-//{
-//    UnionRef sourceRef(*this);
-//    UnionRef targetRef(target);
-//    return sourceRef.canGet(targetRef, properties);
-//}
+// =============================================================================
+// (public)
+bool UnionValue::canGet(UnionValue &target, Conversion *properties) const
+{
+    UnionRef sourceRef(*this);
+    UnionRef targetRef(target);
+    return sourceRef.canGet(targetRef, properties);
+}
 
-//// =============================================================================
-//// (public)
-//bool UnionValue::convertTo(UnionValue &target, Conversion *properties) const
-//{
-//    UnionRef sourceRef(*this);
-//    UnionRef targetRef(target);
-//    return sourceRef.get(targetRef, properties);
-//}
+// =============================================================================
+// (public)
+bool UnionValue::get(UnionValue &target, Conversion *properties) const
+{
+    UnionRef sourceRef(*this);
+    UnionRef targetRef(target);
+    return sourceRef.get(targetRef, properties);
+}
 
 } // namespace Model
 } // namespace Oak
