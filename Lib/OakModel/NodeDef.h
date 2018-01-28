@@ -23,10 +23,10 @@
 #include <Node.h>
 #include <NodeSettings.h>
 
-#include "ValueDefinition.h"
+#include "ValueDef.h"
 
-#include "ContainerDefinition.h"
-#include "ContainerGroupDefinition.h"
+#include "ContainerDef.h"
+#include "ContainerGroupDef.h"
 
 #ifdef XML_BACKEND
 #include "XMLElement.h"
@@ -35,11 +35,11 @@
 namespace Oak {
 namespace Model {
 
-class NodeDefinition;
-typedef std::shared_ptr<NodeDefinition> NodeDefinitionSPtr;
-typedef std::shared_ptr<NodeDefinition> NodeDefSPtr;
-typedef std::weak_ptr<NodeDefinition> NodeDefinitionWPtr;
-typedef std::weak_ptr<NodeDefinition> NodeDefWPtr;
+class NodeDef;
+typedef std::shared_ptr<NodeDef> NodeDefSPtr;
+typedef std::shared_ptr<NodeDef> NodeDefSPtr;
+typedef std::weak_ptr<NodeDef> NodeDefWPtr;
+typedef std::weak_ptr<NodeDef> NodeDefWPtr;
 
 // =============================================================================
 // Enum definition
@@ -55,20 +55,20 @@ enum ValidationState {
 // =============================================================================
 // Class definition
 // =============================================================================
-class NodeDefinition
+class NodeDef
 {
 protected:
-    NodeDefinition(const std::string& _name);
-    NodeDefinition(const std::string& _name, const UnionRef& _derivedId);
+    NodeDef(const std::string& _name);
+    NodeDef(const std::string& _name, const UnionRef& _derivedId);
 
 public:
-    virtual ~NodeDefinition();
+    virtual ~NodeDef();
 
-    NodeDefinition(const NodeDefinition& copy);
-    NodeDefinition(NodeDefinition&& move);
+    NodeDef(const NodeDef& copy);
+    NodeDef(NodeDef&& move);
 
-    NodeDefinition& operator=(const NodeDefinition &copy);
-    NodeDefinition& operator=(NodeDefinition&& move);
+    NodeDef& operator=(const NodeDef &copy);
+    NodeDef& operator=(NodeDef&& move);
 
     bool isNull() const;
 
@@ -78,16 +78,16 @@ public:
 
     const NodeSettings& settings() const;
 
-    NodeDefinitionSPtr sPtr() const;
+    NodeDefSPtr sPtr() const;
 
-    void setWPtr(NodeDefinitionSPtr sPtr);
+    void setWPtr(NodeDefSPtr sPtr);
 
 #ifdef XML_BACKEND
     const std::string &tagName() const;
 #endif // XML_BACKEND
 
 protected:
-    NodeDefinitionWPtr m_thisWPtr;
+    NodeDefWPtr m_thisWPtr;
 
     /// The 'm_name' is a unike identifier for the node definition
     std::string m_name;
@@ -105,10 +105,10 @@ protected:
 // Node definition inheritance functionality
 // *****************************************************************************
 public:
-    /// 'NodeDefinitions' can be part of an inheritance hieraki with derived and base nodes in a tree like structure.
-    /// All 'NodeDefinition's in the same hieraki will have the same 'name' but different 'derivedId'.
-    /// Derived 'NodeDefinition's will inherate all 'ValueDefinition's and "ContainerDefinition's of its base 'NodeDefinition'.
-    /// The 'derivedId' of a node is stored as a 'ValueDefinition' belonging to the derivedRoot so all 'NodeDefinition's
+    /// 'NodeDefs' can be part of an inheritance hieraki with derived and base nodes in a tree like structure.
+    /// All 'NodeDef's in the same hieraki will have the same 'name' but different 'derivedId'.
+    /// Derived 'NodeDef's will inherate all 'ValueDef's and "ContainerDef's of its base 'NodeDef'.
+    /// The 'derivedId' of a node is stored as a 'ValueDef' belonging to the derivedRoot so all 'NodeDef's
     /// of the inheritance hieraki will have the value.
     const UnionRef derivedId() const;
 
@@ -120,27 +120,27 @@ public:
     inline bool hasDerivedDiviations() const { return !m_derivedDirectList.empty(); }
     inline bool hasDiviations() const      { return hasDerivedBase() || hasDerivedDiviations(); }
 
-    inline const NodeDefinition* derivedBase() const { return m_derivedBase.lock().get(); }
-    const NodeDefinition* derivedRoot() const;
+    inline const NodeDef* derivedBase() const { return m_derivedBase.lock().get(); }
+    const NodeDef* derivedRoot() const;
 
-    // Returns the valid NodeDefinition in the inheritance hierarki if any otherwise it returns 0.
-    virtual const NodeDefinition* getDerivedAny(const UnionRef& derivedId) const;
-    virtual const NodeDefinition* getDerivedAny(Node node) const;
+    // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns 0.
+    virtual const NodeDef* getDerivedAny(const UnionRef& derivedId) const;
+    virtual const NodeDef* getDerivedAny(Node node) const;
 
-    // Returns the valid NodeDefinition in the inheritance hierarki if any otherwise it returns 0.
+    // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns 0.
     // Only test derived definitions.
-    virtual const NodeDefinition* getDerived(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
-    virtual const NodeDefinition* getDerived(Node node, const NodeDefinition* excluding = nullptr) const;
+    virtual const NodeDef* getDerived(const UnionRef& derivedId, const NodeDef* excluding = nullptr) const;
+    virtual const NodeDef* getDerived(Node node, const NodeDef* excluding = nullptr) const;
 
-    // Returns the valid NodeDefinition in the inheritance hierarki if any otherwise it returns 0.
+    // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns 0.
     // Only test this definition and its derived definitions.
-    virtual const NodeDefinition* getDerivedOrThis(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
-    virtual const NodeDefinition* getDerivedOrThis(Node node, const NodeDefinition* excluding = nullptr) const;
+    virtual const NodeDef* getDerivedOrThis(const UnionRef& derivedId, const NodeDef* excluding = nullptr) const;
+    virtual const NodeDef* getDerivedOrThis(Node node, const NodeDef* excluding = nullptr) const;
 
 protected:
     UnionValue m_derivedId;
-    NodeDefinitionWPtr m_derivedBase = NodeDefinitionWPtr();
-    std::vector<NodeDefinitionSPtr> m_derivedDirectList;
+    NodeDefWPtr m_derivedBase = NodeDefWPtr();
+    std::vector<NodeDefSPtr> m_derivedDirectList;
 // *****************************************************************************
 
 
@@ -151,11 +151,11 @@ public:
     virtual bool validateForThis(const UnionRef& derivedId) const;
     virtual bool validateForThis(Node _node) const;
 
-    virtual bool validateForDerived(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
-    virtual bool validateForDerived(Node node, const NodeDefinition* excluding = nullptr) const;
+    virtual bool validateForDerived(const UnionRef& derivedId, const NodeDef* excluding = nullptr) const;
+    virtual bool validateForDerived(Node node, const NodeDef* excluding = nullptr) const;
 
-    virtual bool validateForThisOrDerived(const UnionRef& derivedId, const NodeDefinition* excluding = nullptr) const;
-    virtual bool validateForThisOrDerived(Node node, const NodeDefinition* excluding = nullptr) const;
+    virtual bool validateForThisOrDerived(const UnionRef& derivedId, const NodeDef* excluding = nullptr) const;
+    virtual bool validateForThisOrDerived(Node node, const NodeDef* excluding = nullptr) const;
 
     virtual bool validateForAny(const UnionRef& derivedId) const;
     virtual bool validateForAny(Node node) const;
@@ -171,26 +171,26 @@ public:
 public:
     virtual int valueCount() const;
     virtual bool hasValue(const std::string &valueName) const;
-    virtual const ValueDefinition& value(int index) const;
-    virtual const ValueDefinition& value(const std::string &valueName) const;
-    virtual ValueDefinition& value(int index);
-    virtual ValueDefinition& value(const std::string &valueName);
+    virtual const ValueDef& value(int index) const;
+    virtual const ValueDef& value(const std::string &valueName) const;
+    virtual ValueDef& value(int index);
+    virtual ValueDef& value(const std::string &valueName);
 
-    std::vector<const ValueDefinition*> valueList() const;
-    void getValueList(std::vector<const ValueDefinition*>& vList) const;
+    std::vector<const ValueDef*> valueList() const;
+    void getValueList(std::vector<const ValueDef*>& vList) const;
 
     bool hasKey() const;
-    const ValueDefinition& keyValueDef() const;
-    ValueDefinition& keyValueDef();
+    const ValueDef& keyValueDef() const;
+    ValueDef& keyValueDef();
     int keyValueDefIndex() const { return m_keyValueDefIndex; }
 
     bool hasDerivedId() const;
-    const ValueDefinition &derivedIdValueDef() const;
-    ValueDefinition &derivedIdValueDef();
+    const ValueDef &derivedIdValueDef() const;
+    ValueDef &derivedIdValueDef();
     int derivedIdValueDefIndex() const { return m_derivedIdValueDefIndex; }
 
 protected:
-    std::vector<ValueDefinitionUPtr> m_valueList;
+    std::vector<ValueDefUPtr> m_valueList;
     int m_keyValueDefIndex = -1;
     int m_derivedIdValueDefIndex = -1;
 // *****************************************************************************
@@ -201,23 +201,23 @@ protected:
 // *****************************************************************************
 public:
     virtual int containerCount() const;
-    virtual const ContainerDefinition& container(int index) const;
-    const ContainerDefinition &container(const std::string &_name) const;
+    virtual const ContainerDef& container(int index) const;
+    const ContainerDef &container(const std::string &_name) const;
 
-    virtual const ContainerDefinition& container(Node childNode) const;
+    virtual const ContainerDef& container(Node childNode) const;
 
-    virtual std::vector<const ContainerDefinition*> containerList() const;
-    virtual void getContainerList(std::vector<const ContainerDefinition*> &list) const;
+    virtual std::vector<const ContainerDef*> containerList() const;
+    virtual void getContainerList(std::vector<const ContainerDef*> &list) const;
 
-    virtual const ContainerGroupDefinition& containerGroup() const;
+    virtual const ContainerGroupDef& containerGroup() const;
 
-    virtual const NodeDefinition* childDefinition(int index) const;
-    virtual const NodeDefinition* childDefinition(const std::string &_name) const;
-    virtual const NodeDefinition* childDefinition(Node childNode) const;
+    virtual const NodeDef* childDef(int index) const;
+    virtual const NodeDef* childDef(const std::string &_name) const;
+    virtual const NodeDef* childDef(Node childNode) const;
 
 protected:
-    std::vector<ContainerDefinitionUPtr> m_containerList;
-    mutable ContainerGroupDefinitionUPtr m_containerGroup;
+    std::vector<ContainerDefUPtr> m_containerList;
+    mutable ContainerGroupDefUPtr m_containerGroup;
 // *****************************************************************************
 
 
@@ -225,22 +225,22 @@ protected:
 // Parent functions
 // *****************************************************************************
 public:
-    virtual Node parentNode(Node node, const NodeDefinition** parentNodeDefinition = nullptr) const;
+    virtual Node parentNode(Node node, const NodeDef** parentNodeDef = nullptr) const;
 
     virtual int parentContainerCount() const;
-    virtual const ContainerDefinition* parentContainer(int index) const;
-    virtual const ContainerDefinition* parentContainer(const std::string& _name) const;
-    virtual const ContainerDefinition* parentContainer(Node parentNode) const;
+    virtual const ContainerDef* parentContainer(int index) const;
+    virtual const ContainerDef* parentContainer(const std::string& _name) const;
+    virtual const ContainerDef* parentContainer(Node parentNode) const;
 #ifdef XML_BACKEND
-    virtual const ContainerDefinition* parentContainerTagName(const std::string& tagName)const;
+    virtual const ContainerDef* parentContainerTagName(const std::string& tagName)const;
 #endif // XML_BACKEND
 
-    virtual bool hasParent(const NodeDefinition* nodeDefinition) const;
+    virtual bool hasParent(const NodeDef* nodeDef) const;
 
     virtual bool isParent(Node node, Node refNode, bool recursive = true) const;
 
 protected:
-    std::vector<const ContainerDefinition*> m_parentContainerDefinitions;
+    std::vector<const ContainerDef*> m_parentContainerDefs;
 // *****************************************************************************
 
 
@@ -254,18 +254,18 @@ public:
 // *****************************************************************************
 
     template<class... _Types> inline
-    static typename NodeDefinitionSPtr MakeSPtr(_Types&&... _Args)
+    static typename NodeDefSPtr MakeSPtr(_Types&&... _Args)
     {
-        NodeDefinitionSPtr sPtr(new NodeDefinition(_STD forward<_Types>(_Args)...));
+        NodeDefSPtr sPtr(new NodeDef(_STD forward<_Types>(_Args)...));
         sPtr->m_thisWPtr = sPtr;
         return sPtr;
     }
 
-    friend class NodeDefinitionBuilder;
-    friend class ContainerDefinitionBuilder;
+    friend class NodeDefBuilder;
+    friend class ContainerDefBuilder;
 };
 
-typedef NodeDefinition NodeDef;
+typedef NodeDef NodeDef;
 
 } // namespace Model
 } // namespace Oak

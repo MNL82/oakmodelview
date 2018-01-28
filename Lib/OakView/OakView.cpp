@@ -56,7 +56,7 @@ void OakView::setModel(Model::OakModel* model)
     if (m_model) {
         // Disconnect the old model
         m_model->notifier_currentItemChanged.remove(this);
-        m_model->notifier_rootNodeDefinitionChanged.remove(this);
+        m_model->notifier_rootNodeDefChanged.remove(this);
         m_model->notifier_rootNodeChanged.remove(this);
         m_model->notifier_destroyed.remove(this);
 
@@ -78,7 +78,7 @@ void OakView::setModel(Model::OakModel* model)
     if (m_model) {
         // connect the new mobel
         m_model->notifier_currentItemChanged.add(this, &OakView::currentItemChanged);
-        m_model->notifier_rootNodeDefinitionChanged.add(this, &OakView::updateTreeStructure);
+        m_model->notifier_rootNodeDefChanged.add(this, &OakView::updateTreeStructure);
         m_model->notifier_rootNodeChanged.add(this, &OakView::updateTreeStructure);
         m_model->notifier_destroyed.add(this, &OakView::modelDestroyed);
 
@@ -392,8 +392,8 @@ QTreeWidgetItem * OakView::getTreeItems(Model::Item item, QTreeWidgetItem *paren
     if (item.isNull()) { return nullptr; }
 
     std::vector<std::string> values;
-    values.push_back(item.definition()->displayName());
-    if (item.definition()->hasKey()) { values.push_back(item.valueKey().toString()); }
+    values.push_back(item.def()->displayName());
+    if (item.def()->hasKey()) { values.push_back(item.valueKey().toString()); }
 
     QTreeWidgetItem * elementItem;
     if (parentItem) { elementItem = new QTreeWidgetItem(parentItem, toQStringList(values)); }
@@ -453,7 +453,7 @@ void OakView::onItemRemoved(const Model::Item &parentItem, int index)
 // (protected)
 void OakView::onItemValueChanged(const Model::Item &item, int valueIndex)
 {
-    if (item.definition()->derivedIdValueDefIndex() == valueIndex) {
+    if (item.def()->derivedIdValueDefIndex() == valueIndex) {
         // Child items can change when the derived definition change
         QTreeWidgetItem* qItem = NodeIndex(item).qItem(topLevelItem(0));
         QTreeWidgetItem* qParentItem = qItem->parent();
@@ -462,7 +462,7 @@ void OakView::onItemValueChanged(const Model::Item &item, int valueIndex)
         qParentItem->insertChild(index, getTreeItems(item));
         qParentItem->removeChild(qItem);
         blockSignals(false);
-    } else if (item.definition()->keyValueDefIndex() == valueIndex) {
+    } else if (item.def()->keyValueDefIndex() == valueIndex) {
         QTreeWidgetItem* qItem = NodeIndex(item).qItem(topLevelItem(0));
         qItem->setText(1, QString::fromStdString(item.valueKey().toString()));
     }

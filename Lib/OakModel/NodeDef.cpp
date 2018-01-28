@@ -10,8 +10,8 @@
 
 #include <algorithm>
 
-#include "NodeDefinition.h"
-#include "ValueDefinitionBuilder.h"
+#include "NodeDef.h"
+#include "ValueDefBuilder.h"
 #include "QueryBase.h"
 #include "ServiceFunctions.h"
 
@@ -20,11 +20,11 @@ namespace Model {
 
 // =============================================================================
 // (public)
-// This constructor is used when the NodeDefinition has no base definition
-// The derivedId is used to identify the correct NodeDefinition in a inheritance hierarchy
-// The NodeDefinition can not be part of a inheritance hierarchy if the derivedId is null.
-// The NodeDefinition has a derivedId but no base definition, so it is the root NodeDefinition of a inheritance hierarchy
-NodeDefinition::NodeDefinition(const std::string &_name)
+// This constructor is used when the NodeDef has no base definition
+// The derivedId is used to identify the correct NodeDef in a inheritance hierarchy
+// The NodeDef can not be part of a inheritance hierarchy if the derivedId is null.
+// The NodeDef has a derivedId but no base definition, so it is the root NodeDef of a inheritance hierarchy
+NodeDef::NodeDef(const std::string &_name)
 {
     assert(!_name.empty());
 
@@ -33,7 +33,7 @@ NodeDefinition::NodeDefinition(const std::string &_name)
 
 // =============================================================================
 // (public)
-NodeDefinition::NodeDefinition(const std::string &_name, const UnionRef &_derivedId)
+NodeDef::NodeDef(const std::string &_name, const UnionRef &_derivedId)
 {
     assert(!_name.empty());
     assert(!_derivedId.isNull());
@@ -44,28 +44,28 @@ NodeDefinition::NodeDefinition(const std::string &_name, const UnionRef &_derive
 
 // =============================================================================
 // (public)
-NodeDefinition::~NodeDefinition()
+NodeDef::~NodeDef()
 {
 
 }
 
 // =============================================================================
 // (public)
-NodeDefinition::NodeDefinition(const NodeDefinition &copy)
+NodeDef::NodeDef(const NodeDef &copy)
 {
     *this = copy;
 }
 
 // =============================================================================
 // (public)
-NodeDefinition::NodeDefinition(NodeDefinition &&move)
+NodeDef::NodeDef(NodeDef &&move)
 {
     *this = std::move(move);
 }
 
 // =============================================================================
 // (public)
-NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
+NodeDef &NodeDef::operator=(const NodeDef &copy)
 {
     // Copy of self is not allowed
     assert(this != &copy);
@@ -77,9 +77,9 @@ NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
 
     m_derivedBase = copy.m_derivedBase;
     m_derivedDirectList.clear();
-    for (auto dDefinition: copy.m_derivedDirectList)
+    for (auto dDef: copy.m_derivedDirectList)
     {
-        m_derivedDirectList.push_back(dDefinition);
+        m_derivedDirectList.push_back(dDef);
     }
 
     m_valueList.clear();
@@ -96,16 +96,16 @@ NodeDefinition &NodeDefinition::operator=(const NodeDefinition &copy)
     }
     m_containerGroup = copy.m_containerGroup->copy();
 
-    m_parentContainerDefinitions.clear();
-    for (const ContainerDefinition* container: copy.m_parentContainerDefinitions) {
-        m_parentContainerDefinitions.push_back(container);
+    m_parentContainerDefs.clear();
+    for (const ContainerDef* container: copy.m_parentContainerDefs) {
+        m_parentContainerDefs.push_back(container);
     }
     return *this;
 }
 
 // =============================================================================
 // (public)
-NodeDefinition &NodeDefinition::operator=(NodeDefinition &&move)
+NodeDef &NodeDef::operator=(NodeDef &&move)
 {
     m_name = std::move(move.m_name);
     m_displayName = std::move(move.m_displayName);
@@ -122,27 +122,27 @@ NodeDefinition &NodeDefinition::operator=(NodeDefinition &&move)
     m_containerList = std::move(move.m_containerList);
     m_containerGroup = std::move(move.m_containerGroup);
 
-    m_parentContainerDefinitions = std::move(move.m_parentContainerDefinitions);
+    m_parentContainerDefs = std::move(move.m_parentContainerDefs);
     return *this;
 }
 
 // =============================================================================
 // (public)
-bool NodeDefinition::isNull() const
+bool NodeDef::isNull() const
 {
     return m_name.empty();
 }
 
 // =============================================================================
 // (public)
-const std::string& NodeDefinition::name() const
+const std::string& NodeDef::name() const
 {
     return m_name;
 }
 
 // =============================================================================
 // (public)
-std::string NodeDefinition::displayName() const
+std::string NodeDef::displayName() const
 {
     if (!m_displayName.empty()) { return m_displayName; }
 
@@ -158,21 +158,21 @@ std::string NodeDefinition::displayName() const
 
 // =============================================================================
 // (public)
-const NodeSettings &NodeDefinition::settings() const
+const NodeSettings &NodeDef::settings() const
 {
     return m_settings;
 }
 
 // =============================================================================
 // (public)
-NodeDefinitionSPtr NodeDefinition::sPtr() const
+NodeDefSPtr NodeDef::sPtr() const
 {
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::setWPtr(NodeDefinitionSPtr sPtr)
+void NodeDef::setWPtr(NodeDefSPtr sPtr)
 {
     assert(sPtr.get() == this);
     m_thisWPtr = sPtr;
@@ -180,37 +180,37 @@ void NodeDefinition::setWPtr(NodeDefinitionSPtr sPtr)
 
 // =============================================================================
 // (public)
-const std::string& NodeDefinition::tagName() const
+const std::string& NodeDef::tagName() const
 {
     return m_tagName;
 }
 
 // =============================================================================
 // (public)
-const UnionRef NodeDefinition::derivedId() const
+const UnionRef NodeDef::derivedId() const
 {
     return m_derivedId;
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::derivedIdListAll(std::vector<UnionRef> &idList) const
+void NodeDef::derivedIdListAll(std::vector<UnionRef> &idList) const
 {
     derivedRoot()->derivedIdListFromThisAndDerived(idList);
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::derivedIdListFromDerived(std::vector<UnionRef> &idList) const
+void NodeDef::derivedIdListFromDerived(std::vector<UnionRef> &idList) const
 {
-    for (NodeDefinitionSPtr derivedNode: m_derivedDirectList) {
+    for (NodeDefSPtr derivedNode: m_derivedDirectList) {
         derivedNode->derivedIdListFromThisAndDerived(idList);
     }
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::derivedIdListFromThisAndDerived(std::vector<UnionRef> &idList) const
+void NodeDef::derivedIdListFromThisAndDerived(std::vector<UnionRef> &idList) const
 {
     idList.push_back(m_derivedId);
     derivedIdListFromDerived(idList);
@@ -218,7 +218,7 @@ void NodeDefinition::derivedIdListFromThisAndDerived(std::vector<UnionRef> &idLi
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::derivedRoot() const
+const NodeDef* NodeDef::derivedRoot() const
 {
     if (hasDerivedBase()) {
         derivedBase()->derivedRoot();
@@ -228,43 +228,43 @@ const NodeDefinition* NodeDefinition::derivedRoot() const
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerivedAny(const UnionRef &derivedId) const
+const NodeDef* NodeDef::getDerivedAny(const UnionRef &derivedId) const
 {
     return derivedRoot()->getDerivedOrThis(derivedId);
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerivedAny(Node node) const
+const NodeDef* NodeDef::getDerivedAny(Node node) const
 {
     return derivedRoot()->getDerivedOrThis(node);
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerived(const UnionRef &derivedId, const NodeDefinition* excluding) const
+const NodeDef* NodeDef::getDerived(const UnionRef &derivedId, const NodeDef* excluding) const
 {
-    for (NodeDefinitionSPtr dDefinition: m_derivedDirectList) {
-        const NodeDefinition* dDefinition2 = dDefinition->getDerivedOrThis(derivedId, excluding);
-        if (dDefinition2) { return dDefinition2; }
+    for (NodeDefSPtr dDef: m_derivedDirectList) {
+        const NodeDef* dDef2 = dDef->getDerivedOrThis(derivedId, excluding);
+        if (dDef2) { return dDef2; }
     }
     return 0;
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerived(Node node, const NodeDefinition* excluding) const
+const NodeDef* NodeDef::getDerived(Node node, const NodeDef* excluding) const
 {
-    for (NodeDefinitionSPtr dDefinition: m_derivedDirectList) {
-        const NodeDefinition* dDefinition2 = dDefinition->getDerivedOrThis(node, excluding);
-        if (dDefinition2) { return dDefinition2; }
+    for (NodeDefSPtr dDef: m_derivedDirectList) {
+        const NodeDef* dDef2 = dDef->getDerivedOrThis(node, excluding);
+        if (dDef2) { return dDef2; }
     }
     return 0;
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerivedOrThis(const UnionRef &derivedId, const NodeDefinition* excluding) const
+const NodeDef* NodeDef::getDerivedOrThis(const UnionRef &derivedId, const NodeDef* excluding) const
 {
     if (excluding == this) { return 0; }
     if (validateForThis(derivedId)) { return this; }
@@ -273,7 +273,7 @@ const NodeDefinition* NodeDefinition::getDerivedOrThis(const UnionRef &derivedId
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::getDerivedOrThis(Node node, const NodeDefinition* excluding) const
+const NodeDef* NodeDef::getDerivedOrThis(Node node, const NodeDef* excluding) const
 {
     if (excluding == this) { return 0; }
     if (validateForThis(node)) { return this; }
@@ -282,7 +282,7 @@ const NodeDefinition* NodeDefinition::getDerivedOrThis(Node node, const NodeDefi
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForThis(const UnionRef &derivedId) const
+bool NodeDef::validateForThis(const UnionRef &derivedId) const
 {
     return m_derivedId.isEqual(derivedId);
 }
@@ -294,7 +294,7 @@ bool NodeDefinition::validateForThis(const UnionRef &derivedId) const
 // 2. The tag name match
 // 3. One of the parent tag names match
 // 4. The part id of the derived type match
-bool NodeDefinition::validateForThis(Node _node) const
+bool NodeDef::validateForThis(Node _node) const
 {
     if (_node.isNull()) { return false; }
 
@@ -312,7 +312,7 @@ bool NodeDefinition::validateForThis(Node _node) const
 
     // Check the list of parent node names are empty,
     // otherwise any parent element goes
-    if (!m_parentContainerDefinitions.empty()) {
+    if (!m_parentContainerDefs.empty()) {
         if (parentNode(_node).isNull()) {
             return false;
         }
@@ -327,10 +327,10 @@ bool NodeDefinition::validateForThis(Node _node) const
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForDerived(const UnionRef &derivedId, const NodeDefinition* excluding) const
+bool NodeDef::validateForDerived(const UnionRef &derivedId, const NodeDef* excluding) const
 {
-    for (NodeDefinitionSPtr derivedDefinition: m_derivedDirectList) {
-        if (derivedDefinition->validateForThisOrDerived(derivedId, excluding)) {
+    for (NodeDefSPtr derivedDef: m_derivedDirectList) {
+        if (derivedDef->validateForThisOrDerived(derivedId, excluding)) {
             return true;
         }
     }
@@ -339,10 +339,10 @@ bool NodeDefinition::validateForDerived(const UnionRef &derivedId, const NodeDef
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForDerived(Node node, const NodeDefinition* excluding) const
+bool NodeDef::validateForDerived(Node node, const NodeDef* excluding) const
 {
-    for (NodeDefinitionSPtr derivedDefinition: m_derivedDirectList) {
-        if (derivedDefinition->validateForThisOrDerived(node, excluding)) {
+    for (NodeDefSPtr derivedDef: m_derivedDirectList) {
+        if (derivedDef->validateForThisOrDerived(node, excluding)) {
             return true;
         }
     }
@@ -351,7 +351,7 @@ bool NodeDefinition::validateForDerived(Node node, const NodeDefinition* excludi
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForThisOrDerived(const UnionRef &derivedId, const NodeDefinition* excluding) const
+bool NodeDef::validateForThisOrDerived(const UnionRef &derivedId, const NodeDef* excluding) const
 {
     if (excluding == this) { return false; }
     return validateForThis(derivedId) || validateForDerived(derivedId, excluding);
@@ -359,7 +359,7 @@ bool NodeDefinition::validateForThisOrDerived(const UnionRef &derivedId, const N
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForThisOrDerived(Node node, const NodeDefinition* excluding) const
+bool NodeDef::validateForThisOrDerived(Node node, const NodeDef* excluding) const
 {
     if (excluding == this) { return 0; }
     return validateForThis(node) || validateForDerived(node, excluding);
@@ -367,22 +367,22 @@ bool NodeDefinition::validateForThisOrDerived(Node node, const NodeDefinition* e
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForAny(const UnionRef &derivedId) const
+bool NodeDef::validateForAny(const UnionRef &derivedId) const
 {
     return derivedRoot()->validateForThisOrDerived(derivedId);
 }
 
 // =============================================================================
 // (public)
-bool NodeDefinition::validateForAny(Node node) const
+bool NodeDef::validateForAny(Node node) const
 {
-    const NodeDefinition* rootInt = derivedRoot();
+    const NodeDef* rootInt = derivedRoot();
     return rootInt->validateForThis(node) || rootInt->validateForDerived(node);
 }
 
 // =============================================================================
 // (public)
-ValidationState NodeDefinition::validationState(const UnionRef &_derivedId) const
+ValidationState NodeDef::validationState(const UnionRef &_derivedId) const
 {
     if (m_derivedId == _derivedId) {
         return VALIDATION_STATE_VALID;
@@ -392,15 +392,15 @@ ValidationState NodeDefinition::validationState(const UnionRef &_derivedId) cons
     }
     if (hasDerivedBase()) {
         // Base definitions are checked
-        const NodeDefinition* definition;
-        const NodeDefinition* derivedBase = this;
+        const NodeDef* def;
+        const NodeDef* derivedBase = this;
         while (derivedBase->hasDerivedBase()) {
-            definition = derivedBase;
+            def = derivedBase;
             derivedBase = derivedBase->m_derivedBase.lock().get();
             if (derivedBase->validateForThis(_derivedId)) {
                 return VALIDATION_STATE_VALID_SIBLING_BASE;
             }
-            if (derivedBase->validateForDerived(_derivedId, definition)) {
+            if (derivedBase->validateForDerived(_derivedId, def)) {
                 return VALIDATION_STATE_VALID_SIBLING_OTHER;
             }
         }
@@ -410,7 +410,7 @@ ValidationState NodeDefinition::validationState(const UnionRef &_derivedId) cons
 
 // =============================================================================
 // (public)
-ValidationState NodeDefinition::validationState(Node node) const
+ValidationState NodeDef::validationState(Node node) const
 {
     if (validateForThis(node)) {
         return VALIDATION_STATE_VALID;
@@ -421,15 +421,15 @@ ValidationState NodeDefinition::validationState(Node node) const
     }
 
     if (hasDerivedBase()) {
-        const NodeDefinition* definition;
-        const NodeDefinition* derivedBase = this;
+        const NodeDef* def;
+        const NodeDef* derivedBase = this;
         while (derivedBase->hasDerivedBase()) {
-            definition = derivedBase;
+            def = derivedBase;
             derivedBase = derivedBase->m_derivedBase.lock().get();
             if (derivedBase->validateForThis(node)) {
                 return VALIDATION_STATE_VALID_SIBLING_BASE;
             }
-            if (derivedBase->validateForDerived(node, definition)) {
+            if (derivedBase->validateForDerived(node, def)) {
                 return VALIDATION_STATE_VALID_SIBLING_OTHER;
             }
         }
@@ -440,7 +440,7 @@ ValidationState NodeDefinition::validationState(Node node) const
 
 // =============================================================================
 // (public)
-int NodeDefinition::valueCount() const
+int NodeDef::valueCount() const
 {
     if (hasDerivedBase()) {
         return m_derivedBase.lock()->valueCount() + (int)m_valueList.size();
@@ -450,7 +450,7 @@ int NodeDefinition::valueCount() const
 
 // =============================================================================
 // (public)
-bool NodeDefinition::hasValue(const std::string &valueName) const
+bool NodeDef::hasValue(const std::string &valueName) const
 {
     for (const auto &value: m_valueList) {
         if (value->name() == valueName) {
@@ -467,21 +467,21 @@ bool NodeDefinition::hasValue(const std::string &valueName) const
 
 // =============================================================================
 // (public)
-const ValueDefinition &NodeDefinition::value(int index) const
+const ValueDef &NodeDef::value(int index) const
 {
     if (hasDerivedBase()) {
-        int baseDefinitionCount = m_derivedBase.lock()->valueCount();
-        if (index < baseDefinitionCount) {
+        int baseDefCount = m_derivedBase.lock()->valueCount();
+        if (index < baseDefCount) {
             return m_derivedBase.lock()->value(index);
         }
-        index -= baseDefinitionCount;
+        index -= baseDefCount;
     }
     return *m_valueList[index].get();
 }
 
 // =============================================================================
 // (public)
-const ValueDefinition &NodeDefinition::value(const std::string &valueName) const
+const ValueDef &NodeDef::value(const std::string &valueName) const
 {
     for (const auto &value: m_valueList) {
         if (value->name() == valueName) {
@@ -493,26 +493,26 @@ const ValueDefinition &NodeDefinition::value(const std::string &valueName) const
         return m_derivedBase.lock()->value(valueName);
     }
 
-    return ValueDefinition::emptyDefinition();
+    return ValueDef::emptyDef();
 }
 
 // =============================================================================
 // (public)
-ValueDefinition &NodeDefinition::value(int index)
+ValueDef &NodeDef::value(int index)
 {
     if (hasDerivedBase()) {
-        int baseDefinitionCount = m_derivedBase.lock()->valueCount();
-        if (index < baseDefinitionCount) {
+        int baseDefCount = m_derivedBase.lock()->valueCount();
+        if (index < baseDefCount) {
             return m_derivedBase.lock()->value(index);
         }
-        index -= baseDefinitionCount;
+        index -= baseDefCount;
     }
     return *m_valueList[index].get();
 }
 
 // =============================================================================
 // (public)
-ValueDefinition &NodeDefinition::value(const std::string &valueName)
+ValueDef &NodeDef::value(const std::string &valueName)
 {
     for (const auto &value: m_valueList) {
         if (value->name() == valueName) {
@@ -524,21 +524,21 @@ ValueDefinition &NodeDefinition::value(const std::string &valueName)
         return m_derivedBase.lock()->value(valueName);
     }
 
-    return ValueDefinition::emptyDefinition();
+    return ValueDef::emptyDef();
 }
 
 // =============================================================================
 // (public)
-std::vector<const ValueDefinition *> NodeDefinition::valueList() const
+std::vector<const ValueDef *> NodeDef::valueList() const
 {
-    std::vector<const ValueDefinition *> vList;
+    std::vector<const ValueDef *> vList;
     getValueList(vList);
     return std::move(vList);
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::getValueList(std::vector<const ValueDefinition*>& vList) const
+void NodeDef::getValueList(std::vector<const ValueDef*>& vList) const
 {
     if (hasDerivedBase()) {
         m_derivedBase.lock()->getValueList(vList);
@@ -551,49 +551,49 @@ void NodeDefinition::getValueList(std::vector<const ValueDefinition*>& vList) co
 
 // =============================================================================
 // (public)
-bool NodeDefinition::hasKey() const
+bool NodeDef::hasKey() const
 {
     return m_keyValueDefIndex >= 0;
 }
 
 // =============================================================================
 // (public)
-const ValueDefinition& NodeDefinition::keyValueDef() const
+const ValueDef& NodeDef::keyValueDef() const
 {
     return value(m_keyValueDefIndex);
 }
 
 // =============================================================================
 // (public)
-ValueDefinition& NodeDefinition::keyValueDef()
+ValueDef& NodeDef::keyValueDef()
 {
     return value(m_keyValueDefIndex);
 }
 
 // =============================================================================
 // (public)
-bool NodeDefinition::hasDerivedId() const
+bool NodeDef::hasDerivedId() const
 {
     return m_derivedIdValueDefIndex >= 0;
 }
 
 // =============================================================================
 // (public)
-const ValueDefinition& NodeDefinition::derivedIdValueDef() const
+const ValueDef& NodeDef::derivedIdValueDef() const
 {
     return value(m_derivedIdValueDefIndex);
 }
 
 // =============================================================================
 // (public)
-ValueDefinition& NodeDefinition::derivedIdValueDef()
+ValueDef& NodeDef::derivedIdValueDef()
 {
     return value(m_derivedIdValueDefIndex);
 }
 
 // =============================================================================
 // (public)
-int NodeDefinition::containerCount() const
+int NodeDef::containerCount() const
 {
     int count = (int)m_containerList.size();
     if (hasDerivedBase()) { count += m_derivedBase.lock()->containerCount(); }
@@ -602,7 +602,7 @@ int NodeDefinition::containerCount() const
 
 // =============================================================================
 // (public)
-const ContainerDefinition &NodeDefinition::container(int index) const
+const ContainerDef &NodeDef::container(int index) const
 {
     if (hasDerivedBase()) {
         int baseCount = m_derivedBase.lock()->containerCount();
@@ -617,16 +617,16 @@ const ContainerDefinition &NodeDefinition::container(int index) const
     }
 
     assert(false);
-    return ContainerDefinition::emptyChildNodeDefinition();
+    return ContainerDef::emptyChildNodeDef();
 }
 
 // =============================================================================
 // (public)
-const ContainerDefinition &NodeDefinition::container(const std::string& _name) const
+const ContainerDef &NodeDef::container(const std::string& _name) const
 {
     for (const auto& _child: m_containerList)
     {
-        if (_child->containerDefinition()->name() == _name) {
+        if (_child->containerDef()->name() == _name) {
             return *_child.get();
         }
     }
@@ -636,14 +636,14 @@ const ContainerDefinition &NodeDefinition::container(const std::string& _name) c
     }
 
     assert(false);
-    return ContainerDefinition::emptyChildNodeDefinition();
+    return ContainerDef::emptyChildNodeDef();
 }
 
 // =============================================================================
 // (public)
-const ContainerDefinition &NodeDefinition::container(Node childNode) const
+const ContainerDef &NodeDef::container(Node childNode) const
 {
-    if (childNode.isNull()) { return ContainerDefinition::emptyChildNodeDefinition(); }
+    if (childNode.isNull()) { return ContainerDef::emptyChildNodeDef(); }
 
     for (const auto& _child: m_containerList)
     {
@@ -656,21 +656,21 @@ const ContainerDefinition &NodeDefinition::container(Node childNode) const
         return m_derivedBase.lock()->container(childNode);
     }
 
-    return ContainerDefinition::emptyChildNodeDefinition();
+    return ContainerDef::emptyChildNodeDef();
 }
 
 // =============================================================================
 // (public)
-std::vector<const ContainerDefinition *> NodeDefinition::containerList() const
+std::vector<const ContainerDef *> NodeDef::containerList() const
 {
-    std::vector<const ContainerDefinition *> cList;
+    std::vector<const ContainerDef *> cList;
     getContainerList(cList);
     return std::move(cList);
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::getContainerList(std::vector<const ContainerDefinition *> &list) const
+void NodeDef::getContainerList(std::vector<const ContainerDef *> &list) const
 {
     if (hasDerivedBase()) {
         m_derivedBase.lock()->getContainerList(list);
@@ -682,83 +682,83 @@ void NodeDefinition::getContainerList(std::vector<const ContainerDefinition *> &
 
 // =============================================================================
 // (public)
-const ContainerGroupDefinition& NodeDefinition::containerGroup() const
+const ContainerGroupDef& NodeDef::containerGroup() const
 {
     if (!m_containerGroup) {
-        m_containerGroup = std::make_unique<ContainerGroupDefinition>(this);
+        m_containerGroup = std::make_unique<ContainerGroupDef>(this);
     }
     return *m_containerGroup.get();
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::childDefinition(int index) const
+const NodeDef* NodeDef::childDef(int index) const
 {
-    return container(index).containerDefinition();
+    return container(index).containerDef();
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::childDefinition(const std::string &_name) const
+const NodeDef* NodeDef::childDef(const std::string &_name) const
 {
-    return container(_name).containerDefinition();
+    return container(_name).containerDef();
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* NodeDefinition::childDefinition(Node childNode) const
+const NodeDef* NodeDef::childDef(Node childNode) const
 {
     for (const auto& child: m_containerList)
     {
-        const NodeDefinition* match = child->containerDefinition(childNode);
+        const NodeDef* match = child->containerDef(childNode);
         if (match) {
             return match;
         }
     }
     if (hasDerivedBase()) {
-        return childDefinition(childNode);
+        return childDef(childNode);
     }
     return NULL;
 }
 
 // =============================================================================
 // (public)
-Node NodeDefinition::parentNode(Node node, const NodeDefinition** parentNodeDefinition) const
+Node NodeDef::parentNode(Node node, const NodeDef** parentNodeDef) const
 {
     if (node.isNull()) { return Node(); }
 
-    for (auto parentContainer: m_parentContainerDefinitions)
+    for (auto parentContainer: m_parentContainerDefs)
     {
         Node parentNode = parentContainer->hostNode(node);
         if (!parentNode.isNull()) {
-            if (parentNodeDefinition) {
-                *parentNodeDefinition = parentContainer->hostDefinition();
+            if (parentNodeDef) {
+                *parentNodeDef = parentContainer->hostDef();
             }
             return parentNode;
         }
     }
 
     if (hasDerivedBase()) {
-        return m_derivedBase.lock()->parentNode(node, parentNodeDefinition);
+        return m_derivedBase.lock()->parentNode(node, parentNodeDef);
     }
 
     // None of the parent child definitions could locate a valid parent
-    if (parentNodeDefinition) { *parentNodeDefinition = nullptr; }
+    if (parentNodeDef) { *parentNodeDef = nullptr; }
     return Node();
 }
 
 // =============================================================================
 // (public)
-int NodeDefinition::parentContainerCount() const
+int NodeDef::parentContainerCount() const
 {
-    int count = (int)m_parentContainerDefinitions.size();
+    int count = (int)m_parentContainerDefs.size();
     if (hasDerivedBase()) { count += derivedBase()->parentContainerCount(); }
     return count;
 }
 
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainer(int index) const
+const ContainerDef *NodeDef::parentContainer(int index) const
 {
     if (hasDerivedBase()) {
         int baseCount = derivedBase()->parentContainerCount();
@@ -767,16 +767,16 @@ const ContainerDefinition *NodeDefinition::parentContainer(int index) const
         }
         index -= baseCount;
     }
-    return m_parentContainerDefinitions.at(index);
+    return m_parentContainerDefs.at(index);
 }
 
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainer(const std::string &_name) const
+const ContainerDef *NodeDef::parentContainer(const std::string &_name) const
 {
-    for (const ContainerDefinition* parentContainer: m_parentContainerDefinitions)
+    for (const ContainerDef* parentContainer: m_parentContainerDefs)
     {
-        if (parentContainer->hostDefinition()->name() == _name) {
+        if (parentContainer->hostDef()->name() == _name) {
             return parentContainer;
         }
     }
@@ -790,12 +790,12 @@ const ContainerDefinition *NodeDefinition::parentContainer(const std::string &_n
 
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainer(Node parentNode) const
+const ContainerDef *NodeDef::parentContainer(Node parentNode) const
 {
     if (parentNode.isNull()) { return nullptr; }
-    for (const ContainerDefinition* parentContainer: m_parentContainerDefinitions)
+    for (const ContainerDef* parentContainer: m_parentContainerDefs)
     {
-        if (parentContainer->hostDefinition()->validateForThisOrDerived(parentNode)) {
+        if (parentContainer->hostDef()->validateForThisOrDerived(parentNode)) {
             return parentContainer;
         }
     }
@@ -810,10 +810,10 @@ const ContainerDefinition *NodeDefinition::parentContainer(Node parentNode) cons
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-const ContainerDefinition *NodeDefinition::parentContainerTagName(const std::string &tagName) const
+const ContainerDef *NodeDef::parentContainerTagName(const std::string &tagName) const
 {
-    for (const ContainerDefinition* parent: m_parentContainerDefinitions) {
-        if (parent->hostDefinition()->tagName().compare(tagName) == 0) {
+    for (const ContainerDef* parent: m_parentContainerDefs) {
+        if (parent->hostDef()->tagName().compare(tagName) == 0) {
             return parent;
         }
     }
@@ -826,18 +826,18 @@ const ContainerDefinition *NodeDefinition::parentContainerTagName(const std::str
 
 // =============================================================================
 // (public)
-bool NodeDefinition::hasParent(const NodeDefinition* nodeDefinition) const
+bool NodeDef::hasParent(const NodeDef* nodeDef) const
 {
-    if (!nodeDefinition) { return false; }
-    for (const ContainerDefinition* parentContainer: m_parentContainerDefinitions)
+    if (!nodeDef) { return false; }
+    for (const ContainerDef* parentContainer: m_parentContainerDefs)
     {
-        if (parentContainer->hostDefinition()->derivedRoot() == nodeDefinition->derivedRoot()) {
+        if (parentContainer->hostDef()->derivedRoot() == nodeDef->derivedRoot()) {
             return true;
         }
     }
 
     if (hasDerivedBase()) {
-        return hasParent(nodeDefinition);
+        return hasParent(nodeDef);
     }
 
     return false;
@@ -845,14 +845,14 @@ bool NodeDefinition::hasParent(const NodeDefinition* nodeDefinition) const
 
 // =============================================================================
 // (public)
-bool NodeDefinition::isParent(Node node, Node refNode, bool recursive) const
+bool NodeDef::isParent(Node node, Node refNode, bool recursive) const
 {
     // Find the parent data node
     Node _parentNode = parentNode(node);
     if (_parentNode.isNull()) { return false; }
 
     // Find the definition of the parent data node
-    const ContainerDefinition* _parentContainer = parentContainer(_parentNode);
+    const ContainerDef* _parentContainer = parentContainer(_parentNode);
     if (_parentContainer == NULL) { return false; }
 
     if (_parentNode == refNode) {
@@ -861,18 +861,18 @@ bool NodeDefinition::isParent(Node node, Node refNode, bool recursive) const
 
     // Test the parent of the parent if recursive is true
     if (recursive) {
-        _parentContainer->hostDefinition()->isParent(node, refNode, recursive);
+        _parentContainer->hostDef()->isParent(node, refNode, recursive);
     }
     return false;
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::onNodeInserted(Node _node) const
+void NodeDef::onNodeInserted(Node _node) const
 {
     // Get all containers also from derived nodes
     auto cList = containerList();
-    for (const ContainerDefinition* cDef: cList)
+    for (const ContainerDef* cDef: cList)
     {
         int count = cDef->nodeCount(_node);
         while (count < cDef->minCount()) {
@@ -883,7 +883,7 @@ void NodeDefinition::onNodeInserted(Node _node) const
 
     Item item(this, _node);
     auto vList = valueList();
-    for (const ValueDefinition* vDef: vList)
+    for (const ValueDef* vDef: vList)
     {
         if (vDef->settings().required() &&
             vDef->settings().unique()) {
@@ -920,14 +920,14 @@ void NodeDefinition::onNodeInserted(Node _node) const
 
 // =============================================================================
 // (public)
-void NodeDefinition::onNodeMoved(Node _node) const
+void NodeDef::onNodeMoved(Node _node) const
 {
     UNUSED(_node);
 }
 
 // =============================================================================
 // (public)
-void NodeDefinition::onNodeCloned(Node _node) const
+void NodeDef::onNodeCloned(Node _node) const
 {
     UNUSED(_node);
 }

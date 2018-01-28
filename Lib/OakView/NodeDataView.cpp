@@ -60,7 +60,7 @@ void NodeDataView::setModel(Model::OakModel* model)
     if (m_model) {
         // Disconnect the old model
         m_model->notifier_currentItemChanged.remove(this);
-        m_model->notifier_rootNodeDefinitionChanged.remove(this);
+        m_model->notifier_rootNodeDefChanged.remove(this);
 
         m_model->notifier_destroyed.remove(this);
 
@@ -73,7 +73,7 @@ void NodeDataView::setModel(Model::OakModel* model)
     if (m_model) {
         // connect the new mobel
         m_model->notifier_currentItemChanged.add(this, &NodeDataView::currentItemChanged);
-        m_model->notifier_rootNodeDefinitionChanged.add(this, &NodeDataView::clearEditorCash);
+        m_model->notifier_rootNodeDefChanged.add(this, &NodeDataView::clearEditorCash);
 
         m_model->notifier_destroyed.add(this, &NodeDataView::modelDestroyed);
         m_model->notifier_itemValueChanged.add(this, &NodeDataView::onItemValueChanged);
@@ -128,10 +128,10 @@ void NodeDataView::setCurrentItem(const Model::Item& item)
 // (public)
 NodeEditorHandler* NodeDataView::getEditorHandler(const Model::Item& item)
 {
-    if (item.isDefinitionNull()) { return nullptr; }
+    if (item.isDefNull()) { return nullptr; }
 
     for (const auto& eHandler: m_editorList) {
-        if (eHandler->nodeDefinition() == item.definition()) {
+        if (eHandler->nodeDef() == item.def()) {
             return eHandler.get();
         }
     }
@@ -178,15 +178,15 @@ void NodeDataView::setCurrentWidget(int index)
 void NodeDataView::onItemValueChanged(const Model::Item &item, int valueIndex)
 {
     if (item == m_model->currentItem()) {
-        if (item.definition()->derivedIdValueDefIndex() == valueIndex) {
+        if (item.def()->derivedIdValueDefIndex() == valueIndex) {
             auto node = item.node();
-            auto definition = m_model->findNodeDefinition(node);
-            if (definition) {
-                m_model->setCurrentItem(Model::Item(definition, node, m_model));
+            auto def = m_model->findNodeDef(node);
+            if (def) {
+                m_model->setCurrentItem(Model::Item(def, node, m_model));
             }
         }
         // Pass on the event to the current editor
-        getEditorHandler(item)->updateEditorValue(item.definition()->value(valueIndex).name());
+        getEditorHandler(item)->updateEditorValue(item.def()->value(valueIndex).name());
     }
 }
 

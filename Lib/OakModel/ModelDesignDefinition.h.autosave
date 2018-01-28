@@ -24,14 +24,14 @@ typedef std::weak_ptr<ModelDesignDefinition> ModelDesignDefWPtr;
 // =============================================================================
 // Class definition
 // =============================================================================
-class ModelDesignDefinition : public NodeDefinition
+class ModelDesignDefinition : public NodeDef
 {
 protected:
     ModelDesignDefinition();
     void createModelDesign();
 
 public:
-    static NodeDefinitionSPtr MakeSPtr();
+    static NodeDefSPtr MakeSPtr();
 };
 
 } // namespace Model

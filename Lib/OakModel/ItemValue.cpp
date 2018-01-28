@@ -18,7 +18,7 @@ namespace Model {
 // =============================================================================
 // (public)
 ItemValue::ItemValue()
-    : m_valueDefinition(nullptr),
+    : m_valueDef(nullptr),
       m_item(nullptr)
 {
 
@@ -26,8 +26,8 @@ ItemValue::ItemValue()
 
 // =============================================================================
 // (public)
-ItemValue::ItemValue(const ValueDefinition* valueDefinition, const Node& node, const Item *model)
-    : m_valueDefinition(valueDefinition),
+ItemValue::ItemValue(const ValueDef* valueDef, const Node& node, const Item *model)
+    : m_valueDef(valueDef),
       m_node(node),
       m_item(model)
 {
@@ -37,7 +37,7 @@ ItemValue::ItemValue(const ValueDefinition* valueDefinition, const Node& node, c
 // =============================================================================
 // (public)
 ItemValue::ItemValue(const ItemValue& copy)
-    : m_valueDefinition(copy.m_valueDefinition),
+    : m_valueDef(copy.m_valueDef),
       m_node(copy.m_node),
       m_item(copy.m_item)
 {
@@ -47,7 +47,7 @@ ItemValue::ItemValue(const ItemValue& copy)
 // =============================================================================
 // (public)
 ItemValue::ItemValue(ItemValue&& move)
-    : m_valueDefinition(move.m_valueDefinition),
+    : m_valueDef(move.m_valueDef),
       m_node(std::move(move.m_node)),
       m_item(move.m_item)
 {
@@ -58,7 +58,7 @@ ItemValue::ItemValue(ItemValue&& move)
 // (public)
 ItemValue& ItemValue::operator=(const ItemValue& copy)
 {
-    m_valueDefinition = copy.m_valueDefinition;
+    m_valueDef = copy.m_valueDef;
     m_node = copy.m_node;
     m_item = copy.m_item;
     return *this;
@@ -68,7 +68,7 @@ ItemValue& ItemValue::operator=(const ItemValue& copy)
 // (public)
 ItemValue& ItemValue::operator=(ItemValue&& move)
 {
-    m_valueDefinition = move.m_valueDefinition;
+    m_valueDef = move.m_valueDef;
     m_node = std::move(move.m_node);
     m_item = move.m_item;
     return *this;
@@ -78,28 +78,28 @@ ItemValue& ItemValue::operator=(ItemValue&& move)
 // (public)
 bool ItemValue::operator==(const ItemValue &_itemValue) const
 {
-    return m_valueDefinition == _itemValue.m_valueDefinition && m_node == _itemValue.m_node;
+    return m_valueDef == _itemValue.m_valueDef && m_node == _itemValue.m_node;
 }
 
 // =============================================================================
 // (public)
 bool ItemValue::operator!=(const ItemValue &_itemValue) const
 {
-    return m_valueDefinition != _itemValue.m_valueDefinition || m_node != _itemValue.m_node;
+    return m_valueDef != _itemValue.m_valueDef || m_node != _itemValue.m_node;
 }
 
 // =============================================================================
 // (public)
 bool ItemValue::isNull() const
 {
-    return isDefinitionNull() || isNodeNull();
+    return isDefNull() || isNodeNull();
 }
 
 // =============================================================================
 // (public)
-bool ItemValue::isDefinitionNull() const
+bool ItemValue::isDefNull() const
 {
-    return !m_valueDefinition || m_valueDefinition->isNull();
+    return !m_valueDef || m_valueDef->isNull();
 }
 
 // =============================================================================
@@ -113,32 +113,32 @@ bool ItemValue::isNodeNull() const
 // (public)
 const std::string &ItemValue::name() const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->name();
+    assert(m_valueDef != nullptr);
+    return m_valueDef->name();
 }
 
 // =============================================================================
 // (public)
 const std::string & ItemValue::displayName() const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->displayName();
+    assert(m_valueDef != nullptr);
+    return m_valueDef->displayName();
 }
 
 // =============================================================================
 // (public)
 const Node& ItemValue::node() const
 {
-    assert(m_valueDefinition != nullptr);
+    assert(m_valueDef != nullptr);
     return m_node;
 }
 
 // =============================================================================
 // (public)
-const ValueDefinition*ItemValue::valueDefinition() const
+const ValueDef*ItemValue::valueDef() const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition;
+    assert(m_valueDef != nullptr);
+    return m_valueDef;
 }
 
 // =============================================================================
@@ -152,40 +152,40 @@ const Item* ItemValue::item() const
 // (public)
 UnionValue ItemValue::value(bool useDefault) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->value(m_node, useDefault);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->value(m_node, useDefault);
 }
 
 // =============================================================================
 // (public)
 std::string ItemValue::toString(bool useDefault) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->toString(m_node, useDefault);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->toString(m_node, useDefault);
 }
 
 // =============================================================================
 // (public)
 bool ItemValue::hasDefaultValue() const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->hasDefaultValue();
+    assert(m_valueDef != nullptr);
+    return m_valueDef->hasDefaultValue();
 }
 
 //// =============================================================================
 //// (public)
 //bool ItemValue::getOptions(std::vector<VariantCRef>& value) const
 //{
-//    assert(m_valueDefinition != nullptr);
-//    return m_valueDefinition->getOptions(value);
+//    assert(m_valueDef != nullptr);
+//    return m_valueDef->getOptions(value);
 //}
 
 // =============================================================================
 // (public)
 const ValueSettings &ItemValue::settings() const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->settings();
+    assert(m_valueDef != nullptr);
+    return m_valueDef->settings();
 }
 
 // =============================================================================

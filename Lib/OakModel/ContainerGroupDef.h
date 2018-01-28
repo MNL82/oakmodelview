@@ -18,33 +18,33 @@
 namespace Oak {
 namespace Model {
 
-class NodeDefinition;
+class NodeDef;
 
-class ContainerGroupDefinition;
-typedef std::unique_ptr<ContainerGroupDefinition> ContainerGroupDefinitionUPtr;
+class ContainerGroupDef;
+typedef std::unique_ptr<ContainerGroupDef> ContainerGroupDefUPtr;
 
-class NodeDefinition;
-class ContainerDefinition;
+class NodeDef;
+class ContainerDef;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ContainerGroupDefinition
+class ContainerGroupDef
 {
 public:
-    ContainerGroupDefinition(const NodeDefinition *hostDefinition);
-    ContainerGroupDefinition(const ContainerGroupDefinition &copy);
-    ContainerGroupDefinition(ContainerGroupDefinition &&move);
+    ContainerGroupDef(const NodeDef *hostDef);
+    ContainerGroupDef(const ContainerGroupDef &copy);
+    ContainerGroupDef(ContainerGroupDef &&move);
 
-    virtual ~ContainerGroupDefinition() {}
+    virtual ~ContainerGroupDef() {}
 
-    ContainerGroupDefinition& operator=(const ContainerGroupDefinition &copy);
-    ContainerGroupDefinition& operator=(ContainerGroupDefinition&& move);
+    ContainerGroupDef& operator=(const ContainerGroupDef &copy);
+    ContainerGroupDef& operator=(ContainerGroupDef&& move);
 
-    virtual ContainerGroupDefinitionUPtr copy() const;
+    virtual ContainerGroupDefUPtr copy() const;
 
-    virtual const NodeDefinition* containerDefinition(const std::string &name, const UnionRef& derivedId = UnionRef()) const;
-    virtual const NodeDefinition* containerDefinition(Node _node) const;
+    virtual const NodeDef* containerDef(const std::string &name, const UnionRef& derivedId = UnionRef()) const;
+    virtual const NodeDef* containerDef(Node _node) const;
 
     virtual bool validate(Node _node) const;
 
@@ -57,13 +57,13 @@ public:
     virtual int nodeCount(Node _node) const;
     virtual int nodeIndex(Node _node, Node refNode) const;
 
-    virtual Node node(Node _node, int index, const NodeDefinition** nodeDefinition = nullptr) const;
+    virtual Node node(Node _node, int index, const NodeDef** nodeDef = nullptr) const;
 
-    virtual Node firstNode(Node _node, const NodeDefinition** nodeDefinition = nullptr) const;
-    virtual Node lastNode(Node _node, const NodeDefinition** nodeDefinition = nullptr) const;
+    virtual Node firstNode(Node _node, const NodeDef** nodeDef = nullptr) const;
+    virtual Node lastNode(Node _node, const NodeDef** nodeDef = nullptr) const;
 
-    virtual Node nextNode(Node _node, Node refNode, const NodeDefinition** nodeDefinition = nullptr) const;
-    virtual Node previousNode(Node _node, Node refNode, const NodeDefinition** nodeDefinition = nullptr) const;
+    virtual Node nextNode(Node _node, Node refNode, const NodeDef** nodeDef = nullptr) const;
+    virtual Node previousNode(Node _node, Node refNode, const NodeDef** nodeDef = nullptr) const;
 // *****************************************************************************
 
 
@@ -111,18 +111,18 @@ public:
 // ****************************************************************************
 
     template<class... _Types> inline
-    static typename ContainerGroupDefinitionUPtr MakeUPtr(_Types&&... _Args)
+    static typename ContainerGroupDefUPtr MakeUPtr(_Types&&... _Args)
     {
-        return (ContainerGroupDefinitionUPtr(new ContainerGroupDefinition(_STD forward<_Types>(_Args)...)));
+        return (ContainerGroupDefUPtr(new ContainerGroupDef(_STD forward<_Types>(_Args)...)));
     }
 
 protected:
     void updateContainerList() const;
 
-    const NodeDefinition* m_hostDefinition;
-    mutable std::vector<const ContainerDefinition*> m_containerList;
+    const NodeDef* m_hostDef;
+    mutable std::vector<const ContainerDef*> m_containerList;
 
-    friend class NodeDefinitionBuilder;
+    friend class NodeDefBuilder;
 };
 
 } // namespace Model

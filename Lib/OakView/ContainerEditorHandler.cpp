@@ -10,7 +10,7 @@
 
 #include "ContainerEditorHandler.h"
 
-#include "NodeDefinition.h"
+#include "NodeDef.h"
 
 #include <QPushButton>
 
@@ -29,7 +29,7 @@ ContainerEditorHandler::ContainerEditorHandler(Model::Item item, const std::stri
 // (public)
 QString ContainerEditorHandler::listDisplayName() const
 {
-    return QString::fromStdString(m_item.definition()->childDefinition(m_name)->displayName());
+    return QString::fromStdString(m_item.def()->childDef(m_name)->displayName());
 }
 
 // =============================================================================
@@ -90,9 +90,9 @@ QWidget* ContainerEditorHandler::getEditor()
 // (public)
 bool ContainerEditorHandler::setNode(const Model::Node& node)
 {
-    if (!m_item.definition()->validateForThis(node)) { return false; }
+    if (!m_item.def()->validateForThis(node)) { return false; }
 
-    m_item = Model::Item(m_item.definition(), node, m_item.model());
+    m_item = Model::Item(m_item.def(), node, m_item.model());
 
     updateEditor();
 

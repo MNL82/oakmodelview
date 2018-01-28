@@ -7,11 +7,11 @@
 # See accompanying file LICENSE in the root folder.
 
 SOURCES += \
-    $$PWD/NodeDefinitionBuilder.cpp \
-    $$PWD/ValueDefinitionBuilder.cpp \
-    $$PWD/ContainerDefinitionBuilder.cpp
+    $$PWD/ContainerDefBuilder.cpp \
+    $$PWD/NodeDefBuilder.cpp \
+    $$PWD/ValueDefBuilder.cpp
 
 HEADERS += \
-    $$PWD/NodeDefinitionBuilder.h \
-    $$PWD/ValueDefinitionBuilder.h \
-    $$PWD/ContainerDefinitionBuilder.h
+    $$PWD/ContainerDefBuilder.h \
+    $$PWD/NodeDefBuilder.h \
+    $$PWD/ValueDefBuilder.h

@@ -8,11 +8,11 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ContainerDefinition.h"
+#include "ContainerDef.h"
 
 #include <assert.h>
 
-#include "NodeDefinition.h"
+#include "NodeDef.h"
 #include "Item.h"
 #include "ValueOptions.h"
 
@@ -21,7 +21,7 @@ namespace Model {
 
 // =============================================================================
 // (public)
-ContainerDefinition::ContainerDefinition()
+ContainerDef::ContainerDef()
     : m_minCount(-1)
     , m_maxCount(-1)
 #ifdef XML_BACKEND
@@ -32,15 +32,15 @@ ContainerDefinition::ContainerDefinition()
 
 // =============================================================================
 // (public)
-ContainerDefinition::ContainerDefinition(NodeDefinitionSPtr containerDefinition, int min, int max)
-    : m_containerDefinition(containerDefinition)
+ContainerDef::ContainerDef(NodeDefSPtr containerDef, int min, int max)
+    : m_containerDef(containerDef)
     , m_minCount(min)
     , m_maxCount(max)
 #ifdef XML_BACKEND
-    , m_elementListRef(containerDefinition->tagName())
+    , m_elementListRef(containerDef->tagName())
 #endif // XML_BACKEND
 {
-    assert(m_containerDefinition);
+    assert(m_containerDef);
     assert(m_minCount >= 0);
     assert(m_maxCount > 0);
     assert(m_maxCount >= m_minCount);
@@ -48,7 +48,7 @@ ContainerDefinition::ContainerDefinition(NodeDefinitionSPtr containerDefinition,
 
 // =============================================================================
 // (public)
-ContainerDefinition::ContainerDefinition(const ContainerDefinition &copy)
+ContainerDef::ContainerDef(const ContainerDef &copy)
     : m_elementListRef(copy.m_elementListRef)
 {
     *this = copy;
@@ -56,17 +56,17 @@ ContainerDefinition::ContainerDefinition(const ContainerDefinition &copy)
 
 // =============================================================================
 // (public)
-ContainerDefinition::ContainerDefinition(ContainerDefinition &&move)
+ContainerDef::ContainerDef(ContainerDef &&move)
 {
     *this = std::move(move);
 }
 
 // =============================================================================
 // (public)
-ContainerDefinition& ContainerDefinition::operator=(const ContainerDefinition &copy)
+ContainerDef& ContainerDef::operator=(const ContainerDef &copy)
 {
-    m_hostDefinition = copy.m_hostDefinition;
-    m_containerDefinition = copy.m_containerDefinition;
+    m_hostDef = copy.m_hostDef;
+    m_containerDef = copy.m_containerDef;
     m_minCount = copy.m_minCount;
     m_maxCount = copy.m_maxCount;
 
@@ -78,10 +78,10 @@ ContainerDefinition& ContainerDefinition::operator=(const ContainerDefinition &c
 
 // =============================================================================
 // (public)
-ContainerDefinition& ContainerDefinition::operator=(ContainerDefinition &&move)
+ContainerDef& ContainerDef::operator=(ContainerDef &&move)
 {
-    m_hostDefinition = move.m_hostDefinition;
-    m_containerDefinition = move.m_containerDefinition;
+    m_hostDef = move.m_hostDef;
+    m_containerDef = move.m_containerDef;
     m_minCount = move.m_minCount;
     m_maxCount = move.m_maxCount;
 
@@ -93,57 +93,57 @@ ContainerDefinition& ContainerDefinition::operator=(ContainerDefinition &&move)
 
 // =============================================================================
 // (public)
-ContainerDefinitionUPtr ContainerDefinition::copy() const
+ContainerDefUPtr ContainerDef::copy() const
 {
     return MakeUPtr(*this);
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::isNull() const
+bool ContainerDef::isNull() const
 {
-    return m_hostDefinition.expired();
+    return m_hostDef.expired();
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerDefinition::containerDefinition() const
+const NodeDef* ContainerDef::containerDef() const
 {
-    return m_containerDefinition.get();
+    return m_containerDef.get();
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerDefinition::containerDefinition(const UnionRef &derivedId) const
+const NodeDef* ContainerDef::containerDef(const UnionRef &derivedId) const
 {
-    if (derivedId.isNull() || derivedId.isEqual(m_containerDefinition->derivedId())) {
-        return m_containerDefinition.get();
+    if (derivedId.isNull() || derivedId.isEqual(m_containerDef->derivedId())) {
+        return m_containerDef.get();
     }
-    return m_containerDefinition->getDerived(derivedId);
+    return m_containerDef->getDerived(derivedId);
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerDefinition::containerDefinition(Node _node) const
+const NodeDef* ContainerDef::containerDef(Node _node) const
 {
-    if (m_containerDefinition->validateForThis(_node)) {
-        return m_containerDefinition.get();
+    if (m_containerDef->validateForThis(_node)) {
+        return m_containerDef.get();
     }
-    return m_containerDefinition->getDerived(_node);
+    return m_containerDef->getDerived(_node);
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::validate(Node _node) const
+bool ContainerDef::validate(Node _node) const
 {
     if (_node.isNull()) { return false; }
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
     case Node::Type::XML: {
-        if (!m_containerDefinition) { return false; }
-        if (_node.xmlNode().compareTagName(containerDefinition()->tagName()) != 0) { return false; }
-        return m_containerDefinition->validateForThisOrDerived(_node);
+        if (!m_containerDef) { return false; }
+        if (_node.xmlNode().compareTagName(containerDef()->tagName()) != 0) { return false; }
+        return m_containerDef->validateForThisOrDerived(_node);
     }
 #endif // XML_BACKEND
     default:
@@ -155,7 +155,7 @@ bool ContainerDefinition::validate(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerDefinition::minCount() const
+int ContainerDef::minCount() const
 {
     assert(m_minCount >= 0);
     return m_minCount;
@@ -163,7 +163,7 @@ int ContainerDefinition::minCount() const
 
 // =============================================================================
 // (public)
-int ContainerDefinition::maxCount() const
+int ContainerDef::maxCount() const
 {
     assert(m_maxCount > 0);
     return m_maxCount;
@@ -171,7 +171,7 @@ int ContainerDefinition::maxCount() const
 
 // =============================================================================
 // (public)
-int ContainerDefinition::nodeCount(Node _node) const
+int ContainerDef::nodeCount(Node _node) const
 {
     if (_node.isNull()) { return -1; }
 
@@ -189,7 +189,7 @@ int ContainerDefinition::nodeCount(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerDefinition::nodeIndex(Node _node, Node refNode) const
+int ContainerDef::nodeIndex(Node _node, Node refNode) const
 {
     if (_node.isNull()) { return -1; }
 
@@ -207,7 +207,7 @@ int ContainerDefinition::nodeIndex(Node _node, Node refNode) const
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::node(Node _node, int index, const NodeDefinition** nodeDefinition) const
+Node ContainerDef::node(Node _node, int index, const NodeDef** nodeDef) const
 {
     if (_node.isNull()) { return Node(); }
 
@@ -223,15 +223,15 @@ Node ContainerDefinition::node(Node _node, int index, const NodeDefinition** nod
         assert(false);
     }
 
-    if (nodeDefinition) {
-        *nodeDefinition = (childNode.isNull()) ? 0 : containerDefinition(childNode);
+    if (nodeDef) {
+        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
     }
     return childNode;
 }
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::firstNode(Node _node, const NodeDefinition** nodeDefinition) const
+Node ContainerDef::firstNode(Node _node, const NodeDef** nodeDef) const
 {
     if (_node.isNull()) { return Node(); }
 
@@ -247,15 +247,15 @@ Node ContainerDefinition::firstNode(Node _node, const NodeDefinition** nodeDefin
         assert(false);
     }
 
-   if (nodeDefinition) {
-        *nodeDefinition = (childNode.isNull()) ? 0 : containerDefinition(childNode);
+   if (nodeDef) {
+        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
     }
     return childNode;
 }
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::lastNode(Node _node, const NodeDefinition** nodeDefinition) const
+Node ContainerDef::lastNode(Node _node, const NodeDef** nodeDef) const
 {
     if (_node.isNull()) { return Node(); }
 
@@ -271,15 +271,15 @@ Node ContainerDefinition::lastNode(Node _node, const NodeDefinition** nodeDefini
         assert(false);
     }
 
-    if (nodeDefinition) {
-        *nodeDefinition = (childNode.isNull()) ? 0 : containerDefinition(childNode);
+    if (nodeDef) {
+        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
     }
     return childNode;
 }
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::nextNode(Node refNode, const NodeDefinition** nodeDefinition) const
+Node ContainerDef::nextNode(Node refNode, const NodeDef** nodeDef) const
 {
     if (refNode.isNull()) { return Node(); }
 
@@ -295,15 +295,15 @@ Node ContainerDefinition::nextNode(Node refNode, const NodeDefinition** nodeDefi
         assert(false);
     }
 
-    if (nodeDefinition) {
-        *nodeDefinition = (childNode.isNull()) ? 0 : containerDefinition(childNode);
+    if (nodeDef) {
+        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
     }
     return childNode;
 }
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::previousNode(Node refNode, const NodeDefinition** nodeDefinition) const
+Node ContainerDef::previousNode(Node refNode, const NodeDef** nodeDef) const
 {
     if (refNode.isNull()) { return Node(); }
 
@@ -319,22 +319,22 @@ Node ContainerDefinition::previousNode(Node refNode, const NodeDefinition** node
         assert(false);
     }
 
-    if (nodeDefinition) {
-        *nodeDefinition = (childNode.isNull()) ? 0 : containerDefinition(childNode);
+    if (nodeDef) {
+        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
     }
     return childNode;
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerDefinition::hostDefinition() const
+const NodeDef* ContainerDef::hostDef() const
 {
-    return m_hostDefinition.lock().get();
+    return m_hostDef.lock().get();
 }
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::hostNode(Node refdNode) const
+Node ContainerDef::hostNode(Node refdNode) const
 {
     if (refdNode.isNull()) { return Node(); }
 
@@ -345,7 +345,7 @@ Node ContainerDefinition::hostNode(Node refdNode) const
 
         if (hostElement.empty()) { return Node(); }
 
-        if (hostDefinition()->tagName().compare(hostElement.tagName()) != 0) { return Node(); }
+        if (hostDef()->tagName().compare(hostElement.tagName()) != 0) { return Node(); }
         return hostElement;
     }
 #endif // XML_BACKEND
@@ -358,7 +358,7 @@ Node ContainerDefinition::hostNode(Node refdNode) const
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::canInsertNode(Node _node, int &index) const
+bool ContainerDef::canInsertNode(Node _node, int &index) const
 {
     if (isNull()) { return false; }
 
@@ -384,7 +384,7 @@ bool ContainerDefinition::canInsertNode(Node _node, int &index) const
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::insertNode(Node _node, int &index) const
+Node ContainerDef::insertNode(Node _node, int &index) const
 {
     Node newNode;
     if (canInsertNode(_node, index)) {
@@ -400,30 +400,30 @@ Node ContainerDefinition::insertNode(Node _node, int &index) const
             return newNode;
         }
     }
-    m_containerDefinition->onNodeInserted(newNode);
+    m_containerDef->onNodeInserted(newNode);
     return newNode;
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::canCloneNode(Node _node, int &index, Node cloneNode) const
+bool ContainerDef::canCloneNode(Node _node, int &index, Node cloneNode) const
 {
     if (isNull()) { return false; }
 
     // Check that clone node is valid
-    if (!m_containerDefinition->validateForAny(cloneNode)) { return false; }
+    if (!m_containerDef->validateForAny(cloneNode)) { return false; }
 
     // Check if 'cloneNode' is parent(recursive) of 'node'
     // Can not clone it selv into it selv
 
-    if (!m_hostDefinition.expired() && m_hostDefinition.lock()->isParent(_node, cloneNode)) { return false; }
+    if (!m_hostDef.expired() && m_hostDef.lock()->isParent(_node, cloneNode)) { return false; }
 
     return canInsertNode(_node, index);
 }
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::cloneNode(Node _node, int &index, Node cloneNode) const
+Node ContainerDef::cloneNode(Node _node, int &index, Node cloneNode) const
 {
     Node newNode;
     if (canCloneNode(_node, index, cloneNode)) {
@@ -440,13 +440,13 @@ Node ContainerDefinition::cloneNode(Node _node, int &index, Node cloneNode) cons
         }
     }
 
-    m_containerDefinition->onNodeCloned(newNode);
+    m_containerDef->onNodeCloned(newNode);
     return newNode;
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::canMoveNode(Node _node, int &index, Node moveNode) const
+bool ContainerDef::canMoveNode(Node _node, int &index, Node moveNode) const
 {
     if (isNull()) { return false; }
     if (index < -1) { return false; }
@@ -458,11 +458,11 @@ bool ContainerDefinition::canMoveNode(Node _node, int &index, Node moveNode) con
     if (index > count) { return false; }
 
     // Find the definition that match the 'moveNode'
-    const NodeDefinition* moveDefinition = containerDefinition(moveNode);
-    if (!moveDefinition) { return false; }
+    const NodeDef* moveDef = containerDef(moveNode);
+    if (!moveDef) { return false; }
 
     // Find the parent node of the 'moveNode'
-    Node moveNodeParent = moveDefinition->parentNode(moveNode);
+    Node moveNodeParent = moveDef->parentNode(moveNode);
     if (moveNodeParent.isNull()) { return false; }
 
     // Handle special case where the 'moveNode' is already a child of 'node'
@@ -475,7 +475,7 @@ bool ContainerDefinition::canMoveNode(Node _node, int &index, Node moveNode) con
     }
 
     // Find the node definition of 'moveNode' parent
-    const ContainerDefinition* moveParentContainer = moveDefinition->parentContainer(moveNodeParent);
+    const ContainerDef* moveParentContainer = moveDef->parentContainer(moveNodeParent);
     if (moveParentContainer == NULL) { return false; }
 
     // Find the index of the 'moveNode'
@@ -491,7 +491,7 @@ bool ContainerDefinition::canMoveNode(Node _node, int &index, Node moveNode) con
 
 // =============================================================================
 // (public)
-Node ContainerDefinition::moveNode(Node _node, int &index, Node moveNode) const
+Node ContainerDef::moveNode(Node _node, int &index, Node moveNode) const
 {
     Node newNode;
     if (canMoveNode(_node, index, moveNode)) {
@@ -507,14 +507,14 @@ Node ContainerDefinition::moveNode(Node _node, int &index, Node moveNode) const
             return newNode;
         }
     }
-    m_containerDefinition->onNodeMoved(newNode);
+    m_containerDef->onNodeMoved(newNode);
 
     return newNode;
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::canRemoveNode(Node _node, int index) const
+bool ContainerDef::canRemoveNode(Node _node, int index) const
 {
     if (isNull()) { return false; }
 
@@ -533,7 +533,7 @@ bool ContainerDefinition::canRemoveNode(Node _node, int index) const
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::removeNode(Node _node, int index) const
+bool ContainerDef::removeNode(Node _node, int index) const
 {
     if (canRemoveNode(_node, index)) {
         switch (_node.type()) {
@@ -552,19 +552,19 @@ bool ContainerDefinition::removeNode(Node _node, int index) const
 
 // =============================================================================
 // (public)
-const ContainerDefinition &ContainerDefinition::emptyChildNodeDefinition()
+const ContainerDef &ContainerDef::emptyChildNodeDef()
 {
-    static ContainerDefinition emptyChild;
+    static ContainerDef emptyChild;
     return emptyChild;
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefinition::checkUniqueOptionValues(Node _node) const
+bool ContainerDef::checkUniqueOptionValues(Node _node) const
 {
     // Check if a unique options only list do not have any options left
-    auto vList = m_containerDefinition->valueList();
-    for (const ValueDefinition* vDef: vList)
+    auto vList = m_containerDef->valueList();
+    for (const ValueDef* vDef: vList)
     {
         if (vDef->settings().unique() &&
             vDef->options().isUsed() &&
@@ -573,7 +573,7 @@ bool ContainerDefinition::checkUniqueOptionValues(Node _node) const
             if (firstSibling.isNull()) {
                 break;
             }
-            Item item(m_containerDefinition.get(), firstSibling);
+            Item item(m_containerDef.get(), firstSibling);
             std::vector<std::string> optionList;
             if (vDef->options().getOptions(optionList, &item)) {
                 if (optionList.size() <= 1) {

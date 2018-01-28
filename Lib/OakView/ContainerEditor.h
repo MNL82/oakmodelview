@@ -14,7 +14,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 
-#include "ContainerDefinition.h"
+#include "ContainerDef.h"
 
 namespace Oak {
 namespace View {

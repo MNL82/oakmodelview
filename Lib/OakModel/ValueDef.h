@@ -26,24 +26,24 @@ namespace Model {
 
 class ValueOptions;
 
-class ValueDefinition;
-typedef std::unique_ptr<ValueDefinition> ValueDefinitionUPtr;
-typedef std::unique_ptr<ValueDefinition> ValueDefUPtr;
+class ValueDef;
+typedef std::unique_ptr<ValueDef> ValueDefUPtr;
+typedef std::unique_ptr<ValueDef> ValueDefUPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueDefinition
+class ValueDef
 {
 public:
-    ValueDefinition(const UnionRef& valueTemplate);
+    ValueDef(const UnionRef& valueTemplate);
 
-    ValueDefinition(const ValueDefinition &copy);
-    ValueDefinition(ValueDefinition &&move);
+    ValueDef(const ValueDef &copy);
+    ValueDef(ValueDef &&move);
 
-    virtual ValueDefinitionUPtr copy() const;
+    virtual ValueDefUPtr copy() const;
 
-    virtual ~ValueDefinition();
+    virtual ~ValueDef();
 
     UnionType valueType() const;
     const UnionRef valueTemplate() const;
@@ -78,9 +78,9 @@ public:
 
     // Service functions
     template<class... _Types> inline
-    static typename ValueDefinitionUPtr MakeUPtr(_Types&&... _Args);
+    static typename ValueDefUPtr MakeUPtr(_Types&&... _Args);
 
-    static ValueDefinition &emptyDefinition();
+    static ValueDef &emptyDef();
 
 protected:
     UnionValue m_valueTemplate;
@@ -102,15 +102,15 @@ protected:
     // - Values excluded list
     // - Value filter
 
-    static ValueDefinition s_emptyDefinition;
+    static ValueDef s_emptyDef;
 
-    friend class ValueDefinitionBuilder;
+    friend class ValueDefBuilder;
 };
 
 // =============================================================================
 // (public)
 template<typename T>
-T ValueDefinition::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+T ValueDef::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     T val;
     getValue(_node, val, useDefault, allowConversion, conversion);
@@ -120,12 +120,12 @@ T ValueDefinition::value(Node _node, bool useDefault, bool allowConversion, Conv
 // =============================================================================
 // (public)
 template<class... _Types> inline
-static typename ValueDefinitionUPtr ValueDefinition::MakeUPtr(_Types&&... _Args)
+static typename ValueDefUPtr ValueDef::MakeUPtr(_Types&&... _Args)
 {
-    return (ValueDefinitionUPtr(new ValueDefinition(_STD forward<_Types>(_Args)...)));
+    return (ValueDefUPtr(new ValueDef(_STD forward<_Types>(_Args)...)));
 }
 
-typedef ValueDefinition ValueDef;
+typedef ValueDef ValueDef;
 
 } // namespace Model
 } // namespace Oak

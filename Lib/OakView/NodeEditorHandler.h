@@ -33,10 +33,10 @@ public:
     NodeEditorHandler(QObject* parent, Model::Item item);
     virtual ~NodeEditorHandler();
 
-    bool operator==(const Model::NodeDefinition* nodeDefinition);
-    bool operator!=(const Model::NodeDefinition* nodeDefinition);
+    bool operator==(const Model::NodeDef* nodeDef);
+    bool operator!=(const Model::NodeDef* nodeDef);
 
-    const Model::NodeDefinition* nodeDefinition() const;
+    const Model::NodeDef* nodeDef() const;
 
     QWidget* getEditor();
 

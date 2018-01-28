@@ -21,7 +21,7 @@ namespace Model {
 // =============================================================================
 // (protected)
 ModelDesignDefinition::ModelDesignDefinition()
-    : NodeDefinition("Design")
+    : NodeDef("Design")
 {
     m_tagName = "Design";
 }

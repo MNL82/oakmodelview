@@ -12,7 +12,7 @@
 
 #include <utility>
 
-#include "ValueDefinition.h"
+#include "ValueDef.h"
 
 namespace Oak {
 namespace Model {
@@ -26,7 +26,7 @@ class ItemValue
 {
 public:
     ItemValue();
-    ItemValue(const ValueDefinition* valueDefinition, const Node& node, const Item* item/* = nullptr*/);
+    ItemValue(const ValueDef* valueDef, const Node& node, const Item* item/* = nullptr*/);
     ItemValue(const ItemValue& copy);
     ItemValue(ItemValue&& move);
 
@@ -37,14 +37,14 @@ public:
     bool operator!=(const ItemValue& _itemValue) const;
 
     bool isNull() const;
-    bool isDefinitionNull() const;
+    bool isDefNull() const;
     bool isNodeNull() const;
 
     const std::string &name() const;
     const std::string &displayName() const;
 
     const Node& node() const;
-    const ValueDefinition* valueDefinition() const;
+    const ValueDef* valueDef() const;
     const Item* item() const;
 
     template<typename T>
@@ -86,7 +86,7 @@ protected:
     void onItemValueChanged() const;
 
 protected:
-    const ValueDefinition* m_valueDefinition;
+    const ValueDef* m_valueDef;
     Node m_node;
     const Item* m_item;
 };
@@ -96,8 +96,8 @@ protected:
 template<typename T>
 bool ItemValue::canGetValue(T &value, bool useDefault) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->canGetValue(m_node, value, useDefault, true);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->canGetValue(m_node, value, useDefault, true);
 }
 
 // =============================================================================
@@ -105,8 +105,8 @@ bool ItemValue::canGetValue(T &value, bool useDefault) const
 template<typename T>
 bool ItemValue::getValue(T &value, bool useDefault) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->getValue(m_node, value, useDefault, true);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->getValue(m_node, value, useDefault, true);
 }
 
 // =============================================================================
@@ -114,8 +114,8 @@ bool ItemValue::getValue(T &value, bool useDefault) const
 template<typename T>
 T ItemValue::value(bool useDefault) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->value<T>(m_node, useDefault, true);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->value<T>(m_node, useDefault, true);
 }
 
 // =============================================================================
@@ -123,8 +123,8 @@ T ItemValue::value(bool useDefault) const
 template<typename T>
 bool ItemValue::canSetValue(const T &value) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->canSetValue(m_node, value, true);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->canSetValue(m_node, value, true);
 }
 
 // =============================================================================
@@ -132,8 +132,8 @@ bool ItemValue::canSetValue(const T &value) const
 template<typename T>
 bool ItemValue::setValue(const T &value) const
 {
-    assert(m_valueDefinition != nullptr);
-    bool result = m_valueDefinition->setValue(m_node, value, true);
+    assert(m_valueDef != nullptr);
+    bool result = m_valueDef->setValue(m_node, value, true);
     if (result && m_item) {
         onItemValueChanged();
     }
@@ -145,8 +145,8 @@ bool ItemValue::setValue(const T &value) const
 template<typename T>
 bool ItemValue::getDefaultValue(T &value) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->getDefaultValue(value);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->getDefaultValue(value);
 }
 
 // =============================================================================
@@ -154,9 +154,9 @@ bool ItemValue::getDefaultValue(T &value) const
 template<typename T>
 T ItemValue::defaultValue() const
 {
-    assert(m_valueDefinition != nullptr);
+    assert(m_valueDef != nullptr);
     T value;
-    m_valueDefinition->getDefaultValue(value);
+    m_valueDef->getDefaultValue(value);
     return std::move(value);
 }
 
@@ -165,8 +165,8 @@ T ItemValue::defaultValue() const
 template<typename T>
 bool ItemValue::getOptions(std::vector<T>& value) const
 {
-    assert(m_valueDefinition != nullptr);
-    return m_valueDefinition->options().getOptions(value, m_item);
+    assert(m_valueDef != nullptr);
+    return m_valueDef->options().getOptions(value, m_item);
 }
 
 // =============================================================================

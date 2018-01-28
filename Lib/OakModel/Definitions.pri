@@ -9,21 +9,19 @@
 SOURCES += \
     $$PWD/ValueSettings.cpp \
     $$PWD/NodeSettings.cpp \
-    $$PWD/ContainerGroupDefinition.cpp \
-    $$PWD/ContainerDefinition.cpp \
-    $$PWD/NodeDefinition.cpp \
-    $$PWD/ValueDefinition.cpp \
     $$PWD/ValueOptions.cpp \
-    $$PWD/ValueListDefinition.cpp \
-    $$PWD/ModelDesignDefinition.cpp
+    $$PWD/ContainerDef.cpp \
+    $$PWD/ContainerGroupDef.cpp \
+    $$PWD/ModelDesignDef.cpp \
+    $$PWD/NodeDef.cpp \
+    $$PWD/ValueDef.cpp
 
 HEADERS += \
     $$PWD/ValueSettings.h \
     $$PWD/NodeSettings.h \
-    $$PWD/ContainerGroupDefinition.h \
-    $$PWD/ContainerDefinition.h \
-    $$PWD/NodeDefinition.h \
-    $$PWD/ValueDefinition.h \
     $$PWD/ValueOptions.h \
-    $$PWD/ValueListDefinition.h \
-    $$PWD/ModelDesignDefinition.h
+    $$PWD/NodeDef.h \
+    $$PWD/ModelDesignDef.h \
+    $$PWD/ContainerGroupDef.h \
+    $$PWD/ContainerDef.h \
+    $$PWD/ValueDef.h

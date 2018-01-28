@@ -28,7 +28,7 @@ namespace View {
 ValueEditorHandler::ValueEditorHandler(QObject* parent, Model::ItemValue itemValue)
     : QObject(parent), m_itemValue(itemValue)
 {
-    assert(!itemValue.isDefinitionNull());
+    assert(!itemValue.isDefNull());
 }
 
 // =============================================================================
@@ -58,7 +58,7 @@ QWidget* ValueEditorHandler::getEditor()
 // (public)
 void ValueEditorHandler::setNode(const Model::Node& node)
 {
-    m_itemValue = Model::ItemValue(m_itemValue.valueDefinition(), node, m_itemValue.item());
+    m_itemValue = Model::ItemValue(m_itemValue.valueDef(), node, m_itemValue.item());
 
     updateLabelValue();
     updateEditorValue();
@@ -198,7 +198,7 @@ void ValueEditorHandler::createEditor()
 
     QValidator * validator = nullptr;
 
-    auto valueDef = m_itemValue.valueDefinition();
+    auto valueDef = m_itemValue.valueDef();
     if (valueDef->valueType() == Model::UnionType::Integer) {
         validator = new QIntValidator();
     } else if (valueDef->valueType() == Model::UnionType::Double) {

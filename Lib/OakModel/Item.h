@@ -11,7 +11,7 @@
 #pragma once
 
 #include "Node.h"
-#include "NodeDefinition.h"
+#include "NodeDef.h"
 #include "ItemValue.h"
 
 namespace Oak {
@@ -26,7 +26,7 @@ class Item
 {
 public:
     Item();
-    Item(const NodeDefinition* definition, Node node, const OakModel* model = nullptr);
+    Item(const NodeDef* def, Node node, const OakModel* model = nullptr);
     Item(const Item& copy);
     Item(Item&& move);
 
@@ -41,13 +41,13 @@ public:
     Item operator[](int index) const;
 
     bool isNull() const;
-    bool isDefinitionNull() const;
+    bool isDefNull() const;
     bool isNodeNull() const;
 
     void clear();
 
     Node node() const { return m_node; }
-    const NodeDefinition* definition() const { return m_definition; }
+    const NodeDef* def() const { return m_def; }
     const OakModel* model() const;
 
     void setCurrent();
@@ -132,7 +132,7 @@ protected:
     static void updateUniqueValues(Item item);
 
 protected:
-    const NodeDefinition* m_definition;
+    const NodeDef* m_def;
     Node m_node;
     const OakModel* m_model;
 

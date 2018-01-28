@@ -8,10 +8,10 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ContainerGroupDefinition.h"
+#include "ContainerGroupDef.h"
 
-#include "NodeDefinition.h"
-#include "ContainerDefinition.h"
+#include "NodeDef.h"
+#include "ContainerDef.h"
 
 #include <assert.h>
 
@@ -20,74 +20,74 @@ namespace Model {
 
 // =============================================================================
 // (public)
-ContainerGroupDefinition::ContainerGroupDefinition(const NodeDefinition *hostDefinition)
+ContainerGroupDef::ContainerGroupDef(const NodeDef *hostDef)
 {
-    assert(hostDefinition);
-    m_hostDefinition = hostDefinition;
+    assert(hostDef);
+    m_hostDef = hostDef;
 
     updateContainerList();
 }
 
 // =============================================================================
 // (public)
-ContainerGroupDefinition::ContainerGroupDefinition(const ContainerGroupDefinition &copy)
-    : m_hostDefinition(copy.m_hostDefinition),
+ContainerGroupDef::ContainerGroupDef(const ContainerGroupDef &copy)
+    : m_hostDef(copy.m_hostDef),
       m_containerList(copy.m_containerList)
 {
 }
 
 // =============================================================================
 // (public)
-ContainerGroupDefinition::ContainerGroupDefinition(ContainerGroupDefinition &&move)
-    : m_hostDefinition(std::move(move.m_hostDefinition)),
+ContainerGroupDef::ContainerGroupDef(ContainerGroupDef &&move)
+    : m_hostDef(std::move(move.m_hostDef)),
       m_containerList(std::move(move.m_containerList))
 {
 }
 
 // =============================================================================
 // (public)
-ContainerGroupDefinition&  ContainerGroupDefinition::operator=(const ContainerGroupDefinition &copy)
+ContainerGroupDef&  ContainerGroupDef::operator=(const ContainerGroupDef &copy)
 {
-    m_hostDefinition = copy.m_hostDefinition;
+    m_hostDef = copy.m_hostDef;
     m_containerList.assign(copy.m_containerList.begin(), copy.m_containerList.end());
     return *this;
 }
 
 // =============================================================================
 // (public)
-ContainerGroupDefinition& ContainerGroupDefinition::operator=(ContainerGroupDefinition &&move)
+ContainerGroupDef& ContainerGroupDef::operator=(ContainerGroupDef &&move)
 {
-    m_hostDefinition = std::move(move.m_hostDefinition);
+    m_hostDef = std::move(move.m_hostDef);
     m_containerList = std::move(move.m_containerList);
     return *this;
 }
 
 // =============================================================================
 // (public)
-ContainerGroupDefinitionUPtr ContainerGroupDefinition::copy() const
+ContainerGroupDefUPtr ContainerGroupDef::copy() const
 {
     return MakeUPtr(*this);
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerGroupDefinition::containerDefinition(const std::string &name, const UnionRef& derivedId) const
+const NodeDef* ContainerGroupDef::containerDef(const std::string &name, const UnionRef& derivedId) const
 {
-    return m_hostDefinition->container(name).containerDefinition(derivedId);
+    return m_hostDef->container(name).containerDef(derivedId);
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* ContainerGroupDefinition::containerDefinition(Node _node) const
+const NodeDef* ContainerGroupDef::containerDef(Node _node) const
 {
-    const ContainerDefinition& ci = m_hostDefinition->container(_node);
+    const ContainerDef& ci = m_hostDef->container(_node);
     if (ci.isNull()) { return nullptr; }
-    return ci.containerDefinition(_node);
+    return ci.containerDef(_node);
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::validate(Node _node) const
+bool ContainerGroupDef::validate(Node _node) const
 {
     for (auto container: m_containerList)
     {
@@ -100,7 +100,7 @@ bool ContainerGroupDefinition::validate(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerGroupDefinition::nodeCount(Node _node) const
+int ContainerGroupDef::nodeCount(Node _node) const
 {
     int count = 0;
     for (auto child: m_containerList) {
@@ -112,7 +112,7 @@ int ContainerGroupDefinition::nodeCount(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerGroupDefinition::nodeIndex(Node _node, Node refNode) const
+int ContainerGroupDef::nodeIndex(Node _node, Node refNode) const
 {
     int index = 0;
     for (auto container: m_containerList)
@@ -129,66 +129,66 @@ int ContainerGroupDefinition::nodeIndex(Node _node, Node refNode) const
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::node(Node _node, int index, const NodeDefinition** nodeDefinition) const
+Node ContainerGroupDef::node(Node _node, int index, const NodeDef** nodeDef) const
 {
     for (auto container: m_containerList)
     {
-        Node childNode = container->node(_node, index, nodeDefinition);
+        Node childNode = container->node(_node, index, nodeDef);
         if (childNode.isNull()) {
             index -= container->nodeCount(_node);
         } else {
             return childNode;
         }
     }
-    if (nodeDefinition) { *nodeDefinition = 0; }
+    if (nodeDef) { *nodeDef = 0; }
     return Node();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::firstNode(Node _node, const NodeDefinition** nodeDefinition) const
+Node ContainerGroupDef::firstNode(Node _node, const NodeDef** nodeDef) const
 {
     for (auto container: m_containerList)
     {
-        Node childNode = container->firstNode(_node, nodeDefinition);
+        Node childNode = container->firstNode(_node, nodeDef);
         if (!childNode.isNull()) {
             return childNode;
         }
     }
-    if (nodeDefinition) { *nodeDefinition = 0; }
+    if (nodeDef) { *nodeDef = 0; }
     return Node();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::lastNode(Node _node, const NodeDefinition** nodeDefinition) const
+Node ContainerGroupDef::lastNode(Node _node, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.end();
     while (it != m_containerList.begin()) {
         it--;
-        Node childNode = (*it)->lastNode(_node, nodeDefinition);
+        Node childNode = (*it)->lastNode(_node, nodeDef);
         if (!childNode.isNull()) {
             return childNode;
         }
     }
-    if (nodeDefinition) { *nodeDefinition = 0; }
+    if (nodeDef) { *nodeDef = 0; }
     return Node();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::nextNode(Node _node, Node refNode, const NodeDefinition** nodeDefinition) const
+Node ContainerGroupDef::nextNode(Node _node, Node refNode, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.begin();
     while (it != m_containerList.end()) {
         if ((*it)->nodeIndex(_node, refNode) != -1) {
-            Node childNode = (*it)->nextNode(refNode, nodeDefinition);
+            Node childNode = (*it)->nextNode(refNode, nodeDef);
             if (childNode.isNull()) {
                 // Faild to find next node in the same Container
                 // Looking in the next one ...
                 it++;
                 while (it != m_containerList.end()) {
-                    childNode = (*it)->firstNode(_node, nodeDefinition);
+                    childNode = (*it)->firstNode(_node, nodeDef);
                     if (!childNode.isNull()) {
                         // Found the next node as the fist node in an other Container
                         return childNode;
@@ -205,25 +205,25 @@ Node ContainerGroupDefinition::nextNode(Node _node, Node refNode, const NodeDefi
     }
     // Never found the refNode
     assert(false);
-    if (nodeDefinition) { *nodeDefinition = 0; }
+    if (nodeDef) { *nodeDef = 0; }
     return Node();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::previousNode(Node _node, Node refNode, const NodeDefinition** nodeDefinition) const
+Node ContainerGroupDef::previousNode(Node _node, Node refNode, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.end();
     while (it != m_containerList.begin()) {
         it--;
         if ((*it)->nodeIndex(_node, refNode) != -1) {
-            Node childNode = (*it)->nextNode(refNode, nodeDefinition);
+            Node childNode = (*it)->nextNode(refNode, nodeDef);
             if (childNode.isNull()) {
                 // Faild to find previous node in the same Container
                 // Looking in the previous one ...
                 while (it != m_containerList.begin()) {
                     it--;
-                    childNode = (*it)->lastNode(_node, nodeDefinition);
+                    childNode = (*it)->lastNode(_node, nodeDef);
                     if (!childNode.isNull()) {
                         // Found the previous node as the last node in an other Container
                         return childNode;
@@ -238,17 +238,17 @@ Node ContainerGroupDefinition::previousNode(Node _node, Node refNode, const Node
     }
     // Never found the refNode
     assert(false);
-    if (nodeDefinition) { *nodeDefinition = 0; }
+    if (nodeDef) { *nodeDef = 0; }
     return Node();
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::canInsertNode(Node _node, const UnionRef &name, int &index) const
+bool ContainerGroupDef::canInsertNode(Node _node, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
-        if (name == container->containerDefinition()->name()) {
+        if (name == container->containerDef()->name()) {
             return container->canInsertNode(_node, index);
         } else {
             index -= container->nodeCount(_node);
@@ -261,11 +261,11 @@ bool ContainerGroupDefinition::canInsertNode(Node _node, const UnionRef &name, i
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::insertNode(Node _node, const UnionRef &name, int &index) const
+Node ContainerGroupDef::insertNode(Node _node, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
-        if (name == container->containerDefinition()->name()) {
+        if (name == container->containerDef()->name()) {
             return container->insertNode(_node, index);
         } else {
             index -= container->nodeCount(_node);
@@ -278,7 +278,7 @@ Node ContainerGroupDefinition::insertNode(Node _node, const UnionRef &name, int 
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::canCloneNode(Node _node, int &index, Node cloneNode) const
+bool ContainerGroupDef::canCloneNode(Node _node, int &index, Node cloneNode) const
 {
     for (auto container: m_containerList)
     {
@@ -294,7 +294,7 @@ bool ContainerGroupDefinition::canCloneNode(Node _node, int &index, Node cloneNo
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::cloneNode(Node _node, int &index, Node cloneNode) const
+Node ContainerGroupDef::cloneNode(Node _node, int &index, Node cloneNode) const
 {
     for (auto container: m_containerList)
     {
@@ -311,7 +311,7 @@ Node ContainerGroupDefinition::cloneNode(Node _node, int &index, Node cloneNode)
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::canMoveNode(Node _node, int &index, Node moveNode) const
+bool ContainerGroupDef::canMoveNode(Node _node, int &index, Node moveNode) const
 {
     for (auto container: m_containerList)
     {
@@ -327,7 +327,7 @@ bool ContainerGroupDefinition::canMoveNode(Node _node, int &index, Node moveNode
 
 // =============================================================================
 // (public)
-Node ContainerGroupDefinition::moveNode(Node _node, int &index, Node moveNode) const
+Node ContainerGroupDef::moveNode(Node _node, int &index, Node moveNode) const
 {
     for (auto container: m_containerList)
     {
@@ -344,7 +344,7 @@ Node ContainerGroupDefinition::moveNode(Node _node, int &index, Node moveNode) c
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::canRemoveNode(Node _node, int index) const
+bool ContainerGroupDef::canRemoveNode(Node _node, int index) const
 {
     int count;
     for (auto container: m_containerList)
@@ -362,7 +362,7 @@ bool ContainerGroupDefinition::canRemoveNode(Node _node, int index) const
 
 // =============================================================================
 // (public)
-bool ContainerGroupDefinition::removeNode(Node _node, int index) const
+bool ContainerGroupDef::removeNode(Node _node, int index) const
 {
     int count;
     for (auto container: m_containerList)
@@ -380,9 +380,9 @@ bool ContainerGroupDefinition::removeNode(Node _node, int index) const
 
 // =============================================================================
 // (protected)
-void ContainerGroupDefinition::updateContainerList() const
+void ContainerGroupDef::updateContainerList() const
 {
-    m_containerList = m_hostDefinition->containerList();
+    m_containerList = m_hostDef->containerList();
 }
 
 } // namespace Model

@@ -33,23 +33,23 @@ NodeEditorHandler::~NodeEditorHandler()
 
 // =============================================================================
 // (public)
-bool NodeEditorHandler::operator==(const Model::NodeDefinition* nodeDefinition)
+bool NodeEditorHandler::operator==(const Model::NodeDef* nodeDef)
 {
-    return m_item.definition() == nodeDefinition;
+    return m_item.def() == nodeDef;
 }
 
 // =============================================================================
 // (public)
-bool NodeEditorHandler::operator!=(const Model::NodeDefinition* nodeDefinition)
+bool NodeEditorHandler::operator!=(const Model::NodeDef* nodeDef)
 {
-    return m_item.definition() != nodeDefinition;
+    return m_item.def() != nodeDef;
 }
 
 // =============================================================================
 // (public)
-const Model::NodeDefinition* NodeEditorHandler::nodeDefinition() const
+const Model::NodeDef* NodeEditorHandler::nodeDef() const
 {
-    return m_item.definition();
+    return m_item.def();
 }
 
 // =============================================================================
@@ -64,9 +64,9 @@ QWidget* NodeEditorHandler::getEditor()
 // (public)
 bool NodeEditorHandler::setNode(Model::Node node)
 {
-    if (!m_item.definition()->validateForThis(node)) { return false; }
+    if (!m_item.def()->validateForThis(node)) { return false; }
 
-    m_item = Model::Item(m_item.definition(), node, m_item.model());
+    m_item = Model::Item(m_item.def(), node, m_item.model());
 
     foreach (ValueEditorHandler* vHandler, m_valueEditorMap) {
         vHandler->setNode(node);
@@ -157,10 +157,10 @@ void NodeEditorHandler::createEditor()
         vIt++;
     }
 
-    auto cList = m_item.definition()->containerList();
-    for (const Model::ContainerDefinition* containerPtr: cList)
+    auto cList = m_item.def()->containerList();
+    for (const Model::ContainerDef* containerPtr: cList)
     {
-        std::string id = containerPtr->containerDefinition()->name();
+        std::string id = containerPtr->containerDef()->name();
         if (!m_containerEditorMap.contains(id)) {
             auto cHandler = new ContainerEditorHandler(m_item, id, this);
             m_containerEditorMap.insert(id, cHandler);
@@ -170,7 +170,7 @@ void NodeEditorHandler::createEditor()
     }
 
     if (row == 0) {
-        std::string nodeName = m_item.definition()->displayName();
+        std::string nodeName = m_item.def()->displayName();
         QLabel* emptyLabel = new QLabel(QString("Item %1 is empty").arg(QString::fromStdString(nodeName)));
         layout->addWidget(emptyLabel);
     } else {

@@ -3,12 +3,12 @@
 
 #include <QFileDialog>
 
-#include "NodeDefinitionBuilder.h"
-#include "ContainerDefinitionBuilder.h"
-#include "ValueDefinitionBuilder.h"
+#include "NodeDefBuilder.h"
+#include "ContainerDefBuilder.h"
+#include "ValueDefBuilder.h"
 #include "XMLRefFactory.h"
 
-#include "ModelDesignDefinition.h"
+#include "ModelDesignDef.h"
 
 using namespace Oak::Model;
 
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitter->setSizes(QList<int>() << 300 << 700);
 
     //createMasterModel();
-    m_oakModel->setRootNodeDefinition(ModelDesignDefinition::MakeSPtr());
+    m_oakModel->setRootNodeDef(ModelDesignDef::MakeSPtr());
 }
 
 MainWindow::~MainWindow()
@@ -146,5 +146,5 @@ void MainWindow::createMasterModel()
     NDB::addContainerDef(nodeProcess, CDB::Make(nodeColumn));
     NDB::addContainerDef(nodeColumn, CDB::Make(nodeStep));
 
-    m_oakModel->setRootNodeDefinition(nodeProject);
+    m_oakModel->setRootNodeDef(nodeProject);
 }

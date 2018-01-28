@@ -23,40 +23,40 @@
 namespace Oak {
 namespace Model {
 
-class NodeDefinition;
+class NodeDef;
 
-class ContainerDefinition;
-typedef std::unique_ptr<ContainerDefinition> ContainerDefinitionUPtr;
-typedef std::unique_ptr<ContainerDefinition> ContainerDefUPtr;
+class ContainerDef;
+typedef std::unique_ptr<ContainerDef> ContainerDefUPtr;
+typedef std::unique_ptr<ContainerDef> ContainerDefUPtr;
 
-class NodeDefinition;
-typedef std::shared_ptr<NodeDefinition> NodeDefinitionSPtr;
-typedef std::shared_ptr<NodeDefinition> NodeDefSPtr;
-typedef std::weak_ptr<NodeDefinition> NodeDefinitionWPtr;
-typedef std::weak_ptr<NodeDefinition> NodeDefWPtr;
+class NodeDef;
+typedef std::shared_ptr<NodeDef> NodeDefSPtr;
+typedef std::shared_ptr<NodeDef> NodeDefSPtr;
+typedef std::weak_ptr<NodeDef> NodeDefWPtr;
+typedef std::weak_ptr<NodeDef> NodeDefWPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ContainerDefinition {
+class ContainerDef {
 public:
-    ContainerDefinition();
-    ContainerDefinition(NodeDefinitionSPtr containerDefinition, int min = 0, int max = std::numeric_limits<int>::max());
-    ContainerDefinition(const ContainerDefinition &copy);
-    ContainerDefinition(ContainerDefinition &&move);
+    ContainerDef();
+    ContainerDef(NodeDefSPtr containerDef, int min = 0, int max = std::numeric_limits<int>::max());
+    ContainerDef(const ContainerDef &copy);
+    ContainerDef(ContainerDef &&move);
 
-    virtual ~ContainerDefinition() {}
+    virtual ~ContainerDef() {}
 
-    ContainerDefinition& operator=(const ContainerDefinition &copy);
-    ContainerDefinition& operator=(ContainerDefinition&& move);
+    ContainerDef& operator=(const ContainerDef &copy);
+    ContainerDef& operator=(ContainerDef&& move);
 
-    virtual ContainerDefinitionUPtr copy() const;
+    virtual ContainerDefUPtr copy() const;
 
     bool isNull() const;
 
-    virtual const NodeDefinition* containerDefinition() const;
-    virtual const NodeDefinition* containerDefinition(const UnionRef& derivedId) const;
-    virtual const NodeDefinition* containerDefinition(Node _node) const;
+    virtual const NodeDef* containerDef() const;
+    virtual const NodeDef* containerDef(const UnionRef& derivedId) const;
+    virtual const NodeDef* containerDef(Node _node) const;
 
     virtual bool validate(Node _node) const;
 
@@ -71,13 +71,13 @@ public:
     virtual int nodeCount(Node _node) const;
     virtual int nodeIndex(Node _node, Node refNode) const;
 
-    virtual Node node(Node _node, int index, const NodeDefinition** nodeDefinition = nullptr) const;
+    virtual Node node(Node _node, int index, const NodeDef** nodeDef = nullptr) const;
 
-    virtual Node firstNode(Node _node, const NodeDefinition** nodeDefinition = nullptr) const;
-    virtual Node lastNode(Node _node, const NodeDefinition** nodeDefinition = nullptr) const;
+    virtual Node firstNode(Node _node, const NodeDef** nodeDef = nullptr) const;
+    virtual Node lastNode(Node _node, const NodeDef** nodeDef = nullptr) const;
 
-    virtual Node nextNode(Node refNode, const NodeDefinition** nodeDefinition = nullptr) const;
-    virtual Node previousNode(Node refNode, const NodeDefinition** nodeDefinition = nullptr) const;
+    virtual Node nextNode(Node refNode, const NodeDef** nodeDef = nullptr) const;
+    virtual Node previousNode(Node refNode, const NodeDef** nodeDef = nullptr) const;
 // *****************************************************************************
 
 
@@ -85,7 +85,7 @@ public:
 // Host Access
 // *****************************************************************************
 public:
-    virtual const NodeDefinition* hostDefinition() const;
+    virtual const NodeDef* hostDef() const;
     virtual Node hostNode(Node refdNode) const;
 // *****************************************************************************
 
@@ -134,19 +134,19 @@ public:
 // ****************************************************************************
 
     template<class... _Types> inline
-    static typename ContainerDefinitionUPtr MakeUPtr(_Types&&... _Args)
+    static typename ContainerDefUPtr MakeUPtr(_Types&&... _Args)
     {
-        return (ContainerDefinitionUPtr(new ContainerDefinition(_STD forward<_Types>(_Args)...)));
+        return (ContainerDefUPtr(new ContainerDef(_STD forward<_Types>(_Args)...)));
     }
 
-    static const ContainerDefinition &emptyChildNodeDefinition();
+    static const ContainerDef &emptyChildNodeDef();
 
 protected:
     bool checkUniqueOptionValues(Node _node) const;
 
 protected:
-    NodeDefinitionWPtr m_hostDefinition;
-    NodeDefinitionSPtr m_containerDefinition;
+    NodeDefWPtr m_hostDef;
+    NodeDefSPtr m_containerDef;
     int m_minCount;
     int m_maxCount;
 
@@ -154,11 +154,11 @@ protected:
     XML::ListRef m_elementListRef;
 #endif // XML_BACKEND
 
-    friend class ContainerDefinitionBuilder;
-    friend class NodeDefinitionBuilder;
+    friend class ContainerDefBuilder;
+    friend class NodeDefBuilder;
 };
 
-typedef ContainerDefinition ContainerDef;
+typedef ContainerDef ContainerDef;
 
 } // namespace Model
 } // namespace Oak

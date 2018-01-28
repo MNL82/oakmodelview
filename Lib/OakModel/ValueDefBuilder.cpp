@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ValueDefinitionBuilder.h"
+#include "ValueDefBuilder.h"
 
 #include "XMLChildRef.h"
 
@@ -17,7 +17,7 @@ namespace Model {
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setName(ValueDefinitionUPtr& valueDef, const std::string &valueName)
+bool ValueDefBuilder::setName(ValueDefUPtr& valueDef, const std::string &valueName)
 {
     if (!valueDef) { return false; }
 
@@ -28,7 +28,7 @@ bool ValueDefinitionBuilder::setName(ValueDefinitionUPtr& valueDef, const std::s
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion)
+bool ValueDefBuilder::setDefaultConversion(const ValueDefUPtr& valueDef, ConversionSPtr conversion)
 {
     if (!valueDef) { return false; }
     if (!conversion) { return false; }
@@ -40,7 +40,7 @@ bool ValueDefinitionBuilder::setDefaultConversion(const ValueDefinitionUPtr& val
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setQueryOptions(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef)
+bool ValueDefBuilder::setQueryOptions(const ValueDefUPtr& valueDef, QueryRefSPtr queryRef)
 {
     if (!valueDef) { return false; }
 
@@ -54,7 +54,7 @@ bool ValueDefinitionBuilder::setQueryOptions(const ValueDefinitionUPtr& valueDef
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setQueryOptionsExcluded(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef)
+bool ValueDefBuilder::setQueryOptionsExcluded(const ValueDefUPtr& valueDef, QueryRefSPtr queryRef)
 {
     if (!valueDef) { return false; }
 
@@ -68,14 +68,14 @@ bool ValueDefinitionBuilder::setQueryOptionsExcluded(const ValueDefinitionUPtr& 
 
 // =============================================================================
 // (public)
-ValueSettings &ValueDefinitionBuilder::settings(const ValueDefinitionUPtr &valueDef)
+ValueSettings &ValueDefBuilder::settings(const ValueDefUPtr &valueDef)
 {
     return valueDef->m_settings;
 }
 
 // =============================================================================
 // (public)
-bool ValueDefinitionBuilder::setValueRef(const ValueDefinitionUPtr& valueDef, XML::ValueRefUPtr valueRef)
+bool ValueDefBuilder::setValueRef(const ValueDefUPtr& valueDef, XML::ValueRefUPtr valueRef)
 {
     if (!valueDef) { return false; }
     if (!valueRef) { return false; }
@@ -87,7 +87,7 @@ bool ValueDefinitionBuilder::setValueRef(const ValueDefinitionUPtr& valueDef, XM
 
 // =============================================================================
 // (public)
-std::string ValueDefinitionBuilder::generateValueId(std::string tagName, std::string attributeName)
+std::string ValueDefBuilder::generateValueId(std::string tagName, std::string attributeName)
 {
     // The value id is created from the tag name and the attribute name
     if (tagName.empty()) {

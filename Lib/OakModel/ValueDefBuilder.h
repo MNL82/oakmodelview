@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ValueDefinition.h"
+#include "ValueDef.h"
 #include "XMLRefFactory.h"
 #include "XMLValueRef.h"
 #include "ValueOptions.h"
@@ -21,42 +21,42 @@ namespace Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueDefinitionBuilder
+class ValueDefBuilder
 {
-    ValueDefinitionBuilder() = delete;
+    ValueDefBuilder() = delete;
 public:
     template<typename T>
-    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &name, const std::string &displayName = std::string());
+    static ValueDefUPtr Make(T valueTemplate, const std::string &name, const std::string &displayName = std::string());
     template<typename T>
-    static ValueDefinitionUPtr Make(T valueTemplate, const std::string &name, const std::string &displayName, T defaultValue);
+    static ValueDefUPtr Make(T valueTemplate, const std::string &name, const std::string &displayName, T defaultValue);
 #ifdef XML_BACKEND
     template<typename T>
-    static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef = "", const std::string& attributeName = "");
+    static ValueDefUPtr MakeXML(T valueTemplate, const std::string& elementRef = "", const std::string& attributeName = "");
     template<typename T>
-    static ValueDefinitionUPtr MakeXML(T valueTemplate, const std::string& elementRef, const std::string& attributeName, T defaultValue);
+    static ValueDefUPtr MakeXML(T valueTemplate, const std::string& elementRef, const std::string& attributeName, T defaultValue);
 #endif // XML_BACKEND
 
-    static bool setName(ValueDefinitionUPtr& valueDef, const std::string &valueName);
+    static bool setName(ValueDefUPtr& valueDef, const std::string &valueName);
 
     template<typename T>
-    static bool setDefaultValue(const ValueDefinitionUPtr& valueDef, T defaultValue);
+    static bool setDefaultValue(const ValueDefUPtr& valueDef, T defaultValue);
 
-    static bool setDefaultConversion(const ValueDefinitionUPtr& valueDef, ConversionSPtr conversion);
+    static bool setDefaultConversion(const ValueDefUPtr& valueDef, ConversionSPtr conversion);
 
     template<typename T>
-    static bool addStaticOption(ValueDefinition &valueDef, T option);
+    static bool addStaticOption(ValueDef &valueDef, T option);
     template<typename T>
-    static bool setStaticOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options);
+    static bool setStaticOptions(const ValueDefUPtr& valueDef, const std::vector<T> &options);
     template<typename T>
-    static bool setStaticOptionsExcluded(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options);
+    static bool setStaticOptionsExcluded(const ValueDefUPtr& valueDef, const std::vector<T> &options);
 
-    static bool setQueryOptions(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef);
-    static bool setQueryOptionsExcluded(const ValueDefinitionUPtr& valueDef, QueryRefSPtr queryRef);
+    static bool setQueryOptions(const ValueDefUPtr& valueDef, QueryRefSPtr queryRef);
+    static bool setQueryOptionsExcluded(const ValueDefUPtr& valueDef, QueryRefSPtr queryRef);
 
-    static ValueSettings& settings(const ValueDefinitionUPtr& valueDef);
+    static ValueSettings& settings(const ValueDefUPtr& valueDef);
 
 #ifdef XML_BACKEND
-    static bool setValueRef(const ValueDefinitionUPtr& valueDef, XML::ValueRefUPtr valueRef);
+    static bool setValueRef(const ValueDefUPtr& valueDef, XML::ValueRefUPtr valueRef);
 
     static std::string generateValueId(std::string tagName, std::string attributeName);
 #endif // XML_BACKEND
@@ -65,9 +65,9 @@ public:
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &name, const std::string &displayName)
+ValueDefUPtr ValueDefBuilder::Make(T valueTemplate, const std::string &name, const std::string &displayName)
 {
-    ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
+    ValueDefUPtr valueDef = ValueDef::MakeUPtr(valueTemplate);
     valueDef->m_name = name;
     valueDef->m_displayName = displayName;
     valueDef->m_defaultConversion = Conversion::globalDefault();
@@ -84,7 +84,7 @@ ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::str
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::string &name, const std::string &displayName, T defaultValue)
+ValueDefUPtr ValueDefBuilder::Make(T valueTemplate, const std::string &name, const std::string &displayName, T defaultValue)
 {
     auto vDef = Make(valueTemplate, name, displayName);
     vDef->m_defaultValue = defaultValue;
@@ -95,9 +95,9 @@ ValueDefinitionUPtr ValueDefinitionBuilder::Make(T valueTemplate, const std::str
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::string &elementRef, const std::string &attributeName)
+ValueDefUPtr ValueDefBuilder::MakeXML(T valueTemplate, const std::string &elementRef, const std::string &attributeName)
 {
-    ValueDefinitionUPtr valueDef = ValueDefinition::MakeUPtr(valueTemplate);
+    ValueDefUPtr valueDef = ValueDef::MakeUPtr(valueTemplate);
     valueDef->m_defaultConversion = Conversion::globalDefault();
 
     valueDef->m_valueRef = XML::RefFactory::MakeValueRef(elementRef, attributeName);
@@ -109,7 +109,7 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::
 // =============================================================================
 // (public)
 template<typename T>
-ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::string &elementRef, const std::string &attributeName, T defaultValue)
+ValueDefUPtr ValueDefBuilder::MakeXML(T valueTemplate, const std::string &elementRef, const std::string &attributeName, T defaultValue)
 {
     auto vDef = MakeXML(valueTemplate, elementRef, attributeName);
     vDef->m_defaultValue = defaultValue;
@@ -120,7 +120,7 @@ ValueDefinitionUPtr ValueDefinitionBuilder::MakeXML(T valueTemplate, const std::
 // =============================================================================
 // (public)
 template<typename T>
-static bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& valueDef, T defaultValue)
+static bool ValueDefBuilder::setDefaultValue(const ValueDefUPtr& valueDef, T defaultValue)
 {
     if (!valueDef) { return false; }
 
@@ -132,7 +132,7 @@ static bool ValueDefinitionBuilder::setDefaultValue(const ValueDefinitionUPtr& v
 // =============================================================================
 // (public)
 template<typename T>
-static bool ValueDefinitionBuilder::addStaticOption(ValueDefinition &valueDef, T option)
+static bool ValueDefBuilder::addStaticOption(ValueDef &valueDef, T option)
 {
     if (valueDef.valueType() == UnionValue::GetType(option)) {
         if (!valueDef.m_options) {
@@ -147,7 +147,7 @@ static bool ValueDefinitionBuilder::addStaticOption(ValueDefinition &valueDef, T
 // =============================================================================
 // (public)
 template<typename T>
-static bool ValueDefinitionBuilder::setStaticOptions(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
+static bool ValueDefBuilder::setStaticOptions(const ValueDefUPtr& valueDef, const std::vector<T> &options)
 {
     if (!options.empty() && valueDef->m_valueTemplate.type() == UnionValue::GetType(options.front())) {
         if (!valueDef->m_options) {
@@ -166,7 +166,7 @@ static bool ValueDefinitionBuilder::setStaticOptions(const ValueDefinitionUPtr& 
 // =============================================================================
 // (public)
 template<typename T>
-static bool ValueDefinitionBuilder::setStaticOptionsExcluded(const ValueDefinitionUPtr& valueDef, const std::vector<T> &options)
+static bool ValueDefBuilder::setStaticOptionsExcluded(const ValueDefUPtr& valueDef, const std::vector<T> &options)
 {
     if (!options.empty() && valueDef->m_valueTemplate.isBaseTypeEqual(options.front())) {
         if (!valueDef->m_options) {
@@ -182,7 +182,7 @@ static bool ValueDefinitionBuilder::setStaticOptionsExcluded(const ValueDefiniti
     return false;
 }
 
-typedef ValueDefinitionBuilder VDB;
+typedef ValueDefBuilder VDB;
 
 } // namespace Model
 } // namespace Oak

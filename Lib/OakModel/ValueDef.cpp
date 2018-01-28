@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ValueDefinition.h"
+#include "ValueDef.h"
 
 #include "ValueOptions.h"
 #include "XMLChildRef.h"
@@ -20,11 +20,11 @@
 namespace Oak {
 namespace Model {
 
-ValueDefinition ValueDefinition::s_emptyDefinition = ValueDefinition(UnionRef());
+ValueDef ValueDef::s_emptyDef = ValueDef(UnionRef());
 
 // =============================================================================
 // (public)
-ValueDefinition::ValueDefinition(const UnionRef &valueTemplate)
+ValueDef::ValueDef(const UnionRef &valueTemplate)
     : m_valueTemplate(valueTemplate), m_options(nullptr)
 {
 
@@ -32,7 +32,7 @@ ValueDefinition::ValueDefinition(const UnionRef &valueTemplate)
 
 // =============================================================================
 // (public)
-ValueDefinition::ValueDefinition(const ValueDefinition &copy)
+ValueDef::ValueDef(const ValueDef &copy)
     : m_valueTemplate(copy.m_valueTemplate)
 {
     m_defaultValue = copy.m_defaultValue;
@@ -49,7 +49,7 @@ ValueDefinition::ValueDefinition(const ValueDefinition &copy)
 
 // =============================================================================
 // (public)
-ValueDefinition::ValueDefinition(ValueDefinition&& move)
+ValueDef::ValueDef(ValueDef&& move)
     : m_valueTemplate(move.m_valueTemplate)
 {
     m_defaultValue = std::move(move.m_defaultValue);
@@ -65,14 +65,14 @@ ValueDefinition::ValueDefinition(ValueDefinition&& move)
 
 // =============================================================================
 // (public)
-ValueDefinitionUPtr ValueDefinition::copy() const
+ValueDefUPtr ValueDef::copy() const
 {
     return MakeUPtr(*this);
 }
 
 // =============================================================================
 // (public)
-ValueDefinition::~ValueDefinition()
+ValueDef::~ValueDef()
 {
     if (m_options) {
         delete m_options;
@@ -82,28 +82,28 @@ ValueDefinition::~ValueDefinition()
 
 // =============================================================================
 // (public)
-UnionType ValueDefinition::valueType() const
+UnionType ValueDef::valueType() const
 {
     return m_valueTemplate.type();
 }
 
 // =============================================================================
 // (public)
-const UnionRef ValueDefinition::valueTemplate() const
+const UnionRef ValueDef::valueTemplate() const
 {
     return m_valueTemplate;
 }
 
 // =============================================================================
 // (public)
-const std::string &ValueDefinition::name() const
+const std::string &ValueDef::name() const
 {
     return m_name;
 }
 
 // =============================================================================
 // (public)
-const std::string &ValueDefinition::displayName() const
+const std::string &ValueDef::displayName() const
 {
     if (m_displayName.empty()) {
         return m_name;
@@ -114,28 +114,28 @@ const std::string &ValueDefinition::displayName() const
 
 // =============================================================================
 // (public)
-bool ValueDefinition::isNull() const
+bool ValueDef::isNull() const
 {
     return m_valueTemplate.isNull();
 }
 
 // =============================================================================
 // (public)
-ConversionSPtr ValueDefinition::defaultConversion() const
+ConversionSPtr ValueDef::defaultConversion() const
 {
     return m_defaultConversion;
 }
 
 // =============================================================================
 // (public)
-const ValueSettings& ValueDefinition::settings() const
+const ValueSettings& ValueDef::settings() const
 {
     return m_settings;
 }
 
 // =============================================================================
 // (public)
-const ValueOptions &ValueDefinition::options() const
+const ValueOptions &ValueDef::options() const
 {
     if (m_options) {
         return *m_options;
@@ -146,7 +146,7 @@ const ValueOptions &ValueDefinition::options() const
 
 // =============================================================================
 // (public)
-int ValueDefinition::compareValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+int ValueDef::compareValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return -2; }
 
@@ -193,7 +193,7 @@ int ValueDefinition::compareValue(Node _node, const UnionRef &value, bool useDef
 
 // =============================================================================
 // (public)
-bool ValueDefinition::hasValue(Node _node) const
+bool ValueDef::hasValue(Node _node) const
 {
     if (_node.isNull()) { return false; }
 
@@ -212,7 +212,7 @@ bool ValueDefinition::hasValue(Node _node) const
 
 // =============================================================================
 // (public)
-bool ValueDefinition::canGetValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::canGetValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
 
@@ -233,7 +233,7 @@ bool ValueDefinition::canGetValue(Node _node, const UnionRef &value, bool useDef
 
 // =============================================================================
 // (public)
-bool ValueDefinition::getValue(Node _node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::getValue(Node _node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -273,7 +273,7 @@ bool ValueDefinition::getValue(Node _node, UnionRef value, bool useDefault, bool
 
 // =============================================================================
 // (public)
-UnionValue ValueDefinition::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+UnionValue ValueDef::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     UnionValue val(m_valueTemplate);
     UnionRef uRef(val);
@@ -283,7 +283,7 @@ UnionValue ValueDefinition::value(Node _node, bool useDefault, bool allowConvers
 
 // =============================================================================
 // (public)
-std::string ValueDefinition::toString(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+std::string ValueDef::toString(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     std::string str;
     UnionRef uRef(str);
@@ -293,7 +293,7 @@ std::string ValueDefinition::toString(Node _node, bool useDefault, bool allowCon
 
 // =============================================================================
 // (public)
-bool ValueDefinition::canSetValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::canSetValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -333,7 +333,7 @@ bool ValueDefinition::canSetValue(Node _node, const UnionRef &value, bool allowC
 
 // =============================================================================
 // (public)
-bool ValueDefinition::setValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::setValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (value.isNull()) { return false; }
     if (_node.isNull()) { return false; }
@@ -373,30 +373,30 @@ bool ValueDefinition::setValue(Node _node, const UnionRef &value, bool allowConv
 
 // =============================================================================
 // (public)
-bool ValueDefinition::hasDefaultValue() const
+bool ValueDef::hasDefaultValue() const
 {
     return !m_defaultValue.isNull();
 }
 
 // =============================================================================
 // (public)
-const UnionRef ValueDefinition::defaultValue() const
+const UnionRef ValueDef::defaultValue() const
 {
     return m_defaultValue;
 }
 
 // =============================================================================
 // (public)
-bool ValueDefinition::getDefaultValue(const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::getDefaultValue(const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     return m_defaultValue.get(value, allowConversion, (conversion) ? conversion.get() : m_defaultConversion.get());
 }
 
 // =============================================================================
 // (public)
-ValueDefinition &ValueDefinition::emptyDefinition()
+ValueDef &ValueDef::emptyDef()
 {
-    return s_emptyDefinition;
+    return s_emptyDef;
 }
 
 } // namespace Model

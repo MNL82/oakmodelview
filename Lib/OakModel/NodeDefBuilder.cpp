@@ -8,18 +8,18 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "NodeDefinitionBuilder.h"
+#include "NodeDefBuilder.h"
 
-#include "ValueDefinitionBuilder.h"
+#include "ValueDefBuilder.h"
 
 namespace Oak {
 namespace Model {
 
 // =============================================================================
 // (public)
-NodeDefinitionSPtr NodeDefinitionBuilder::Make(const std::string & name)
+NodeDefSPtr NodeDefBuilder::Make(const std::string & name)
 {
-    NodeDefinitionSPtr nodeDef = NodeDefinition::MakeSPtr(name);
+    NodeDefSPtr nodeDef = NodeDef::MakeSPtr(name);
 
 #ifdef XML_BACKEND
     if (XML::Element::validateTagName(name)) {
@@ -32,12 +32,12 @@ NodeDefinitionSPtr NodeDefinitionBuilder::Make(const std::string & name)
 
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::addValueDef(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDef)
+bool NodeDefBuilder::addValueDef(NodeDefSPtr nodeDef, ValueDefUPtr valueDef)
 {
     if (!nodeDef) { return false; }
     if (!valueDef) { return false; }
 
-    // A NodeDefinition can only have
+    // A NodeDef can only have
     if (hasValueI(nodeDef, valueDef)) { return false; }
 
     nodeDef->m_valueList.push_back(std::move(valueDef));
@@ -47,7 +47,7 @@ bool NodeDefinitionBuilder::addValueDef(NodeDefinitionSPtr nodeDef, ValueDefinit
 
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::addValueDefAsKey(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDefKey)
+bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefUPtr valueDefKey)
 {
     if (!nodeDef) { return false; }
     if (!valueDefKey) { return false; }
@@ -73,7 +73,7 @@ bool NodeDefinitionBuilder::addValueDefAsKey(NodeDefinitionSPtr nodeDef, ValueDe
 
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, ValueDefinitionUPtr valueDefDerivedId)
+bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefUPtr valueDefDerivedId)
 {
     if (!nodeDef) { return false; }
     if (!valueDefDerivedId) { return false; }
@@ -106,35 +106,35 @@ bool NodeDefinitionBuilder::addValueDefAsDerivedId(NodeDefinitionSPtr nodeDef, V
 
 // =============================================================================
 // (public)
-ValueDefinitionUPtr NodeDefinitionBuilder::takeValueDef(NodeDefinitionSPtr nodeDef, const std::string &valueName)
+ValueDefUPtr NodeDefBuilder::takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName)
 {
-    if (!nodeDef || valueName.empty()) { return ValueDefinitionUPtr(); }
+    if (!nodeDef || valueName.empty()) { return ValueDefUPtr(); }
 
     auto it = nodeDef->m_valueList.begin();
     while (it != nodeDef->m_valueList.end()) {
         if ((*it)->name() == valueName) {
-            ValueDefinitionUPtr movedValue(std::move(*it));
+            ValueDefUPtr movedValue(std::move(*it));
             nodeDef->m_valueList.erase(it);
             return std::move(movedValue);
         }
     }
 
-    return ValueDefinitionUPtr();
+    return ValueDefUPtr();
 }
 
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, ContainerDefinitionUPtr cDef)
+bool NodeDefBuilder::addContainerDef(NodeDefSPtr nodeDef, ContainerDefUPtr cDef)
 {
     if (!nodeDef || !cDef) {
         assert(false);
         return false;
     }
 
-    // Check if the NodeDefinition will be referenced twice (Not sure this is needed)
+    // Check if the NodeDef will be referenced twice (Not sure this is needed)
     if (hasContainerI(nodeDef, cDef)) { return false; }
 
-    cDef->m_hostDefinition = nodeDef;
+    cDef->m_hostDef = nodeDef;
 
     nodeDef->m_containerList.push_back(std::move(cDef));
 
@@ -148,14 +148,14 @@ bool NodeDefinitionBuilder::addContainerDef(NodeDefinitionSPtr nodeDef, Containe
 
 // =============================================================================
 // (public)
-ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSPtr nodeDef, const std::string &name)
+ContainerDefUPtr NodeDefBuilder::takeContainerDef(NodeDefSPtr nodeDef, const std::string &name)
 {
-    if (!nodeDef || name.empty()) { return ContainerDefinitionUPtr(); }
+    if (!nodeDef || name.empty()) { return ContainerDefUPtr(); }
 
     auto it = nodeDef->m_containerList.begin();
     while (it != nodeDef->m_containerList.end()) {
-        if ((*it)->containerDefinition()->name() == name) {
-            ContainerDefinitionUPtr movedContainer(std::move(*it));
+        if ((*it)->containerDef()->name() == name) {
+            ContainerDefUPtr movedContainer(std::move(*it));
             nodeDef->m_containerList.erase(it);
 
             // Clear the list of existing containers
@@ -167,12 +167,12 @@ ContainerDefinitionUPtr NodeDefinitionBuilder::takeContainerDef(NodeDefinitionSP
         }
     }
 
-    return ContainerDefinitionUPtr();
+    return ContainerDefUPtr();
 }
 
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::setDisplayName(NodeDefinitionSPtr nodeDef, const std::string& displayName)
+bool NodeDefBuilder::setDisplayName(NodeDefSPtr nodeDef, const std::string& displayName)
 {
     if (!nodeDef) { return false; }
 
@@ -184,13 +184,13 @@ bool NodeDefinitionBuilder::setDisplayName(NodeDefinitionSPtr nodeDef, const std
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-bool NodeDefinitionBuilder::setTagName(NodeDefinitionSPtr nodeDef, const std::string &tagName)
+bool NodeDefBuilder::setTagName(NodeDefSPtr nodeDef, const std::string &tagName)
 {
     if (!nodeDef) { return false; }
     if (!XML::Element::validateTagName(tagName)) { return false; }
     if (nodeDef->m_tagName == tagName) { return true; }
 
-    NodeDefinitionSPtr derivedRoot = nodeDef;
+    NodeDefSPtr derivedRoot = nodeDef;
     while (derivedRoot->hasDerivedBase()) {
         derivedRoot = derivedRoot->m_derivedBase.lock();
     }
@@ -203,12 +203,12 @@ bool NodeDefinitionBuilder::setTagName(NodeDefinitionSPtr nodeDef, const std::st
 
 // =============================================================================
 // (protected)
-bool NodeDefinitionBuilder::hasValueI(NodeDefinitionSPtr nodeDef, const ValueDefinitionUPtr& valueDef)
+bool NodeDefBuilder::hasValueI(NodeDefSPtr nodeDef, const ValueDefUPtr& valueDef)
 {
     if (!nodeDef) { return false; }
 
-    // Check ValueDefinitions on it's base NodeDefinitions
-    const NodeDefinition* ni = nodeDef.get();
+    // Check ValueDefs on it's base NodeDefs
+    const NodeDef* ni = nodeDef.get();
     while (ni->hasDerivedBase()) {
         ni = ni->derivedBase();
         for (const auto& vi: nodeDef->m_valueList)
@@ -218,14 +218,14 @@ bool NodeDefinitionBuilder::hasValueI(NodeDefinitionSPtr nodeDef, const ValueDef
             }
         }
     }
-    // Check ValueDefinitions on this NodeDefinition
-    // Check ValueDefinitions on it's derived NodeDefinitions
+    // Check ValueDefs on this NodeDef
+    // Check ValueDefs on it's derived NodeDefs
     return hasValueIThisAndDerived(nodeDef, valueDef);
 }
 
 // =============================================================================
 // (protected)
-bool NodeDefinitionBuilder::hasValueIThisAndDerived(NodeDefinitionSPtr nodeDef, const ValueDefinitionUPtr &valueDef)
+bool NodeDefBuilder::hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefUPtr &valueDef)
 {
     for (const auto& vi: nodeDef->m_valueList)
     {
@@ -234,7 +234,7 @@ bool NodeDefinitionBuilder::hasValueIThisAndDerived(NodeDefinitionSPtr nodeDef, 
         }
     }
     if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefinitionSPtr ni: nodeDef->m_derivedDirectList)
+        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
         {
             if (hasValueIThisAndDerived(ni, valueDef)) {
                 return true;
@@ -246,11 +246,11 @@ bool NodeDefinitionBuilder::hasValueIThisAndDerived(NodeDefinitionSPtr nodeDef, 
 
 // =============================================================================
 // (protected)
-void NodeDefinitionBuilder::setKeyValueThisAndDerived(NodeDefinitionSPtr nodeDef, int index)
+void NodeDefBuilder::setKeyValueThisAndDerived(NodeDefSPtr nodeDef, int index)
 {
     nodeDef->m_keyValueDefIndex = index;
     if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefinitionSPtr ni: nodeDef->m_derivedDirectList)
+        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
         {
             setKeyValueThisAndDerived(ni, index);
         }
@@ -259,11 +259,11 @@ void NodeDefinitionBuilder::setKeyValueThisAndDerived(NodeDefinitionSPtr nodeDef
 
 // =============================================================================
 // (protected)
-void NodeDefinitionBuilder::setDerivedIdValueThisAndDerived(NodeDefinitionSPtr nodeDef, int index)
+void NodeDefBuilder::setDerivedIdValueThisAndDerived(NodeDefSPtr nodeDef, int index)
 {
     nodeDef->m_derivedIdValueDefIndex = index;
     if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefinitionSPtr ni: nodeDef->m_derivedDirectList)
+        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
         {
             setDerivedIdValueThisAndDerived(ni, index);
         }
@@ -272,38 +272,38 @@ void NodeDefinitionBuilder::setDerivedIdValueThisAndDerived(NodeDefinitionSPtr n
 
 // =============================================================================
 // (protected)
-bool NodeDefinitionBuilder::hasContainerI(NodeDefinitionSPtr nodeDef, const ContainerDefinitionUPtr &cDefinition)
+bool NodeDefBuilder::hasContainerI(NodeDefSPtr nodeDef, const ContainerDefUPtr &cDef)
 {
-    // Check ValueDefinitions on it's base NodeDefinitions
-    const NodeDefinition* ni = nodeDef.get();
+    // Check ValueDefs on it's base NodeDefs
+    const NodeDef* ni = nodeDef.get();
     while (ni->hasDerivedBase()) {
         ni = ni->derivedBase();
         for (const auto& ci: nodeDef->m_containerList)
         {
-            if (ci->m_containerDefinition->name() == cDefinition->m_containerDefinition->name()) {
+            if (ci->m_containerDef->name() == cDef->m_containerDef->name()) {
                 return true;
             }
         }
     }
-    // Check ValueDefinitions on this NodeDefinition
-    // Check ValueDefinitions on it's derived NodeDefinitions
-    return hasContainerIThisAndDerived(nodeDef, cDefinition);
+    // Check ValueDefs on this NodeDef
+    // Check ValueDefs on it's derived NodeDefs
+    return hasContainerIThisAndDerived(nodeDef, cDef);
 }
 
 // =============================================================================
 // (protected)
-bool NodeDefinitionBuilder::hasContainerIThisAndDerived(NodeDefinitionSPtr nodeDef, const ContainerDefinitionUPtr &cDefinition)
+bool NodeDefBuilder::hasContainerIThisAndDerived(NodeDefSPtr nodeDef, const ContainerDefUPtr &cDef)
 {
     for (const auto& ci: nodeDef->m_containerList)
     {
-        if (ci->m_containerDefinition->name() == cDefinition->m_containerDefinition->name()) {
+        if (ci->m_containerDef->name() == cDef->m_containerDef->name()) {
             return true;
         }
     }
     if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefinitionSPtr ni: nodeDef->m_derivedDirectList)
+        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
         {
-            if (hasContainerIThisAndDerived(ni, cDefinition)) {
+            if (hasContainerIThisAndDerived(ni, cDef)) {
                 return true;
             }
         }
@@ -314,11 +314,11 @@ bool NodeDefinitionBuilder::hasContainerIThisAndDerived(NodeDefinitionSPtr nodeD
 #ifdef XML_BACKEND
 // =============================================================================
 // (protected)
-void NodeDefinitionBuilder::setTagNameThisAndDerived(NodeDefinitionSPtr nodeDef, const std::string &tagName)
+void NodeDefBuilder::setTagNameThisAndDerived(NodeDefSPtr nodeDef, const std::string &tagName)
 {
     nodeDef->m_tagName = tagName;
     if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefinitionSPtr ni: nodeDef->m_derivedDirectList)
+        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
         {
             setTagNameThisAndDerived(ni, tagName);
         }

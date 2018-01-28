@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "NodeDefinition.h"
+#include "NodeDef.h"
 #include "Item.h"
 #include "CallbackFunctions.h"
 
@@ -31,7 +31,7 @@ public:
     virtual ~OakModel();
 
     bool isNull() const;
-    bool isDefinitionNull() const;
+    bool isDefNull() const;
     bool isNodeNull() const;
 
     bool createNewRootDocument(Node::Type backendType, bool setAsCurrent = true);
@@ -41,9 +41,9 @@ public:
 
     const std::string &rootDefName() const;
 
-    const NodeDefinition* rootNodeDefinition() const;
-    void setRootNodeDefinition(NodeDefinitionSPtr definition);
-    void setRootNodeDefinition(const NodeDefinition* definition);
+    const NodeDef* rootNodeDef() const;
+    void setRootNodeDef(NodeDefSPtr def);
+    void setRootNodeDef(const NodeDef* def);
 
     void setRootNode(Node node);
 
@@ -59,9 +59,9 @@ public:
     bool saveXMLRootNode(const std::string& filePath = "");
 #endif // XML_BACKEND
 
-    // Starting with the root NodeDefinition and look through all NodeDefinitions recursive
+    // Starting with the root NodeDef and look through all NodeDefs recursive
     //  untill a match is found
-    const NodeDefinition *findNodeDefinition(Node node) const;
+    const NodeDef *findNodeDef(Node node) const;
 
 protected:
     void onItemInserted(const Item& parentItem, int index) const;
@@ -74,7 +74,7 @@ protected:
 public:
     Callback notifier_currentItemChanged;
     Callback notifier_rootNodeChanged;
-    Callback notifier_rootNodeDefinitionChanged;
+    Callback notifier_rootNodeDefChanged;
 
     Callback notifier_destroyed;
 
@@ -90,7 +90,7 @@ protected:
     mutable Item m_currentItem;
 
     // Used only to keep the definition alive (Smart Pointer)
-    NodeDefinitionSPtr m_definition;
+    NodeDefSPtr m_def;
 
 #ifdef XML_BACKEND
     Node m_XMLRootNode;

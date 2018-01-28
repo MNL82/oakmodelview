@@ -41,8 +41,8 @@ protected:
     QueryRefSPtr m_query;
     QueryRefSPtr m_queryExcluded;
 
-    friend class ValueDefinition;
-    friend class ValueDefinitionBuilder;
+    friend class ValueDef;
+    friend class ValueDefBuilder;
 };
 
 // =============================================================================

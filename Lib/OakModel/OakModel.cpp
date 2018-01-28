@@ -35,14 +35,14 @@ OakModel::~OakModel()
 // (public)
 bool OakModel::isNull() const
 {
-    return isDefinitionNull() || isNodeNull();
+    return isDefNull() || isNodeNull();
 }
 
 // =============================================================================
 // (public)
-bool OakModel::isDefinitionNull() const
+bool OakModel::isDefNull() const
 {
-    return m_rootItem.isDefinitionNull();
+    return m_rootItem.isDefNull();
 }
 
 // =============================================================================
@@ -56,14 +56,14 @@ bool OakModel::isNodeNull() const
 // (public)
 bool OakModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
 {
-    if (m_rootItem.isDefinitionNull()) {
+    if (m_rootItem.isDefNull()) {
         return false;
     }
 
     if (backendType == Node::Type::XML) {
         m_xmlDoc.clear();
-        Node documentNode(m_xmlDoc.appendChild(m_rootItem.definition()->tagName()));
-        m_rootItem.definition()->onNodeInserted(documentNode);
+        Node documentNode(m_xmlDoc.appendChild(m_rootItem.def()->tagName()));
+        m_rootItem.def()->onNodeInserted(documentNode);
         setXMLRootNode(documentNode, setAsCurrent);
         return true;
     }
@@ -90,42 +90,42 @@ const Item &OakModel::rootItem() const
 // (public)
 const std::string &OakModel::rootDefName() const
 {
-    return m_rootItem.definition()->name();
+    return m_rootItem.def()->name();
 }
 
 // =============================================================================
 // (public)
-const NodeDefinition* OakModel::rootNodeDefinition() const
+const NodeDef* OakModel::rootNodeDef() const
 {
-    return m_rootItem.definition();
+    return m_rootItem.def();
 }
 
 // =============================================================================
 // (public)
-void OakModel::setRootNodeDefinition(NodeDefinitionSPtr definition)
+void OakModel::setRootNodeDef(NodeDefSPtr def)
 {
-    m_definition = definition; // Saved only to keep the definition alive (Smart Pointer)
-    setRootNodeDefinition(definition.get());
+    m_def = def; // Saved only to keep the definition alive (Smart Pointer)
+    setRootNodeDef(def.get());
 }
 
 // =============================================================================
 // (public)
-void OakModel::setRootNodeDefinition(const NodeDefinition *definition)
+void OakModel::setRootNodeDef(const NodeDef *def)
 {
-    if (m_rootItem.definition() != definition) {
+    if (m_rootItem.def() != def) {
         Node currentNode = m_currentItem.node();
         // Clear the current item before it becomes invalid
         setCurrentItem(Item());
 
         // Update the root definition and trigger event
-        m_rootItem = Item(definition, m_rootItem.node(), this);
-        notifier_rootNodeDefinitionChanged.trigger();
+        m_rootItem = Item(def, m_rootItem.node(), this);
+        notifier_rootNodeDefChanged.trigger();
 
         // Set the current item to the same node as before
         // Otherwise sent the root node
-        const NodeDefinition * currentItemDefinition = findNodeDefinition(currentNode);
-        if (currentItemDefinition) {
-            setCurrentItem(Item(currentItemDefinition, currentNode, this));
+        const NodeDef * currentItemDef = findNodeDef(currentNode);
+        if (currentItemDef) {
+            setCurrentItem(Item(currentItemDef, currentNode, this));
         } else {
             setCurrentItem(rootItem());
         }
@@ -138,7 +138,7 @@ void OakModel::setRootNode(Node node)
 {
     if (m_rootItem.node() != node) {
         setCurrentItem(Item());
-        m_rootItem = Item(m_rootItem.definition(), node, this);
+        m_rootItem = Item(m_rootItem.def(), node, this);
 
         notifier_rootNodeChanged.trigger();
         setCurrentItem(rootItem());
@@ -149,7 +149,7 @@ void OakModel::setRootNode(Node node)
 // (public)
 void OakModel::setRootItem(const Item& item)
 {
-    setRootNodeDefinition(item.definition());
+    setRootNodeDef(item.def());
     setRootNode(item.node());
 }
 
@@ -215,37 +215,37 @@ bool OakModel::saveXMLRootNode(const std::string& filePath)
 
 // =============================================================================
 // (public)
-const NodeDefinition* OakModel::findNodeDefinition(Node node) const
+const NodeDef* OakModel::findNodeDef(Node node) const
 {
-    if (m_rootItem.isDefinitionNull() || node.isNull()) { return 0; }
+    if (m_rootItem.isDefNull() || node.isNull()) { return 0; }
 
     // Check if the root definition match
-    const NodeDefinition* definition = m_rootItem.definition()->getDerivedAny(node);
-    if (definition) { return definition; }
+    const NodeDef* def = m_rootItem.def()->getDerivedAny(node);
+    if (def) { return def; }
 
-    std::list<const NodeDefinition*> definitionList;
-    std::vector<const NodeDefinition*> ignoreList;
-    definitionList.push_back(m_rootItem.definition());
+    std::list<const NodeDef*> defList;
+    std::vector<const NodeDef*> ignoreList;
+    defList.push_back(m_rootItem.def());
 
     // Recursive check if any child definition match the node
-    const NodeDefinition * currentDefinition;
-    while (!definitionList.empty()) {
-        currentDefinition = definitionList.front();
-        definitionList.remove(currentDefinition);
+    const NodeDef * currentDef;
+    while (!defList.empty()) {
+        currentDef = defList.front();
+        defList.remove(currentDef);
 
         // Check if on of the child definitions match
-        definition = currentDefinition->containerGroup().containerDefinition(node);
-        if (definition) { return definition; }
-        ignoreList.push_back(currentDefinition);
+        def = currentDef->containerGroup().containerDef(node);
+        if (def) { return def; }
+        ignoreList.push_back(currentDef);
 
         // Add child definitions to the list
-        auto cList = currentDefinition->containerList();
-        for(const ContainerDefinition* c: cList)
+        auto cList = currentDef->containerList();
+        for(const ContainerDef* c: cList)
         {
             // Only add the definition if it is not in the ignore list
             //  to avoid checking an definition twice and enter an infinete loop
-            if (std::find(ignoreList.begin(), ignoreList.end(), c->containerDefinition()) == ignoreList.end()) {
-                definitionList.push_back(c->containerDefinition());
+            if (std::find(ignoreList.begin(), ignoreList.end(), c->containerDef()) == ignoreList.end()) {
+                defList.push_back(c->containerDef());
             }
         }
     }
@@ -342,10 +342,10 @@ void OakModel::onItemRemoved(const Item &parentItem, int index) const
 // (protected)
 void OakModel::onItemValueChanged(const Item &item, int valueIndex) const
 {
-    if (item.definition()->derivedIdValueDefIndex() == valueIndex) {
-        const NodeDefinition* definition = findNodeDefinition(item.node());
-        assert(definition);
-        Item newItem(definition, item.node(), this);
+    if (item.def()->derivedIdValueDefIndex() == valueIndex) {
+        const NodeDef* def = findNodeDef(item.node());
+        assert(def);
+        Item newItem(def, item.node(), this);
 
         notifier_itemValueChanged.trigger(newItem, valueIndex);
         if (item == m_currentItem) {

@@ -12,7 +12,7 @@
 
 #include "Node.h"
 #include "ItemValue.h"
-#include "ValueDefinition.h"
+#include "ValueDef.h"
 
 #include <QObject>
 

@@ -72,7 +72,7 @@ void ParentDataView::setCurrentItem(const Model::Item& item)
     QPushButton* button;
     while (index < m_itemList.count()) {
         bItem = m_itemList.at(index);
-        QString nodeName = QString::fromStdString(bItem.definition()->displayName());
+        QString nodeName = QString::fromStdString(bItem.def()->displayName());
         if (index < m_layout->count()-1) {
             layoutItem = m_layout->itemAt(index);
             button = dynamic_cast<QPushButton*>(layoutItem->widget());

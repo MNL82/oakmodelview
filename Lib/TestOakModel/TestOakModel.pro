@@ -9,7 +9,7 @@
 CONFIG += \
     debug_and_release
 
-DEFINES += RESOURCE_PATH=\\\"D:/dev/oakmodelview/Lib/TestOakModel/resources/\\\"
+DEFINES += RESOURCE_PATH=\\\"C:/dev/oakmodelview/Lib/TestOakModel/resources/\\\"
 
 INCLUDEPATH +=  \
     .. \

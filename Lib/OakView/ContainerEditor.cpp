@@ -10,7 +10,7 @@
 
 #include "ContainerEditor.h"
 
-#include "NodeDefinition.h"
+#include "NodeDef.h"
 #include "ContainerEditorHandler.h"
 
 #include <QPushButton>
