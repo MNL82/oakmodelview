@@ -18,22 +18,6 @@
 namespace Oak {
 namespace Model {
 
-// Node tag names
-std::string DesignStr::Design = "Design";
-std::string DesignStr::Node = "Node";
-std::string DesignStr::Value = "Value";
-std::string DesignStr::Container = "Container";
-
-// Value tag and attribute names
-std::string DesignStr::Name = "Name";
-std::string DesignStr::DisplayName = "DisplayName";
-std::string DesignStr::Key = "Key";
-std::string DesignStr::Type = "Type";
-
-std::string DesignStr::DerivedId = "DerivedId";
-std::string DesignStr::DerivedValue = "DerivedValue";
-std::string DesignStr::DerivedBase = "DerivedBase";
-
 // =============================================================================
 // (protected)
 ModelDesignDefinition::ModelDesignDefinition()
@@ -50,6 +34,7 @@ void ModelDesignDefinition::createModelDesign()
     auto NodeDef = NDB::MakeDerivedRoot("Node", "Standard");
     NDB::setDisplayName(NodeDef, "Node");
     NDB::addValueDefAsKey(NodeDef, VDB::Make("", "Name", "", "Noname"));
+    NDB::addValueDef(NodeDef, VDB::Make("", "TagName", "XML Tag Name"));
     NDB::addValueDef(NodeDef, VDB::Make("", "DisplayName", "Display Name"));
 
     auto keyValueDef = VDB::Make("", "KeyValue", "Key Value", "");

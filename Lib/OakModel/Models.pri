@@ -7,11 +7,7 @@
 # See accompanying file LICENSE in the root folder.
 
 SOURCES += \
-    $$PWD/OakModel.cpp \
-    $$PWD/DesignOakModel.cpp \
-    $$PWD/MasterOakModel.cpp
+    $$PWD/OakModel.cpp
 
 HEADERS += \
-    $$PWD/OakModel.h \
-    $$PWD/MasterOakModel.h \
-    $$PWD/DesignOakModel.h
+    $$PWD/OakModel.h

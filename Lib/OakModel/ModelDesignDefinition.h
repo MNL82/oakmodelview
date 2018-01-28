@@ -15,26 +15,6 @@
 namespace Oak {
 namespace Model {
 
-class DesignStr {
-public:
-    // Node tag names
-    static std::string Design;
-    static std::string Node;
-    static std::string Value;
-    static std::string Container;
-
-    // Value tag and attribute names
-    static std::string Name;
-    static std::string DisplayName;
-    static std::string Key;
-    static std::string Type;
-
-
-    static std::string DerivedId;
-    static std::string DerivedValue;
-    static std::string DerivedBase;
-};
-
 class ModelDesignDefinition;
 typedef std::shared_ptr<ModelDesignDefinition> ModelDesignDefinitionSPtr;
 typedef std::shared_ptr<ModelDesignDefinition> ModelDesignDefSPtr;
