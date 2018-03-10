@@ -44,7 +44,7 @@ void ModelDesignDef::createModelDesign()
     VDB::settings(keyValueDef).setOptionsOnly(true);
     NDB::addValueDef(NodeDef, std::move(keyValueDef));
 
-    NDB::addValueDefAsDerivedId(NodeDef, VDB::Make(std::string(), "Type"));
+    NDB::addValueDefAsDerivedId(NodeDef, VDB::Make("", "Type", "Node Type"));
     NDB::addContainerDef(sPtr(), CDB::Make(NodeDef));
 
     /************************** Node(DerivedRoot) **************************/
