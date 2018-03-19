@@ -66,6 +66,19 @@ UnionValue::UnionValue(const std::string &s)
 
 // =============================================================================
 // (public)
+UnionValue::UnionValue(UnionType type)
+    : t(type)
+{
+    assert((int)type > 0);
+    if (type == UnionType::String) {
+        v.s = new std::string();
+    } else {
+        v.i = 0;
+    }
+}
+
+// =============================================================================
+// (public)
 UnionValue::UnionValue(const UnionRef &uRef)
 {
     *this = uRef;

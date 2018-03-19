@@ -32,6 +32,14 @@ ValueDef::ValueDef(const UnionRef &valueTemplate)
 
 // =============================================================================
 // (public)
+ValueDef::ValueDef(UnionType type)
+    : m_valueTemplate(type), m_options(nullptr)
+{
+
+}
+
+// =============================================================================
+// (public)
 ValueDef::ValueDef(const ValueDef &copy)
     : m_valueTemplate(copy.m_valueTemplate)
 {
@@ -110,6 +118,13 @@ const std::string &ValueDef::displayName() const
     } else {
         return m_displayName;
     }
+}
+
+// =============================================================================
+// (public)
+const std::string &ValueDef::tooltip() const
+{
+    return m_tooltip;
 }
 
 // =============================================================================

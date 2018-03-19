@@ -11,6 +11,7 @@
 #pragma once
 
 #include "NodeDef.h"
+#include "ValueDefBuilder.h"
 
 namespace Oak {
 namespace Model {
@@ -32,9 +33,9 @@ public:
     static NodeDefSPtr MakeDerived(NodeDefSPtr derivedBase, T derivedId);
 
 
-    static bool addValueDef(NodeDefSPtr nodeDef, ValueDefUPtr valueDef);
-    static bool addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefUPtr valueDefKey);
-    static bool addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefUPtr valueDefDerivedId);
+    static bool addValueDef(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDef);
+    static bool addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey);
+    static bool addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId);
     static ValueDefUPtr takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName);
 
     static bool addContainerDef(NodeDefSPtr nodeDef, ContainerDefUPtr cDef);
@@ -49,8 +50,8 @@ public:
 protected:
     // ************* SERVICE FUNCTIONS *************
     // Check if the ValueDef will conflict with any other ValueDef
-    static bool hasValueI(NodeDefSPtr nodeDef, const ValueDefUPtr& valueDef);
-    static bool hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefUPtr& valueDef);
+    static bool hasValueI(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr &valueDef);
+    static bool hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr &valueDef);
 
     // Set the keyValue or derivedIdValue on the whole existing inheritance heiracky
     static void setKeyValueThisAndDerived(NodeDefSPtr nodeDef, int index);
@@ -112,7 +113,8 @@ NodeDefSPtr NodeDefBuilder::MakeDerived(NodeDefSPtr derivedBase, T derivedId)
     derivedDef->m_derivedIdValueDefIndex = derivedBase->m_derivedIdValueDefIndex;
 
     if (derivedBase->hasDerivedId()) {
-        VDB::addStaticOption(derivedBase->derivedIdValueDef(), derivedId);
+        VDB::use(&derivedBase->derivedIdValueDef())->addOptionStatic(derivedId);
+        //VDB::addStaticOption(derivedBase->derivedIdValueDef(), );
     }
 
 #ifdef XML_BACKEND

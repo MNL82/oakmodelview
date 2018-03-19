@@ -37,6 +37,7 @@ class ValueDef
 {
 public:
     ValueDef(const UnionRef& valueTemplate);
+    ValueDef(UnionType type);
 
     ValueDef(const ValueDef &copy);
     ValueDef(ValueDef &&move);
@@ -49,6 +50,7 @@ public:
     const UnionRef valueTemplate() const;
     const std::string &name() const;
     const std::string &displayName() const;
+    const std::string &tooltip() const;
 
     bool isNull() const;
     ConversionSPtr defaultConversion() const;
@@ -90,6 +92,7 @@ protected:
     UnionValue m_defaultValue;
     ConversionSPtr m_defaultConversion;
     ValueOptions *m_options;
+    std::string m_tooltip;
     //std::vector<Variant> m_options;
 
 

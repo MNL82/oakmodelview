@@ -33,6 +33,7 @@ public:
     UnionValue(const int &i);
     UnionValue(const double &d);
     UnionValue(const std::string &s);
+    UnionValue(UnionType type);
 
     UnionValue(const UnionRef& uRef);
 

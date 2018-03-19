@@ -30,9 +30,6 @@ private slots:
     void on_actionExit_triggered();
 
 private:
-    void createMasterModel();
-
-private:
     Ui::MainWindow *ui;
     Oak::Model::OakModel* m_oakModel;
 

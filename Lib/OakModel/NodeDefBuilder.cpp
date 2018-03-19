@@ -10,8 +10,6 @@
 
 #include "NodeDefBuilder.h"
 
-#include "ValueDefBuilder.h"
-
 namespace Oak {
 namespace Model {
 
@@ -32,7 +30,7 @@ NodeDefSPtr NodeDefBuilder::Make(const std::string & name)
 
 // =============================================================================
 // (public)
-bool NodeDefBuilder::addValueDef(NodeDefSPtr nodeDef, ValueDefUPtr valueDef)
+bool NodeDefBuilder::addValueDef(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDef)
 {
     if (!nodeDef) { return false; }
     if (!valueDef) { return false; }
@@ -40,14 +38,14 @@ bool NodeDefBuilder::addValueDef(NodeDefSPtr nodeDef, ValueDefUPtr valueDef)
     // A NodeDef can only have
     if (hasValueI(nodeDef, valueDef)) { return false; }
 
-    nodeDef->m_valueList.push_back(std::move(valueDef));
+    nodeDef->m_valueList.push_back(valueDef->get());
 
     return true;
 }
 
 // =============================================================================
 // (public)
-bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefUPtr valueDefKey)
+bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey)
 {
     if (!nodeDef) { return false; }
     if (!valueDefKey) { return false; }
@@ -55,7 +53,7 @@ bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefUPtr valueDef
     // Derived node definitions inherate its node id value from its base and can not have it's own
     if (nodeDef->hasDerivedBase()) { return false; }
 
-    ValueSettings &settings = VDB::settings(valueDefKey);
+    ValueSettings &settings = valueDefKey->settings();
     if (!settings.isUniqueSet()) {
         settings.setUnique(true);
     }
@@ -63,7 +61,7 @@ bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefUPtr valueDef
         settings.setRequired(true);
     }
 
-    if (addValueDef(nodeDef, std::move(valueDefKey))) {
+    if (addValueDef(nodeDef, valueDefKey)) {
         int index = nodeDef->valueCount()-1;
         setKeyValueThisAndDerived(nodeDef, index);
         return true;
@@ -73,7 +71,7 @@ bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefUPtr valueDef
 
 // =============================================================================
 // (public)
-bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefUPtr valueDefDerivedId)
+bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId)
 {
     if (!nodeDef) { return false; }
     if (!valueDefDerivedId) { return false; }
@@ -82,7 +80,7 @@ bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefUPtr va
     if (nodeDef->derivedId().isNull()) { return false; }
 
     // The value type of the derivedId and the derivedIdValue must match
-    if (nodeDef->derivedId().type() != valueDefDerivedId->valueTemplate().type()) { return false; }
+    if (nodeDef->derivedId().type() != valueDefDerivedId->valueDef().valueType()) { return false; }
 
     // Derived node definitions inherate its derived id value from its base and can not have it's own
     if (nodeDef->hasDerivedBase()) { return false; }
@@ -90,13 +88,13 @@ bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefUPtr va
     //
     std::vector<UnionRef> optionList;
     nodeDef->derivedIdListAll(optionList);
-    VDB::setStaticOptions(valueDefDerivedId, optionList);
-    VDB::settings(valueDefDerivedId).setOptionsOnly(true);
-    if (!valueDefDerivedId->hasDefaultValue()) {
-        VDB::setDefaultValue(valueDefDerivedId, nodeDef->derivedId());
+    valueDefDerivedId->setOptionsStatic(optionList);
+    valueDefDerivedId->settings().setOptionsOnly(true);
+    if (!valueDefDerivedId->valueDef().hasDefaultValue()) {
+        valueDefDerivedId->setDefaultValue(nodeDef->derivedId());
     }
 
-    if (addValueDef(nodeDef, std::move(valueDefDerivedId))) {
+    if (addValueDef(nodeDef, valueDefDerivedId)) {
         int index = nodeDef->valueCount()-1;
         setDerivedIdValueThisAndDerived(nodeDef, index);
         return true;
@@ -203,7 +201,7 @@ bool NodeDefBuilder::setTagName(NodeDefSPtr nodeDef, const std::string &tagName)
 
 // =============================================================================
 // (protected)
-bool NodeDefBuilder::hasValueI(NodeDefSPtr nodeDef, const ValueDefUPtr& valueDef)
+bool NodeDefBuilder::hasValueI(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr& valueDef)
 {
     if (!nodeDef) { return false; }
 
@@ -213,7 +211,7 @@ bool NodeDefBuilder::hasValueI(NodeDefSPtr nodeDef, const ValueDefUPtr& valueDef
         ni = ni->derivedBase();
         for (const auto& vi: nodeDef->m_valueList)
         {
-            if (vi->name() == valueDef->name()) {
+            if (vi->name() == valueDef->valueDef().name()) {
                 return true;
             }
         }
@@ -225,11 +223,11 @@ bool NodeDefBuilder::hasValueI(NodeDefSPtr nodeDef, const ValueDefUPtr& valueDef
 
 // =============================================================================
 // (protected)
-bool NodeDefBuilder::hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefUPtr &valueDef)
+bool NodeDefBuilder::hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr &valueDef)
 {
     for (const auto& vi: nodeDef->m_valueList)
     {
-        if (vi->name() == valueDef->name()) {
+        if (vi->name() == valueDef->valueDef().name()) {
             return true;
         }
     }
