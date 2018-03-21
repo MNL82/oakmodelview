@@ -11,12 +11,17 @@
 #pragma once
 
 #include "UnionRef.h"
-#include "QueryRef.h"
+#include "UnionValue.h"
 
 #include <algorithm>
 
 namespace Oak {
 namespace Model {
+
+class Item;
+class QueryRef;
+typedef std::shared_ptr<QueryRef> QueryRefSPtr;
+typedef std::weak_ptr<QueryRef> QueryRefWPtr;
 
 // =============================================================================
 // Class definition
@@ -28,9 +33,11 @@ public:
     ValueOptions(const ValueOptions &copy);
 
     bool isUsed() const;
+
+    bool getOptions(std::vector<UnionValue>& options, const Item *item, bool allowConversion, ConversionSPtr conversion) const;
+
     template<typename T>
     bool getOptions(std::vector<T>& options, const Item *item, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    //bool getOptions(std::vector<VariantCRef>& options) const;
 
     static const ValueOptions& empty();
 
@@ -50,54 +57,13 @@ protected:
 template<typename T>
 bool ValueOptions::getOptions(std::vector<T>& options, const Item *item, bool allowConversion, ConversionSPtr conversion) const
 {
-    options.resize(m_options.size());
-    if (!isUsed()) { return false; }
-
-    // Add static options
-    for (int i = 0; i < m_options.size(); i++)
+    std::vector<UnionValue> oList;
+    getOptions(oList, item, allowConversion, conversion);
+    options.resize(oList.size());
+    for (std::vector<UnionValue>::size_type i = 0; i < oList.size(); i++)
     {
-        m_options.at(i).get(options[i], allowConversion, conversion.get());
+        oList[i].get(options[i], allowConversion, conversion.get());
     }
-
-    std::vector<T>::const_iterator it;
-    if (item && m_query) {
-        std::vector<T> oList = m_query->toValueList<T>(*item);
-        for(const T &option: oList)
-        {
-            it = std::find(options.begin(), options.end(), option);
-            if (it == options.end()) {
-                options.push_back(option);
-            }
-        }
-    }
-
-    if (item && m_queryExcluded) {
-        std::vector<T> oList = m_queryExcluded->toValueList<T>(*item);
-        for(const T &option: oList)
-        {
-            it = std::find(options.begin(), options.end(), option);
-            if (it != options.end()) {
-                options.erase(it);
-            }
-        }
-    }
-
-
-    // Remove excluded options
-    T option;
-    for (const UnionValue& vo: m_excluded)
-    {
-        if (vo.get(option, allowConversion, conversion.get())) {
-            it = std::find(options.begin(), options.end(), option);
-            if (it != options.end()) {
-                options.erase(it);
-            }
-        }
-
-    }
-
-    std::sort(options.begin(), options.end());
-
     return true;
 }
 

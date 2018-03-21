@@ -47,7 +47,6 @@ std::vector<std::string> splitString(const std::string &str, char seperator, boo
 std::string joinString(const std::vector<std::string> strList, char seperator);
 
 std::string simplified(const std::string &str);
-std::string toLower(const std::string &str);
 
 std::string fromDouble(double value, char f='g', int prec=6);
 
@@ -88,14 +87,14 @@ std::vector<std::string> toStringList(const std::vector<bool> &values);
 std::vector<std::string> toStringList(const std::vector<BoolState> &values, const std::vector<std::string> &itemList);
 
 // integer
-int toInteger(const std::string &str, bool *ok = 0);
+int toInteger(const std::string &str, bool *ok = nullptr);
 std::vector<int> toIntegerList(const std::vector<std::string> &values, bool *ok = nullptr);
 std::vector<int> toIntegerList(const std::string &value, char seperator, bool *ok = nullptr);
 std::vector<std::vector<int>> toIntegerListOfList(const std::vector<std::string> &values, char seperator, bool *ok = nullptr);
 
 // double
-float toFloat(const std::string &str, bool *ok = 0);
-double toDouble(const std::string &str, bool *ok = 0);
+float toFloat(const std::string &str, bool *ok = nullptr);
+double toDouble(const std::string &str, bool *ok = nullptr);
 std::vector<double> toDoubleList(const std::vector<std::string> &values);
 
 // bool

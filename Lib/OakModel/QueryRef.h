@@ -38,6 +38,9 @@ public:
 
     int count(const Item &item);
 
+    void addValueList(Item item, std::vector<UnionValue> &valueList) const;
+    std::vector<UnionValue> getValueList(Item item) const;
+
     template<typename T>
     std::vector<T> toValueList(Item item);
 

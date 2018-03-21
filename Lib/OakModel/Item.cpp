@@ -193,12 +193,12 @@ std::vector<std::string> Item::childNameList() const
 int Item::valueCount() const
 {
     initItemValueList();
-    return (int)m_itemValueList.size();
+    return static_cast<int>(m_itemValueList.size());
 }
 
 // =============================================================================
 // (public)
-const bool Item::hasValue(const std::string &valueName) const
+bool Item::hasValue(const std::string &valueName) const
 {
     return m_def->hasValue(valueName);
 }

@@ -57,7 +57,7 @@ public:
 
     // ************* ItemValue access *************
     int valueCount() const;
-    const bool hasValue(const std::string &valueName) const;
+    bool hasValue(const std::string &valueName) const;
     int valueIndex(const ItemValue& value) const;
     const ItemValue& valueAt(int index) const;
     const ItemValue& value(const std::string &valueName) const;

@@ -88,45 +88,6 @@ bool convert(std::vector<T1>& dest, const std::vector<T2>& src, Conversion* prop
     return success;
 }
 
-template<typename T>
-bool convert(std::vector<bool>& dest, const std::vector<T>& src, Conversion* properties = nullptr)
-{
-    const int size = static_cast<int>(src.size());
-    dest.resize(size);
-    if (size == 0) { return true; }
-    bool success = true;
-    const T* srcPtr = src.data();
-    Bool temp;
-    for (int i = 0; i < size; ++i)
-    {
-        if (convert(temp, *srcPtr++, properties)) {
-            dest[i] = temp;
-        } else {
-            success = false;
-        }
-    }
-    return success;
-}
-
-template<typename T>
-bool convert(std::vector<T>& dest, const std::vector<bool>& src, Conversion* properties = nullptr)
-{
-    const int size = static_cast<int>(src.size());
-    dest.resize(size);
-    if (size == 0) { return true; }
-    bool success = true;
-    T* srcPtr = dest.data();
-    Bool temp;
-    for (int i = 0; i < size; ++i)
-    {
-        temp = src[i];
-        if (!convert(*srcPtr++, temp, properties)) {
-            success = false;
-        }
-    }
-    return success;
-}
-
 template<typename T1, typename T2>
 bool convert(T1 &dest, const T2 &source, Conversion* properties = nullptr)
 {
@@ -176,7 +137,6 @@ bool canConvert(T1&, const T2& src, Conversion* properties = nullptr)
 template<typename T1, typename T2>
 bool isTypeIdBaseEqual(const T1&, const T2&)
 {
-    if (typeid(T1) == typeid(InvalidVariant) || typeid(T2) == typeid(InvalidVariant)) { return false; }
     if (typeid(T1) == typeid(T2)) { return true; }
     if (typeid(T1) == typeid(std::vector<T2>)) { return true; }
     if (typeid(std::vector<T1>) == typeid(T2)) { return true; }

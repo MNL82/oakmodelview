@@ -36,7 +36,21 @@ public:
     static UnionType GetType(const std::string&);
     static UnionType GetType(const UnionRef& ur);
     static UnionType GetType(const UnionValue& uv);
+
+    template<typename T>
+    static UnionType GetValueType(const T &v);
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+UnionType Union::GetValueType(const T &v)
+{
+    UnionType type = GetType(v);
+    return (type == UnionType::Char) ? UnionType::String : type;
+
+}
+
 
 } // namespace Model
 } // namespace Oak

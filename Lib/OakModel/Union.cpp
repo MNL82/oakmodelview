@@ -87,6 +87,5 @@ UnionType Union::GetType(const UnionValue &uv)
     return uv.type();
 }
 
-
 } // namespace Model
 } // namespace Oak

@@ -113,9 +113,6 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsStatic(const std::vector<T> &opti
 {
     assert(m_valueDef);
     if (!options.empty() && m_valueDef->m_valueTemplate.type() == UnionValue::GetType(options.front())) {
-        if (!m_valueDef->m_options) {
-            m_valueDef->m_options = new ValueOptions();
-        }
         m_valueDef->m_options->m_options.clear();
         for (const auto& option: options)
         {
@@ -133,10 +130,7 @@ template<typename T>
 ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedStatic(const std::vector<T> &options)
 {
     assert(m_valueDef);
-    if (!options.empty() && m_valueDef->m_valueTemplate.isBaseTypeEqual(options.front())) {
-        if (!m_valueDef->m_options) {
-            m_valueDef->m_options = new ValueOptions();
-        }
+    if (!options.empty() && m_valueDef->m_valueTemplate.type() == UnionValue::GetType(options.front())) {
         m_valueDef->m_options->m_excluded.clear();
         for (const auto& option: options)
         {

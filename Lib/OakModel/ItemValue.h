@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "ValueDef.h"
+#include "ValueOptions.h"
 
 namespace Oak {
 namespace Model {

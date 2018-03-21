@@ -107,9 +107,6 @@ ValueDefBuilderSPtr ValueDefBuilder::addOptionStatic(const UnionRef &value)
 {
     assert(m_valueDef);
     if (m_valueDef->valueType() == UnionValue::GetType(value)) {
-        if (!m_valueDef->m_options) {
-            m_valueDef->m_options = new ValueOptions();
-        }
         m_valueDef->m_options->m_options.push_back(value);
     } else {
         assert(false);
@@ -122,9 +119,6 @@ ValueDefBuilderSPtr ValueDefBuilder::addOptionStatic(const UnionRef &value)
 ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(QueryRefSPtr value)
 {
     assert(m_valueDef);
-    if (!m_valueDef->m_options) {
-        m_valueDef->m_options = new ValueOptions();
-    }
     m_valueDef->m_options->m_query = value;
 
     return m_thisWPtr.lock();
@@ -135,9 +129,6 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(QueryRefSPtr value)
 ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedQuery(QueryRefSPtr value)
 {
     assert(m_valueDef);
-    if (!m_valueDef->m_options) {
-        m_valueDef->m_options = new ValueOptions();
-    }
     m_valueDef->m_options->m_queryExcluded = value;
     return m_thisWPtr.lock();
 }

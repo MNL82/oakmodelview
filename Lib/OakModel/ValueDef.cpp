@@ -25,7 +25,7 @@ ValueDef ValueDef::s_emptyDef = ValueDef(UnionRef());
 // =============================================================================
 // (public)
 ValueDef::ValueDef(const UnionRef &valueTemplate)
-    : m_valueTemplate(valueTemplate), m_options(nullptr)
+    : m_valueTemplate(valueTemplate), m_options(new ValueOptions())
 {
 
 }
@@ -33,7 +33,7 @@ ValueDef::ValueDef(const UnionRef &valueTemplate)
 // =============================================================================
 // (public)
 ValueDef::ValueDef(UnionType type)
-    : m_valueTemplate(type), m_options(nullptr)
+    : m_valueTemplate(type), m_options(new ValueOptions())
 {
 
 }
@@ -46,9 +46,7 @@ ValueDef::ValueDef(const ValueDef &copy)
     m_defaultValue = copy.m_defaultValue;
     m_name = copy.m_name;
     m_defaultConversion = copy.m_defaultConversion;
-    if (m_options) {
-        m_options = new ValueOptions(*copy.m_options);
-    }
+    m_options = new ValueOptions(*copy.m_options);
 
 #ifdef XML_BACKEND
     m_valueRef = copy.m_valueRef->copy();

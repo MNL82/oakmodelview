@@ -14,6 +14,7 @@
 #include "ContainerDefBuilder.h"
 #include "ValueDefBuilder.h"
 #include "QueryRef.h"
+#include <memory>
 
 namespace Oak {
 namespace Model {

@@ -177,6 +177,29 @@ bool UnionValue::operator!=(const UnionRef &value) const
 
 // =============================================================================
 // (public)
+bool UnionValue::operator<(const UnionValue &value) const
+{
+    if (t != value.t) { return false; }
+
+    switch (value.t) {
+        case UnionType::Undefined:
+            return false;
+        case UnionType::Bool:
+            return v.b < value.v.b;
+        case UnionType::Integer:
+            return v.i < value.v.i;
+        case UnionType::Double:
+            return v.d < value.v.d;
+        case UnionType::String:
+            return *v.s < *value.v.s;
+        default:
+            assert(false);
+    }
+    return false;
+}
+
+// =============================================================================
+// (public)
 bool UnionValue::isEqual(const UnionRef &value, bool allowConversion, Conversion *properties) const
 {
     UnionRef uRef(*this);
@@ -285,20 +308,20 @@ bool UnionValue::get(UnionRef &target, bool allowConversion, Conversion *propert
 
 // =============================================================================
 // (public)
-bool UnionValue::canGet(UnionValue &target, Conversion *properties) const
+bool UnionValue::canGet(UnionValue &target, bool allowConversion, Conversion *properties) const
 {
     UnionRef sourceRef(*this);
     UnionRef targetRef(target);
-    return sourceRef.canGet(targetRef, properties);
+    return sourceRef.canGet(targetRef, allowConversion, properties);
 }
 
 // =============================================================================
 // (public)
-bool UnionValue::get(UnionValue &target, Conversion *properties) const
+bool UnionValue::get(UnionValue &target, bool allowConversion, Conversion *properties) const
 {
     UnionRef sourceRef(*this);
     UnionRef targetRef(target);
-    return sourceRef.get(targetRef, properties);
+    return sourceRef.get(targetRef, allowConversion, properties);
 }
 
 } // namespace Model

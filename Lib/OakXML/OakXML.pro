@@ -8,6 +8,7 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += c++11
 
 DEFINES += XML_BACKEND
 DEFINES += NOMINMAX

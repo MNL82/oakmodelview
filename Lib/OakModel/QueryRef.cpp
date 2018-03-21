@@ -83,6 +83,36 @@ int QueryRef::count(const Item &item)
 
 // =============================================================================
 // (public)
+void QueryRef::addValueList(Item item, std::vector<UnionValue> &valueList) const
+{
+    assert(!m_valueName.empty());
+
+    if (m_queryPtr) {
+        m_queryPtr->reset(item);
+        while(m_queryPtr->moveNext()) {
+            Item tempItem = m_queryPtr->current();
+            if (tempItem.hasValue(m_valueName)) {
+                valueList.push_back(tempItem.value(m_valueName).value());
+            }
+        }
+    } else {
+        if (item.hasValue(m_valueName)) {
+            valueList.push_back(item.value(m_valueName).value());
+        }
+    }
+}
+
+// =============================================================================
+// (public)
+std::vector<UnionValue> QueryRef::getValueList(Item item) const
+{
+    std::vector<UnionValue> valueList;
+    addValueList(item, valueList);
+    return valueList;
+}
+
+// =============================================================================
+// (public)
 std::vector<Item> QueryRef::toItemList(Item item)
 {
     std::vector<Item> itemList;

@@ -110,7 +110,7 @@ UnionRef &UnionRef::operator=(const UnionRef &copy)
 // (public)
 bool UnionRef::operator==(const UnionRef &value) const
 {
-    assert(value.t == t);
+    if (value.t != t) { return false; }
     switch (t) {
         case UnionType::Undefined:
             return true;

@@ -80,7 +80,7 @@ public:
 
     // Service functions
     template<class... _Types> inline
-    static typename ValueDefUPtr MakeUPtr(_Types&&... _Args);
+    static ValueDefUPtr MakeUPtr(_Types&&... _Args);
 
     static ValueDef &emptyDef();
 
@@ -122,8 +122,8 @@ T ValueDef::value(Node _node, bool useDefault, bool allowConversion, ConversionS
 
 // =============================================================================
 // (public)
-template<class... _Types> inline
-static typename ValueDefUPtr ValueDef::MakeUPtr(_Types&&... _Args)
+template<class... _Types>
+ValueDefUPtr ValueDef::MakeUPtr(_Types&&... _Args)
 {
     return (ValueDefUPtr(new ValueDef(_STD forward<_Types>(_Args)...)));
 }

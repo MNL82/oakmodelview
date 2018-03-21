@@ -82,7 +82,7 @@ template<typename T>
 bool UnionRef::canGet(T &target, bool allowConversion, Conversion *properties) const
 {
     if (t == UnionType::Undefined) { return false; }
-    if (!allowConversion && t != UnionValue::GetType(target)) { return false; }
+    if (!allowConversion && t != Union::GetValueType(target)) { return false; }
 
     switch (t) {
         case UnionType::Undefined:
@@ -110,7 +110,7 @@ template<typename T>
 bool UnionRef::get(T &target, bool allowConversion, Conversion *properties) const
 {
     if (t == UnionType::Undefined) { return false; }
-    if (!allowConversion && t != UnionValue::GetType(target)) { return false; }
+    if (!allowConversion && t != Union::GetValueType(target)) { return false; }
 
     switch (t) {
         case UnionType::Undefined:

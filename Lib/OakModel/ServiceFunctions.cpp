@@ -117,7 +117,7 @@ std::string simplified(const std::string &str)
     }
     last++; // Points to the next to last element again
 
-    bool isSpacer;
+    bool isSpacer = false;
     while (first != last) {
         charIt = spacers.begin();
         if (resultStr.empty()) {
@@ -153,19 +153,6 @@ std::string simplified(const std::string &str)
     }
 
     return resultStr;
-}
-
-// =============================================================================
-// (public)
-std::string toLower(const std::string &str)
-{
-    std::string result = str;
-    std::string::iterator it = result.begin();
-    while (it != result.end()) {
-        *it = std::tolower(*it);
-        it++;
-    }
-    return result;
 }
 
 // =============================================================================
