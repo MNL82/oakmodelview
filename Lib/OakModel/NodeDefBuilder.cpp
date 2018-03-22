@@ -53,13 +53,8 @@ bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr v
     // Derived node definitions inherate its node id value from its base and can not have it's own
     if (nodeDef->hasDerivedBase()) { return false; }
 
-    ValueSettings &settings = valueDefKey->settings();
-    if (!settings.isUniqueSet()) {
-        settings.setUnique(true);
-    }
-    if (!settings.isRequiredSet()) {
-        settings.setRequired(true);
-    }
+    valueDefKey->setSetting("Unique", true);
+    valueDefKey->setSetting("Required", true);
 
     if (addValueDef(nodeDef, valueDefKey)) {
         int index = nodeDef->valueCount()-1;
@@ -89,7 +84,7 @@ bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefBuilder
     std::vector<UnionRef> optionList;
     nodeDef->derivedIdListAll(optionList);
     valueDefDerivedId->setOptionsStatic(optionList);
-    valueDefDerivedId->settings().setOptionsOnly(true);
+    valueDefDerivedId->setSetting("OptionsOnly", true);
     if (!valueDefDerivedId->valueDef().hasDefaultValue()) {
         valueDefDerivedId->setDefaultValue(nodeDef->derivedId());
     }

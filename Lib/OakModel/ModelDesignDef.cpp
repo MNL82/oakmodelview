@@ -40,13 +40,12 @@ void ModelDesignDef::createModelDesign()
     NDB::addValueDef(NodeDef, VDB::create(UnionType::String, "DisplayName")
                      ->setDisplayName("Display Name"));
 
-    auto keyValueDef = VDB::create(UnionType::String, "KeyValue")
+    NDB::addValueDef(NodeDef, VDB::create(UnionType::String, "KeyValue")
             ->setDisplayName("Key Value")
             ->setOptionsStatic(std::vector<std::string>{""})
             ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("DerivedIDValue"));
-    keyValueDef->settings().setOptionsOnly(true);
-    NDB::addValueDef(NodeDef, keyValueDef);
+            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("DerivedIDValue"))
+            ->setSetting("OptionsOnly", true));
 
     NDB::addValueDefAsDerivedId(NodeDef, VDB::create(UnionType::String, "Type")
                                 ->setDisplayName("Node Type"));
@@ -57,18 +56,11 @@ void ModelDesignDef::createModelDesign()
     NDB::addValueDef(NodeRootDef, VDB::create(UnionType::String, "DerivedId")
                      ->setDisplayName("Derived ID"));
 
-    auto DerivedIDValueDef = VDB::create(UnionType::String, "DerivedIDValue")
+    NDB::addValueDef(NodeRootDef, VDB::create(UnionType::String, "DerivedIDValue")
             ->setDisplayName("Derived ID Value")
             ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("KeyValue"));
-    DerivedIDValueDef->settings().setOptionsOnly(true);
-    NDB::addValueDef(NodeRootDef, DerivedIDValueDef);
-
-//    auto DerivedIDValueDef = VDB::Make("", "DerivedIDValue", "Derived ID Value");
-//    VDB::setOptionsQuery(DerivedIDValueDef, QueryRef::MakeSPtr()->children("Value")->setValueName("Name"));
-//    VDB::setOptionsExcludedQuery(DerivedIDValueDef, QueryRef::MakeSPtr()->setValueName("KeyValue"));
-//    VDB::settings(DerivedIDValueDef).setOptionsOnly(true);
-//    NDB::addValueDef(NodeRootDef, std::move(DerivedIDValueDef));
+            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("KeyValue"))
+            ->setSetting("OptionsOnly", true));
 
     /************************** Node(Rerived) **************************/
     auto NodeDerivedDef = NDB::MakeDerived(NodeDef, "Derived");
@@ -103,12 +95,11 @@ void ModelDesignDef::createModelDesign()
     /************************** Container **************************/
     auto ContainerDef = NDB::Make("Container");
 
-    auto cNameValueDef = VDB::create(UnionType::String, "Name")
+    NDB::addValueDef(ContainerDef, VDB::create(UnionType::String, "Name")
             ->setDisplayName("Derived ID Value")
             ->setOptionsQuery(QueryRef::MakeSPtr()->parent()->parent()->children("Node")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->ignore()->parent()->children("Container")->setValueName("Name"));
-    cNameValueDef->settings().setOptionsOnly(true);
-    NDB::addValueDef(ContainerDef, cNameValueDef);
+            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->ignore()->parent()->children("Container")->setValueName("Name"))
+            ->setSetting("OptionsOnly", true));
 
     NDB::addValueDef(ContainerDef, VDB::create(UnionType::Integer, "Min")
                      ->setDefaultValue(0));
