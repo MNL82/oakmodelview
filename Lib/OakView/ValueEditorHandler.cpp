@@ -221,6 +221,8 @@ void ValueEditorHandler::createEditor()
         connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onEditingFinished()));
         if (validator) {
             comboBox->setValidator(validator);
+            validator->setParent(comboBox);
+            validator = nullptr;
         }
         layout->addWidget(comboBox, 1);
     } else {
@@ -230,6 +232,8 @@ void ValueEditorHandler::createEditor()
         connect(lineEdit, SIGNAL(editingFinished()), this, SLOT(onEditingFinished()));
         if (validator) {
             lineEdit->setValidator(validator);
+            validator->setParent(lineEdit);
+            validator = nullptr;
         }
         if (valueDef->valueType() == Model::UnionType::Integer ||
             valueDef->valueType() == Model::UnionType::Double) {
@@ -244,6 +248,8 @@ void ValueEditorHandler::createEditor()
         unitLabel->setObjectName("unit");
         layout->addWidget(unitLabel);
     }
+
+    if (validator) { delete validator; }
 
     connect(m_editor, SIGNAL(destroyed(QObject*)), this, SLOT(onEditorDestroyed()));
 
