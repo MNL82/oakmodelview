@@ -45,14 +45,14 @@ public:
 
     virtual Element getSource(Element target) const override;
 
-    virtual bool isNull() const { return false; }
+    virtual bool isNull() const override { return false; }
 
     bool empty() const { return m_references.empty(); }
-    int count() const { return (int)m_references.size(); }
-    Ref* at(int index) { return m_references.at(index).get(); }
+    int count() const { return static_cast<int>(m_references.size()); }
+    Ref* at(int index) { return m_references[static_cast<vSize>(index)].get(); }
     template<typename T>
     T* at(int index) { return dynamic_cast<T*>(m_references.at(index).get()); }
-    RefUPtr take(int index) { return std::move(m_references.at(index)); }
+    RefUPtr take(int index) { return std::move(m_references[static_cast<vSize>(index)]); }
 
     void add(RefUPtr eRef);
     void clear();
@@ -61,7 +61,7 @@ public:
     virtual const std::string& lastTagName() const override { return m_references.back()->lastTagName(); }
 
     template<class... _Types> inline
-    static typename RefGroupUPtr MakeUPtr(_Types&&... _Args)
+    static RefGroupUPtr MakeUPtr(_Types&&... _Args)
     {
         return (RefGroupUPtr(new RefGroup(_STD forward<_Types>(_Args)...)));
     }

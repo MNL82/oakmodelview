@@ -17,6 +17,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 typedef std::basic_ostream<char, std::char_traits<char> > stdTextStream;
 
 #include "pugixml/pugixml.hpp"
@@ -27,6 +28,8 @@ typedef std::basic_ostream<char, std::char_traits<char> > stdTextStream;
 
 namespace Oak {
 namespace XML {
+
+typedef std::vector<int>::size_type vSize;
 
 // =============================================================================
 // Class definition

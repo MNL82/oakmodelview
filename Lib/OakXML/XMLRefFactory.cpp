@@ -43,7 +43,7 @@ RefUPtr RefFactory::MakeRef(const std::string &elementRef)
     if (groupRef->count() == 0) {
         return Ref::MakeUPtr();
     } else if (groupRef->count() == 1) {
-        return std::move(groupRef->take(0));
+        return groupRef->take(0);
     }
     return std::move(groupRef);
 }
@@ -55,7 +55,7 @@ RefGroupUPtr RefFactory::MakeGroupRef(const std::string &elementRef)
     std::vector<std::vector<std::string>> sMatrix = doubleSplit(elementRef);
 
     std::vector<RefUPtr> refList;
-    for (const std::vector<std::string> sList: sMatrix)
+    for (const std::vector<std::string> &sList: sMatrix)
     {
         if (sList.empty()) { continue; }
 
@@ -80,11 +80,11 @@ RefGroupUPtr RefFactory::MakeGroupRef(const std::string &elementRef)
         }
     }
     RefGroupUPtr refGroup = RefGroup::MakeUPtr();
-    for (int i = 0; i < (int)refList.size(); i++)
+    for (int i = 0; i < static_cast<int>(refList.size()); i++)
     {
-        refGroup->add(std::move(refList[i]));
+        refGroup->add(std::move(refList[static_cast<vSize>(i)]));
     }
-    return std::move(refGroup);
+    return refGroup;
 }
 
 // =============================================================================
@@ -106,10 +106,10 @@ ChildRefGroupUPtr RefFactory::MakeChildRef(const std::string &childRef)
 RefUPtr RefFactory::MakeSingle(const std::string &refType, const std::string &refValue, int index)
 {
     if (refType.empty() || refType.find("c") == 0) {
-        return std::move(ChildRef::MakeUPtr(refValue, index));
+        return ChildRef::MakeUPtr(refValue, index);
     } else if (refType.find("p") == 0) {
         // refValue is the parent tagName. If empty the link is to the direct parent
-        return std::move(ParentRef::MakeUPtr(refValue));
+        return ParentRef::MakeUPtr(refValue);
     } else {
         assert(false);
         return Ref::MakeUPtr();

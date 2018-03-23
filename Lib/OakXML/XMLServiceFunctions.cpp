@@ -53,7 +53,7 @@ std::vector<std::vector<std::string>> doubleSplit(const std::string &str, char o
     for (const std::string& is: outerList) {
         sMatrix.push_back(split(is, innerSeperator, ignoreEmpty));
     }
-    return std::move(sMatrix);
+    return sMatrix;
 }
 
 // =============================================================================

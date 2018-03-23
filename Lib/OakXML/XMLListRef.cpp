@@ -50,6 +50,13 @@ ListRef::ListRef(ListRef &&move)
 
 // =============================================================================
 // (public)
+ListRef::~ListRef()
+{
+
+}
+
+// =============================================================================
+// (public)
 ListRef& ListRef::operator=(const ListRef &copy)
 {
     m_listBaseRef = copy.m_listBaseRef->copy();

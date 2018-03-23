@@ -215,7 +215,9 @@ bool ValueDef::hasValue(Node _node) const
     case Node::Type::XML: {
         return m_valueRef->hasValue(_node.xmlNode());
     }
-#endif // XML_BACKENDvalue
+#endif // XML_BACKEND
+    case Node::Type::UNDEFINED:
+        break;
     }
 
     // _node.type() returns an unhandled type that needs to be implemented
@@ -236,7 +238,9 @@ bool ValueDef::canGetValue(Node _node, const UnionRef &value, bool useDefault, b
         UnionRef tempRef(tempValue);
         return getValue(_node.xmlNode(), tempRef, useDefault, allowConversion, (conversion) ? conversion : m_defaultConversion);
     }
-#endif // XML_BACKENDvalue
+#endif // XML_BACKEND
+    case Node::Type::UNDEFINED:
+        break;
     }
 
     // _node.type() returns an unhandled type that needs to be implemented
@@ -291,7 +295,7 @@ UnionValue ValueDef::value(Node _node, bool useDefault, bool allowConversion, Co
     UnionValue val(m_valueTemplate);
     UnionRef uRef(val);
     getValue(_node, uRef, useDefault, allowConversion, conversion);
-    return std::move(val);
+    return val;
 }
 
 // =============================================================================
@@ -301,7 +305,7 @@ std::string ValueDef::toString(Node _node, bool useDefault, bool allowConversion
     std::string str;
     UnionRef uRef(str);
     getValue(_node, uRef, useDefault, allowConversion, conversion);
-    return std::move(str);
+    return str;
 }
 
 // =============================================================================
@@ -334,12 +338,14 @@ bool ValueDef::canSetValue(Node _node, const UnionRef &value, bool allowConversi
                 }
             }
         }
+        return false;
     }
 #endif // XML_BACKEND
-    default:
-        // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+    case Node::Type::UNDEFINED:
+        break;
     }
+    // _node.type() returns an unhandled type that needs to be implemented
+    assert(false);
 
     return false;
 }
@@ -377,10 +383,11 @@ bool ValueDef::setValue(Node _node, const UnionRef &value, bool allowConversion,
         return false;
     }
 #endif // XML_BACKEND
-    default:
-        // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+    case Node::Type::UNDEFINED:
+        break;
     }
+    // _node.type() returns an unhandled type that needs to be implemented
+    assert(false);
     return false;
 }
 

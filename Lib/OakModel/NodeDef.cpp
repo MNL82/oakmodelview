@@ -248,7 +248,7 @@ const NodeDef* NodeDef::getDerived(const UnionRef &derivedId, const NodeDef* exc
         const NodeDef* dDef2 = dDef->getDerivedOrThis(derivedId, excluding);
         if (dDef2) { return dDef2; }
     }
-    return 0;
+    return nullptr;
 }
 
 // =============================================================================
@@ -259,14 +259,14 @@ const NodeDef* NodeDef::getDerived(Node node, const NodeDef* excluding) const
         const NodeDef* dDef2 = dDef->getDerivedOrThis(node, excluding);
         if (dDef2) { return dDef2; }
     }
-    return 0;
+    return nullptr;
 }
 
 // =============================================================================
 // (public)
 const NodeDef* NodeDef::getDerivedOrThis(const UnionRef &derivedId, const NodeDef* excluding) const
 {
-    if (excluding == this) { return 0; }
+    if (excluding == this) { return nullptr; }
     if (validateForThis(derivedId)) { return this; }
     return getDerived(derivedId, excluding);
 }
@@ -275,7 +275,7 @@ const NodeDef* NodeDef::getDerivedOrThis(const UnionRef &derivedId, const NodeDe
 // (public)
 const NodeDef* NodeDef::getDerivedOrThis(Node node, const NodeDef* excluding) const
 {
-    if (excluding == this) { return 0; }
+    if (excluding == this) { return nullptr; }
     if (validateForThis(node)) { return this; }
     return getDerived(node, excluding);
 }
@@ -443,9 +443,9 @@ ValidationState NodeDef::validationState(Node node) const
 int NodeDef::valueCount() const
 {
     if (hasDerivedBase()) {
-        return m_derivedBase.lock()->valueCount() + (int)m_valueList.size();
+        return m_derivedBase.lock()->valueCount() + static_cast<int>(m_valueList.size());
     }
-    return (int)m_valueList.size();
+    return static_cast<int>(m_valueList.size());
 }
 
 // =============================================================================
@@ -476,7 +476,7 @@ const ValueDef &NodeDef::value(int index) const
         }
         index -= baseDefCount;
     }
-    return *m_valueList[index].get();
+    return *m_valueList[static_cast<vSize>(index)].get();
 }
 
 // =============================================================================
@@ -507,7 +507,7 @@ ValueDef &NodeDef::value(int index)
         }
         index -= baseDefCount;
     }
-    return *m_valueList[index].get();
+    return *m_valueList[static_cast<vSize>(index)].get();
 }
 
 // =============================================================================
@@ -533,7 +533,7 @@ std::vector<const ValueDef *> NodeDef::valueList() const
 {
     std::vector<const ValueDef *> vList;
     getValueList(vList);
-    return std::move(vList);
+    return vList;
 }
 
 // =============================================================================
@@ -595,7 +595,7 @@ ValueDef& NodeDef::derivedIdValueDef()
 // (public)
 int NodeDef::containerCount() const
 {
-    int count = (int)m_containerList.size();
+    int count = static_cast<int>(m_containerList.size());
     if (hasDerivedBase()) { count += m_derivedBase.lock()->containerCount(); }
     return count;
 }
@@ -612,8 +612,8 @@ const ContainerDef &NodeDef::container(int index) const
         index -= baseCount;
     }
 
-    if (index >= 0 || index < (int)m_containerList.size()) {
-        return *m_containerList.at(index);
+    if (index >= 0 || index < static_cast<int>(m_containerList.size())) {
+        return *m_containerList[static_cast<vSize>(index)];
     }
 
     assert(false);
@@ -665,7 +665,7 @@ std::vector<const ContainerDef *> NodeDef::containerList() const
 {
     std::vector<const ContainerDef *> cList;
     getContainerList(cList);
-    return std::move(cList);
+    return cList;
 }
 
 // =============================================================================
@@ -718,7 +718,7 @@ const NodeDef* NodeDef::childDef(Node childNode) const
     if (hasDerivedBase()) {
         return childDef(childNode);
     }
-    return NULL;
+    return nullptr;
 }
 
 // =============================================================================
@@ -751,7 +751,7 @@ Node NodeDef::parentNode(Node node, const NodeDef** parentNodeDef) const
 // (public)
 int NodeDef::parentContainerCount() const
 {
-    int count = (int)m_parentContainerDefs.size();
+    int count = static_cast<int>(m_parentContainerDefs.size());
     if (hasDerivedBase()) { count += derivedBase()->parentContainerCount(); }
     return count;
 }
@@ -767,7 +767,7 @@ const ContainerDef *NodeDef::parentContainer(int index) const
         }
         index -= baseCount;
     }
-    return m_parentContainerDefs.at(index);
+    return m_parentContainerDefs[static_cast<vSize>(index)];
 }
 
 // =============================================================================
@@ -785,7 +785,7 @@ const ContainerDef *NodeDef::parentContainer(const std::string &_name) const
         return derivedBase()->parentContainer(_name);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // =============================================================================
@@ -804,7 +804,7 @@ const ContainerDef *NodeDef::parentContainer(Node parentNode) const
         return derivedBase()->parentContainer(parentNode);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 #ifdef XML_BACKEND
@@ -820,7 +820,7 @@ const ContainerDef *NodeDef::parentContainerTagName(const std::string &tagName) 
     if (hasDerivedBase()) {
         return derivedBase()->parentContainer(tagName);
     }
-    return NULL;
+    return nullptr;
 }
 #endif // XML_BACKEND
 
@@ -853,7 +853,7 @@ bool NodeDef::isParent(Node node, Node refNode, bool recursive) const
 
     // Find the definition of the parent data node
     const ContainerDef* _parentContainer = parentContainer(_parentNode);
-    if (_parentContainer == NULL) { return false; }
+    if (_parentContainer == nullptr) { return false; }
 
     if (_parentNode == refNode) {
         return true;

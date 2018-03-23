@@ -12,6 +12,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #ifndef UNUSED
 #define UNUSED(x) (void)x;
@@ -19,6 +20,8 @@
 
 namespace Oak {
 namespace Model {
+
+typedef std::vector<int>::size_type vSize;
 
 class Conversion;
 typedef std::shared_ptr<Conversion> ConversionSPtr;

@@ -43,8 +43,8 @@ Item::Item(const NodeDef* nodeDef, Node node, const OakModel* model)
 Item::Item(const Item& copy)
     : m_def(copy.m_def),
       m_node(copy.m_node),
-      m_itemValueList(copy.m_itemValueList),
-      m_model(copy.m_model)
+      m_model(copy.m_model),
+      m_itemValueList(copy.m_itemValueList)
 {
 
 }
@@ -54,8 +54,8 @@ Item::Item(const Item& copy)
 Item::Item(Item&& move)
     : m_def(std::move(move.m_def)),
       m_node(std::move(move.m_node)),
-      m_itemValueList(std::move(move.m_itemValueList)),
-      m_model(move.m_model)
+      m_model(move.m_model),
+      m_itemValueList(std::move(move.m_itemValueList))
 {
 
 }
@@ -170,7 +170,7 @@ std::vector<std::string> Item::valueNameList() const
     {
         nameList.push_back(iv.name());
     }
-    return std::move(nameList);
+    return nameList;
 }
 
 // =============================================================================
@@ -185,7 +185,7 @@ std::vector<std::string> Item::childNameList() const
     {
         nameList.push_back(container->containerDef()->name());
     }
-    return std::move(nameList);
+    return nameList;
 }
 
 // =============================================================================
@@ -212,7 +212,7 @@ int Item::valueIndex(const ItemValue &value) const
     if (it == m_itemValueList.end()) {
         return -1;
     } else {
-        return (int)std::distance(m_itemValueList.begin(), it);
+        return static_cast<int>(std::distance(m_itemValueList.begin(), it));
     }
 }
 
@@ -221,7 +221,7 @@ int Item::valueIndex(const ItemValue &value) const
 const ItemValue& Item::valueAt(int index) const
 {
     initItemValueList();
-    return m_itemValueList.at(index);
+    return m_itemValueList.at(static_cast<vSize>(index));
 }
 
 // =============================================================================
@@ -267,7 +267,7 @@ bool Item::hasKey() const
 const ItemValue& Item::valueKey() const
 {
     initItemValueList();
-    if (hasKey()) { return m_itemValueList[m_def->keyValueDefIndex()]; }
+    if (hasKey()) { return m_itemValueList[static_cast<vSize>(m_def->keyValueDefIndex())]; }
     return ItemValue::emptyItemValue();
 }
 
@@ -284,7 +284,7 @@ bool Item::hasDerivedId() const
 const ItemValue& Item::valueDerivedId() const
 {
     initItemValueList();
-    if (hasDerivedId()) { return m_itemValueList[m_def->derivedIdValueDefIndex()]; }
+    if (hasDerivedId()) { return m_itemValueList[static_cast<vSize>(m_def->derivedIdValueDefIndex())]; }
     return ItemValue::emptyItemValue();
 }
 
@@ -448,7 +448,7 @@ Item Item::insertChild(const std::string &name, int &index) const
     if (m_model && !childItem.isNull()) {
         onItemInserted(*this, childIndex(childItem));
     }
-    return std::move(childItem);
+    return childItem;
 }
 
 // =============================================================================
@@ -484,7 +484,7 @@ Item Item::cloneChild(int& index, Item cloneItem) const
         }
         updateUniqueValues(item);
 
-        return std::move(item);
+        return item;
     } else {
         return Item(cloneItem.m_def, m_def->containerGroup().cloneNode(m_node, index, cloneItem.m_node), m_model);
     }
@@ -507,7 +507,7 @@ Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
         }
         updateUniqueValues(item);
 
-        return std::move(item);
+        return item;
     } else {
         return Item(cloneItem.m_def, m_def->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
     }
@@ -546,7 +546,7 @@ Item Item::moveChild(int& index, Item moveItem) const
         }
         updateUniqueValues(item);
 
-        return std::move(item);
+        return item;
     } else {
         return Item(moveItem.m_def, m_def->containerGroup().moveNode(m_node, index, moveItem.m_node), m_model);
     }
@@ -569,7 +569,7 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
         }
         updateUniqueValues(item);
 
-        return std::move(item);
+        return item;
     } else {
         return Item(moveItem.m_def, m_def->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
     }

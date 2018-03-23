@@ -85,13 +85,13 @@ bool convert(int& dest, double src, Conversion* properties)
 {
     if (properties == nullptr) { properties = Conversion::globalDefault2(); }
     if (properties->roundRules() == Conversion::DoubleToInt_Round) {
-        dest = (int)std::round(src);
+        dest = static_cast<int>(std::round(src));
     } else if (properties->roundRules() == Conversion::DoubleToInt_Floor) {
-        dest = (int)std::floor(src);
+        dest = static_cast<int>(std::floor(src));
     } else if (properties->roundRules() == Conversion::DoubleToInt_Ceil) {
-        dest = (int)std::ceil(src);
+        dest = static_cast<int>(std::ceil(src));
     } else if (properties->roundRules() == Conversion::DoubleToInt_Trunc) {
-        dest = (int)std::trunc(src);
+        dest = static_cast<int>(std::trunc(src));
     }
     return true;
 }

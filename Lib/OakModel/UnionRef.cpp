@@ -121,7 +121,7 @@ bool UnionRef::operator==(const UnionRef &value) const
         case UnionType::Integer:
             return *r.i == *value.r.i;
         case UnionType::Double:
-            return *r.d == *value.r.d;
+            return std::abs(*r.d - *value.r.d) <= 1.0e-6;
         case UnionType::String:
             return *r.s == *value.r.s;
         default:

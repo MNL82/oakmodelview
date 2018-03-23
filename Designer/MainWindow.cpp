@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->NodeDataView->setModel(m_oakModel);
     ui->ParentDataView->setModel(m_oakModel);
-    ui->OakView->setModel(m_oakModel);
+    ui->OakView->setOakModel(m_oakModel);
 
     ui->splitter->setSizes(QList<int>() << 300 << 700);
 

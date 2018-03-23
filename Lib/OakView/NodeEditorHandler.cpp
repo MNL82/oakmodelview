@@ -119,7 +119,7 @@ void NodeEditorHandler::clearEditor()
             delete m_editor;
         } else {
             // Disconnect any signal from the m_editor to this object
-            disconnect(m_editor, 0, this, 0);
+            disconnect(m_editor, nullptr, this, nullptr);
         }
         m_editor = nullptr;
     }

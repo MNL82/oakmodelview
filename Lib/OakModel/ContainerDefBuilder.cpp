@@ -36,7 +36,7 @@ ContainerDefUPtr ContainerDefBuilder::Make(NodeDefSPtr containerDef, int minCoun
     container->m_elementListRef.setTagName(containerDef->tagName());
 #endif // XML_BACKEND
 
-    return std::move(container);
+    return container;
 }
 
 // =============================================================================

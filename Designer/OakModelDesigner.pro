@@ -11,6 +11,8 @@ CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QMAKE_CXXFLAGS += -Werror
+
 TARGET = OakModelDesigner
 TEMPLATE = app
 

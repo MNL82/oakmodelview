@@ -156,7 +156,7 @@ void ValueEditorHandler::clearLabel()
             delete m_label;
         } else {
             // Disconnect any signal from the m_label to this object
-            disconnect(m_label, 0, this,  0);
+            disconnect(m_label, nullptr, this,  nullptr);
         }
         m_label = nullptr;
     }
@@ -172,7 +172,7 @@ void ValueEditorHandler::clearEditor()
             delete m_editor;
         } else {
             // Disconnect any signal from the m_editor to this object
-            disconnect(m_editor, 0, this, 0);
+            disconnect(m_editor, nullptr, this, nullptr);
         }
         m_editor = nullptr;
     }

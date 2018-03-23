@@ -20,8 +20,8 @@
 #include <vector>
 #include <assert.h>
 
-#include <Node.h>
-#include <NodeSettings.h>
+#include "Node.h"
+#include "NodeSettings.h"
 
 #include "ValueDef.h"
 
@@ -254,7 +254,7 @@ public:
 // *****************************************************************************
 
     template<class... _Types> inline
-    static typename NodeDefSPtr MakeSPtr(_Types&&... _Args)
+    static NodeDefSPtr MakeSPtr(_Types&&... _Args)
     {
         NodeDefSPtr sPtr(new NodeDef(_STD forward<_Types>(_Args)...));
         sPtr->m_thisWPtr = sPtr;

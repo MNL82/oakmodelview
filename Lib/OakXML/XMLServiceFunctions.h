@@ -26,7 +26,7 @@ namespace XML {
 std::vector<std::string> split(const std::string &str, char seperator = ';', bool ignoreEmpty = false);
 std::vector<std::vector<std::string>> doubleSplit(const std::string &str, char outerSeperator = ';', char innerSeperator = ':', bool ignoreEmpty = false);
 
-int toInteger(const std::string &str, bool *ok = 0);
+int toInteger(const std::string &str, bool *ok = nullptr);
 
 template<typename TO, typename FROM>
 std::unique_ptr<TO> dynamic_unique_pointer_cast(std::unique_ptr<FROM>&& old)

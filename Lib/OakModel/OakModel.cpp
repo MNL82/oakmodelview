@@ -217,7 +217,7 @@ bool OakModel::saveXMLRootNode(const std::string& filePath)
 // (public)
 const NodeDef* OakModel::findNodeDef(Node node) const
 {
-    if (m_rootItem.isDefNull() || node.isNull()) { return 0; }
+    if (m_rootItem.isDefNull() || node.isNull()) { return nullptr; }
 
     // Check if the root definition match
     const NodeDef* def = m_rootItem.def()->getDerivedAny(node);
@@ -249,7 +249,7 @@ const NodeDef* OakModel::findNodeDef(Node node) const
             }
         }
     }
-    return 0;
+    return nullptr;
 }
 
 // =============================================================================

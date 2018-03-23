@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "noderef.h"
-
 #include <vector>
+
+#include "NodeRef.h"
 
 namespace Oak {
 namespace Model {
@@ -23,7 +23,8 @@ namespace Model {
 class NodeRefGroup : NodeRef
 {
 public:
-    virtual Node getNode(const Node& baseNode, bool* ok = 0) const override;
+    virtual ~NodeRefGroup() override;
+    virtual Node getNode(const Node& baseNode, bool* ok = nullptr) const override;
 
 private:
     std::vector<NodeRef> m_references;

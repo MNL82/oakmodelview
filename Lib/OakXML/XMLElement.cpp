@@ -66,7 +66,7 @@ bool Element::isNull() const
 //
 bool Element::empty() const
 {
-    return m_element.empty() || (m_element.internal_object()->first_child == 0 && m_element.internal_object()->first_attribute == 0);
+    return m_element.empty() || (m_element.internal_object()->first_child == nullptr && m_element.internal_object()->first_attribute == nullptr);
 }
 
 // =============================================================================

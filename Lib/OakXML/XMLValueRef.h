@@ -54,7 +54,7 @@ public:
     void setElementRef(RefUPtr elRef);
 
     template<class... _Types> inline
-    static typename ValueRefUPtr MakeUPtr(_Types&&... _Args)
+    static ValueRefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (ValueRefUPtr(new ValueRef(_STD forward<_Types>(_Args)...)));
     }

@@ -108,7 +108,7 @@ ValueDefUPtr NodeDefBuilder::takeValueDef(NodeDefSPtr nodeDef, const std::string
         if ((*it)->name() == valueName) {
             ValueDefUPtr movedValue(std::move(*it));
             nodeDef->m_valueList.erase(it);
-            return std::move(movedValue);
+            return movedValue;
         }
     }
 
@@ -156,7 +156,7 @@ ContainerDefUPtr NodeDefBuilder::takeContainerDef(NodeDefSPtr nodeDef, const std
                 nodeDef->m_containerGroup->updateContainerList();
             }
 
-            return std::move(movedContainer);
+            return movedContainer;
         }
     }
 

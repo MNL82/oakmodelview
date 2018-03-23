@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Union.h"
+#include "UnionRef.h"
 #include "Conversion.h"
 #include "ConvertFunctions.h"
 
@@ -18,8 +19,6 @@
 
 namespace Oak {
 namespace Model {
-
-class UnionRef;
 
 // =============================================================================
 // Class definition
@@ -88,6 +87,8 @@ protected:
 
     friend class UnionRef;
 };
+
+#include "UnionRef.h"
 
 // =============================================================================
 // (public)

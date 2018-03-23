@@ -52,13 +52,13 @@ public:
 
     virtual Element getSource(Element target) const override;
 
-    virtual bool isNull() const { return false; }
+    virtual bool isNull() const override { return false; }
 
     virtual const std::string& firstTagName() const override { return emptyStr; }
     virtual const std::string& lastTagName() const override { return emptyStr; }
 
     template<class... _Types> inline
-    static typename ParentRefUPtr MakeUPtr(_Types&&... _Args)
+    static ParentRefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (ParentRefUPtr(new ParentRef(_STD forward<_Types>(_Args)...)));
     }

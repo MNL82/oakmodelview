@@ -69,7 +69,7 @@ UnionValue::UnionValue(const std::string &s)
 UnionValue::UnionValue(UnionType type)
     : t(type)
 {
-    assert((int)type > 0);
+    assert(static_cast<int>(type) > 0);
     if (type == UnionType::String) {
         v.s = new std::string();
     } else {

@@ -28,9 +28,9 @@ class OakView : public QTreeWidget
     Q_OBJECT
 public:
     OakView(QWidget* parent = nullptr);
-    virtual ~OakView();
+    virtual ~OakView() override;
 
-    void setModel(Model::OakModel* model);
+    void setOakModel(Model::OakModel* model);
 
     void currentItemChanged();
 
@@ -51,7 +51,7 @@ protected:
     void clearTreeStructure();
     void updateTreeStructure();
 
-    QTreeWidgetItem * getTreeItems(Model::Item item, QTreeWidgetItem *parentItem = 0);
+    QTreeWidgetItem * getTreeItems(Model::Item item, QTreeWidgetItem *parentItem = nullptr);
 
     void onItemInserted(const Model::Item& parentItem, int index);
     void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);

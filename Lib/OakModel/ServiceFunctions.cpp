@@ -53,7 +53,7 @@ std::vector<std::vector<std::string>> doubleSplit(const std::string &str, char o
     for (const std::string& is: outerList) {
         sMatrix.push_back(split(is, innerSeperator, ignoreEmpty));
     }
-    return std::move(sMatrix);
+    return sMatrix;
 }
 
 // =============================================================================
@@ -498,7 +498,7 @@ std::vector<BoolState> toBoolStateList(const std::vector<std::string> &values, c
 // (public)
 int indexOf(const std::string &str, const char &value, int firstIndex)
 {
-    if (str.size() < firstIndex) {
+    if (static_cast<int>(str.size()) < firstIndex) {
         return -1;
     }
     std::string::const_iterator it = str.begin();

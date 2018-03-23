@@ -28,7 +28,7 @@ class ContainerEditor : public QWidget
 {
     Q_OBJECT
 public:
-    ContainerEditor(ContainerEditorHandler* eHandler, QWidget *parent = 0);
+    ContainerEditor(ContainerEditorHandler* eHandler, QWidget *parent = nullptr);
 
     void updateEditor();
 

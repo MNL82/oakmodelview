@@ -140,7 +140,7 @@ Node ContainerGroupDef::node(Node _node, int index, const NodeDef** nodeDef) con
             return childNode;
         }
     }
-    if (nodeDef) { *nodeDef = 0; }
+    if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
 
@@ -155,7 +155,7 @@ Node ContainerGroupDef::firstNode(Node _node, const NodeDef** nodeDef) const
             return childNode;
         }
     }
-    if (nodeDef) { *nodeDef = 0; }
+    if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
 
@@ -171,7 +171,7 @@ Node ContainerGroupDef::lastNode(Node _node, const NodeDef** nodeDef) const
             return childNode;
         }
     }
-    if (nodeDef) { *nodeDef = 0; }
+    if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
 
@@ -205,7 +205,7 @@ Node ContainerGroupDef::nextNode(Node _node, Node refNode, const NodeDef** nodeD
     }
     // Never found the refNode
     assert(false);
-    if (nodeDef) { *nodeDef = 0; }
+    if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
 
@@ -238,7 +238,7 @@ Node ContainerGroupDef::previousNode(Node _node, Node refNode, const NodeDef** n
     }
     // Never found the refNode
     assert(false);
-    if (nodeDef) { *nodeDef = 0; }
+    if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
 

@@ -44,12 +44,12 @@ OakView::OakView(QWidget* parent)
 OakView::~OakView()
 {
     //qDebug() << "~OakView()";
-    setModel(nullptr);
+    setOakModel(nullptr);
 }
 
 // =============================================================================
 // (public)
-void OakView::setModel(Model::OakModel* model)
+void OakView::setOakModel(Model::OakModel* model)
 {
     if (m_model == model) { return; }
 

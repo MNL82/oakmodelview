@@ -111,7 +111,7 @@ public:
 // ****************************************************************************
 
     template<class... _Types> inline
-    static typename ContainerGroupDefUPtr MakeUPtr(_Types&&... _Args)
+    static ContainerGroupDefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (ContainerGroupDefUPtr(new ContainerGroupDef(_STD forward<_Types>(_Args)...)));
     }

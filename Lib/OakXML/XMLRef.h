@@ -35,8 +35,8 @@ public:
 
     virtual ~Ref() {}
 
-    Ref& operator=(const Ref&) {}
-    Ref& operator=(Ref&&) {}
+    Ref& operator=(const Ref&) { return *this; }
+    Ref& operator=(Ref&&) { return *this; }
 
     virtual RefUPtr copy() const;
 
@@ -52,7 +52,7 @@ public:
     virtual const std::string& lastTagName() const { return emptyStr; }
 
     template<class... _Types> inline
-    static typename RefUPtr MakeUPtr(_Types&&... _Args)
+    static RefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (RefUPtr(new Ref(_STD forward<_Types>(_Args)...)));
     }

@@ -41,7 +41,7 @@ public:
 
     virtual Element getSource(Element target) const override;
 
-    virtual bool isNull() const { return false; }
+    virtual bool isNull() const override { return false; }
 
     int index() const { return m_index; }
     void setIndex(int index) { m_index = index; }
@@ -53,7 +53,7 @@ public:
     virtual const std::string& lastTagName() const override { return m_tagName; }
 
     template<class... _Types> inline
-    static typename ChildRefUPtr MakeUPtr(_Types&&... _Args)
+    static ChildRefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (ChildRefUPtr(new ChildRef(_STD forward<_Types>(_Args)...)));
     }

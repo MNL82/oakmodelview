@@ -21,7 +21,8 @@ namespace Model {
 class NodeRef
 {
 public:
-    virtual Node getNode(const Node& baseNode, bool* ok = 0) const = 0;
+    virtual ~NodeRef() {}
+    virtual Node getNode(const Node& baseNode, bool* ok = nullptr) const = 0;
 };
 
 } // namespace Model

@@ -15,6 +15,13 @@ namespace Model {
 
 // =============================================================================
 // (public)
+NodeRefGroup::~NodeRefGroup()
+{
+
+}
+
+// =============================================================================
+// (public)
 Node NodeRefGroup::getNode(const Node &baseNode, bool *ok) const
 {
     bool okRef;

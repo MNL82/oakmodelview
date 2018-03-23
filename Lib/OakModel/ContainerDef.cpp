@@ -224,7 +224,7 @@ Node ContainerDef::node(Node _node, int index, const NodeDef** nodeDef) const
     }
 
     if (nodeDef) {
-        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
+        *nodeDef = (childNode.isNull()) ? nullptr : containerDef(childNode);
     }
     return childNode;
 }
@@ -248,7 +248,7 @@ Node ContainerDef::firstNode(Node _node, const NodeDef** nodeDef) const
     }
 
    if (nodeDef) {
-        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
+        *nodeDef = (childNode.isNull()) ? nullptr : containerDef(childNode);
     }
     return childNode;
 }
@@ -272,7 +272,7 @@ Node ContainerDef::lastNode(Node _node, const NodeDef** nodeDef) const
     }
 
     if (nodeDef) {
-        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
+        *nodeDef = (childNode.isNull()) ? nullptr : containerDef(childNode);
     }
     return childNode;
 }
@@ -296,7 +296,7 @@ Node ContainerDef::nextNode(Node refNode, const NodeDef** nodeDef) const
     }
 
     if (nodeDef) {
-        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
+        *nodeDef = (childNode.isNull()) ? nullptr : containerDef(childNode);
     }
     return childNode;
 }
@@ -320,7 +320,7 @@ Node ContainerDef::previousNode(Node refNode, const NodeDef** nodeDef) const
     }
 
     if (nodeDef) {
-        *nodeDef = (childNode.isNull()) ? 0 : containerDef(childNode);
+        *nodeDef = (childNode.isNull()) ? nullptr : containerDef(childNode);
     }
     return childNode;
 }
@@ -476,7 +476,7 @@ bool ContainerDef::canMoveNode(Node _node, int &index, Node moveNode) const
 
     // Find the node definition of 'moveNode' parent
     const ContainerDef* moveParentContainer = moveDef->parentContainer(moveNodeParent);
-    if (moveParentContainer == NULL) { return false; }
+    if (moveParentContainer == nullptr) { return false; }
 
     // Find the index of the 'moveNode'
     int moveIndex = moveParentContainer->nodeIndex(moveNodeParent, moveNode);

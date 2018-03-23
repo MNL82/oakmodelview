@@ -14,6 +14,7 @@ DEFINES += XML_BACKEND
 DEFINES += NOMINMAX
 
 unix::QMAKE_CXXFLAGS += -std=gnu++0x
+QMAKE_CXXFLAGS += -Werror
 
 SOURCES += \
     pugixml/pugixml.cpp \

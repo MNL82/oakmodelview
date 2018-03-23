@@ -34,6 +34,8 @@ public:
     ListRef(const ListRef &copy);
     ListRef(ListRef &&move);
 
+    virtual ~ListRef();
+
     ListRef& operator=(const ListRef &copy);
     ListRef& operator=(ListRef&& move);
 
@@ -76,7 +78,7 @@ public:
     void setSubRef(ChildRefGroupUPtr value);
 
     template<class... _Types> inline
-    static typename ListRefUPtr MakeUPtr(_Types&&... _Args)
+    static ListRefUPtr MakeUPtr(_Types&&... _Args)
     {
         return (ListRefUPtr(new ListRef(_STD forward<_Types>(_Args)...)));
     }
