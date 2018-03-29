@@ -127,6 +127,14 @@ const std::string & ItemValue::displayName() const
 
 // =============================================================================
 // (public)
+const std::string &ItemValue::tooltip() const
+{
+    assert(m_valueDef != nullptr);
+    return m_valueDef->tooltip();
+}
+
+// =============================================================================
+// (public)
 const Node& ItemValue::node() const
 {
     assert(m_valueDef != nullptr);

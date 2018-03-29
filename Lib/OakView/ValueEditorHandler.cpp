@@ -185,6 +185,7 @@ void ValueEditorHandler::createLabel()
     if (m_label != nullptr) { return; }
 
     m_label = new QLabel(QString::fromStdString(m_itemValue.displayName()));
+    m_label->setToolTip(QString::fromStdString(m_itemValue.tooltip()));
     connect(m_label, SIGNAL(destroyed(QObject*)), this, SLOT(onLabelDestroyed()));
 
     updateLabelValue();

@@ -44,6 +44,8 @@ public:
     const std::string &name() const;
     const std::string &displayName() const;
 
+    const std::string &tooltip() const;
+
     const Node& node() const;
     const ValueDef* valueDef() const;
     const Item* item() const;
