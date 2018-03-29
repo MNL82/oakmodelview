@@ -3,24 +3,12 @@
 
 #include <QFileDialog>
 
-#include "NodeDefBuilder.h"
-#include "ContainerDefBuilder.h"
-#include "ValueDefBuilder.h"
-#include "XMLRefFactory.h"
-
 #include "ModelDesignDef.h"
 
 using namespace Oak::Model;
 
-std::string MainWindow::s_master    = "master";
-std::string MainWindow::s_data      = "data";
-std::string MainWindow::s_filter    = "filter";
-std::string MainWindow::s_version   = "version";
-std::string MainWindow::s_major     = "major";
-std::string MainWindow::s_minor     = "minor";
-std::string MainWindow::s_patch     = "patch";
-std::string MainWindow::s_filePath  = "filePath";
-
+// =============================================================================
+// (public)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -42,11 +30,15 @@ MainWindow::MainWindow(QWidget *parent) :
     m_oakModel->setRootNodeDef(ModelDesignDef::MakeSPtr());
 }
 
+// =============================================================================
+// (public)
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+// =============================================================================
+// (public)
 void MainWindow::on_actionNew_triggered()
 {
     m_oakModel->createNewRootDocument(Node::Type::XML);
@@ -54,6 +46,8 @@ void MainWindow::on_actionNew_triggered()
     ui->OakView->expandAll();
 }
 
+// =============================================================================
+// (public)
 void MainWindow::on_actionOpen_triggered()
 {
     QString fileName = QString::fromStdString(m_oakModel->xmlDocFilePath());
@@ -64,11 +58,15 @@ void MainWindow::on_actionOpen_triggered()
     ui->OakView->expandAll();
 }
 
+// =============================================================================
+// (public)
 void MainWindow::on_action_Save_triggered()
 {
     m_oakModel->saveXMLRootNode();
 }
 
+// =============================================================================
+// (public)
 void MainWindow::on_actionSave_As_triggered()
 {
     QString fileName = QString::fromStdString(m_oakModel->xmlDocFilePath());
@@ -77,11 +75,15 @@ void MainWindow::on_actionSave_As_triggered()
     m_oakModel->saveXMLRootNode(fileName.toStdString());
 }
 
+// =============================================================================
+// (public)
 void MainWindow::on_actionClose_triggered()
 {
     m_oakModel->clearRoot();
 }
 
+// =============================================================================
+// (public)
 void MainWindow::on_actionExit_triggered()
 {
     close();
