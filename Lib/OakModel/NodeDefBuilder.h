@@ -33,8 +33,8 @@ protected:
 
 public:
     static NodeDefBuilderSPtr create(const std::string &name);
-    static NodeDefBuilderSPtr createRoot(const std::string &name, const UnionRef &derivedId);
-    static NodeDefBuilderSPtr createDerived(NodeDefBuilderSPtr derivedBaseNode, const UnionRef &derivedId);
+    static NodeDefBuilderSPtr createInheritanceRoot(const std::string &name, const UnionRef &derivedId);
+    static NodeDefBuilderSPtr createInheritancDerived(NodeDefBuilderSPtr derivedBaseNode, const UnionRef &derivedId);
     static NodeDefBuilderSPtr use(NodeDefSPtr nodeDef);
 
     NodeDefSPtr get();

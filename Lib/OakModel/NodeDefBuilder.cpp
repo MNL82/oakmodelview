@@ -96,7 +96,7 @@ NodeDefBuilderSPtr NodeDefBuilder::create(const std::string &name)
 
 // =============================================================================
 // (public static)
-NodeDefBuilderSPtr NodeDefBuilder::createRoot(const std::string &name, const UnionRef &derivedId)
+NodeDefBuilderSPtr NodeDefBuilder::createInheritanceRoot(const std::string &name, const UnionRef &derivedId)
 {
     NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(name, derivedId));
     sPtr->m_thisWPtr = sPtr;
@@ -105,7 +105,7 @@ NodeDefBuilderSPtr NodeDefBuilder::createRoot(const std::string &name, const Uni
 
 // =============================================================================
 // (public static)
-NodeDefBuilderSPtr NodeDefBuilder::createDerived(NodeDefBuilderSPtr derivedBaseNode, const UnionRef &derivedId)
+NodeDefBuilderSPtr NodeDefBuilder::createInheritancDerived(NodeDefBuilderSPtr derivedBaseNode, const UnionRef &derivedId)
 {
     NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(derivedBaseNode->get(), derivedId));
     sPtr->m_thisWPtr = sPtr;

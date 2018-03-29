@@ -32,7 +32,7 @@ ModelDesignDef::ModelDesignDef()
 void ModelDesignDef::createModelDesign()
 {
     /************************** Node(Standard) **************************/
-    auto NodeDef = NDB::createRoot("Node", "Standard")
+    auto NodeDef = NDB::createInheritanceRoot("Node", "Standard")
         ->setDisplayName("Node")
         ->addValueDefAsKey(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Noname"))
@@ -42,28 +42,30 @@ void ModelDesignDef::createModelDesign()
             ->setDisplayName("Key Value")
             ->setOptionsStatic(std::vector<std::string>{""})
             ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("DerivedIDValue"))
+            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
         ->addValueDefAsDerivedId(VDB::create(UnionType::String, "Type")
             ->setDisplayName("Node Type"));
 
-    /************************** Node(DerivedRoot) **************************/
-    auto NodeRootDef = NDB::createDerived(NodeDef, "DerivedRoot")
-        ->addValueDef(VDB::create(UnionType::String, "DerivedId")
-            ->setDisplayName("Derived ID"))
-        ->addValueDef(VDB::create(UnionType::String, "DerivedIDValue")
-            ->setDisplayName("Derived ID Value")
+    /************************** Node(InheritanceRoot) **************************/
+    auto NodeRootDef = NDB::createInheritancDerived(NodeDef, "InheritanceRoot")
+        ->addValueDef(VDB::create(UnionType::String, "NodeInheritanceId")
+            ->setDisplayName("Root Inheritance ID"))
+        ->addValueDef(VDB::create(UnionType::String, "InheritanceIDValue")
+            ->setDisplayName("Value for Inheritance ID")
             ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
             ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("KeyValue"))
             ->setSetting("OptionsOnly", true));
 
     /************************** Node(Rerived) **************************/
-    auto NodeDerivedDef = NDB::createDerived(NodeDef, "Derived")
-        ->addValueDef(VDB::create(UnionType::String, "DerivedBase")
-            ->setDisplayName("Derived Base"));
+    auto NodeDerivedDef = NDB::createInheritancDerived(NodeDef, "Derived")
+        ->addValueDef(VDB::create(UnionType::String, "NodeInheritanceId")
+            ->setDisplayName("Derived Inheritance ID"))
+        ->addValueDef(VDB::create(UnionType::String, "BaseNode")
+            ->setDisplayName("Base Node"));
 
     /************************** Value(String) **************************/
-    auto ValueDef = NDB::createRoot("Value", "String")
+    auto ValueDef = NDB::createInheritanceRoot("Value", "String")
         ->addValueDefAsKey(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Value"))
         ->addValueDef(VDB::create(UnionType::String, "DisplayName")
@@ -71,18 +73,17 @@ void ModelDesignDef::createModelDesign()
         ->addValueDefAsDerivedId(VDB::create(UnionType::String, "Type"))
         ->addValueDef(VDB::create(UnionType::String, "Tooltip"));
 
-
     NodeDef->addContainerDef(CDB::Make(ValueDef->get()));
 
     /************************** Value(Integer) **************************/
-    auto ValueDefInt = NDB::createDerived(ValueDef, "Integer")
+    auto ValueDefInt = NDB::createInheritancDerived(ValueDef, "Integer")
         ->addValueDef(VDB::create(UnionType::Integer, "Min")
             ->setDefaultValue(-std::numeric_limits<int>::max()))
         ->addValueDef(VDB::create(UnionType::Integer, "Max")
             ->setDefaultValue(std::numeric_limits<int>::max()));
 
     /************************** Value(Double) **************************/
-    auto ValueDefReal = NDB::createDerived(ValueDef, "Real")
+    auto ValueDefReal = NDB::createInheritancDerived(ValueDef, "Real")
         ->addValueDef(VDB::create(UnionType::Double, "Min")
             ->setDefaultValue(-std::numeric_limits<double>::max()))
         ->addValueDef(VDB::create(UnionType::Double, "Max")
