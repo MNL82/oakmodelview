@@ -145,7 +145,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueDef(ValueDefBuilderSPtr valueDef)
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueDefAsKey(ValueDefBuilderSPtr valueDefKey)
+NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
 {
     assert(m_nodeDef);
     assert(valueDefKey);
@@ -165,7 +165,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueDefAsKey(ValueDefBuilderSPtr valueDef
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueDefAsDerivedId(ValueDefBuilderSPtr valueDefDerivedId)
+NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr valueDefDerivedId)
 {
     assert(m_nodeDef);
     assert(valueDefDerivedId);
@@ -279,7 +279,7 @@ NodeDefBuilderSPtr NodeDefBuilder::setTagName(const std::string &tagName)
 
 //// =============================================================================
 //// (public)
-//bool NodeDefBuilder::addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey)
+//bool NodeDefBuilder::addValueKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey)
 //{
 //    if (!nodeDef) { return false; }
 //    if (!valueDefKey) { return false; }
@@ -300,7 +300,7 @@ NodeDefBuilderSPtr NodeDefBuilder::setTagName(const std::string &tagName)
 
 //// =============================================================================
 //// (public)
-//bool NodeDefBuilder::addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId)
+//bool NodeDefBuilder::addValueInheritanceId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId)
 //{
 //    if (!nodeDef) { return false; }
 //    if (!valueDefDerivedId) { return false; }

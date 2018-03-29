@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->splitter->setSizes(QList<int>() << 300 << 700);
 
-    //createMasterModel();
     m_oakModel->setRootNodeDef(ModelDesignDef::MakeSPtr());
 }
 

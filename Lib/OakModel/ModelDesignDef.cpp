@@ -34,7 +34,7 @@ void ModelDesignDef::createModelDesign()
     /************************** Node(Standard) **************************/
     auto NodeDef = NDB::createInheritanceRoot("Node", "Standard")
         ->setDisplayName("Node")
-        ->addValueDefAsKey(VDB::create(UnionType::String, "Name")
+        ->addValueKey(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Noname"))
         ->addValueDef(VDB::create(UnionType::String, "DisplayName")
             ->setDisplayName("Display Name")
@@ -45,7 +45,7 @@ void ModelDesignDef::createModelDesign()
             ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
             ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
-        ->addValueDefAsDerivedId(VDB::create(UnionType::String, "Type")
+        ->addValueInheritanceId(VDB::create(UnionType::String, "Type")
             ->setDisplayName("Node Type"));
 
     /************************** Node(InheritanceRoot) **************************/
@@ -67,11 +67,11 @@ void ModelDesignDef::createModelDesign()
 
     /************************** Value(String) **************************/
     auto ValueDef = NDB::createInheritanceRoot("Value", "String")
-        ->addValueDefAsKey(VDB::create(UnionType::String, "Name")
+        ->addValueKey(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Value"))
         ->addValueDef(VDB::create(UnionType::String, "DisplayName")
             ->setDisplayName("Display Name"))
-        ->addValueDefAsDerivedId(VDB::create(UnionType::String, "Type"))
+        ->addValueInheritanceId(VDB::create(UnionType::String, "Type"))
         ->addValueDef(VDB::create(UnionType::String, "Tooltip"));
 
     NodeDef->addContainerDef(CDB::Make(ValueDef->get()));
@@ -92,7 +92,7 @@ void ModelDesignDef::createModelDesign()
 
     /************************** Container **************************/
     auto ContainerDef = NDB::create("Container")
-        ->addValueDefAsKey(VDB::create(UnionType::String, "Name")
+        ->addValueKey(VDB::create(UnionType::String, "Name")
             ->setDisplayName("Derived ID Value")
             ->setOptionsQuery(QueryRef::MakeSPtr()->parent()->parent()->children("Node")->setValueName("Name"))
             ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->ignore()->parent()->children("Container")->setValueName("Name"))

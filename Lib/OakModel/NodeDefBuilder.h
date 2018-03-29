@@ -40,8 +40,8 @@ public:
     NodeDefSPtr get();
 
     NodeDefBuilderSPtr addValueDef(ValueDefBuilderSPtr valueDef);
-    NodeDefBuilderSPtr addValueDefAsKey(ValueDefBuilderSPtr valueDefKey);
-    NodeDefBuilderSPtr addValueDefAsDerivedId(ValueDefBuilderSPtr valueDefDerivedId);
+    NodeDefBuilderSPtr addValueKey(ValueDefBuilderSPtr valueDefKey);
+    NodeDefBuilderSPtr addValueInheritanceId(ValueDefBuilderSPtr valueDefDerivedId);
 
     NodeDefBuilderSPtr addContainerDef(ContainerDefUPtr cDef);
 
@@ -81,8 +81,8 @@ public:
 
 
 //    static bool addValueDef(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDef);
-//    static bool addValueDefAsKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey);
-//    static bool addValueDefAsDerivedId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId);
+//    static bool addValueKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey);
+//    static bool addValueInheritanceId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId);
     static ValueDefUPtr takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName);
 
 //    static bool addContainerDef(NodeDefSPtr nodeDef, ContainerDefUPtr cDef);
