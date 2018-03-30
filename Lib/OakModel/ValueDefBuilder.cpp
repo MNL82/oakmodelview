@@ -30,6 +30,7 @@ ValueDefBuilder::ValueDefBuilder(UnionType type, const std::string &name)
     }
 #endif // XML_BACKEND
 }
+
 // =============================================================================
 // (protected)
 ValueDefBuilder::ValueDefBuilder(ValueDef *valueDef)
@@ -41,7 +42,7 @@ ValueDefBuilder::ValueDefBuilder(ValueDef *valueDef)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::create(UnionType type, const std::string &name)
 {
-    ValueDefBuilderSPtr sPtr = ValueDefBuilderSPtr(new ValueDefBuilder(type, name));
+    ValueDefBuilderSPtr sPtr(new ValueDefBuilder(type, name));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }

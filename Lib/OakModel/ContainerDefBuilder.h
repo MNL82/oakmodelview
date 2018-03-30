@@ -10,28 +10,50 @@
 
 #pragma once
 
+
 #include "ContainerDef.h"
 
 namespace Oak {
 namespace Model {
+
+class NodeDefBuilder;
+typedef std::shared_ptr<NodeDefBuilder> NodeDefBuilderSPtr;
+
+class ContainerDefBuilder;
+typedef std::shared_ptr<ContainerDefBuilder> ContainerDefBuilderSPtr;
+typedef std::weak_ptr<ContainerDefBuilder> ContainerDefBuilderWPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
 class ContainerDefBuilder
 {
-    ContainerDefBuilder() = delete;
+protected:
+    ContainerDefBuilder(NodeDefBuilderSPtr nodeDefBuilder, int minCount, int maxCount);
+    ContainerDefBuilder(ContainerDef *containerDef);
+
 public:
-    static ContainerDefUPtr Make(NodeDefSPtr containerDef, int minCount = 0, int maxCount = std::numeric_limits<int>::max());
+    static ContainerDefBuilderSPtr create(NodeDefBuilderSPtr nodeDefBuilder, int minCount = 0, int maxCount = std::numeric_limits<int>::max());
+    static ContainerDefBuilderSPtr use(ContainerDef *containerDef);
 
-    static bool setNodeDefElement(const ContainerDefUPtr& nContainer, NodeDefSPtr containerDef);
-    static bool setNodeDefParent(const ContainerDefUPtr& nContainer, NodeDefSPtr hostDef);
+public:
+    ContainerDefUPtr get();
+    const ContainerDef & containerDef() const;
 
-    static bool setMinMaxCount(const ContainerDefUPtr& nContainer, int minCount = 0, int maxCount = std::numeric_limits<int>::max());
+    ContainerDefBuilderSPtr setNodeDefElement(NodeDefSPtr nodeDef);
+    ContainerDefBuilderSPtr setNodeDefParent(NodeDefSPtr hostDef);
+
+    ContainerDefBuilderSPtr setMinMaxCount(int minCount = 0, int maxCount = std::numeric_limits<int>::max());
 
 #ifdef XML_BACKEND
-    static bool setElementListRef(const ContainerDefUPtr& nContainer, XML::ListRef listRef);
+    ContainerDefBuilderSPtr setElementListRef(XML::ListRef listRef);
 #endif // XML_BACKEND
+
+private:
+    ContainerDefUPtr m_containerDefUPtr;
+    ContainerDef * m_containerDef;
+
+    ContainerDefBuilderWPtr m_thisWPtr;
 };
 
 typedef ContainerDefBuilder CDB;

@@ -10,6 +10,8 @@
 
 #include "NodeDefBuilder.h"
 
+#include "ContainerDefBuilder.h"
+
 namespace Oak {
 namespace Model {
 
@@ -196,17 +198,19 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr val
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addContainerDef(ContainerDefUPtr cDef)
+NodeDefBuilderSPtr NodeDefBuilder::addContainerDef(ContainerDefBuilderSPtr cDef)
 {
     assert(m_nodeDef);
     assert(cDef);
 
     // Check if the NodeDef will be referenced twice (Not sure this is needed)
-    assert(!hasContainerI(m_nodeDef, cDef));
+    assert(!hasContainerI(m_nodeDef, cDef->containerDef()));
 
-    cDef->m_hostDef = m_nodeDef;
+    auto containerDef = cDef->get();
 
-    m_nodeDef->m_containerList.push_back(std::move(cDef));
+    containerDef->m_hostDef = m_nodeDef;
+
+    m_nodeDef->m_containerList.push_back(std::move(containerDef));
 
     // Clear the list of existing containers
     if (m_nodeDef->m_containerGroup) {
@@ -245,92 +249,6 @@ NodeDefBuilderSPtr NodeDefBuilder::setTagName(const std::string &tagName)
 }
 #endif // XML_BACKEND
 
-
-
-//// =============================================================================
-//// (public)
-//NodeDefSPtr NodeDefBuilder::Make(const std::string & name)
-//{
-//    NodeDefSPtr nodeDef = NodeDef::MakeSPtr(name);
-
-//#ifdef XML_BACKEND
-//    if (XML::Element::validateTagName(name)) {
-//        nodeDef->m_tagName = name;
-//    }
-//#endif // XML_BACKEND
-
-//    return nodeDef;
-//}
-
-//// =============================================================================
-//// (public)
-//bool NodeDefBuilder::addValueDef(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDef)
-//{
-//    if (!nodeDef) { return false; }
-//    if (!valueDef) { return false; }
-
-//    // A NodeDef can only have
-//    if (hasValueI(nodeDef, valueDef)) { return false; }
-
-//    nodeDef->m_valueList.push_back(valueDef->get());
-
-//    return true;
-//}
-
-//// =============================================================================
-//// (public)
-//bool NodeDefBuilder::addValueKey(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefKey)
-//{
-//    if (!nodeDef) { return false; }
-//    if (!valueDefKey) { return false; }
-
-//    // Derived node definitions inherate its node id value from its base and can not have it's own
-//    if (nodeDef->hasDerivedBase()) { return false; }
-
-//    valueDefKey->setSetting("Unique", true);
-//    valueDefKey->setSetting("Required", true);
-
-//    if (addValueDef(nodeDef, valueDefKey)) {
-//        int index = nodeDef->valueCount()-1;
-//        setKeyValueThisAndDerived(nodeDef, index);
-//        return true;
-//    }
-//    return false;
-//}
-
-//// =============================================================================
-//// (public)
-//bool NodeDefBuilder::addValueInheritanceId(NodeDefSPtr nodeDef, ValueDefBuilderSPtr valueDefDerivedId)
-//{
-//    if (!nodeDef) { return false; }
-//    if (!valueDefDerivedId) { return false; }
-
-//    // The node must have an derived id
-//    if (nodeDef->derivedId().isNull()) { return false; }
-
-//    // The value type of the derivedId and the derivedIdValue must match
-//    if (nodeDef->derivedId().type() != valueDefDerivedId->valueDef().valueType()) { return false; }
-
-//    // Derived node definitions inherate its derived id value from its base and can not have it's own
-//    if (nodeDef->hasDerivedBase()) { return false; }
-
-//    //
-//    std::vector<UnionRef> optionList;
-//    nodeDef->derivedIdListAll(optionList);
-//    valueDefDerivedId->setOptionsStatic(optionList);
-//    valueDefDerivedId->setSetting("OptionsOnly", true);
-//    if (!valueDefDerivedId->valueDef().hasDefaultValue()) {
-//        valueDefDerivedId->setDefaultValue(nodeDef->derivedId());
-//    }
-
-//    if (addValueDef(nodeDef, valueDefDerivedId)) {
-//        int index = nodeDef->valueCount()-1;
-//        setDerivedIdValueThisAndDerived(nodeDef, index);
-//        return true;
-//    }
-//    return false;
-//}
-
 // =============================================================================
 // (public)
 ValueDefUPtr NodeDefBuilder::takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName)
@@ -348,30 +266,6 @@ ValueDefUPtr NodeDefBuilder::takeValueDef(NodeDefSPtr nodeDef, const std::string
 
     return ValueDefUPtr();
 }
-
-//// =============================================================================
-//// (public)
-//bool NodeDefBuilder::addContainerDef(NodeDefSPtr nodeDef, ContainerDefUPtr cDef)
-//{
-//    if (!nodeDef || !cDef) {
-//        assert(false);
-//        return false;
-//    }
-
-//    // Check if the NodeDef will be referenced twice (Not sure this is needed)
-//    if (hasContainerI(nodeDef, cDef)) { return false; }
-
-//    cDef->m_hostDef = nodeDef;
-
-//    nodeDef->m_containerList.push_back(std::move(cDef));
-
-//    // Clear the list of existing containers
-//    if (nodeDef->m_containerGroup) {
-//        nodeDef->m_containerGroup->updateContainerList();
-//    }
-
-//    return true;
-//}
 
 // =============================================================================
 // (public)
@@ -396,37 +290,6 @@ ContainerDefUPtr NodeDefBuilder::takeContainerDef(NodeDefSPtr nodeDef, const std
 
     return ContainerDefUPtr();
 }
-
-//// =============================================================================
-//// (public)
-//bool NodeDefBuilder::setDisplayName(NodeDefSPtr nodeDef, const std::string& displayName)
-//{
-//    if (!nodeDef) { return false; }
-
-//    nodeDef->m_displayName = displayName;
-
-//    return true;
-//}
-
-//#ifdef XML_BACKEND
-//// =============================================================================
-//// (public)
-//bool NodeDefBuilder::setTagName(NodeDefSPtr nodeDef, const std::string &tagName)
-//{
-//    if (!nodeDef) { return false; }
-//    if (!XML::Element::validateTagName(tagName)) { return false; }
-//    if (nodeDef->m_tagName == tagName) { return true; }
-
-//    NodeDefSPtr derivedRoot = nodeDef;
-//    while (derivedRoot->hasDerivedBase()) {
-//        derivedRoot = derivedRoot->m_derivedBase.lock();
-//    }
-
-//    setTagNameThisAndDerived(derivedRoot, tagName);
-
-//    return true;
-//}
-//#endif // XML_BACKEND
 
 // =============================================================================
 // (protected)
@@ -499,7 +362,7 @@ void NodeDefBuilder::setDerivedIdValueThisAndDerived(NodeDefSPtr nodeDef, int in
 
 // =============================================================================
 // (protected)
-bool NodeDefBuilder::hasContainerI(NodeDefSPtr nodeDef, const ContainerDefUPtr &cDef)
+bool NodeDefBuilder::hasContainerI(NodeDefSPtr nodeDef, const ContainerDef &cDef)
 {
     // Check ValueDefs on it's base NodeDefs
     const NodeDef* ni = nodeDef.get();
@@ -507,7 +370,7 @@ bool NodeDefBuilder::hasContainerI(NodeDefSPtr nodeDef, const ContainerDefUPtr &
         ni = ni->derivedBase();
         for (const auto& ci: nodeDef->m_containerList)
         {
-            if (ci->m_containerDef->name() == cDef->m_containerDef->name()) {
+            if (ci->m_containerDef->name() == cDef.m_containerDef->name()) {
                 return true;
             }
         }
@@ -519,11 +382,11 @@ bool NodeDefBuilder::hasContainerI(NodeDefSPtr nodeDef, const ContainerDefUPtr &
 
 // =============================================================================
 // (protected)
-bool NodeDefBuilder::hasContainerIThisAndDerived(NodeDefSPtr nodeDef, const ContainerDefUPtr &cDef)
+bool NodeDefBuilder::hasContainerIThisAndDerived(NodeDefSPtr nodeDef, const ContainerDef &cDef)
 {
     for (const auto& ci: nodeDef->m_containerList)
     {
-        if (ci->m_containerDef->name() == cDef->m_containerDef->name()) {
+        if (ci->m_containerDef->name() == cDef.m_containerDef->name()) {
             return true;
         }
     }

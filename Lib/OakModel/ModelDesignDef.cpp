@@ -41,7 +41,6 @@ void ModelDesignDef::createModelDesign()
             ->setTooltip("The name will be used if left empty"))
         ->addValueDef(VDB::create(UnionType::String, "KeyValue")
             ->setDisplayName("Key Value")
-            ->setOptionsStatic(std::vector<std::string>{""})
             ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
             ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
@@ -74,7 +73,7 @@ void ModelDesignDef::createModelDesign()
         ->addValueInheritanceId(VDB::create(UnionType::String, "Type"))
         ->addValueDef(VDB::create(UnionType::String, "Tooltip"));
 
-    NodeDef->addContainerDef(CDB::Make(ValueDef->get()));
+    NodeDef->addContainerDef(CDB::create(ValueDef));
 
     /************************** Value(Integer) **************************/
     auto ValueDefInt = NDB::createInheritancDerived(ValueDef, "Integer")
@@ -102,10 +101,10 @@ void ModelDesignDef::createModelDesign()
         ->addValueDef(VDB::create(UnionType::Integer, "Max")
             ->setDefaultValue(std::numeric_limits<int>::max()));
 
-    NodeDef->addContainerDef(CDB::Make(ContainerDef->get()));
+    NodeDef->addContainerDef(CDB::create(ContainerDef));
 
     // Add the node definition to the Model design definition
-    NDB::use(sPtr())->addContainerDef(CDB::Make(NodeDef->get()));
+    NDB::use(sPtr())->addContainerDef(CDB::create(NodeDef));
 }
 
 // =============================================================================

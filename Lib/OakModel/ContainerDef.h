@@ -31,8 +31,6 @@ typedef std::unique_ptr<ContainerDef> ContainerDefUPtr;
 
 class NodeDef;
 typedef std::shared_ptr<NodeDef> NodeDefSPtr;
-typedef std::shared_ptr<NodeDef> NodeDefSPtr;
-typedef std::weak_ptr<NodeDef> NodeDefWPtr;
 typedef std::weak_ptr<NodeDef> NodeDefWPtr;
 
 // =============================================================================
@@ -41,7 +39,7 @@ typedef std::weak_ptr<NodeDef> NodeDefWPtr;
 class ContainerDef {
 public:
     ContainerDef();
-    ContainerDef(NodeDefSPtr containerDef, int min = 0, int max = std::numeric_limits<int>::max());
+    ContainerDef(NodeDefSPtr nodeDef, int min = 0, int max = std::numeric_limits<int>::max());
     ContainerDef(const ContainerDef &copy);
     ContainerDef(ContainerDef &&move);
 

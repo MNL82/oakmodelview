@@ -64,6 +64,7 @@ public:
 private:
     ValueDefUPtr m_valueDefUPtr;
     ValueDef *m_valueDef;
+
     ValueDefBuilderWPtr m_thisWPtr;
 };
 

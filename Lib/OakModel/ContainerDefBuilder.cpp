@@ -9,6 +9,7 @@
  */
 
 #include "ContainerDefBuilder.h"
+#include "NodeDefBuilder.h"
 
 #include "NodeDef.h"
 
@@ -16,78 +17,115 @@ namespace Oak {
 namespace Model {
 
 // =============================================================================
-// (public)
-ContainerDefUPtr ContainerDefBuilder::Make(NodeDefSPtr containerDef, int minCount, int maxCount)
+// (protected)
+ContainerDefBuilder::ContainerDefBuilder(NodeDefBuilderSPtr nodeDefBuilder, int minCount, int maxCount)
 {
-    assert(containerDef);
+    assert(nodeDefBuilder);
     assert(minCount >= 0);
     assert(maxCount > 0);
     assert(maxCount >= minCount);
 
-    auto container = ContainerDef::MakeUPtr();
+    m_containerDefUPtr = ContainerDef::MakeUPtr(nodeDefBuilder->get());
+    m_containerDef = m_containerDefUPtr.get();
 
-    container->m_containerDef = containerDef;
-    container->m_minCount = minCount;
-    container->m_maxCount = maxCount;
-
-    containerDef->m_parentContainerDefs.push_back(container.get());
+    nodeDefBuilder->get()->m_parentContainerDefs.push_back(m_containerDef);
 
 #ifdef XML_BACKEND
-    container->m_elementListRef.setTagName(containerDef->tagName());
+    m_containerDef->m_elementListRef.setTagName(nodeDefBuilder->get()->tagName());
 #endif // XML_BACKEND
+}
 
-    return container;
+// =============================================================================
+// (protected)
+ContainerDefBuilder::ContainerDefBuilder(ContainerDef *containerDef)
+{
+    assert(containerDef);
+    m_containerDef = containerDef;
+}
+
+// =============================================================================
+// (public static)
+ContainerDefBuilderSPtr ContainerDefBuilder::create(NodeDefBuilderSPtr nodeDefBuilder, int minCount, int maxCount)
+{
+    ContainerDefBuilderSPtr sPtr(new ContainerDefBuilder(nodeDefBuilder, minCount, maxCount));
+    sPtr->m_thisWPtr = sPtr;
+    return sPtr;
+}
+
+// =============================================================================
+// (public static)
+ContainerDefBuilderSPtr ContainerDefBuilder::use(ContainerDef *containerDef)
+{
+    ContainerDefBuilderSPtr sPtr(new ContainerDefBuilder(containerDef));
+    sPtr->m_thisWPtr = sPtr;
+    return sPtr;
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefBuilder::setNodeDefElement(const ContainerDefUPtr &nContainer, NodeDefSPtr containerDef)
+ContainerDefUPtr ContainerDefBuilder::get()
 {
-    if (!nContainer) { return false; }
-    if (!containerDef) { return false; }
+    assert(m_containerDefUPtr);
+    return std::move(m_containerDefUPtr);
+}
+
+// =============================================================================
+// (public)
+const ContainerDef &ContainerDefBuilder::containerDef() const
+{
+    assert(m_containerDef);
+    return *m_containerDef;
+}
+
+// =============================================================================
+// (public)
+ContainerDefBuilderSPtr ContainerDefBuilder::setNodeDefElement(NodeDefSPtr nodeDef)
+{
+    assert(m_containerDef);
+    assert(nodeDef);
 
 #ifdef XML_BACKEND
     // todo: Update m_elementListRef so that it refers to a alement with the same name as the new container definition
 #endif // XML_BACKEND
-    nContainer->m_containerDef = containerDef;
-    containerDef->m_parentContainerDefs.push_back(nContainer.get());
-    return true;
+    m_containerDef->m_containerDef = nodeDef;
+    nodeDef->m_parentContainerDefs.push_back(m_containerDef);
+    return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefBuilder::setNodeDefParent(const ContainerDefUPtr &nContainer, NodeDefSPtr hostDef)
+ContainerDefBuilderSPtr ContainerDefBuilder::setNodeDefParent(NodeDefSPtr hostDef)
 {
-    if (!nContainer) { return false; }
+    assert(m_containerDef);
 
-    nContainer->m_hostDef = hostDef;
-    return true;
+    m_containerDef->m_hostDef = hostDef;
+    return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-bool ContainerDefBuilder::setMinMaxCount(const ContainerDefUPtr &nContainer, int minCount, int maxCount)
+ContainerDefBuilderSPtr ContainerDefBuilder::setMinMaxCount(int minCount, int maxCount)
 {
-    if (!nContainer) { return false; }
-    if (minCount < 0 || maxCount < minCount) { return false; }
+    assert(m_containerDef);
+    assert(minCount >= 0 && maxCount >= minCount);
 
-    nContainer->m_minCount = minCount;
-    nContainer->m_maxCount = maxCount;
+    m_containerDef->m_minCount = minCount;
+    m_containerDef->m_maxCount = maxCount;
 
-    return true;
+    return m_thisWPtr.lock();
 }
 
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-bool ContainerDefBuilder::setElementListRef(const ContainerDefUPtr &nContainer, XML::ListRef listRef)
+ContainerDefBuilderSPtr ContainerDefBuilder::setElementListRef(XML::ListRef listRef)
 {
-    if (!nContainer) { return false; }
+    assert(m_containerDef);
 
     // todo: Validate listRef
     // It needs to reference a list of tags with the same tag name as the container node definition
-    nContainer->m_elementListRef = listRef;
-    return true;
+    m_containerDef->m_elementListRef = listRef;
+    return m_thisWPtr.lock();
 }
 #endif // XML_BACKEND
 

@@ -32,12 +32,12 @@ ContainerDef::ContainerDef()
 
 // =============================================================================
 // (public)
-ContainerDef::ContainerDef(NodeDefSPtr containerDef, int min, int max)
-    : m_containerDef(containerDef)
+ContainerDef::ContainerDef(NodeDefSPtr nodeDef, int min, int max)
+    : m_containerDef(nodeDef)
     , m_minCount(min)
     , m_maxCount(max)
 #ifdef XML_BACKEND
-    , m_elementListRef(containerDef->tagName())
+    , m_elementListRef(nodeDef->tagName())
 #endif // XML_BACKEND
 {
     assert(m_containerDef);
