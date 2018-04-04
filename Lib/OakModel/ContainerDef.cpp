@@ -566,9 +566,9 @@ bool ContainerDef::checkUniqueOptionValues(Node _node) const
     auto vList = m_containerDef->valueList();
     for (const ValueDef* vDef: vList)
     {
-        if (vDef->settings().unique() &&
+        if (vDef->settings().value(UNIQUE) > 0 &&
             vDef->options().isUsed() &&
-            vDef->settings().optionsOnly()) {
+            vDef->settings().value(OPTION_ONLY)) {
             Node firstSibling = firstNode(_node);
             if (firstSibling.isNull()) {
                 break;

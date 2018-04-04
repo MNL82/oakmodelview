@@ -28,9 +28,9 @@ class UnionValue
 public:
     UnionValue();
     UnionValue(const char *c);
-    UnionValue(const bool &b);
-    UnionValue(const int &i);
-    UnionValue(const double &d);
+    UnionValue(bool b);
+    UnionValue(int i);
+    UnionValue(double d);
     UnionValue(const std::string &s);
     UnionValue(UnionType type);
 
@@ -45,10 +45,34 @@ public:
     UnionValue& operator=(const UnionValue& copy);
     UnionValue& operator=(UnionValue&& move);
 
+    template<typename T>
+    UnionValue& operator=(T value) { return *this = UnionRef(value); }
+
+    operator bool() const;
+
     bool operator==(const UnionRef& value) const;
     bool operator!=(const UnionRef& value) const;
 
-    bool operator<(const UnionValue& value) const;
+    bool operator>(const UnionRef& value) const;
+    bool operator>=(const UnionRef& value) const;
+    bool operator<(const UnionRef& value) const;
+    bool operator<=(const UnionRef& value) const;
+
+    template<typename T>
+    bool operator==(T value) const { return *this == UnionRef(value); }
+    template<typename T>
+    bool operator!=(T value) const { return *this != UnionRef(value); }
+
+    template<typename T>
+    bool operator>(T value) const { return *this > UnionRef(value); }
+    template<typename T>
+    bool operator>=(T value) const { return *this >= UnionRef(value); }
+    template<typename T>
+    bool operator<(T value) const { return *this < UnionRef(value); }
+    template<typename T>
+    bool operator<=(T value) const { return *this <= UnionRef(value); }
+
+    int compare(const UnionRef& value, bool allowConversion = false, Conversion* properties = nullptr) const;
 
     bool isEqual(const UnionRef& value, bool allowConversion = true, Conversion* properties = nullptr) const;
 
@@ -87,8 +111,6 @@ protected:
 
     friend class UnionRef;
 };
-
-#include "UnionRef.h"
 
 // =============================================================================
 // (public)

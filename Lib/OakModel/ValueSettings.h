@@ -10,10 +10,20 @@
 
 #pragma once
 
+
+
 #include <string>
+#include <map>
+
+#include "UnionValue.h"
 
 namespace Oak {
 namespace Model {
+
+#define OPTION_ONLY     "OptionsOnly"
+#define UNIT            "Unit"
+#define UNIQUE          "Unique"
+#define REQUIRED        "Required"
 
 // =============================================================================
 // Class definition
@@ -25,30 +35,15 @@ public:
 
     ValueSettings& operator=(const ValueSettings& copy);
 
-    bool optionsOnly() const;
-    void setOptionsOnly(bool value);
-
-    bool hasUnit() const;
-    const std::string& unit() const;
-    void setUnit(const std::string value);
-
-    bool unique() const;
-    void setUnique(bool value);
-    bool isUniqueSet() const;
-
-    bool required() const;
-    void setRequired(bool value);
-    bool isRequiredSet() const;
+    const UnionValue &value(const std::string &settingName, const UnionValue &defaultValue = UnionValue()) const;
+    void setValue(const std::string &settingName, const UnionRef &value);
 
 private:
     // x < 0 => false
     // x > 0 => true
     // x == 0 => undefined (default is false)
-    int m_unique = 0;
-    int m_required = 0;
 
-    bool m_optionsOnly = false;
-    std::string m_unit;
+    std::map<std::string, UnionValue> m_settingsMap;
 };
 
 } // namespace Model

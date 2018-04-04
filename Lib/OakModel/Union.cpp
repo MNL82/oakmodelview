@@ -47,21 +47,21 @@ UnionType Union::GetType(const char *)
 
 // =============================================================================
 // (public)
-UnionType Union::GetType(const bool &)
+UnionType Union::GetType(bool)
 {
     return UnionType::Bool;
 }
 
 // =============================================================================
 // (public)
-UnionType Union::GetType(const int &)
+UnionType Union::GetType(int)
 {
     return UnionType::Integer;
 }
 
 // =============================================================================
 // (public)
-UnionType Union::GetType(const double &)
+UnionType Union::GetType(double)
 {
     return UnionType::Double;
 }
@@ -71,6 +71,13 @@ UnionType Union::GetType(const double &)
 UnionType Union::GetType(const std::string &)
 {
     return UnionType::String;
+}
+
+// =============================================================================
+// (public)
+UnionType Union::GetType(UnionType t)
+{
+    return t;
 }
 
 // =============================================================================

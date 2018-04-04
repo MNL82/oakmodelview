@@ -672,8 +672,8 @@ void Item::updateUniqueValues(Item item)
     Model::Item::ValueIterator vIt = item.valueBegin();
     Model::Item::ValueIterator vItEnd = item.valueEnd();
     while (vIt != vItEnd) {
-        if (vIt->settings().required() &&
-            vIt->settings().unique() &&
+        if (vIt->settings().value(REQUIRED) > 0 &&
+            vIt->settings().value(UNIQUE) > 0 &&
             vIt->hasDefaultValue()) {
 
             std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(item.def()->name())->toList<std::string>(vIt->name());

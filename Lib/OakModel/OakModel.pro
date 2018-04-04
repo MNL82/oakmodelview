@@ -11,7 +11,6 @@ CONFIG += staticlib
 CONFIG += c++11
 
 unix::QMAKE_CXXFLAGS += -std=gnu++0x
-QMAKE_CXXFLAGS += -Werror
 
 INCLUDEPATH += \
     . \

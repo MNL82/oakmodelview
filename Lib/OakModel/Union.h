@@ -30,10 +30,11 @@ class Union
 public:
     static UnionType GetType(type_info info);
     static UnionType GetType(const char*);
-    static UnionType GetType(const bool&);
-    static UnionType GetType(const int&);
-    static UnionType GetType(const double&);
+    static UnionType GetType(bool);
+    static UnionType GetType(int);
+    static UnionType GetType(double);
     static UnionType GetType(const std::string&);
+    static UnionType GetType(UnionType t);
     static UnionType GetType(const UnionRef& ur);
     static UnionType GetType(const UnionValue& uv);
 

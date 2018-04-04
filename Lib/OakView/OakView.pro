@@ -12,8 +12,6 @@ TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++11
 
-QMAKE_CXXFLAGS += -Werror
-
 INCLUDEPATH += \
     . \
     .. \

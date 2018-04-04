@@ -119,7 +119,7 @@ void ValueEditorHandler::updateEditorValue()
         {
             comboBox->addItem(QString::fromStdString(option));
         }
-        if (m_itemValue.settings().optionsOnly()) {
+        if (m_itemValue.settings().value(OPTION_ONLY)) {
             comboBox->setInsertPolicy(QComboBox::NoInsert);
         } else {
             comboBox->setInsertPolicy(QComboBox::InsertAtBottom);
@@ -243,9 +243,9 @@ void ValueEditorHandler::createEditor()
         layout->addWidget(lineEdit, 1);
     }
 
-    if (m_itemValue.settings().hasUnit()) {
+    if (m_itemValue.settings().value(UNIT)) {
         QLabel* unitLabel = new QLabel();
-        unitLabel->setText(QString::fromStdString(m_itemValue.settings().unit()));
+        unitLabel->setText(QString::fromStdString(m_itemValue.settings().value(UNIT).getCString()));
         unitLabel->setObjectName("unit");
         layout->addWidget(unitLabel);
     }

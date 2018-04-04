@@ -110,50 +110,90 @@ UnionRef &UnionRef::operator=(const UnionRef &copy)
 // (public)
 bool UnionRef::operator==(const UnionRef &value) const
 {
-    if (value.t != t) { return false; }
-    switch (t) {
-        case UnionType::Undefined:
-            return true;
-        case UnionType::Char:
-            return strcmp(r.c, value.r.c) == 0;
-        case UnionType::Bool:
-            return *r.b == *value.r.b;
-        case UnionType::Integer:
-            return *r.i == *value.r.i;
-        case UnionType::Double:
-            return std::abs(*r.d - *value.r.d) <= 1.0e-6;
-        case UnionType::String:
-            return *r.s == *value.r.s;
-        default:
-            assert(false);
-            return false;
-    }
-    return false;
+    return compare(value, false) == 0;
 }
 
 // =============================================================================
 // (public)
 bool UnionRef::operator!=(const UnionRef &value) const
 {
-    return !(*this == value);
+    return compare(value, false) != 0;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::operator>(const UnionRef &value) const
+{
+    return compare(value, false) > 0;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::operator>=(const UnionRef &value) const
+{
+    return compare(value, false) >= 0;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::operator<(const UnionRef &value) const
+{
+    return compare(value, false) < 0;
+}
+
+// =============================================================================
+// (public)
+bool UnionRef::operator<=(const UnionRef &value) const
+{
+    return compare(value, false) <= 0;
+}
+
+// =============================================================================
+// (public)
+int UnionRef::compare(UnionRef value, bool allowConversion, Conversion *properties) const
+{
+    if (Union::GetValueType(t) != Union::GetValueType(value.t)) {
+        if (!allowConversion) { return -1000; }
+
+        UnionValue uValue(*this);
+        UnionRef uRef(uValue);
+
+        if (!value.get(uRef, allowConversion, properties)) { return -1000; }
+        value = uRef;
+    }
+
+    switch (value.t) {
+        case UnionType::Undefined:
+            return 0;
+        case UnionType::Bool:
+            return (*r.b == *value.r.b) ? 0 : (*r.b) ? 1 : -1;
+        case UnionType::Integer:
+            return (*r.i == *value.r.i) ? 0 : (*r.i > *value.r.i) ? 1 : -1;
+        case UnionType::Double:
+            return (std::abs(*r.d - *value.r.d) < 1.0e-8) ? 0 : (*r.d > *value.r.d) ? 1 : -1;
+        case UnionType::String:
+            if (value.t == UnionType::String) {
+                return r.s->compare(*value.r.s);
+            } else {
+                return r.s->compare(value.r.c);
+            }
+        case UnionType::Char:
+            if (value.t == UnionType::String) {
+                return std::strcmp(r.c, value.r.s->c_str());
+            } else {
+                return std::strcmp(r.c, value.r.c);
+            }
+        default:
+            assert(false);
+    }
+    return -1000;
 }
 
 // =============================================================================
 // (public)
 bool UnionRef::isEqual(const UnionRef &value, bool allowConversion, Conversion *properties) const
 {
-    if (value.t == t) {
-        return *this == value;
-    } else if (!allowConversion) {
-        return false;
-    }
-
-    UnionValue uValue(*this);
-    UnionRef uRef(uValue);
-    if (value.get(uRef, allowConversion, properties)) {
-        return *this == uRef;
-    }
-    return true;
+    return compare(value, allowConversion, properties) == 0;
 }
 
 // =============================================================================

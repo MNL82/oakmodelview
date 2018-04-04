@@ -885,11 +885,11 @@ void NodeDef::onNodeInserted(Node _node) const
     auto vList = valueList();
     for (const ValueDef* vDef: vList)
     {
-        if (vDef->settings().required() &&
-            vDef->settings().unique()) {
+        if (vDef->settings().value(REQUIRED) > 0 &&
+            vDef->settings().value(UNIQUE) > 0) {
             std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->ignore()->parent()->children(m_name)->toList<std::string>(vDef->name());
 
-            if (vDef->options().isUsed() && vDef->settings().optionsOnly()) {
+            if (vDef->options().isUsed() && vDef->settings().value(OPTION_ONLY)) {
                 std::vector<std::string> optionList;
                 if (vDef->options().getOptions(optionList, &item)) {
                     for (const std::string &option: optionList) {

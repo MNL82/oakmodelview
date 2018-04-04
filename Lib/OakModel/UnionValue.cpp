@@ -34,7 +34,7 @@ UnionValue::UnionValue(const char *c)
 
 // =============================================================================
 // (public)
-UnionValue::UnionValue(const bool &b)
+UnionValue::UnionValue(bool b)
     : t(UnionType::Bool)
 {
     v.b = b;
@@ -42,7 +42,7 @@ UnionValue::UnionValue(const bool &b)
 
 // =============================================================================
 // (public)
-UnionValue::UnionValue(const int &i)
+UnionValue::UnionValue(int i)
     : t(UnionType::Integer)
 {
     v.i = i;
@@ -50,7 +50,7 @@ UnionValue::UnionValue(const int &i)
 
 // =============================================================================
 // (public)
-UnionValue::UnionValue(const double &d)
+UnionValue::UnionValue(double d)
     : t(UnionType::Double)
 {
     v.d = d;
@@ -177,25 +177,42 @@ bool UnionValue::operator!=(const UnionRef &value) const
 
 // =============================================================================
 // (public)
-bool UnionValue::operator<(const UnionValue &value) const
+bool UnionValue::operator>=(const UnionRef &value) const
 {
-    if (t != value.t) { return false; }
+    UnionRef uRef(*this);
+    return uRef >= value;
+}
 
-    switch (value.t) {
-        case UnionType::Undefined:
-            return false;
-        case UnionType::Bool:
-            return v.b < value.v.b;
-        case UnionType::Integer:
-            return v.i < value.v.i;
-        case UnionType::Double:
-            return v.d < value.v.d;
-        case UnionType::String:
-            return *v.s < *value.v.s;
-        default:
-            assert(false);
-    }
-    return false;
+// =============================================================================
+// (public)
+bool UnionValue::operator>(const UnionRef &value) const
+{
+    UnionRef uRef(*this);
+    return uRef > value;
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::operator<(const UnionRef &value) const
+{
+    UnionRef uRef(*this);
+    return uRef < value;
+}
+
+// =============================================================================
+// (public)
+bool UnionValue::operator<=(const UnionRef &value) const
+{
+    UnionRef uRef(*this);
+    return uRef <= value;
+}
+
+// =============================================================================
+// (public)
+int UnionValue::compare(const UnionRef &value, bool allowConversion, Conversion *properties) const
+{
+    UnionRef uRef(*this);
+    return uRef.compare(value, allowConversion, properties);
 }
 
 // =============================================================================
@@ -227,6 +244,28 @@ UnionValue &UnionValue::operator=(UnionValue &&move)
     move.v.s = nullptr;
 
     return *this;
+}
+
+// =============================================================================
+// (public)
+Oak::Model::UnionValue::operator bool() const
+{
+    switch (t) {
+        case UnionType::Undefined:
+            assert(false);
+            return false;
+        case UnionType::Bool:
+            return v.b;
+        case UnionType::Integer:
+            return static_cast<bool>(v.i);
+        case UnionType::Double:
+            return v.d != 0.0;
+        case UnionType::String:
+            return !v.s->empty();
+        default:
+            assert(false);
+    }
+    return false;
 }
 
 // =============================================================================

@@ -40,8 +40,32 @@ public:
 
     UnionRef& operator=(const UnionRef& copy);
 
+    template<typename T>
+    UnionRef& operator=(T value) { return *this = UnionRef(value); }
+
     bool operator==(const UnionRef& value) const;
     bool operator!=(const UnionRef& value) const;
+
+    bool operator>(const UnionRef& value) const;
+    bool operator>=(const UnionRef& value) const;
+    bool operator<(const UnionRef& value) const;
+    bool operator<=(const UnionRef& value) const;
+
+    template<typename T>
+    bool operator==(T value) const { return *this == UnionRef(value); }
+    template<typename T>
+    bool operator!=(T value) const { return *this != UnionRef(value); }
+
+    template<typename T>
+    bool operator>(T value) const { return *this > UnionRef(value); }
+    template<typename T>
+    bool operator>=(T value) const { return *this >= UnionRef(value); }
+    template<typename T>
+    bool operator<(T value) const { return *this < UnionRef(value); }
+    template<typename T>
+    bool operator<=(T value) const { return *this <= UnionRef(value); }
+
+    int compare(UnionRef value, bool allowConversion = true, Conversion* properties = nullptr) const;
 
     bool isEqual(const UnionRef& value, bool allowConversion = true, Conversion* properties = nullptr) const;
 

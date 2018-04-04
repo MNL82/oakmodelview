@@ -8,7 +8,10 @@
  * See accompanying file LICENSE in the root folder.
  */
 
+#include <assert.h>
+
 #include "ValueSettings.h"
+#include "UnionRef.h"
 
 namespace Oak {
 namespace Model {
@@ -17,93 +20,37 @@ namespace Model {
 // (public)
 ValueSettings::ValueSettings()
 {
-
+    m_settingsMap[OPTION_ONLY] = false;
+    m_settingsMap[UNIT] = "";
+    m_settingsMap[UNIQUE] = 0;
+    m_settingsMap[REQUIRED] = 0;
 }
 
 // =============================================================================
 // (public)
 ValueSettings& ValueSettings::operator=(const ValueSettings& copy)
 {
-    m_optionsOnly = copy.m_optionsOnly;
+    m_settingsMap = copy.m_settingsMap;
     return *this;
 }
 
 // =============================================================================
 // (public)
-bool ValueSettings::optionsOnly() const
+const UnionValue &ValueSettings::value(const std::string &settingName, const UnionValue &defaultValue) const
 {
-    return m_optionsOnly;
+    auto it = m_settingsMap.find(settingName);
+    if (it != m_settingsMap.end()) {
+        return it->second;
+    }
+    assert(!defaultValue.isNull());
+    return defaultValue;
 }
 
 // =============================================================================
 // (public)
-void ValueSettings::setOptionsOnly(bool value)
+void ValueSettings::setValue(const std::string &settingName, const UnionRef &value)
 {
-    // Todo: Notify about change?
-    m_optionsOnly = value;
-}
-
-// =============================================================================
-// (public)
-bool ValueSettings::hasUnit() const
-{
-    return !m_unit.empty();
-}
-
-// =============================================================================
-// (public)
-const std::string &ValueSettings::unit() const
-{
-    return m_unit;
-}
-
-// =============================================================================
-// (public)
-void ValueSettings::setUnit(const std::string value)
-{
-    m_unit = value;
-}
-
-// =============================================================================
-// (public)
-bool ValueSettings::unique() const
-{
-    return m_unique > 0;
-}
-
-// =============================================================================
-// (public)
-void ValueSettings::setUnique(bool value)
-{
-    m_unique = value ? 1 : -1;
-}
-
-// =============================================================================
-// (public)
-bool ValueSettings::isUniqueSet() const
-{
-    return m_unique != 0;
-}
-
-// =============================================================================
-// (public)
-bool ValueSettings::required() const
-{
-    return m_required > 0;
-}
-
-// =============================================================================
-// (public)
-void ValueSettings::setRequired(bool value)
-{
-    m_required = value ? 1 : -1;
-}
-
-// =============================================================================
-// (public)
-bool ValueSettings::isRequiredSet() const
-{
-    return m_required != 0;
+    m_settingsMap[settingName] = value;
 }
 
 } // namespace Model
