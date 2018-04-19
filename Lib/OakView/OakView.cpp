@@ -97,7 +97,7 @@ void OakView::setOakModel(Model::OakModel* model)
 // (public)
 void OakView::currentItemChanged()
 {
-    if (m_model && !m_model->isNull()) {
+    if (m_model && (m_model->currentItem().isNodeNull() || !m_model->isNull())) {
         setCurrentItem(m_model->currentItem());
     }
 }
@@ -382,7 +382,9 @@ void OakView::clearTreeStructure()
 void OakView::updateTreeStructure()
 {
     clearTreeStructure();
+    reset();
     createTreeStructure();
+    reset();
 }
 
 // =============================================================================

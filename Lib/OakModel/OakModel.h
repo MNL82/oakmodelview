@@ -54,6 +54,7 @@ public:
 
 #ifdef XML_BACKEND
     const std::string& xmlDocFilePath() { return m_xmlDocFilePath; }
+    void setXMLDocFilePath(const std::string xmlDocFilePath) { m_xmlDocFilePath = xmlDocFilePath; }
     void setXMLRootNode(Node rootNode, bool setAsCurrent = true);
     bool loadXMLRootNode(const std::string& filePath, bool setAsCurrent = true);
     bool saveXMLRootNode(const std::string& filePath = "");

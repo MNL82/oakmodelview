@@ -25,7 +25,7 @@ ContainerDefBuilder::ContainerDefBuilder(NodeDefBuilderSPtr nodeDefBuilder, int 
     assert(maxCount > 0);
     assert(maxCount >= minCount);
 
-    m_containerDefUPtr = ContainerDef::MakeUPtr(nodeDefBuilder->get());
+    m_containerDefUPtr = ContainerDef::MakeUPtr(nodeDefBuilder->get(), minCount, maxCount);
     m_containerDef = m_containerDefUPtr.get();
 
     nodeDefBuilder->get()->m_parentContainerDefs.push_back(m_containerDef);

@@ -83,9 +83,9 @@ void ContainerEditor::updateEditor()
     // Update entry text of existing entries
     for (int i = 0; i < qMin(eCount, m_count); i++)
     {
-        QPushButton* button = dynamic_cast<QPushButton*>(m_listLayout->itemAtPosition(i, 0)->widget());
-        assert(button);
-        button->setText(entryList.at(i));
+        QLabel* label = dynamic_cast<QLabel*>(m_listLayout->itemAtPosition(i, 0)->widget());
+        assert(label);
+        label->setText(entryList.at(i));
     }
 
     // Add missing buttons
@@ -111,6 +111,17 @@ bool ContainerEditor::eventFilter(QObject* obj, QEvent* event)
         if (index >= 0) {
             QContextMenuEvent* cEvent = dynamic_cast<QContextMenuEvent*>(event);
             createContextMenu(cEvent->globalPos(), index);
+            return true;
+        }
+    }
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent * mEvent = dynamic_cast<QMouseEvent*>(event);
+        if (mEvent->button() == Qt::LeftButton) {
+            int index = entryIndex(obj);
+            if (index >= 0) {
+                emit entryClicked(index);
+                return true;
+            }
         }
     }
     return false;
@@ -120,11 +131,13 @@ bool ContainerEditor::eventFilter(QObject* obj, QEvent* event)
 // (protected)
 void ContainerEditor::addEntry(const QString& text)
 {
-    QPushButton* button = new QPushButton(text);
-    button->setStyleSheet("border:1px solid #444444;");
-    connect(button, SIGNAL(pressed()), this, SLOT(onItemClicked()));
-    m_listLayout->addWidget(button, m_count++, 0, 1, 1);
-    button->installEventFilter(this);
+    QLabel* label = new QLabel(text);
+    //button->setStyleSheet("QPushButton { border:1px solid #444444 };");
+    label->setAlignment(Qt::AlignHCenter);
+    label->setFrameShape(QFrame::StyledPanel);
+
+    m_listLayout->addWidget(label, m_count++, 0, 1, 1);
+    label->installEventFilter(this);
 }
 
 // =============================================================================
@@ -133,7 +146,9 @@ void ContainerEditor::removeLastEntry()
 {
     QLayoutItem* layoutItem = m_listLayout->itemAtPosition(--m_count, 0);
     m_listLayout->removeItem(layoutItem);
+    QWidget * widget = layoutItem->widget();
     delete layoutItem;
+    delete widget;
 }
 
 // =============================================================================
@@ -176,20 +191,6 @@ void ContainerEditor::createContextMenu(const QPoint& globalPos, int index)
     if (haveAction) {
         menu.exec(globalPos);
     }
-}
-
-// =============================================================================
-// (protected slots)
-void ContainerEditor::onItemClicked()
-{
-    int index = entryIndex(sender());
-
-    if (index == -1) {
-        assert(false);
-        return;
-    }
-
-    emit entryClicked(index);
 }
 
 // =============================================================================

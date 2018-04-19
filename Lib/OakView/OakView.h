@@ -47,7 +47,6 @@ protected:
 
 protected:
     void modelDestroyed();
-    void createTreeStructure();
     void clearTreeStructure();
     void updateTreeStructure();
 
@@ -61,6 +60,7 @@ protected:
     void onItemValueChanged(const Model::Item& item, int valueIndex);
 
 protected slots:
+    void createTreeStructure();
     void onCurrentQItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
 protected:

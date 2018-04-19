@@ -41,7 +41,6 @@ protected:
     void createContextMenu(const QPoint& globalPos, int index);
 
 protected slots:
-    void onItemClicked();
     void onEntryAdded();
 
 signals:

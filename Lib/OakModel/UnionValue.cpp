@@ -248,7 +248,7 @@ UnionValue &UnionValue::operator=(UnionValue &&move)
 
 // =============================================================================
 // (public)
-Oak::Model::UnionValue::operator bool() const
+UnionValue::operator bool() const
 {
     switch (t) {
         case UnionType::Undefined:
@@ -257,7 +257,7 @@ Oak::Model::UnionValue::operator bool() const
         case UnionType::Bool:
             return v.b;
         case UnionType::Integer:
-            return static_cast<bool>(v.i);
+            return v.i != 0;
         case UnionType::Double:
             return v.d != 0.0;
         case UnionType::String:
