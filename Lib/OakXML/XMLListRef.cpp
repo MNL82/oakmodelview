@@ -90,7 +90,7 @@ int ListRef::count(Element refBase) const
 
     Element listBase = m_listBaseRef->getTarget(refBase);
 
-    if (listBase.isNull()) { return -1; }
+    if (listBase.isNull()) { return 0; }
 
     int nb = 0;
     Element element = listBase.firstChild(m_tagName);
@@ -216,7 +216,7 @@ Element ListRef::insert(Element refBase, int index) const
 {
     if (refBase.isNull()) { return Element(); }
 
-    Element listBase = m_listBaseRef->getTarget(refBase);
+    Element listBase = m_listBaseRef->getTarget(refBase, true);
 
     if (listBase.isNull()) { return Element(); }
 
