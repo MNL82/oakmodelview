@@ -53,7 +53,7 @@ public:
     ValueDefBuilderSPtr setOptionsQuery(QueryRefSPtr value);
     ValueDefBuilderSPtr setOptionsExcludedQuery(QueryRefSPtr value);
 
-    ValueDefBuilderSPtr setSetting(std::string name, bool value);
+    ValueDefBuilderSPtr setSetting(std::string name, const UnionRef &value);
 
 #ifdef XML_BACKEND
     ValueDefBuilderSPtr setXMLValueRef(XML::ValueRefUPtr value);

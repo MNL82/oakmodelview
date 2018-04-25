@@ -136,19 +136,10 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedQuery(QueryRefSPtr value)
 
 // =============================================================================
 // (public)
-ValueDefBuilderSPtr ValueDefBuilder::setSetting(std::string name, bool value)
+ValueDefBuilderSPtr ValueDefBuilder::setSetting(std::string name, const UnionRef &value)
 {
     assert(m_valueDef);
     m_valueDef->m_settings.setValue(name, value);
-//    if (name == "OptionsOnly") {
-//        m_valueDef->m_settings.setOptionsOnly(value);
-//    } else if (name == "Required") {
-//        m_valueDef->m_settings.setRequired(value);
-//    } else if (name == "Unique") {
-//        m_valueDef->m_settings.setUnique(value);
-//    } else {
-//        assert(false);
-//    }
     return m_thisWPtr.lock();
 }
 
