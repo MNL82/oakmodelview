@@ -142,18 +142,22 @@ const std::string& NodeDef::name() const
 
 // =============================================================================
 // (public)
-std::string NodeDef::displayName() const
+std::string NodeDef::displayName(bool basic) const
 {
     if (!m_displayName.empty()) { return m_displayName; }
 
     if (m_name.empty()) { return std::string(); }
 
-    if (m_derivedId.isNull()) { return m_name; }
+    if (basic || m_derivedId.isNull()) { return m_name; }
 
     std::string inheritanceStr;
     if (!m_derivedId.get(inheritanceStr)) { return m_name; }
 
-    return m_name + "(" + inheritanceStr + ")";
+    if (hasDerivedBase()) {
+        return derivedRoot()->displayName(true) + "(" + inheritanceStr + ")";
+    } else {
+        return m_name + "(" + inheritanceStr + ")";
+    }
 }
 
 // =============================================================================
@@ -221,7 +225,7 @@ void NodeDef::derivedIdListFromThisAndDerived(std::vector<UnionRef> &idList) con
 const NodeDef* NodeDef::derivedRoot() const
 {
     if (hasDerivedBase()) {
-        derivedBase()->derivedRoot();
+        return derivedBase()->derivedRoot();
     }
     return this;
 }

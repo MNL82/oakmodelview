@@ -74,7 +74,7 @@ public:
 
     const std::string &name() const;
 
-    virtual std::string displayName() const;
+    virtual std::string displayName(bool basic = false) const;
 
     const NodeSettings& settings() const;
 
