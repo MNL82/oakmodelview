@@ -29,7 +29,7 @@ ContainerEditorHandler::ContainerEditorHandler(Model::Item item, const std::stri
 // (public)
 QString ContainerEditorHandler::listDisplayName() const
 {
-    return QString::fromStdString(m_item.def()->childDef(m_name)->displayName());
+    return QString::fromStdString(m_item.def()->childDef(m_name)->displayName(true));
 }
 
 // =============================================================================

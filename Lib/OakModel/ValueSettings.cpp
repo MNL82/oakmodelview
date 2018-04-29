@@ -22,8 +22,8 @@ ValueSettings::ValueSettings()
 {
     m_settingsMap[OPTION_ONLY] = false;
     m_settingsMap[UNIT] = "";
-    m_settingsMap[UNIQUE] = 0;
-    m_settingsMap[REQUIRED] = 0;
+    m_settingsMap[UNIQUE] = -1;
+    m_settingsMap[REQUIRED] = -1;
 }
 
 // =============================================================================

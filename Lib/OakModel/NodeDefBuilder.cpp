@@ -155,8 +155,12 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
     // Derived node definitions inherate its node id value from its base and can not have it's own
     assert(!m_nodeDef->hasDerivedBase());
 
-    valueDefKey->setSetting(UNIQUE, 1);
-    valueDefKey->setSetting(REQUIRED, 1);
+    if (valueDefKey->valueDef().settings().value(UNIQUE) != 0) {
+        valueDefKey->setSetting(UNIQUE, 1);
+    }
+    if (valueDefKey->valueDef().settings().value(REQUIRED) != 0) {
+        valueDefKey->setSetting(REQUIRED, 1);
+    }
 
     addValueDef(valueDefKey);
 
