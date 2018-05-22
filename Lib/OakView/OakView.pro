@@ -29,7 +29,10 @@ SOURCES += \
     ServiceFunctions.cpp \
     NodeDataView.cpp \
     NodeIndex.cpp \
-    OakView.cpp
+    OakView.cpp \
+    ListView.cpp \
+    TableView.cpp \
+    ListViewItem.cpp
 
 HEADERS += \
     ValueEditorHandler.h \
@@ -40,7 +43,10 @@ HEADERS += \
     ServiceFunctions.h \
     NodeDataView.h \
     NodeIndex.h \
-    OakView.h
+    OakView.h \
+    ListView.h \
+    TableView.h \
+    ListViewItem.h
 
 
 CONFIG(debug, debug|release) {
