@@ -24,11 +24,17 @@ public:
 
     const Model::Item& item() const;
 
+    ListViewItem * child(const Model::Item &item);
+
     virtual QSize sizeHint() const override;
 
-signals:
+    void onItemInserted(int index);
 
-public slots:
+protected slots:
+    void onHeightChanged(int change);
+
+signals:
+    void heightChanged(int change);
 
 protected:
     int m_height;

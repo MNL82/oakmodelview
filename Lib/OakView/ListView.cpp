@@ -152,7 +152,8 @@ void ListView::setCurrentItem(const Model::Item &item)
 // (public)
 void ListView::onItemInserted(const Model::Item &parentItem, int index)
 {
-
+    ListViewItem * viewItem = getViewItem(parentItem);
+    viewItem->onItemInserted(index);
 }
 
 // =============================================================================
@@ -204,63 +205,32 @@ void ListView::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
 }
 
-//// =============================================================================
-//// (protected)
-//QWidget * ListView::createViewItem(const Model::Item &item, int depth) const
-//{
-//    Q_UNUSED(depth);
-//    auto button = new QPushButton(QString::fromStdString(item.value("name").toString()));
-//    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-//    return button;
-//}
+// =============================================================================
+// (protected)
+ListViewItem * ListView::getViewItem(const Model::Item &item)
+{
+    if (item == m_rootItem->item()) {
+        return m_rootItem;
+    }
+    std::vector<Model::Item> itemList;
+    itemList.push_back(item);
 
-//// =============================================================================
-//// (protected)
-//void ListView::insertViewItem(const Model::Item &item, int depth) const
-//{
-//    int height = m_viewWidget->height();
-//    QWidget * w = createViewItem(item, depth);
-//    m_viewLayout->addWidget(w);
-//    height += w->sizeHint().height() + m_viewLayout->spacing();
-//    m_viewWidget->setFixedHeight(height);
-//}
+    Model::Item pItem = item.parent();
+    while (pItem != m_rootItem->item()) {
+        if (pItem.isNull()) { return nullptr; }
+        itemList.push_back(pItem);
+        pItem = pItem.parent();
+    }
 
-//// =============================================================================
-//// (protected)
-//void ListView::createViewItems() const
-//{
-//    int height = - m_viewLayout->spacing();
+    ListViewItem * viewItem = m_rootItem;
+    auto it = itemList.rbegin();
+    while (it != itemList.rend()) {
+        viewItem = viewItem->child(*it);
+        it++;
+    }
 
-//    // Recursive lambda function that create viewItems
-//    std::function<void(const Model::Item &,int)> cf;
-//    cf = [this, &height, &cf](const Model::Item &item, int currentDepth) {
-//        Model::Item cItem = item.firstChild();
-//        while (!cItem.isNull()) {
-//            QWidget * w = createViewItem(cItem, currentDepth);
-//            m_viewLayout->addWidget(w);
-//            height += w->sizeHint().height() + m_viewLayout->spacing();
-//            if (currentDepth < m_depth) {
-//                cf(cItem, currentDepth+1);
-//            }
-//            cItem = item.nextChild(cItem);
-//        }
-//    };
-//    cf(m_rootItem, 1);
-
-//    m_viewWidget->setFixedHeight(height);
-//}
-
-//// =============================================================================
-//// (protected)
-//void ListView::clearViewItems() const
-//{
-//    QLayoutItem* tempItem;
-//    while ((tempItem = m_viewLayout->takeAt(0)) != nullptr)
-//    {
-//        delete tempItem->widget();
-//        delete tempItem;
-//    }
-//}
+    return viewItem;
+}
 
 // =============================================================================
 // (protected)

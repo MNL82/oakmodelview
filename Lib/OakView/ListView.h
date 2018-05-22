@@ -43,11 +43,7 @@ public:
     void resizeEvent(QResizeEvent *event) override;
 
 protected:
-//    QWidget * createViewItem(const Model::Item &item, int depth) const;
-//    void insertViewItem(const Model::Item &item, int depth) const;
-
-//    void createViewItems() const;
-//    void clearViewItems() const;
+    ListViewItem * getViewItem(const Model::Item &item);
 
     void createDragItems() const;
     void clearDragItems() const;
