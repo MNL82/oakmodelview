@@ -116,6 +116,18 @@ void ListViewItem::onItemInserted(int index)
 
 // =============================================================================
 // (public)
+void ListViewItem::onItemRemoved(int index)
+{
+    assert(index >= 0 && index < m_childItemLayout->count());
+    QLayoutItem * layoutItem = m_childItemLayout->takeAt(index);
+    QWidget * w = layoutItem->widget();
+    onHeightChanged(-w->sizeHint().height());
+    delete layoutItem;
+    delete w;
+}
+
+// =============================================================================
+// (public)
 void ListViewItem::onHeightChanged(int change)
 {
     m_height += change;

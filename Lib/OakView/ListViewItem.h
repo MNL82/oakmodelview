@@ -29,6 +29,7 @@ public:
     virtual QSize sizeHint() const override;
 
     void onItemInserted(int index);
+    void onItemRemoved(int index);
 
 protected slots:
     void onHeightChanged(int change);

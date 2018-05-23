@@ -174,7 +174,8 @@ void ListView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex
 // (public)
 void ListView::onItemRemoved(const Model::Item &parentItem, int index)
 {
-
+    ListViewItem * viewItem = getViewItem(parentItem);
+    viewItem->onItemRemoved(index);
 }
 
 // =============================================================================
