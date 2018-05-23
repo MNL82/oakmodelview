@@ -160,14 +160,17 @@ void ListView::onItemInserted(const Model::Item &parentItem, int index)
 // (public)
 void ListView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
-
+    onItemRemoved(sourceParentItem, sourceIndex);
+    onItemInserted(targetParentItem, targetIndex);
 }
 
 // =============================================================================
 // (public)
 void ListView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
-
+    Q_UNUSED(sourceParentItem);
+    Q_UNUSED(sourceIndex);
+    onItemInserted(targetParentItem, targetIndex);
 }
 
 // =============================================================================

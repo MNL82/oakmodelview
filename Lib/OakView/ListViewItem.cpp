@@ -107,10 +107,13 @@ QSize ListViewItem::sizeHint() const
 void ListViewItem::onItemInserted(int index)
 {
     Model::Item cItem = m_item.childAt(index);
-    m_childCount++;
     QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1);
     connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
+
     m_childItemLayout->insertWidget(index, w);
+
+    m_childCount++;
+    if (m_exspanded) { m_childItemWidget->setHidden(false); }
     onHeightChanged(w->sizeHint().height());
 }
 
@@ -119,9 +122,14 @@ void ListViewItem::onItemInserted(int index)
 void ListViewItem::onItemRemoved(int index)
 {
     assert(index >= 0 && index < m_childItemLayout->count());
+
     QLayoutItem * layoutItem = m_childItemLayout->takeAt(index);
     QWidget * w = layoutItem->widget();
+
+    m_childCount--;
     onHeightChanged(-w->sizeHint().height());
+    if (m_childCount == 0) { m_childItemWidget->setHidden(true); }
+
     delete layoutItem;
     delete w;
 }
@@ -130,6 +138,7 @@ void ListViewItem::onItemRemoved(int index)
 // (public)
 void ListViewItem::onHeightChanged(int change)
 {
+    if (m_childItemWidget->isHidden()) { return; }
     m_height += change;
     setFixedHeight(m_height);
     emit heightChanged(change);
