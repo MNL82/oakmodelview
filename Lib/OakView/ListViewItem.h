@@ -6,6 +6,7 @@
 
 
 class QVBoxLayout;
+class QPushButton;
 
 namespace Oak {
 namespace View {
@@ -26,13 +27,20 @@ public:
 
     ListViewItem * child(const Model::Item &item);
 
+    bool isExspanded() const;
+    void setExspanded(bool value);
+
     virtual QSize sizeHint() const override;
 
     void onItemInserted(int index);
     void onItemRemoved(int index);
 
+protected:
+    void updateFixedheight();
+
 protected slots:
     void onHeightChanged(int change);
+    void onExspandChanged();
 
 signals:
     void heightChanged(int change);
@@ -41,14 +49,15 @@ protected:
     int m_height;
     int m_depth;
     int m_childCount = 0;
-    bool m_exspanded = true;
-
 
     ListView * m_listView;
     Model::Item m_item;
 
-    QVBoxLayout * m_childItemLayout;
-    QWidget * m_childItemWidget;
+    QWidget * m_itemWidget = nullptr;
+    QPushButton * m_exspandbuttom = nullptr;
+
+    QWidget * m_childItemWidget = nullptr;
+    QVBoxLayout * m_childItemLayout = nullptr;
 
 };
 

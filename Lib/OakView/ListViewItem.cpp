@@ -22,30 +22,48 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     m_item = item;
     m_depth = depth;
 
-    m_height = 0;
-
     int deltaDepth = m_listView->depth() - m_depth;
+    bool canHaveChildren = deltaDepth > 0 && m_item.def()->containerCount() > 0;
 
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->setContentsMargins(m_depth * 5, 1 , 0, 1);
+    layout->setContentsMargins((m_depth == 0) ? 0 : 5, 0 , 0, 0);
     layout->setSpacing(0);
 
     if (m_depth > 0) {
+        int widgetMargin = 6;
+
+        m_itemWidget = new QWidget();
+        m_itemWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        auto itemHLayout = new QHBoxLayout();
+        itemHLayout->setContentsMargins(0, widgetMargin/2, 0, widgetMargin/2);
+        itemHLayout->setSpacing(0);
+
         QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
-        auto itemWidget = new QPushButton(name);
-        itemWidget->setStyleSheet("Text-align:left");
-        itemWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        auto button = new QPushButton(name);
+        button->setStyleSheet("Text-align:left");
+        button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-        layout->addWidget(itemWidget);
+        int widgetHeight = button->sizeHint().height() + 4 * deltaDepth;
 
-        m_height += itemWidget->sizeHint().height() +
-                    3 * deltaDepth +
-                    layout->spacing() +
-                    layout->contentsMargins().top() +
-                    layout->contentsMargins().bottom();
+        m_itemWidget->setFixedHeight(widgetHeight + widgetMargin);
+        m_itemWidget->setLayout(itemHLayout);
+        itemHLayout->addWidget(button);
+
+        if (canHaveChildren) {
+            m_exspandbuttom = new QPushButton("+");
+            m_exspandbuttom->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            m_exspandbuttom->setFixedHeight(widgetHeight);
+            m_exspandbuttom->setFixedWidth(widgetHeight);
+            itemHLayout->addWidget(m_exspandbuttom);
+            connect(m_exspandbuttom, SIGNAL(clicked()), this, SLOT(onExspandChanged()));
+        }
+
+
+
+        layout->addWidget(m_itemWidget);
     }
 
-    if (deltaDepth > 0) {
+    if (canHaveChildren) {
         m_childItemWidget = new QWidget();
         m_childItemLayout = new QVBoxLayout();
         m_childItemLayout->setMargin(0);
@@ -57,21 +75,18 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
             QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1);
             connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
             m_childItemLayout->addWidget(w);
-            m_height += w->sizeHint().height();
             cItem = m_item.nextChild(cItem);
         }
 
         m_childItemWidget->setLayout(m_childItemLayout);
         layout->addWidget(m_childItemWidget);
 
-        if (!m_exspanded || m_childCount == 0) {
-            m_childItemWidget->setHidden(true);
+        if (m_exspandbuttom != nullptr) {
+            m_exspandbuttom->setEnabled(m_childCount > 0);
         }
     }
-
-
     setLayout(layout);
-    setFixedHeight(m_height);
+    setExspanded(false);
 }
 
 // =============================================================================
@@ -97,6 +112,25 @@ ListViewItem *ListViewItem::child(const Model::Item &item)
 
 // =============================================================================
 // (public)
+bool ListViewItem::isExspanded() const
+{
+    if (m_childItemWidget == nullptr) { return false; }
+    return !m_childItemWidget->isHidden();
+}
+
+// =============================================================================
+// (public)
+void ListViewItem::setExspanded(bool value)
+{
+    if (m_childItemWidget != nullptr && m_exspandbuttom != nullptr) {
+        m_childItemWidget->setHidden(!value);
+        m_exspandbuttom->setText(value ? "-" : "+");
+    }
+    updateFixedheight();
+}
+
+// =============================================================================
+// (public)
 QSize ListViewItem::sizeHint() const
 {
     return QSize(200, m_height);
@@ -113,8 +147,7 @@ void ListViewItem::onItemInserted(int index)
     m_childItemLayout->insertWidget(index, w);
 
     m_childCount++;
-    if (m_exspanded) { m_childItemWidget->setHidden(false); }
-    onHeightChanged(w->sizeHint().height());
+    if (m_childCount == 1) { setExspanded(isExspanded()); }
 }
 
 // =============================================================================
@@ -136,12 +169,39 @@ void ListViewItem::onItemRemoved(int index)
 
 // =============================================================================
 // (public)
+void ListViewItem::updateFixedheight()
+{
+    int height = 0;
+    if (m_itemWidget != nullptr) {
+        height = m_itemWidget->sizeHint().height();
+    }
+    if (m_childItemWidget != nullptr && !m_childItemWidget->isHidden()) {
+        for (int i = 0; i < m_childItemLayout->count(); i++)
+        {
+            height += m_childItemLayout->itemAt(i)->widget()->sizeHint().height();
+        }
+    }
+    int change = height - m_height;
+    m_height = height;
+    setFixedHeight(m_height);
+    emit heightChanged(change);
+}
+
+// =============================================================================
+// (public)
 void ListViewItem::onHeightChanged(int change)
 {
     if (m_childItemWidget->isHidden()) { return; }
     m_height += change;
     setFixedHeight(m_height);
     emit heightChanged(change);
+}
+
+// =============================================================================
+// (public)
+void ListViewItem::onExspandChanged()
+{
+    setExspanded(!isExspanded());
 }
 
 } // namespace View
