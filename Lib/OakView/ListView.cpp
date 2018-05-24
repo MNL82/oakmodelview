@@ -21,22 +21,6 @@ namespace View {
 ListView::ListView(QWidget *parent)
     : QWidget(parent)
 {
-//    m_viewWidget = new QWidget();
-
-//    m_viewLayout = new QVBoxLayout();
-//    m_viewLayout->setSpacing(6);
-//    m_viewLayout->setMargin(0);
-//    m_viewWidget->setLayout(m_viewLayout);
-
-//    // TEST View - Begin
-//    for (int i = 0; i < 100; i++)
-//    {
-//        auto button = new QPushButton("View Item " + QString::number(i+1));
-//        button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-//        m_viewLayout->addWidget(button);
-//    }
-//    // TEST View - End
-
     m_scrollArea = new QScrollArea();
     m_scrollArea->setFrameShape(QFrame::NoFrame);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -153,7 +137,9 @@ void ListView::setCurrentItem(const Model::Item &item)
 void ListView::onItemInserted(const Model::Item &parentItem, int index)
 {
     ListViewItem * viewItem = getViewItem(parentItem);
-    viewItem->onItemInserted(index);
+    if (viewItem != nullptr) {
+        viewItem->onItemInserted(index);
+    }
 }
 
 // =============================================================================
@@ -178,23 +164,25 @@ void ListView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex
 void ListView::onItemRemoved(const Model::Item &parentItem, int index)
 {
     ListViewItem * viewItem = getViewItem(parentItem);
-    viewItem->onItemRemoved(index);
+    if (viewItem != nullptr) {
+        viewItem->onItemRemoved(index);
+    }
 }
 
 // =============================================================================
 // (public)
-int ListView::depth() const
+int ListView::maxDepth() const
 {
-    return m_depth;
+    return m_maxDepth;
 }
 
 // =============================================================================
 // (public)
-void ListView::setDepth(int depth)
+void ListView::setMaxDepth(int depth)
 {
-    if (m_depth == depth) { return; }
+    if (m_maxDepth == depth) { return; }
 
-    m_depth = depth;
+    m_maxDepth = depth;
 
     // TODO: Update view and drag items when depth changes
 }

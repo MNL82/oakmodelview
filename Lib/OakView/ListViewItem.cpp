@@ -22,7 +22,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     m_item = item;
     m_depth = depth;
 
-    int deltaDepth = m_listView->depth() - m_depth;
+    int deltaDepth = m_listView->maxDepth() - m_depth;
     bool canHaveChildren = deltaDepth > 0 && m_item.def()->containerCount() > 0;
 
     QVBoxLayout * layout = new QVBoxLayout();
@@ -30,7 +30,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     layout->setSpacing(0);
 
     if (m_depth > 0) {
-        int widgetMargin = 6;
+        int widgetMargin = 2;
 
         m_itemWidget = new QWidget();
         m_itemWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -58,8 +58,6 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
             connect(m_exspandbuttom, SIGNAL(clicked()), this, SLOT(onExspandChanged()));
         }
 
-
-
         layout->addWidget(m_itemWidget);
     }
 
@@ -71,7 +69,6 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
 
         Model::Item cItem = m_item.firstChild();
         while (!cItem.isNull()) {
-            m_childCount++;
             QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1);
             connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
             m_childItemLayout->addWidget(w);
@@ -82,7 +79,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         layout->addWidget(m_childItemWidget);
 
         if (m_exspandbuttom != nullptr) {
-            m_exspandbuttom->setEnabled(m_childCount > 0);
+            m_exspandbuttom->setEnabled(m_childItemLayout->count() > 0);
         }
     }
     setLayout(layout);
@@ -114,8 +111,8 @@ ListViewItem *ListViewItem::child(const Model::Item &item)
 // (public)
 bool ListViewItem::isExspanded() const
 {
-    if (m_childItemWidget == nullptr) { return false; }
-    return !m_childItemWidget->isHidden();
+    if (m_exspandbuttom == nullptr) { return false; }
+    return m_exspandbuttom->text() == "-";
 }
 
 // =============================================================================
@@ -146,8 +143,12 @@ void ListViewItem::onItemInserted(int index)
 
     m_childItemLayout->insertWidget(index, w);
 
-    m_childCount++;
-    if (m_childCount == 1) { setExspanded(isExspanded()); }
+    if (m_childItemLayout->count() == 1) {
+        m_exspandbuttom->setEnabled(true);
+        setExspanded(isExspanded());
+    } else {
+        onHeightChanged(w->sizeHint().height());
+    }
 }
 
 // =============================================================================
@@ -159,9 +160,11 @@ void ListViewItem::onItemRemoved(int index)
     QLayoutItem * layoutItem = m_childItemLayout->takeAt(index);
     QWidget * w = layoutItem->widget();
 
-    m_childCount--;
     onHeightChanged(-w->sizeHint().height());
-    if (m_childCount == 0) { m_childItemWidget->setHidden(true); }
+    if (m_childItemLayout->count() == 0) {
+        m_exspandbuttom->setEnabled(false);
+        m_childItemWidget->setHidden(true);
+    }
 
     delete layoutItem;
     delete w;

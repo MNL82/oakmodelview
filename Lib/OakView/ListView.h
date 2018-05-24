@@ -36,8 +36,8 @@ public:
     void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemRemoved(const Model::Item& parentItem, int index);
 
-    int depth() const;
-    void setDepth(int depth);
+    int maxDepth() const;
+    void setMaxDepth(int maxDepth);
 
 
     void resizeEvent(QResizeEvent *event) override;
@@ -52,7 +52,7 @@ protected:
     Model::OakModel * m_model = nullptr;
     ListViewItem * m_rootItem = nullptr;
 
-    int m_depth = 2;
+    int m_maxDepth = 2;
 
     QScrollArea * m_scrollArea;
 //    QWidget * m_viewWidget;
