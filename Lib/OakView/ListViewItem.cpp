@@ -36,10 +36,10 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         int border = 1;
         int contentHeight = 24;
 
-        m_itemWidget = new QFrame();
-        m_itemWidget->setFrameShape(QFrame::StyledPanel);
-        m_itemWidget->setLineWidth(border);
-        m_itemWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_itemFrame = new QFrame();
+        m_itemFrame->setFrameShape(QFrame::StyledPanel);
+        m_itemFrame->setLineWidth(border);
+        m_itemFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         auto itemHLayout = new QHBoxLayout();
         itemHLayout->setMargin(margin);
         itemHLayout->setSpacing(5);
@@ -50,8 +50,8 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         label->setFixedHeight(contentHeight);
 
-        m_itemWidget->setFixedHeight(contentHeight + 2*(margin+border));
-        m_itemWidget->setLayout(itemHLayout);
+        m_itemFrame->setFixedHeight(contentHeight + 2*(margin+border));
+        m_itemFrame->setLayout(itemHLayout);
         itemHLayout->addWidget(label);
 
         if (canHaveChildren) {
@@ -63,7 +63,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
             connect(m_exspandbuttom, SIGNAL(clicked()), this, SLOT(onExspandChanged()));
         }
 
-        layout->addWidget(m_itemWidget);
+        layout->addWidget(m_itemFrame);
     }
 
     if (canHaveChildren) {
@@ -180,8 +180,8 @@ void ListViewItem::onItemRemoved(int index)
 void ListViewItem::updateFixedheight()
 {
     int height = 0;
-    if (m_itemWidget != nullptr) {
-        height = m_itemWidget->height();
+    if (m_itemFrame != nullptr) {
+        height = m_itemFrame->height();
     }
     if (m_childItemWidget != nullptr && !m_childItemWidget->isHidden()) {
         for (int i = 0; i < m_childItemLayout->count(); i++)
