@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QSpacerItem>
 #include <QResizeEvent>
+#include <QScrollBar>
 
 #include <QDebug>
 
@@ -111,11 +112,14 @@ void ListView::setRootItem(const Model::Item &item)
         // Do nothing if the root item is the same
         if (m_rootItem->item() == item) { return; }
 
+        disconnect(m_rootItem, SIGNAL(onHeightChanged()), this, SLOT(adjustItemWidth()));
         //Clear existing item before creating a new one
     }
     m_rootItem = new ListViewItem(this, item, 0);
     m_scrollArea->setWidget(m_rootItem);
     m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
+
+    connect(m_rootItem, SIGNAL(heightChanged(int)), this, SLOT(adjustItemWidth()), Qt::QueuedConnection);
 }
 
 // =============================================================================
@@ -236,6 +240,15 @@ void ListView::createDragItems() const
 void ListView::clearDragItems() const
 {
 
+}
+
+// =============================================================================
+// (protected slots)
+void ListView::adjustItemWidth()
+{
+    if (m_rootItem != nullptr) {
+        m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
+    }
 }
 
 } // namespace View

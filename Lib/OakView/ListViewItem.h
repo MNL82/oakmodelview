@@ -7,6 +7,7 @@
 
 class QVBoxLayout;
 class QPushButton;
+class QFrame;
 
 namespace Oak {
 namespace View {
@@ -53,7 +54,7 @@ protected:
     ListView * m_listView;
     Model::Item m_item;
 
-    QWidget * m_itemWidget = nullptr;
+    QFrame * m_itemFrame = nullptr;
     QPushButton * m_exspandbuttom = nullptr;
 
     QWidget * m_childItemWidget = nullptr;

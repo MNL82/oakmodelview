@@ -39,7 +39,6 @@ public:
     int maxDepth() const;
     void setMaxDepth(int maxDepth);
 
-
     void resizeEvent(QResizeEvent *event) override;
 
 protected:
@@ -47,6 +46,9 @@ protected:
 
     void createDragItems() const;
     void clearDragItems() const;
+
+protected slots:
+    void adjustItemWidth();
 
 protected:
     Model::OakModel * m_model = nullptr;
