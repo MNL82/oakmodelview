@@ -47,6 +47,8 @@ protected:
     void createDragItems() const;
     void clearDragItems() const;
 
+    QString createStyleSheep(QColor color, int level);
+
 protected slots:
     void adjustItemWidth();
 

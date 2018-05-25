@@ -8,7 +8,11 @@
 
 #include "ListView.h"
 
-#define hSpacing 4
+#define SPACING_H 4
+#define BEFORE 10
+#define CONTENT_HEIGHT 24
+#define CONTENT_MARGIN 3
+#define CONTENT_BORDER 1
 
 namespace Oak {
 namespace View {
@@ -28,39 +32,35 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     bool canHaveChildren = deltaDepth > 0 && m_item.def()->containerCount() > 0;
 
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->setContentsMargins((m_depth == 0) ? 0 : 5, 0, 0, 0);
-    layout->setSpacing(hSpacing);
+    layout->setContentsMargins((m_depth == 0) ? 0 : BEFORE, 0, 0, 0);
+    layout->setSpacing(SPACING_H);
 
     if (m_depth > 0) {
-        int margin = 3;
-        int border = 1;
-        int contentHeight = 24;
-
         m_itemFrame = new QFrame();
-        m_itemFrame->setStyleSheet(".QFrame { border: 1px solid green; border-radius: 4px; }");
-        // background-image: url(images/welcome.png);
+        m_itemFrame->setObjectName("level_" + QString::number(depth));
         m_itemFrame->setFrameShape(QFrame::StyledPanel);
-        m_itemFrame->setLineWidth(border);
+        m_itemFrame->setLineWidth(CONTENT_BORDER);
         m_itemFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         auto itemHLayout = new QHBoxLayout();
-        itemHLayout->setMargin(margin);
+        itemHLayout->setMargin(CONTENT_MARGIN);
         itemHLayout->setSpacing(5);
 
         QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
         auto label = new QLabel(name);
         label->setStyleSheet("Text-align:left");
         label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        label->setFixedHeight(contentHeight);
+        label->setFixedHeight(CONTENT_HEIGHT);
 
-        m_itemFrame->setFixedHeight(contentHeight + 2*(margin+border));
+        m_itemFrame->setFixedHeight(CONTENT_HEIGHT + 2 * (CONTENT_MARGIN + CONTENT_BORDER));
         m_itemFrame->setLayout(itemHLayout);
         itemHLayout->addWidget(label);
 
         if (canHaveChildren) {
             m_exspandbuttom = new QPushButton("+");
+            m_exspandbuttom->setObjectName("level_" + QString::number(depth));
             m_exspandbuttom->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-            m_exspandbuttom->setFixedHeight(contentHeight);
-            m_exspandbuttom->setFixedWidth(contentHeight);
+            m_exspandbuttom->setFixedHeight(CONTENT_HEIGHT);
+            m_exspandbuttom->setFixedWidth(CONTENT_HEIGHT);
             itemHLayout->addWidget(m_exspandbuttom);
             connect(m_exspandbuttom, SIGNAL(clicked()), this, SLOT(onExspandChanged()));
         }
@@ -72,7 +72,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         m_childItemWidget = new QWidget();
         m_childItemLayout = new QVBoxLayout();
         m_childItemLayout->setMargin(0);
-        m_childItemLayout->setSpacing(hSpacing);
+        m_childItemLayout->setSpacing(SPACING_H);
 
         Model::Item cItem = m_item.firstChild();
         while (!cItem.isNull()) {
@@ -188,7 +188,7 @@ void ListViewItem::updateFixedheight()
     if (m_childItemWidget != nullptr && !m_childItemWidget->isHidden()) {
         for (int i = 0; i < m_childItemLayout->count(); i++)
         {
-            height += m_childItemLayout->itemAt(i)->widget()->sizeHint().height() +  hSpacing;
+            height += m_childItemLayout->itemAt(i)->widget()->sizeHint().height() +  SPACING_H;
         }
     }
     int change = height - m_height;
