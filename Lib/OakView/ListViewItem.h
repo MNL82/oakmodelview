@@ -36,6 +36,10 @@ public:
     void onItemInserted(int index);
     void onItemRemoved(int index);
 
+
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+
 protected:
     void updateFixedheight();
 

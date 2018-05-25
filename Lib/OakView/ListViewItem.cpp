@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QMouseEvent>
 
 #include <QDebug>
 
@@ -175,6 +176,16 @@ void ListViewItem::onItemRemoved(int index)
 
     delete layoutItem;
     delete w;
+}
+
+// =============================================================================
+// (public)
+void ListViewItem::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        event->accept();
+        m_item.model()->setCurrentItem(m_item);
+    }
 }
 
 // =============================================================================
