@@ -37,6 +37,8 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         int contentHeight = 24;
 
         m_itemFrame = new QFrame();
+        m_itemFrame->setStyleSheet(".QFrame { border: 1px solid green; border-radius: 4px; }");
+        // background-image: url(images/welcome.png);
         m_itemFrame->setFrameShape(QFrame::StyledPanel);
         m_itemFrame->setLineWidth(border);
         m_itemFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
