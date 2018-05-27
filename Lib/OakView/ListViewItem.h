@@ -8,6 +8,7 @@
 class QVBoxLayout;
 class QPushButton;
 class QFrame;
+class QLabel;
 
 namespace Oak {
 namespace View {
@@ -27,6 +28,7 @@ public:
     const Model::Item& item() const;
 
     ListViewItem * child(const Model::Item &item);
+    int childViewItemIndex(const ListViewItem * childViewItem);
 
     bool isExspanded() const;
     void setExspanded(bool value);
@@ -40,6 +42,8 @@ public:
 
     void clearCurrent();
     void setCurrent();
+
+    void updateLabel();
 
 protected:
     QString currentStylesheet(QColor color);
@@ -61,6 +65,7 @@ protected:
     Model::Item m_item;
 
     QFrame * m_itemFrame = nullptr;
+    QLabel * m_label = nullptr;
     QPushButton * m_exspandbuttom = nullptr;
 
     QWidget * m_childItemWidget = nullptr;

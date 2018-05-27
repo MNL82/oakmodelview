@@ -29,12 +29,11 @@ public:
 
     void currentItemChanged();
 
-    void setCurrentItem(const Model::Item& item);
-
     void onItemInserted(const Model::Item& parentItem, int index);
     void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemRemoved(const Model::Item& parentItem, int index);
+    void onItemValueChanged(const Model::Item &item, int valueIndex);
 
     int maxDepth() const;
     void setMaxDepth(int maxDepth);
@@ -51,6 +50,7 @@ protected:
 
 protected slots:
     void adjustItemWidth();
+    void onCurrentItemViewDestoyed();
 
 protected:
     Model::OakModel * m_model = nullptr;
@@ -61,8 +61,6 @@ protected:
     int m_maxDepth = 2;
 
     QScrollArea * m_scrollArea;
-//    QWidget * m_viewWidget;
-//    QVBoxLayout * m_viewLayout;
     QGridLayout * m_dragLayout;
 };
 

@@ -98,7 +98,7 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloned.remove(this);
         m_model->notifier_itemRemoved.remove(this);
 
-//        m_model->notifier_itemValueChanged.remove(this);
+        m_model->notifier_itemValueChanged.remove(this);
     }
 
     // Change the model
@@ -116,7 +116,7 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloned.add(this, &ListView::onItemCloned);
         m_model->notifier_itemRemoved.add(this, &ListView::onItemRemoved);
 
-//        m_model->notifier_itemValueChanged.add(this, &ListView::onItemValueChanged);
+        m_model->notifier_itemValueChanged.add(this, &ListView::onItemValueChanged);
     }
 }
 
@@ -148,20 +148,15 @@ void ListView::currentItemChanged()
 
     if (m_currentViewItem) {
         m_currentViewItem->clearCurrent();
+        disconnect(m_currentViewItem, SIGNAL(destroyed()), this, SLOT(onCurrentItemViewDestoyed()));
     }
 
     m_currentViewItem = currentViewItem;
 
     if (m_currentViewItem) {
         m_currentViewItem->setCurrent();
+        connect(m_currentViewItem, SIGNAL(destroyed()), this, SLOT(onCurrentItemViewDestoyed()));
     }
-}
-
-// =============================================================================
-// (public)
-void ListView::setCurrentItem(const Model::Item &item)
-{
-
 }
 
 // =============================================================================
@@ -198,6 +193,28 @@ void ListView::onItemRemoved(const Model::Item &parentItem, int index)
     ListViewItem * viewItem = getViewItem(parentItem);
     if (viewItem != nullptr) {
         viewItem->onItemRemoved(index);
+    }
+}
+
+// =============================================================================
+// (public)
+void ListView::onItemValueChanged(const Model::Item &item, int valueIndex)
+{
+    if (item.def()->derivedIdValueDefIndex() == valueIndex) {
+        // Child items can change when the derived definition change
+        Model::Item pItem = item.parent();
+        int index = pItem.childIndex(item);
+
+        onItemRemoved(pItem, index);
+        onItemInserted(pItem, index);
+
+        currentItemChanged();
+    } else if (item.def()->keyValueDefIndex() == valueIndex) {
+        // Child items can change when the derived definition change
+        ListViewItem * viewItem = getViewItem(item);
+        if (viewItem != nullptr) {
+            viewItem->updateLabel();
+        }
     }
 }
 
@@ -296,6 +313,13 @@ void ListView::adjustItemWidth()
     if (m_rootItem != nullptr) {
         m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
     }
+}
+
+// =============================================================================
+// (protected slots)
+void ListView::onCurrentItemViewDestoyed()
+{
+    m_currentViewItem = nullptr;
 }
 
 } // namespace View

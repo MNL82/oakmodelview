@@ -47,14 +47,14 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         itemHLayout->setSpacing(5);
 
         QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
-        auto label = new QLabel(name);
-        label->setStyleSheet("Text-align:left");
-        label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        label->setFixedHeight(CONTENT_HEIGHT);
+        m_label = new QLabel(name);
+        m_label->setStyleSheet("Text-align:left");
+        m_label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        m_label->setFixedHeight(CONTENT_HEIGHT);
 
         m_itemFrame->setFixedHeight(CONTENT_HEIGHT + 2 * (CONTENT_MARGIN + CONTENT_BORDER));
         m_itemFrame->setLayout(itemHLayout);
-        itemHLayout->addWidget(label);
+        itemHLayout->addWidget(m_label);
 
         if (canHaveChildren) {
             m_exspandbuttom = new QPushButton("+");
@@ -108,11 +108,24 @@ ListViewItem *ListViewItem::child(const Model::Item &item)
     for (int i = 0; i < m_childItemLayout->count(); i++)
     {
         ListViewItem * cItem = static_cast<ListViewItem*>(m_childItemLayout->itemAt(i)->widget());
-        if (cItem->item() == item) {
+        if (cItem->item().node() == item.node()) {
             return cItem;
         }
     }
     return nullptr;
+}
+
+// =============================================================================
+// (public)
+int ListViewItem::childViewItemIndex(const ListViewItem *childViewItem)
+{
+    for (int i = 0; i < m_childItemLayout->count(); i++)
+    {
+        if (childViewItem == m_childItemLayout->itemAt(i)->widget()) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 // =============================================================================
@@ -204,6 +217,16 @@ void ListViewItem::setCurrent()
     if (m_itemFrame) {
         QString styleSheet = currentStylesheet(QColor(100, 100, 100));
         m_itemFrame->setStyleSheet(styleSheet);
+    }
+}
+
+// =============================================================================
+// (public)
+void ListViewItem::updateLabel()
+{
+    if (m_label) {
+        QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
+        m_label->setText(name);
     }
 }
 
