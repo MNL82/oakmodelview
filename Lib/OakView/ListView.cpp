@@ -20,7 +20,7 @@ namespace View {
 // =============================================================================
 // (public)
 ListView::ListView(QWidget *parent)
-    : QWidget(parent)
+    : QFrame(parent)
 {
     QString styleSheet = ".QFrame {"
                          "  border: 1px solid rgba(0, 0, 0, 255);"

@@ -36,13 +36,13 @@ public:
     void onItemInserted(int index);
     void onItemRemoved(int index);
 
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
     void clearCurrent();
     void setCurrent();
 
-    virtual void mouseReleaseEvent(QMouseEvent *event) override;
-
-
 protected:
+    QString currentStylesheet(QColor color);
     void updateFixedheight();
 
 protected slots:

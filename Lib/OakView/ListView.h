@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QFrame>
 
 #include "OakModel.h"
 
@@ -16,7 +16,7 @@ class ListViewItem;
 // =============================================================================
 // Class definition
 // =============================================================================
-class ListView : public QWidget
+class ListView : public QFrame
 {
     Q_OBJECT
 

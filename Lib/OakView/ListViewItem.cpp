@@ -33,7 +33,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     bool canHaveChildren = deltaDepth > 0 && m_item.def()->containerCount() > 0;
 
     QVBoxLayout * layout = new QVBoxLayout();
-    layout->setContentsMargins((m_depth == 0) ? 0 : BEFORE, 0, 0, 0);
+    layout->setMargin(0);
     layout->setSpacing(SPACING_H);
 
     if (m_depth > 0) {
@@ -72,7 +72,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     if (canHaveChildren) {
         m_childItemWidget = new QWidget();
         m_childItemLayout = new QVBoxLayout();
-        m_childItemLayout->setMargin(0);
+        m_childItemLayout->setContentsMargins((m_depth == 0) ? 0 : BEFORE, 0, 0, 0);
         m_childItemLayout->setSpacing(SPACING_H);
 
         Model::Item cItem = m_item.firstChild();
@@ -180,6 +180,16 @@ void ListViewItem::onItemRemoved(int index)
 
 // =============================================================================
 // (public)
+void ListViewItem::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        event->accept();
+        m_item.model()->setCurrentItem(m_item);
+    }
+}
+
+// =============================================================================
+// (public)
 void ListViewItem::clearCurrent()
 {
     if (m_itemFrame) {
@@ -192,22 +202,24 @@ void ListViewItem::clearCurrent()
 void ListViewItem::setCurrent()
 {
     if (m_itemFrame) {
-        m_itemFrame->setStyleSheet("border-color: red;");
+        QString styleSheet = currentStylesheet(QColor(100, 100, 100));
+        m_itemFrame->setStyleSheet(styleSheet);
     }
 }
 
 // =============================================================================
-// (public)
-void ListViewItem::mouseReleaseEvent(QMouseEvent *event)
+// (protected)
+QString ListViewItem::currentStylesheet(QColor color)
 {
-    if (event->button() == Qt::LeftButton) {
-        event->accept();
-        m_item.model()->setCurrentItem(m_item);
-    }
+    QString colorStr = QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
+    QString stylesheet = QString(".QFrame {"
+                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white);"
+                                 "}").arg(colorStr);
+    return stylesheet;
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void ListViewItem::updateFixedheight()
 {
     int height = 0;
