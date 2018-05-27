@@ -1,3 +1,13 @@
+/**
+ * oakmodelview - version 0.1.0
+ * --------------------------------------------------------
+ * Copyright (C) 2017, by Mikkel Nøhr Løvgreen (mikkel@oakmodelview.com)
+ * Report bugs and download new versions at http://oakmodelview.com/
+ *
+ * This library is distributed under the MIT License.
+ * See accompanying file LICENSE in the root folder.
+ */
+
 #include "ListViewItem.h"
 
 #include <QVBoxLayout>
@@ -12,7 +22,7 @@
 #define SPACING_H 4
 #define BEFORE 10
 #define CONTENT_HEIGHT 24
-#define CONTENT_MARGIN 3
+#define CONTENT_MARGIN 1
 #define CONTENT_BORDER 1
 
 namespace Oak {
@@ -43,7 +53,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         m_itemFrame->setLineWidth(CONTENT_BORDER);
         m_itemFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         auto itemHLayout = new QHBoxLayout();
-        itemHLayout->setMargin(CONTENT_MARGIN);
+        itemHLayout->setContentsMargins(5, CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN);
         itemHLayout->setSpacing(5);
 
         QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());

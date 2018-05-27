@@ -32,7 +32,8 @@ SOURCES += \
     OakView.cpp \
     ListView.cpp \
     TableView.cpp \
-    ListViewItem.cpp
+    ListViewItem.cpp \
+    ActionView.cpp
 
 HEADERS += \
     ValueEditorHandler.h \
@@ -46,7 +47,8 @@ HEADERS += \
     OakView.h \
     ListView.h \
     TableView.h \
-    ListViewItem.h
+    ListViewItem.h \
+    ActionView.h
 
 
 CONFIG(debug, debug|release) {
@@ -61,3 +63,6 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+RESOURCES += \
+    Resources.qrc
