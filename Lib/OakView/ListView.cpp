@@ -23,6 +23,7 @@ ListView::ListView(QWidget *parent)
     : QWidget(parent)
 {
     QString styleSheet = ".QFrame {"
+                         "  border: 1px solid rgba(0, 0, 0, 255);"
                          "  border-radius: 4px;"
                          "}"
                          ".QPushButton {"
@@ -141,7 +142,19 @@ void ListView::setRootItem(const Model::Item &item)
 // (public)
 void ListView::currentItemChanged()
 {
+    ListViewItem * currentViewItem = getViewItem(m_model->currentItem());
 
+    if (currentViewItem == m_currentViewItem) { return; }
+
+    if (m_currentViewItem) {
+        m_currentViewItem->clearCurrent();
+    }
+
+    m_currentViewItem = currentViewItem;
+
+    if (m_currentViewItem) {
+        m_currentViewItem->setCurrent();
+    }
 }
 
 // =============================================================================
@@ -220,6 +233,7 @@ void ListView::resizeEvent(QResizeEvent *event)
 // (protected)
 ListViewItem * ListView::getViewItem(const Model::Item &item)
 {
+    if (m_rootItem == nullptr || item.isNull()) { return nullptr; }
     if (item == m_rootItem->item()) {
         return m_rootItem;
     }
@@ -263,16 +277,15 @@ QString ListView::createStyleSheep(QColor color, int level)
 {
     QString colorStr = QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
     QString stylesheet = QString(".QFrame#level_%2 {"
-                                 "  border: 1px solid rgba(%1, 255);"
                                  "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 100), stop: 0.4 rgba(%1, 100), stop: 1 white);"
                                  "}"
                                  ".QFrame#level_%2:hover {"
-                                 "  border: 1px solid rgba(%1, 255);"
                                  "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white);"
                                  "}"
                                  ".QPushButton#level_%2:hover { "
                                  "  background: rgba(%1, 100);"
                                  "}").arg(colorStr).arg(level);
+    // "  border: 1px solid rgba(%1, 255);"
     return stylesheet;
 }
 

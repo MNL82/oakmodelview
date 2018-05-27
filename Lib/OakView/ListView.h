@@ -56,6 +56,8 @@ protected:
     Model::OakModel * m_model = nullptr;
     ListViewItem * m_rootItem = nullptr;
 
+    ListViewItem * m_currentViewItem = nullptr;
+
     int m_maxDepth = 2;
 
     QScrollArea * m_scrollArea;

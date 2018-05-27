@@ -180,6 +180,24 @@ void ListViewItem::onItemRemoved(int index)
 
 // =============================================================================
 // (public)
+void ListViewItem::clearCurrent()
+{
+    if (m_itemFrame) {
+        m_itemFrame->setStyleSheet("");
+    }
+}
+
+// =============================================================================
+// (public)
+void ListViewItem::setCurrent()
+{
+    if (m_itemFrame) {
+        m_itemFrame->setStyleSheet("border-color: red;");
+    }
+}
+
+// =============================================================================
+// (public)
 void ListViewItem::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {

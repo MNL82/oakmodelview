@@ -36,6 +36,8 @@ public:
     void onItemInserted(int index);
     void onItemRemoved(int index);
 
+    void clearCurrent();
+    void setCurrent();
 
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
 
