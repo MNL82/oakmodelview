@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QMouseEvent>
+#include <QWidget>
 
 #include <QDebug>
 
@@ -30,7 +31,7 @@ namespace View {
 
 // =============================================================================
 // (public)
-ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int depth)
+ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int depth, ListViewItem * parent)
     : QWidget(nullptr)
 {
     assert(listView != nullptr);
@@ -38,6 +39,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     m_listView = listView;
     m_item = item;
     m_depth = depth;
+    m_parent = parent;
 
     int deltaDepth = m_listView->maxDepth() - m_depth;
     bool canHaveChildren = deltaDepth > 0 && m_item.def()->containerCount() > 0;
@@ -48,10 +50,12 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
 
     if (m_depth > 0) {
         m_itemFrame = new QFrame();
+        m_itemFrame->setFocusPolicy(Qt::StrongFocus);
         m_itemFrame->setObjectName("level_" + QString::number(depth));
         m_itemFrame->setFrameShape(QFrame::StyledPanel);
         m_itemFrame->setLineWidth(CONTENT_BORDER);
         m_itemFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_itemFrame->installEventFilter(this);
         auto itemHLayout = new QHBoxLayout();
         itemHLayout->setContentsMargins(5, CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN);
         itemHLayout->setSpacing(5);
@@ -68,6 +72,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
 
         if (canHaveChildren) {
             m_exspandbuttom = new QPushButton("+");
+            m_exspandbuttom->setFocusPolicy(Qt::NoFocus);
             m_exspandbuttom->setObjectName("level_" + QString::number(depth));
             m_exspandbuttom->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             m_exspandbuttom->setFixedHeight(CONTENT_HEIGHT);
@@ -87,7 +92,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
 
         Model::Item cItem = m_item.firstChild();
         while (!cItem.isNull()) {
-            QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1);
+            QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1, this);
             connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
             m_childItemLayout->addWidget(w);
             cItem = m_item.nextChild(cItem);
@@ -113,6 +118,26 @@ const Model::Item& ListViewItem::item() const
 
 // =============================================================================
 // (public)
+int ListViewItem::childCount() const
+{
+    return m_childItemLayout->count();
+}
+
+// =============================================================================
+// (public)
+int ListViewItem::childViewItemIndex(const ListViewItem *childViewItem)
+{
+    for (int i = 0; i < m_childItemLayout->count(); i++)
+    {
+        if (childViewItem == m_childItemLayout->itemAt(i)->widget()) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// =============================================================================
+// (public)
 ListViewItem *ListViewItem::child(const Model::Item &item)
 {
     for (int i = 0; i < m_childItemLayout->count(); i++)
@@ -127,15 +152,45 @@ ListViewItem *ListViewItem::child(const Model::Item &item)
 
 // =============================================================================
 // (public)
-int ListViewItem::childViewItemIndex(const ListViewItem *childViewItem)
+ListViewItem *ListViewItem::child(int index)
 {
-    for (int i = 0; i < m_childItemLayout->count(); i++)
-    {
-        if (childViewItem == m_childItemLayout->itemAt(i)->widget()) {
-            return i;
-        }
-    }
-    return -1;
+    if (index < 0 || index >= m_childItemLayout->count()) { return nullptr; }
+
+    return static_cast<ListViewItem*>(m_childItemLayout->itemAt(index)->widget());
+}
+
+// =============================================================================
+// (public)
+ListViewItem *ListViewItem::parent()
+{
+    return m_parent;
+}
+
+// =============================================================================
+// (public)
+ListViewItem *ListViewItem::nextSibling()
+{
+    if (m_parent == nullptr) { return nullptr; }
+    int index = m_parent->childViewItemIndex(this);
+    assert(index != -1);
+    return m_parent->child(index+1);
+}
+
+// =============================================================================
+// (public)
+ListViewItem *ListViewItem::previousSibling()
+{
+    if (m_parent == nullptr) { return nullptr; }
+    int index = m_parent->childViewItemIndex(this);
+    assert(index != -1);
+    return m_parent->child(index-1);
+}
+
+// =============================================================================
+// (public)
+void ListViewItem::giveFocus()
+{
+    if (m_itemFrame) { m_itemFrame->setFocus(); }
 }
 
 // =============================================================================
@@ -169,7 +224,7 @@ QSize ListViewItem::sizeHint() const
 void ListViewItem::onItemInserted(int index)
 {
     Model::Item cItem = m_item.childAt(index);
-    QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1);
+    QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1, this);
     connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
 
     m_childItemLayout->insertWidget(index, w);
@@ -203,12 +258,56 @@ void ListViewItem::onItemRemoved(int index)
 
 // =============================================================================
 // (public)
-void ListViewItem::mouseReleaseEvent(QMouseEvent *event)
+bool ListViewItem::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->button() == Qt::LeftButton) {
-        event->accept();
-        m_item.model()->setCurrentItem(m_item);
+    if (watched == m_itemFrame) {
+        if (event->type() == QEvent::FocusIn) {
+            m_item.model()->setCurrentItem(m_item);
+            return true;
+        }
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent * kEvent = dynamic_cast<QKeyEvent*>(event);
+            if (kEvent->key() == Qt::Key_Down) {
+                if (isExspanded() && childCount() > 0) {
+                    child(0)->giveFocus();
+                    return true;
+                }
+                ListViewItem * item1 = this;
+                while(item1 != nullptr) {
+                    ListViewItem * item2 = item1->nextSibling();
+                    if (item2) {
+                        item2->giveFocus();
+                        return true;
+                    }
+                    item1 = item1->parent();
+                }
+                return true;
+            } else if (kEvent->key() == Qt::Key_Up) {
+                ListViewItem * sItem = previousSibling();
+                if (sItem) {
+                    while (sItem->isExspanded() && sItem->childCount() > 0) {
+                        sItem = sItem->child(sItem->childCount()-1);
+                    }
+                    sItem->giveFocus();
+                } else {
+                    ListViewItem * pItem = parent();
+                    if (pItem != nullptr) {
+                        pItem->giveFocus();
+                    }
+                }
+                return true;
+            } else if (kEvent->key() == Qt::Key_Right) {
+                if (m_childItemLayout && m_childItemLayout->count() > 0) {
+                    setExspanded(true);
+                }
+            } else if (kEvent->key() == Qt::Key_Left) {
+                if (m_childItemLayout && m_childItemLayout->count() > 0) {
+                    setExspanded(false);
+                }
+            }
+        }
     }
+    return false;
 }
 
 // =============================================================================

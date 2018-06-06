@@ -36,6 +36,9 @@ ListView::ListView(QWidget *parent)
                          "  border: 1px solid rgba(0, 0, 0, 255);"
                          "  border-radius: 4px;"
                          "}"
+                         ".QFrame:focus {"
+                         "  border: 1px solid rgba(140, 0, 0, 255);"
+                         "}"
                          ".QPushButton {"
                          "  background: transparent;"
                          "}"
@@ -59,6 +62,7 @@ ListView::ListView(QWidget *parent)
 
     // Available new items that can be dragged into place
     auto dragItems = new QWidget();
+    dragItems->setHidden(true);
     m_dragLayout = new QGridLayout();
     m_dragLayout->setMargin(0);
     dragItems->setLayout(m_dragLayout);

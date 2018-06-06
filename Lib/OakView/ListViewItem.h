@@ -33,12 +33,21 @@ class ListViewItem : public QWidget
 {
     Q_OBJECT
 public:
-    ListViewItem(ListView * listView, const Model::Item &item, int depth);
+    ListViewItem(ListView * listView, const Model::Item &item, int depth, ListViewItem *parent = nullptr);
 
     const Model::Item& item() const;
 
-    ListViewItem * child(const Model::Item &item);
+    int childCount() const;
     int childViewItemIndex(const ListViewItem * childViewItem);
+
+    ListViewItem * child(const Model::Item &item);
+    ListViewItem * child(int index);
+
+    ListViewItem * parent();
+    ListViewItem * nextSibling();
+    ListViewItem * previousSibling();
+
+    void giveFocus();
 
     bool isExspanded() const;
     void setExspanded(bool value);
@@ -48,7 +57,7 @@ public:
     void onItemInserted(int index);
     void onItemRemoved(int index);
 
-    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
     void clearCurrent();
     void setCurrent();
@@ -72,6 +81,7 @@ protected:
     int m_childCount = 0;
 
     ListView * m_listView;
+    ListViewItem * m_parent;
     Model::Item m_item;
 
     QFrame * m_itemFrame = nullptr;
