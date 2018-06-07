@@ -10,9 +10,11 @@
 
 #pragma once
 
-#include <QObject>
+#include <QToolBar>
 
 #include "OakModel.h"
+
+class QAction;
 
 namespace Oak {
 namespace View {
@@ -20,21 +22,25 @@ namespace View {
 // =============================================================================
 // Class definition
 // =============================================================================
-class ActionView : public QObject
+class ActionToolBar : public QToolBar
 {
     Q_OBJECT
 public:
-    ActionView(QObject * parent = nullptr);
+    ActionToolBar(QWidget * parent = nullptr);
 
     void setModel(Model::OakModel* model);
 
     void currentItemChanged();
 
+protected:
+    void disableAllActions();
+
+protected slots:
+    void onActionDelete();
 
 protected:
     Model::OakModel* m_model = nullptr;
-
-
+    QAction * m_actionRemove;
 };
 
 } // namespace View

@@ -33,7 +33,7 @@ SOURCES += \
     ListView.cpp \
     TableView.cpp \
     ListViewItem.cpp \
-    ActionView.cpp
+    ActionToolBar.cpp
 
 HEADERS += \
     ValueEditorHandler.h \
@@ -48,7 +48,7 @@ HEADERS += \
     ListView.h \
     TableView.h \
     ListViewItem.h \
-    ActionView.h
+    ActionToolBar.h
 
 
 CONFIG(debug, debug|release) {
@@ -65,4 +65,4 @@ unix {
 }
 
 RESOURCES += \
-    Resources.qrc
+    OakViewResources.qrc
