@@ -36,11 +36,27 @@ protected:
     void disableAllActions();
 
 protected slots:
+    void onActionAdd();
     void onActionDelete();
+    void onActionUp();
+    void onActionDown();
+    void onActionCut();
+    void onActionCopy();
+    void onActionPaste();
 
 protected:
     Model::OakModel* m_model = nullptr;
-    QAction * m_actionRemove;
+
+    Model::Item m_cutItem;
+    Model::Item m_copyItem;
+
+    QAction * m_actionAdd;
+    QAction * m_actionDelete;
+    QAction * m_actionUp;
+    QAction * m_actionDown;
+    QAction * m_actionCut;
+    QAction * m_actionCopy;
+    QAction * m_actionPaste;
 };
 
 } // namespace View

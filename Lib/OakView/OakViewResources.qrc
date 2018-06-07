@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/OakView">
         <file>Resources/delete_32.png</file>
+        <file>Resources/add_32.png</file>
+        <file>Resources/copy_32.png</file>
+        <file>Resources/cut_32.png</file>
+        <file>Resources/down_32.png</file>
+        <file>Resources/paste_32.png</file>
+        <file>Resources/up_32.png</file>
     </qresource>
 </RCC>
