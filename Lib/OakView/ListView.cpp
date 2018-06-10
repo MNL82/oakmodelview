@@ -59,6 +59,7 @@ ListView::ListView(QWidget *parent)
     auto lineA = new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
+    lineA->setHidden(true);
 
     // Available new items that can be dragged into place
     auto dragItems = new QWidget();
@@ -170,6 +171,13 @@ void ListView::currentItemChanged()
     if (m_currentViewItem) {
         m_currentViewItem->setCurrent();
         connect(m_currentViewItem, SIGNAL(destroyed()), this, SLOT(onCurrentItemViewDestoyed()));
+    }
+
+    // Make current items visible
+    ListViewItem * pItem = currentViewItem->parent();
+    while (pItem != m_rootItem) {
+        pItem->setExspanded(true);
+        pItem = pItem->parent();
     }
 }
 
