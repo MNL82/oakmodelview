@@ -340,6 +340,13 @@ void OakModel::onItemRemoved(const Item &parentItem, int index) const
 
 // =============================================================================
 // (protected)
+void OakModel::onItemBeforeRemoving(const Item &item) const
+{
+    notifier_itemBeforeRemoving.trigger(item);
+}
+
+// =============================================================================
+// (protected)
 void OakModel::onItemValueChanged(const Item &item, int valueIndex) const
 {
     if (item.def()->derivedIdValueDefIndex() == valueIndex) {

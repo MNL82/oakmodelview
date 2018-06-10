@@ -44,6 +44,9 @@ protected:
     std::map<void*, std::function<void(void)>> m_functionMap;
 };
 
+// =============================================================================
+// Class definition
+// =============================================================================
 class Callback_ItemIntItemInt
 {
 public:
@@ -67,6 +70,9 @@ protected:
     std::map<void*, std::function<void(const Item&, int, const Item&, int)>> m_functionMap;
 };
 
+// =============================================================================
+// Class definition
+// =============================================================================
 class Callback_ItemInt
 {
 public:
@@ -88,6 +94,32 @@ public:
 
 protected:
     std::map<void*, std::function<void(const Item&, int)>> m_functionMap;
+};
+
+// =============================================================================
+// Class definition
+// =============================================================================
+class Callback_Item
+{
+public:
+    Callback_Item();
+
+    template<typename T>
+    void add(T* funcObj, void (T::*func)(const Item&))
+    {
+        if (funcObj == nullptr) {
+            assert(false);
+            return;
+        }
+        m_functionMap[funcObj] = std::bind(func, funcObj, std::placeholders::_1);
+    }
+
+    void remove(void* funcObj = nullptr);
+
+    void trigger(const Item &parentItem) const;
+
+protected:
+    std::map<void*, std::function<void(const Item&)>> m_functionMap;
 };
 
 } // namespace Model

@@ -124,11 +124,6 @@ public:
 protected:
     inline void initItemValueList() const;
 
-    void onItemInserted(const Item& parentItem, int index) const;
-    void onItemMoved(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
-    void onItemCloned(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
-    void onItemRemoved(const Item& parentItem, int index) const;
-
     static void updateUniqueValues(Item item);
 
 protected:

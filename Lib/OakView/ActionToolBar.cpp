@@ -76,6 +76,7 @@ void ActionToolBar::setModel(Model::OakModel *model)
     if (m_model) {
         // Disconnect the old model
         m_model->notifier_currentItemChanged.remove(this);
+        m_model->notifier_itemBeforeRemoving.remove(this);
     }
 
     // Change the model
@@ -84,11 +85,12 @@ void ActionToolBar::setModel(Model::OakModel *model)
     if (m_model) {
         // connect the new mobel
         m_model->notifier_currentItemChanged.add(this, &ActionToolBar::currentItemChanged);
+        m_model->notifier_itemBeforeRemoving.add(this, &ActionToolBar::itemBeforeRemoving);
     }
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void ActionToolBar::currentItemChanged()
 {
     Model::Item item = m_model->currentItem();
@@ -136,6 +138,31 @@ void ActionToolBar::currentItemChanged()
 
 // =============================================================================
 // (protected)
+void ActionToolBar::itemBeforeRemoving(const Model::Item &item)
+{
+    Model::Item cItem = m_cutItem;
+    while (!cItem.isNull()) {
+        if (cItem == item) {
+            m_cutItem = Model::Item();
+            m_actionPaste->setEnabled(false);
+            return;
+        }
+        cItem = cItem.parent();
+    }
+
+    cItem = m_copyItem;
+    while (!cItem.isNull()) {
+        if (cItem == item) {
+            m_copyItem = Model::Item();
+            m_actionPaste->setEnabled(false);
+            return;
+        }
+        cItem = cItem.parent();
+    }
+}
+
+// =============================================================================
+// (protected)
 void ActionToolBar::disableAllActions()
 {
     m_actionAdd->setEnabled(false);
@@ -153,9 +180,10 @@ void ActionToolBar::onActionAdd()
 {
     Model::Item item = m_model->currentItem();
     Model::Item pItem = item.parent();
-    int index = pItem.childIndex(item)+1;
+    int index = pItem.childIndex(item);
     if (pItem.canInsertChild(item.def()->name(), index)) {
-        pItem.insertChild(item.def()->name(), index);
+        Model::Item newItem = pItem.insertChild(item.def()->name(), index);
+        m_model->setCurrentItem(newItem);
     }
 }
 
@@ -214,22 +242,26 @@ void ActionToolBar::onActionPaste()
     if (!m_copyItem.isNull()) {
         Model::Item item = m_model->currentItem();
         Model::Item pItem = item.parent();
-        int index = pItem.childIndex(item)+1;
+        int index = pItem.childIndex(item);
         if (pItem.canCloneChild(index, m_copyItem)) {
-            pItem.cloneChild(index, m_copyItem);
+            Model::Item newItem = pItem.cloneChild(index, m_copyItem);
+            m_model->setCurrentItem(newItem);
         } else {
-            index = 0;
-            item.cloneChild(index, m_copyItem);
+            index = -1;
+            Model::Item newItem = item.cloneChild(index, m_copyItem);
+            m_model->setCurrentItem(newItem);
         }
     } else if (!m_cutItem.isNull()) {
         Model::Item item = m_model->currentItem();
         Model::Item pItem = item.parent();
-        int index = pItem.childIndex(item)+1;
+        int index = pItem.childIndex(item);
         if (pItem.canMoveChild(index, m_cutItem)) {
-            pItem.moveChild(index, m_cutItem);
+            Model::Item newItem = pItem.moveChild(index, m_cutItem);
+            m_model->setCurrentItem(newItem);
         } else {
-            index = 0;
-            item.moveChild(index, m_cutItem);
+            index = -1;
+            Model::Item newItem = item.moveChild(index, m_cutItem);
+            m_model->setCurrentItem(newItem);
         }
         m_cutItem = Model::Item();
         m_actionPaste->setEnabled(false);

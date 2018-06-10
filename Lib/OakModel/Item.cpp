@@ -446,7 +446,7 @@ Item Item::insertChild(const std::string &name, int &index) const
     const auto& container = m_def->container(name);
     Item childItem(container.containerDef(), container.insertNode(m_node, index), m_model);
     if (m_model && !childItem.isNull()) {
-        onItemInserted(*this, childIndex(childItem));
+        m_model->onItemInserted(*this, childIndex(childItem));
     }
     return childItem;
 }
@@ -503,7 +503,7 @@ Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
         Item item = Item(cloneItem.m_def, m_def->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
         // Notify everyone if cloning did not fail
         if (!item.isNull()) {
-            onItemCloned(sourceParentItem, sourceIndex, *this, childIndex(item));
+            m_model->onItemCloned(sourceParentItem, sourceIndex, *this, childIndex(item));
         }
         updateUniqueValues(item);
 
@@ -538,6 +538,9 @@ Item Item::moveChild(int& index, Item moveItem) const
         // Cash data needed to notify change
         Item sourceParentItem = moveItem.parent();
         int sourceIndex = sourceParentItem.childIndex(moveItem);
+
+        m_model->onItemBeforeRemoving(sourceParentItem.childAt(sourceIndex));
+
         // Perform the cloneing
         Item item = Item(moveItem.m_def, m_def->containerGroup().moveNode(m_node, index, moveItem.m_node), m_model);
         // Notify everyone if cloning did not fail
@@ -565,7 +568,7 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
         Item item = Item(moveItem.m_def, m_def->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
         // Notify everyone if cloning did not fail
         if (!item.isNull()) {
-            onItemMoved(sourceParentItem, sourceIndex, *this, childIndex(item));
+            m_model->onItemMoved(sourceParentItem, sourceIndex, *this, childIndex(item));
         }
         updateUniqueValues(item);
 
@@ -596,7 +599,12 @@ bool Item::canRemoveChild(const std::string &name, int index) const
 bool Item::removeChild(int index) const
 {
     assert(m_def);
-    if (m_def->containerGroup().removeNode(m_node, index)) {
+    if (m_def->containerGroup().canRemoveNode(m_node, index)) {
+        if (m_model) {
+            m_model->onItemBeforeRemoving(childAt(index));
+        }
+
+        m_def->containerGroup().removeNode(m_node, index);
         if (m_model) {
             m_model->onItemRemoved(*this, index);
         }
@@ -611,13 +619,7 @@ bool Item::removeChild(const std::string &name, int index) const
 {
     assert(m_def);
     int index2 = childIndex(childAt(name, index));
-    if (m_def->container(name).removeNode(m_node, index)) {
-        if (m_model) {
-            onItemRemoved(*this, index2);
-        }
-        return true;
-    }
-    return false;
+    return removeChild(index2);
 }
 
 // =============================================================================
@@ -631,38 +633,6 @@ void Item::initItemValueList() const
             m_itemValueList.push_back(ItemValue(vi, m_node, this));
         }
     }
-}
-
-// =============================================================================
-// (protected)
-void Item::onItemInserted(const Item &parentItem, int index) const
-{
-    assert(m_model);
-    m_model->onItemInserted(parentItem, index);
-}
-
-// =============================================================================
-// (protected)
-void Item::onItemMoved(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
-{
-    assert(m_model);
-    m_model->onItemMoved(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
-}
-
-// =============================================================================
-// (protected)
-void Item::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
-{
-    assert(m_model);
-    m_model->onItemCloned(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
-}
-
-// =============================================================================
-// (protected)
-void Item::onItemRemoved(const Item &parentItem, int index) const
-{
-    assert(m_model);
-    m_model->onItemRemoved(parentItem, index);
 }
 
 // =============================================================================

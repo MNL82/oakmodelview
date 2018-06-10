@@ -30,9 +30,10 @@ public:
 
     void setModel(Model::OakModel* model);
 
-    void currentItemChanged();
-
 protected:
+    void currentItemChanged();
+    void itemBeforeRemoving(const Model::Item &item);
+
     void disableAllActions();
 
 protected slots:

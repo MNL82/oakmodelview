@@ -115,5 +115,38 @@ void Callback_ItemInt::trigger(const Item &parentItem, int index) const
     }
 }
 
+// =============================================================================
+// (public)
+Callback_Item::Callback_Item()
+{
+
+}
+
+// =============================================================================
+// (public)
+void Callback_Item::remove(void *funcObj)
+{
+    if (funcObj == nullptr) {
+        m_functionMap.clear();
+    } else {
+        auto it = m_functionMap.find(funcObj);
+        while (it != m_functionMap.end()) {
+            m_functionMap.erase(it);
+            it = m_functionMap.find(funcObj);
+        }
+    }
+}
+
+// =============================================================================
+// (public)
+void Callback_Item::trigger(const Item &parentItem) const
+{
+    for (auto func: m_functionMap)
+    {
+        //qDebug() << "Callback_Item::trigger()";
+        func.second(parentItem);
+    }
+}
+
 } // namespace Model
 } // namespace Oak

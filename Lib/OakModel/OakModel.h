@@ -69,6 +69,7 @@ protected:
     void onItemMoved(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
     void onItemCloned(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
     void onItemRemoved(const Item& parentItem, int index) const;
+    void onItemBeforeRemoving(const Item &item) const;
 
     void onItemValueChanged(const Item& item, int valueIndex) const;
 
@@ -83,6 +84,7 @@ public:
     Callback_ItemIntItemInt notifier_itemMoved;
     Callback_ItemIntItemInt notifier_itemCloned;
     Callback_ItemInt notifier_itemRemoved;
+    Callback_Item notifier_itemBeforeRemoving;
 
     Callback_ItemInt notifier_itemValueChanged;
 
