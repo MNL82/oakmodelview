@@ -65,7 +65,8 @@ public:
     void updateLabel();
 
 protected:
-    QString currentStylesheet(QColor color);
+    QString createStyleSheetCurrent(QColor color);
+    QString createStyleSheetNormal(QColor color);
     void updateFixedheight();
 
 protected slots:
@@ -91,6 +92,8 @@ protected:
     QWidget * m_childItemWidget = nullptr;
     QVBoxLayout * m_childItemLayout = nullptr;
 
+    QString m_styleSheetNormal;
+    QString m_styleSheetCurrent;
 };
 
 } // namespace View

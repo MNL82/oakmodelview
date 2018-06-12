@@ -32,6 +32,11 @@ namespace View {
 ListView::ListView(QWidget *parent)
     : QFrame(parent)
 {
+    m_scrollArea = new QScrollArea();
+    m_scrollArea->setFrameShape(QFrame::NoFrame);
+    m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // Update stylesheet
     QString styleSheet = ".QFrame {"
                          "  border: 1px solid rgba(0, 0, 0, 255);"
                          "  border-radius: 4px;"
@@ -46,13 +51,7 @@ ListView::ListView(QWidget *parent)
                          "  border-radius: 3px;"
                          "  border: 1px solid rgba(120, 120, 120, 255);"
                          "}";
-    styleSheet += createStyleSheep(QColor(50, 70, 200), 1);
-    styleSheet += createStyleSheep(QColor(80, 150, 50), 2);
 
-
-    m_scrollArea = new QScrollArea();
-    m_scrollArea->setFrameShape(QFrame::NoFrame);
-    m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setStyleSheet(styleSheet);
 
     // Horizontal line between scrollable existing items and draggable new items
@@ -308,24 +307,6 @@ void ListView::createDragItems() const
 void ListView::clearDragItems() const
 {
 
-}
-
-// =============================================================================
-// (protected)
-QString ListView::createStyleSheep(QColor color, int level)
-{
-    QString colorStr = QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
-    QString stylesheet = QString(".QFrame#level_%2 {"
-                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 100), stop: 0.4 rgba(%1, 100), stop: 1 white);"
-                                 "}"
-                                 ".QFrame#level_%2:hover {"
-                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white);"
-                                 "}"
-                                 ".QPushButton#level_%2:hover { "
-                                 "  background: rgba(%1, 100);"
-                                 "}").arg(colorStr).arg(level);
-    // "  border: 1px solid rgba(%1, 255);"
-    return stylesheet;
 }
 
 // =============================================================================

@@ -74,6 +74,7 @@ NodeDef &NodeDef::operator=(const NodeDef &copy)
     m_tagName = copy.m_tagName;
     m_derivedId = copy.m_derivedId;
     m_displayName = copy.m_displayName;
+    m_color = copy.m_color;
 
     m_derivedBase = copy.m_derivedBase;
     m_derivedDirectList.clear();
@@ -109,6 +110,7 @@ NodeDef &NodeDef::operator=(NodeDef &&move)
 {
     m_name = std::move(move.m_name);
     m_displayName = std::move(move.m_displayName);
+    m_color = std::move(move.m_color);
     m_tagName = std::move(move.m_tagName);
     m_derivedId = std::move(move.m_derivedId);
 
@@ -158,6 +160,33 @@ std::string NodeDef::displayName(bool basic) const
     } else {
         return m_name + "(" + inheritanceStr + ")";
     }
+}
+
+// =============================================================================
+// (public)
+bool NodeDef::hasColor() const
+{
+    if (m_color.isValid()) {
+        return true;
+    }
+    if (hasDerivedBase()) {
+        return derivedBase()->hasColor();
+    }
+    return false;
+}
+
+// =============================================================================
+// (public)
+const Color &NodeDef::color() const
+{
+    if (m_color.isValid()) {
+        return m_color;
+    }
+    if (hasDerivedBase()) {
+        return derivedBase()->color();
+    }
+    assert(false);
+    return m_color;
 }
 
 // =============================================================================

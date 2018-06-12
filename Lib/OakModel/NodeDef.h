@@ -28,6 +28,8 @@
 #include "ContainerDef.h"
 #include "ContainerGroupDef.h"
 
+#include "Color.h"
+
 #ifdef XML_BACKEND
 #include "XMLElement.h"
 #endif // XML_BACKEND
@@ -76,6 +78,9 @@ public:
 
     virtual std::string displayName(bool basic = false) const;
 
+    bool hasColor() const;
+    const Color &color() const;
+
     const NodeSettings& settings() const;
 
     NodeDefSPtr sPtr() const;
@@ -93,6 +98,8 @@ protected:
     std::string m_name;
 
     std::string m_displayName;
+
+    Color m_color;
 
     NodeSettings m_settings;
 

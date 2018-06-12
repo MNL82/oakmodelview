@@ -49,6 +49,14 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     layout->setSpacing(SPACING_H);
 
     if (m_depth > 0) {
+        QColor qColor(120,120,120);
+        if (m_item.def()->hasColor()) {
+            auto color = m_item.def()->color();
+            qColor = QColor(color.red(), color.green(), color.blue());
+        }
+        m_styleSheetNormal = createStyleSheetNormal(qColor);
+        m_styleSheetCurrent = createStyleSheetCurrent(qColor);
+
         m_itemFrame = new QFrame();
         m_itemFrame->setFocusPolicy(Qt::StrongFocus);
         m_itemFrame->setObjectName("level_" + QString::number(depth));
@@ -56,6 +64,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         m_itemFrame->setLineWidth(CONTENT_BORDER);
         m_itemFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         m_itemFrame->installEventFilter(this);
+        m_itemFrame->setStyleSheet(m_styleSheetNormal);
         auto itemHLayout = new QHBoxLayout();
         itemHLayout->setContentsMargins(5, CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN);
         itemHLayout->setSpacing(5);
@@ -315,7 +324,7 @@ bool ListViewItem::eventFilter(QObject *watched, QEvent *event)
 void ListViewItem::clearCurrent()
 {
     if (m_itemFrame) {
-        m_itemFrame->setStyleSheet("");
+        m_itemFrame->setStyleSheet(m_styleSheetNormal);
     }
 }
 
@@ -324,8 +333,7 @@ void ListViewItem::clearCurrent()
 void ListViewItem::setCurrent()
 {
     if (m_itemFrame) {
-        QString styleSheet = currentStylesheet(QColor(100, 100, 100));
-        m_itemFrame->setStyleSheet(styleSheet);
+        m_itemFrame->setStyleSheet(m_styleSheetCurrent);
     }
 }
 
@@ -341,11 +349,34 @@ void ListViewItem::updateLabel()
 
 // =============================================================================
 // (protected)
-QString ListViewItem::currentStylesheet(QColor color)
+QString ListViewItem::createStyleSheetCurrent(QColor color)
 {
     QString colorStr = QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
-    QString stylesheet = QString(".QFrame {"
+    QString stylesheet = QString(".QFrame { "
+                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white); "
+                                 "}"
+                                 ".QPushButton:hover { "
+                                 "  background: rgba(%1, 100);"
+                                 "}").arg(colorStr);
+    return stylesheet;
+}
+
+// =============================================================================
+// (protected)
+QString ListViewItem::createStyleSheetNormal(QColor color)
+{
+    QString colorStr = QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
+    QString stylesheet = QString(".QFrame { "
+                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 100), stop: 0.4 rgba(%1, 100), stop: 1 white); "
+                                 "}"
+                                 ".QFrame:hover {"
                                  "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white);"
+                                 "}"
+                                 ".QFrame:focus {"
+                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white);"
+                                 "}"
+                                 ".QPushButton:hover { "
+                                 "  background: rgba(%1, 100);"
                                  "}").arg(colorStr);
     return stylesheet;
 }

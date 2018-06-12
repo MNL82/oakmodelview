@@ -233,6 +233,15 @@ NodeDefBuilderSPtr NodeDefBuilder::setDisplayName(const std::string& displayName
     return m_thisWPtr.lock();
 }
 
+// =============================================================================
+// (public)
+NodeDefBuilderSPtr NodeDefBuilder::setColor(int red, int green, int blue, int alpha)
+{
+    assert(m_nodeDef);
+    m_nodeDef->m_color.set(red, green, blue, alpha);
+    return m_thisWPtr.lock();
+}
+
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)

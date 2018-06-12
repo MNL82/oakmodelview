@@ -50,6 +50,8 @@ public:
 
     NodeDefBuilderSPtr setDisplayName(const std::string& displayName);
 
+    NodeDefBuilderSPtr setColor(int red, int green, int blue, int alpha = 255);
+
 #ifdef XML_BACKEND
     NodeDefBuilderSPtr setTagName(const std::string& tagName);
 #endif // XML_BACKEND
