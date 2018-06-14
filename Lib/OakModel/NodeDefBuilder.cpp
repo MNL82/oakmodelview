@@ -241,6 +241,14 @@ NodeDefBuilderSPtr NodeDefBuilder::setColor(int red, int green, int blue, int al
     m_nodeDef->m_color.set(red, green, blue, alpha);
     return m_thisWPtr.lock();
 }
+// =============================================================================
+// (public)
+NodeDefBuilderSPtr NodeDefBuilder::setImagePath(const std::string &imagePath)
+{
+    assert(m_nodeDef);
+    m_nodeDef->m_imagePath = imagePath;
+    return m_thisWPtr.lock();
+}
 
 #ifdef XML_BACKEND
 // =============================================================================

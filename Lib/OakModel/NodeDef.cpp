@@ -191,6 +191,33 @@ const Color &NodeDef::color() const
 
 // =============================================================================
 // (public)
+bool NodeDef::hasImagePath() const
+{
+    if (!m_imagePath.empty()) {
+        return true;
+    }
+    if (hasDerivedBase()) {
+        return derivedBase()->hasImagePath();
+    }
+    return false;
+}
+
+// =============================================================================
+// (public)
+const std::string &NodeDef::imagePath() const
+{
+    if (!m_imagePath.empty()) {
+        return m_imagePath;
+    }
+    if (hasDerivedBase()) {
+        return derivedBase()->imagePath();
+    }
+    assert(false);
+    return m_imagePath;
+}
+
+// =============================================================================
+// (public)
 const NodeSettings &NodeDef::settings() const
 {
     return m_settings;

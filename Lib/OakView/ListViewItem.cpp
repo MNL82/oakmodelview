@@ -69,6 +69,20 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
         itemHLayout->setContentsMargins(5, CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN);
         itemHLayout->setSpacing(5);
 
+        if (m_item.def()->hasImagePath()) {
+            QPixmap image(QString::fromStdString(m_item.def()->imagePath()));
+            if (!image.isNull()) {
+                if (image.width() != 24 || image.height() != 24) {
+                    image = image.scaled(24, 24);
+                }
+                QLabel *imageLabel = new QLabel();
+                imageLabel->setFixedHeight(24);
+                imageLabel->setFixedWidth(24);
+                imageLabel->setPixmap(image);
+                itemHLayout->addWidget(imageLabel);
+            }
+        }
+
         QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
         m_label = new QLabel(name);
         m_label->setStyleSheet("Text-align:left");

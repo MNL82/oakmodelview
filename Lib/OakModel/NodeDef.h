@@ -81,6 +81,9 @@ public:
     bool hasColor() const;
     const Color &color() const;
 
+    bool hasImagePath() const;
+    const std::string &imagePath() const;
+
     const NodeSettings& settings() const;
 
     NodeDefSPtr sPtr() const;
@@ -100,6 +103,8 @@ protected:
     std::string m_displayName;
 
     Color m_color;
+
+    std::string m_imagePath;
 
     NodeSettings m_settings;
 
