@@ -89,6 +89,8 @@ ListView::ListView(QWidget *parent)
     setLayout(mainLayout);
 }
 
+// =============================================================================
+// (public)
 ListView::~ListView()
 {
 
@@ -170,13 +172,15 @@ void ListView::currentItemChanged()
     if (m_currentViewItem) {
         m_currentViewItem->setCurrent();
         connect(m_currentViewItem, SIGNAL(destroyed()), this, SLOT(onCurrentItemViewDestoyed()));
-    }
 
-    // Make current items visible
-    ListViewItem * pItem = currentViewItem->parent();
-    while (pItem != m_rootItem) {
-        pItem->setExspanded(true);
-        pItem = pItem->parent();
+        // Make current items visible
+        ListViewItem * pItem = m_currentViewItem->parent();
+        if (pItem != nullptr) {
+            while (pItem != m_rootItem) {
+                pItem->setExspanded(true);
+                pItem = pItem->parent();
+            }
+        }
     }
 }
 
