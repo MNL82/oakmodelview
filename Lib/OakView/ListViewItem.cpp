@@ -256,7 +256,7 @@ void ListViewItem::onItemInserted(int index)
         m_exspandbuttom->setEnabled(true);
         setExspanded(isExspanded());
     } else {
-        onHeightChanged(w->sizeHint().height());
+        onHeightChanged(w->sizeHint().height() + SPACING_H);
     }
 }
 
@@ -269,7 +269,7 @@ void ListViewItem::onItemRemoved(int index)
     QLayoutItem * layoutItem = m_childItemLayout->takeAt(index);
     QWidget * w = layoutItem->widget();
 
-    onHeightChanged(-w->sizeHint().height());
+    onHeightChanged(-w->sizeHint().height() - SPACING_H);
     if (m_childItemLayout->count() == 0) {
         m_exspandbuttom->setEnabled(false);
         m_childItemWidget->setHidden(true);
@@ -409,6 +409,7 @@ void ListViewItem::updateFixedheight()
             height += m_childItemLayout->itemAt(i)->widget()->sizeHint().height() +  SPACING_H;
         }
     }
+    if (height == m_height) { return; }
     int change = height - m_height;
     m_height = height;
     setFixedHeight(m_height);

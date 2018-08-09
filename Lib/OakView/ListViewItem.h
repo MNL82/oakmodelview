@@ -77,7 +77,7 @@ signals:
     void heightChanged(int change);
 
 protected:
-    int m_height;
+    int m_height = -1;
     int m_depth;
     int m_childCount = 0;
 
