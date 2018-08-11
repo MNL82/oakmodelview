@@ -21,6 +21,20 @@ TableView::~TableView()
 
 // =============================================================================
 // (public)
+void TableView::setBaseRef(Model::QueryRefSPtr baseRef)
+{
+    m_baseRef = baseRef;
+}
+
+// =============================================================================
+// (public)
+void TableView::addValueRef(Model::QueryRefSPtr valueRef)
+{
+    m_valueRefList.push_back(valueRef);
+}
+
+// =============================================================================
+// (public)
 void TableView::setOakModel(Model::OakModel *model)
 {
     if (m_model == model) { return; }
@@ -69,6 +83,7 @@ void TableView::setRootItem(const Model::Item &item)
     }
     m_rootItem = item;
 
+    clearContents();
 
 }
 

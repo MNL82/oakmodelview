@@ -16,6 +16,9 @@ public:
     TableView(QWidget *parent = nullptr);
     virtual ~TableView() override;
 
+    void setBaseRef(Model::QueryRefSPtr baseRef);
+    void addValueRef(Model::QueryRefSPtr valueRef);
+
     void setOakModel(Model::OakModel* model);
     void setRootItem(const Model::Item& item);
 
@@ -28,6 +31,8 @@ public:
 protected:
     Model::OakModel * m_model = nullptr;
     Model::Item m_rootItem;
+    Model::QueryRefSPtr m_baseRef;
+    std::vector<Model::QueryRefSPtr> m_valueRefList;
 };
 
 } // namespace View
