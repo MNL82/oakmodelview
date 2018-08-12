@@ -1,0 +1,393 @@
+
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="NovoNordisk.DataService.Compounds.Data" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="CompoundAnnotation">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="ProjectNo" Type="Edm.String" />
+        <Property Name="Topic" Type="Edm.String" />
+        <Property Name="Annotation" Type="Edm.String" />
+        <Property Name="IdTopic" Type="Edm.Int64" Nullable="false" />
+        <Property Name="IdProject" Type="Edm.Int64" Nullable="false" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CompoundKeyword">
+        <Key>
+          <PropertyRef Name="IdKeyword" />
+        </Key>
+        <Property Name="IdKeyword" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Keyword" Type="Edm.String" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CompoundProject">
+        <Key>
+          <PropertyRef Name="IdProject" />
+        </Key>
+        <Property Name="IdProject" Type="Edm.Int64" Nullable="false" />
+        <Property Name="ProjectNo" Type="Edm.String" />
+        <Property Name="ProjectName" Type="Edm.String" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+        <NavigationProperty Name="Formulation" Type="NovoNordisk.DataService.Compounds.Data.Formulation" />
+      </EntityType>
+      <EntityType Name="CompoundRelation">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Type" Type="Edm.String" />
+        <Property Name="Qualifier" Type="Edm.String" />
+        <Property Name="NameFrom" Type="Edm.String" />
+        <Property Name="IdFrom" Type="Edm.Int64" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CompoundOtherName">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="OtherName" Type="Edm.String" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CompoundBatchNo">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="BatchNo" Type="Edm.String" />
+        <Property Name="BatchNo1" Type="Edm.Int32" />
+        <Property Name="BatchNo2" Type="Edm.String" />
+        <Property Name="JournalNo" Type="Edm.String" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+      </EntityType>
+      <EntityType Name="CalculatedProperty">
+        <Key>
+          <PropertyRef Name="IdCompound" />
+          <PropertyRef Name="IdProperty" />
+        </Key>
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+        <Property Name="IdProperty" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="MethodRemarks" Type="Edm.String" />
+        <Property Name="Value" Type="Edm.Decimal" />
+        <Property Name="ValueAsText" Type="Edm.String" />
+        <Property Name="Unit" Type="Edm.String" />
+        <Property Name="CalculationDate" Type="Edm.DateTimeOffset" />
+      </EntityType>
+      <EntityType Name="Molecule">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="NNCNo" Type="Edm.String" />
+        <Property Name="ProjectNo" Type="Edm.String" />
+        <Property Name="GroupNo" Type="Edm.String" />
+        <Property Name="SerialNo" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="ElnExperimentNo" Type="Edm.String" />
+        <Property Name="Scientist" Type="Edm.String" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="DateCreated" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Locked" Type="Edm.String" />
+        <Property Name="CurrentUserMayUpdate" Type="Edm.String" />
+        <Property Name="Batches" Type="Edm.String" />
+        <Property Name="Projects" Type="Edm.String" />
+        <Property Name="OtherNames" Type="Edm.String" />
+        <Property Name="Keywords" Type="Edm.String" />
+        <Property Name="Annotations" Type="Edm.String" />
+        <Property Name="Selected" Type="Edm.String" />
+        <Property Name="Remarks" Type="Edm.String" />
+        <Property Name="LineageDerivedFrom" Type="Edm.String" />
+        <Property Name="LineageProcessedFrom" Type="Edm.String" />
+        <Property Name="LineageModifiedFrom" Type="Edm.String" />
+        <Property Name="LineageProcessedUsing" Type="Edm.String" />
+        <Property Name="LineageModifiedUsing" Type="Edm.String" />
+        <Property Name="Stereo" Type="Edm.String" />
+        <Property Name="Molweight" Type="Edm.Decimal" Nullable="false" />
+        <Property Name="Molformula" Type="Edm.String" />
+        <Property Name="Provenance" Type="Edm.String" />
+        <Property Name="IsRedacted" Type="Edm.String" />
+        <NavigationProperty Name="Molfile" Type="NovoNordisk.DataService.Compounds.Data.Molfile" />
+        <NavigationProperty Name="NNASProt" Type="NovoNordisk.DataService.Compounds.Data.NNASProt" />
+        <NavigationProperty Name="WritableMolecule" Type="NovoNordisk.DataService.Compounds.Data.WritableMolecule" />
+        <NavigationProperty Name="AnnotationList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundAnnotation)" />
+        <NavigationProperty Name="OtherNamesList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundOtherName)" />
+        <NavigationProperty Name="RelationList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundRelation)" />
+        <NavigationProperty Name="ProjectList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundProject)" />
+        <NavigationProperty Name="KeywordList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundKeyword)" />
+        <NavigationProperty Name="BatchNoList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundBatchNo)" />
+        <NavigationProperty Name="CalculatedProperties" Type="Collection(NovoNordisk.DataService.Compounds.Data.CalculatedProperty)" />
+      </EntityType>
+      <EntityType Name="WritableMolecule">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="NNCNo" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Scientist" Type="Edm.String" />
+        <Property Name="Locked" Type="Edm.String" />
+        <Property Name="Selected" Type="Edm.String" />
+        <Property Name="Remarks" Type="Edm.String" />
+        <Property Name="Molfile" Type="Edm.String" />
+        <Property Name="NNASProt" Type="Edm.String" />
+        <NavigationProperty Name="Molecule" Type="NovoNordisk.DataService.Compounds.Data.Molecule" />
+      </EntityType>
+      <EntityType Name="Molfile">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="NNCNo" Type="Edm.String" />
+        <Property Name="Content" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="NNASProt">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="NNCNo" Type="Edm.String" />
+        <Property Name="Content" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="Formulation">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="NNCNo" Type="Edm.String" />
+        <Property Name="ProjectNo" Type="Edm.String" />
+        <Property Name="GroupNo" Type="Edm.String" />
+        <Property Name="SerialNo" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="ElnExperimentNo" Type="Edm.String" />
+        <Property Name="Scientist" Type="Edm.String" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="DateCreated" Type="Edm.DateTimeOffset" Nullable="false" />
+        <Property Name="Locked" Type="Edm.String" />
+        <Property Name="CurrentUserMayUpdate" Type="Edm.String" />
+        <Property Name="Batches" Type="Edm.String" />
+        <Property Name="Projects" Type="Edm.String" />
+        <Property Name="OtherNames" Type="Edm.String" />
+        <Property Name="Keywords" Type="Edm.String" />
+        <Property Name="Annotations" Type="Edm.String" />
+        <Property Name="Selected" Type="Edm.String" />
+        <Property Name="Remarks" Type="Edm.String" />
+        <Property Name="LineageDerivedFrom" Type="Edm.String" />
+        <Property Name="Ph" Type="Edm.String" />
+        <Property Name="RouteOfAdministration" Type="Edm.String" />
+        <Property Name="DosageForm" Type="Edm.String" />
+        <Property Name="NoOfComponents" Type="Edm.Decimal" />
+        <Property Name="Components" Type="Edm.String" />
+        <Property Name="IsRedacted" Type="Edm.String" />
+        <NavigationProperty Name="AnnotationList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundAnnotation)" />
+        <NavigationProperty Name="KeywordList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundKeyword)" />
+        <NavigationProperty Name="OtherNamesList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundOtherName)" />
+        <NavigationProperty Name="ProjectList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundProject)" />
+        <NavigationProperty Name="RelationList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundRelation)" />
+        <NavigationProperty Name="ComponentList" Type="Collection(NovoNordisk.DataService.Compounds.Data.FormulationComponent)" />
+        <NavigationProperty Name="WritableFormulation" Type="NovoNordisk.DataService.Compounds.Data.WritableFormulation" />
+        <NavigationProperty Name="BatchNoList" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundBatchNo)" />
+        <NavigationProperty Name="CalculatedProperties" Type="Collection(NovoNordisk.DataService.Compounds.Data.CalculatedProperty)" />
+      </EntityType>
+      <EntityType Name="WritableFormulation">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="NNCNo" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Scientist" Type="Edm.String" />
+        <Property Name="Locked" Type="Edm.String" />
+        <Property Name="Selected" Type="Edm.String" />
+        <Property Name="Remarks" Type="Edm.String" />
+        <Property Name="Ph" Type="Edm.String" />
+        <Property Name="RouteOfAdministration" Type="Edm.String" />
+        <Property Name="DosageForm" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="FormulationComponent">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="LineNo" Type="Edm.Decimal" />
+        <Property Name="Source" Type="Edm.String" />
+        <Property Name="IdCompoundComponent" Type="Edm.Int64" />
+        <Property Name="IdStandardComponent" Type="Edm.Int64" />
+        <Property Name="Concentration" Type="Edm.Decimal" />
+        <Property Name="ConcentrationUnit" Type="Edm.String" />
+        <Property Name="ConcentrationAsText" Type="Edm.String" />
+        <Property Name="Remarks" Type="Edm.String" />
+        <Property Name="IdCompound" Type="Edm.Int64" Nullable="false" />
+      </EntityType>
+      <EntityType Name="StandardComponent">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="OtherNames" Type="Edm.String" />
+        <Property Name="IdCompound" Type="Edm.Int64" />
+      </EntityType>
+      <EntityType Name="RoutesOfAdministration">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="DosageForm">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+      </EntityType>
+      <Action Name="UpsertMolecule" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.WritableMolecule)" />
+        <Parameter Name="molecule" Type="NovoNordisk.DataService.Compounds.Data.WritableMolecule" />
+        <Parameter Name="keywords" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundKeyword)" />
+        <Parameter Name="projects" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundProject)" />
+        <Parameter Name="relations" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundRelation)" />
+        <Parameter Name="annotations" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundAnnotation)" />
+        <Parameter Name="otherNames" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundOtherName)" />
+        <ReturnType Type="NovoNordisk.DataService.Compounds.Data.WritableMolecule" />
+      </Action>
+      <Function Name="Search" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="top" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="skip" Type="Edm.Int32" Nullable="false" />
+        <Parameter Name="nncNo" Type="Edm.String" />
+        <Parameter Name="name" Type="Edm.String" />
+        <Parameter Name="createdBy" Type="Edm.String" />
+        <Parameter Name="batchNo" Type="Edm.String" />
+        <Parameter Name="fromDate" Type="Edm.String" />
+        <Parameter Name="toDate" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Function>
+      <Action Name="FindMolfileDuplicates" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="molfile" Type="Edm.String" />
+        <Parameter Name="nncNoToIgnore" Type="Edm.String" />
+        <Parameter Name="UseDirect" Type="Edm.Boolean" />
+        <ReturnType Type="Collection(Edm.String)" />
+      </Action>
+      <Action Name="FindNNASProtDuplicates" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="NNASProt" Type="Edm.String" />
+        <Parameter Name="nncNoToIgnore" Type="Edm.String" />
+        <ReturnType Type="Collection(Edm.String)" />
+      </Action>
+      <Action Name="AddPlasmidReference" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="nncNo" Type="Edm.String" />
+        <Parameter Name="plasmidId" Type="Edm.Int64" Nullable="false" />
+      </Action>
+      <Action Name="ExactSequenceSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="sequenceQuery" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Action>
+      <Action Name="SubSequenceSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="sequenceQuery" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Action>
+      <Action Name="ExactCTABSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="molfileQuery" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Action>
+      <Action Name="SubstructCTABSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="molfileQuery" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Action>
+      <Action Name="ExactNNASProtSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="NNASProtQuery" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Action>
+      <Action Name="TextNNASProtSearch" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+        <Parameter Name="textQuery" Type="Edm.String" />
+        <ReturnType Type="Collection(NovoNordisk.DataService.Compounds.Data.Molecule)" />
+      </Action>
+      <Action Name="FindDuplicates" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.Formulation)" />
+        <Parameter Name="ph" Type="Edm.String" />
+        <Parameter Name="components" Type="Collection(NovoNordisk.DataService.Compounds.Data.FormulationComponent)" />
+        <Parameter Name="nncNoToIgnore" Type="Edm.String" />
+        <ReturnType Type="Collection(Edm.String)" />
+      </Action>
+      <Action Name="UpsertFormulation" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.WritableFormulation)" />
+        <Parameter Name="formulation" Type="NovoNordisk.DataService.Compounds.Data.WritableFormulation" />
+        <Parameter Name="components" Type="Collection(NovoNordisk.DataService.Compounds.Data.FormulationComponent)" />
+        <Parameter Name="removedComponents" Type="Collection(NovoNordisk.DataService.Compounds.Data.FormulationComponent)" />
+        <Parameter Name="keywords" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundKeyword)" />
+        <Parameter Name="projects" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundProject)" />
+        <Parameter Name="relations" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundRelation)" />
+        <Parameter Name="annotations" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundAnnotation)" />
+        <Parameter Name="otherNames" Type="Collection(NovoNordisk.DataService.Compounds.Data.CompoundOtherName)" />
+        <ReturnType Type="NovoNordisk.DataService.Compounds.Data.WritableFormulation" />
+      </Action>
+      <Action Name="UpsertFormulationComponent" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.FormulationComponent)" />
+        <Parameter Name="component" Type="NovoNordisk.DataService.Compounds.Data.FormulationComponent" />
+        <ReturnType Type="NovoNordisk.DataService.Compounds.Data.FormulationComponent" />
+      </Action>
+      <Action Name="DeleteFormulationComponent" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(NovoNordisk.DataService.Compounds.Data.FormulationComponent)" />
+        <Parameter Name="component" Type="NovoNordisk.DataService.Compounds.Data.FormulationComponent" />
+      </Action>
+      <EntityContainer Name="NNCompoundsContainer">
+        <EntitySet Name="CompoundAnnotations" EntityType="NovoNordisk.DataService.Compounds.Data.CompoundAnnotation" />
+        <EntitySet Name="CompoundKeywords" EntityType="NovoNordisk.DataService.Compounds.Data.CompoundKeyword" />
+        <EntitySet Name="CompoundProjects" EntityType="NovoNordisk.DataService.Compounds.Data.CompoundProject">
+          <NavigationPropertyBinding Path="Formulation" Target="Formulations" />
+        </EntitySet>
+        <EntitySet Name="CompoundRelations" EntityType="NovoNordisk.DataService.Compounds.Data.CompoundRelation" />
+        <EntitySet Name="CompoundOtherNames" EntityType="NovoNordisk.DataService.Compounds.Data.CompoundOtherName" />
+        <EntitySet Name="CompoundBatchNos" EntityType="NovoNordisk.DataService.Compounds.Data.CompoundBatchNo" />
+        <EntitySet Name="CalculatedProperties" EntityType="NovoNordisk.DataService.Compounds.Data.CalculatedProperty" />
+        <EntitySet Name="Molecules" EntityType="NovoNordisk.DataService.Compounds.Data.Molecule">
+          <NavigationPropertyBinding Path="Molfile" Target="Molfiles" />
+          <NavigationPropertyBinding Path="NNASProt" Target="NNASProts" />
+          <NavigationPropertyBinding Path="WritableMolecule" Target="WritableMolecules" />
+          <NavigationPropertyBinding Path="AnnotationList" Target="CompoundAnnotations" />
+          <NavigationPropertyBinding Path="OtherNamesList" Target="CompoundOtherNames" />
+          <NavigationPropertyBinding Path="RelationList" Target="CompoundRelations" />
+          <NavigationPropertyBinding Path="ProjectList" Target="CompoundProjects" />
+          <NavigationPropertyBinding Path="KeywordList" Target="CompoundKeywords" />
+          <NavigationPropertyBinding Path="BatchNoList" Target="CompoundBatchNos" />
+          <NavigationPropertyBinding Path="CalculatedProperties" Target="CalculatedProperties" />
+        </EntitySet>
+        <EntitySet Name="WritableMolecules" EntityType="NovoNordisk.DataService.Compounds.Data.WritableMolecule">
+          <NavigationPropertyBinding Path="Molecule" Target="Molecules" />
+        </EntitySet>
+        <EntitySet Name="Molfiles" EntityType="NovoNordisk.DataService.Compounds.Data.Molfile" />
+        <EntitySet Name="NNASProts" EntityType="NovoNordisk.DataService.Compounds.Data.NNASProt" />
+        <EntitySet Name="Formulations" EntityType="NovoNordisk.DataService.Compounds.Data.Formulation">
+          <NavigationPropertyBinding Path="AnnotationList" Target="CompoundAnnotations" />
+          <NavigationPropertyBinding Path="KeywordList" Target="CompoundKeywords" />
+          <NavigationPropertyBinding Path="OtherNamesList" Target="CompoundOtherNames" />
+          <NavigationPropertyBinding Path="ProjectList" Target="CompoundProjects" />
+          <NavigationPropertyBinding Path="RelationList" Target="CompoundRelations" />
+          <NavigationPropertyBinding Path="ComponentList" Target="FormulationComponents" />
+          <NavigationPropertyBinding Path="WritableFormulation" Target="WritableFormulations" />
+          <NavigationPropertyBinding Path="BatchNoList" Target="CompoundBatchNos" />
+          <NavigationPropertyBinding Path="CalculatedProperties" Target="CalculatedProperties" />
+        </EntitySet>
+        <EntitySet Name="WritableFormulations" EntityType="NovoNordisk.DataService.Compounds.Data.WritableFormulation" />
+        <EntitySet Name="FormulationComponents" EntityType="NovoNordisk.DataService.Compounds.Data.FormulationComponent" />
+        <EntitySet Name="StandardComponents" EntityType="NovoNordisk.DataService.Compounds.Data.StandardComponent" />
+        <EntitySet Name="RoutesOfAdministration" EntityType="NovoNordisk.DataService.Compounds.Data.RoutesOfAdministration" />
+        <EntitySet Name="DosageForms" EntityType="NovoNordisk.DataService.Compounds.Data.DosageForm" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

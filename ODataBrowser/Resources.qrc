@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>Resources/doc_64.png</file>
+        <file>Resources/folder_64.png</file>
+        <file>Resources/save_64.png</file>
+        <file>Resources/save-as-64.png</file>
+    </qresource>
+</RCC>
