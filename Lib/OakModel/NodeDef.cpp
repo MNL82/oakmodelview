@@ -29,6 +29,12 @@ NodeDef::NodeDef(const std::string &_name)
     assert(!_name.empty());
 
     m_name = _name;
+
+#ifdef XML_BACKEND
+    if (XML::Element::validateTagName(_name)) {
+        m_tagName = _name;
+    }
+#endif // XML_BACKEND
 }
 
 // =============================================================================
@@ -40,6 +46,12 @@ NodeDef::NodeDef(const std::string &_name, const UnionRef &_derivedId)
 
     m_name = _name;
     m_derivedId = _derivedId;
+
+#ifdef XML_BACKEND
+    if (XML::Element::validateTagName(_name)) {
+        m_tagName = _name;
+    }
+#endif // XML_BACKEND
 }
 
 // =============================================================================

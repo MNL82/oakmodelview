@@ -20,13 +20,6 @@ namespace Model {
 NodeDefBuilder::NodeDefBuilder(const std::string &name)
 {
     m_nodeDef = NodeDef::MakeSPtr(name);
-
-#ifdef XML_BACKEND
-    if (XML::Element::validateTagName(name)) {
-        m_nodeDef->m_tagName = name;
-    }
-#endif // XML_BACKEND
-
 }
 
 // =============================================================================
@@ -34,12 +27,6 @@ NodeDefBuilder::NodeDefBuilder(const std::string &name)
 NodeDefBuilder::NodeDefBuilder(const std::string &name, const UnionRef &derivedId)
 {
     m_nodeDef = NodeDef::MakeSPtr(name, derivedId);
-
-#ifdef XML_BACKEND
-    if (XML::Element::validateTagName(name)) {
-        m_nodeDef->m_tagName = name;
-    }
-#endif // XML_BACKEND
 }
 
 // =============================================================================

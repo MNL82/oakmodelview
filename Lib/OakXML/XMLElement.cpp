@@ -427,7 +427,7 @@ bool Element::validateTagName(const std::string &tagName)
 {
     static std::regex reserved_text("^[xX][mM][lL].*");
     static std::regex start_with("^[a-zA-Z_].*");
-    static std::regex valid_chars("^[a-zA-Z0-9_\\-\\.]+$");
+    static std::regex valid_chars("^[a-zA-Z0-9_\\-\\.:]+$");
 
 
     return !std::regex_match(tagName, reserved_text) &&
@@ -438,7 +438,7 @@ bool Element::validateTagName(const std::string &tagName)
 bool Element::validateAttributeName(const std::string &attributeName)
 {
     static std::regex start_with("^[a-zA-Z_].*");
-    static std::regex valid_chars("^[a-zA-Z0-9_\\-\\.]+$");
+    static std::regex valid_chars("^[a-zA-Z0-9_\\-\\.:]+$");
 
     return std::regex_match(attributeName, start_with) &&
            std::regex_match(attributeName, valid_chars);
