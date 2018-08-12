@@ -14,7 +14,8 @@ SOURCES += \
     $$PWD/ContainerGroupDef.cpp \
     $$PWD/ModelDesignDef.cpp \
     $$PWD/NodeDef.cpp \
-    $$PWD/ValueDef.cpp
+    $$PWD/ValueDef.cpp \
+    $$PWD/ODataMetadataDef.cpp
 
 HEADERS += \
     $$PWD/ValueSettings.h \
@@ -24,4 +25,5 @@ HEADERS += \
     $$PWD/ModelDesignDef.h \
     $$PWD/ContainerGroupDef.h \
     $$PWD/ContainerDef.h \
-    $$PWD/ValueDef.h
+    $$PWD/ValueDef.h \
+    $$PWD/ODataMetadataDef.h
