@@ -10,24 +10,42 @@
 
 #pragma once
 
-#include "Query.h"
+#include "Item.h"
 
 namespace Oak {
 namespace Model {
 
+class ItemQuery;
+typedef std::unique_ptr<ItemQuery> ItemQueryUPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
-class QueryIgnore : public Query
+class ItemQuery
 {
 public:
-    QueryIgnore();
+    ItemQuery();
+    virtual ~ItemQuery();
 
-    virtual bool moveNext() override;
+    void reset(const Item &refItem);
+    virtual bool moveNext();
+    const Item &current(bool recursive = true) const;
+
+    int count(const Item &item);
+    std::vector<Item> itemList(const Item &item);
+
+    ItemQuery *childQuery();
 
 protected:
-    virtual bool moveCurrentNext() override;
+    void add(ItemQueryUPtr query);
+    virtual bool moveCurrentNext() = 0;
 
+protected:
+    Item m_refItem;
+    Item m_currentItem;
+    ItemQueryUPtr m_childQueryUPtr = ItemQueryUPtr();
+
+    friend class QueryBuilder;
 };
 
 } // namespace Model

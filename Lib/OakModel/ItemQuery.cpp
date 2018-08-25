@@ -8,7 +8,11 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "Query.h"
+#include "ItemQuery.h"
+
+#include "ItemQueryChildren.h"
+#include "ItemQueryParent.h"
+#include "ItemQueryIgnoreSelf.h"
 
 #include <utility>
 
@@ -17,42 +21,38 @@ namespace Model {
 
 // =============================================================================
 // (public)
-Query::Query()
+ItemQuery::ItemQuery()
 {
 
 }
 
 // =============================================================================
 // (public)
-Query::~Query()
+ItemQuery::~ItemQuery()
 {
-    if (m_childQuery) {
-        delete m_childQuery;
-        m_childQuery = nullptr;
-    }
 }
 
 // =============================================================================
 // (public)
-void Query::reset(Item refItem)
+void ItemQuery::reset(const Item &refItem)
 {
-    m_refItem = std::move(refItem);
+    m_refItem = refItem;
     if (!m_currentItem.isNull()) {
         m_currentItem.clear();
-        if (m_childQuery) {
-            m_childQuery->reset(m_currentItem);
+        if (m_childQueryUPtr) {
+            m_childQueryUPtr->reset(m_currentItem);
         }
     }
 }
 
 // =============================================================================
 // (public)
-bool Query::moveNext()
+bool ItemQuery::moveNext()
 {
     assert(!m_refItem.isNull());
 
     // Skip recursive iteration if there are no child query
-    if (!m_childQuery) {
+    if (!m_childQueryUPtr) {
         return moveCurrentNext();
     }
 
@@ -60,16 +60,16 @@ bool Query::moveNext()
     if (m_currentItem.isNull()) {
         // First item
         if (moveCurrentNext()) {
-            m_childQuery->reset(m_currentItem);
+            m_childQueryUPtr->reset(m_currentItem);
         } else {
             return false;
         }
     }
 
     // Find the next child current item
-    while (!m_childQuery->moveNext()) {
+    while (!m_childQueryUPtr->moveNext()) {
         if (moveCurrentNext()) {
-            m_childQuery->reset(m_currentItem);
+            m_childQueryUPtr->reset(m_currentItem);
         } else {
             // There are no more items in the query
             return false;
@@ -80,30 +80,59 @@ bool Query::moveNext()
 
 // =============================================================================
 // (public)
-const Item& Query::current(bool recursive) const
+const Item& ItemQuery::current(bool recursive) const
 {
-    if (recursive && m_childQuery) {
-        return m_childQuery->current();
+    if (recursive && m_childQueryUPtr) {
+        return m_childQueryUPtr->current();
     }
     return m_currentItem;
 }
 
 // =============================================================================
 // (public)
-void Query::add(Query *query)
+int ItemQuery::count(const Item &item)
 {
-    if (m_childQuery) {
-        m_childQuery->add(query);
-    } else {
-        m_childQuery = query;
+    if (!m_childQueryUPtr) { return -1; }
+
+    m_childQueryUPtr->reset(item);
+    int count = 0;
+    while(m_childQueryUPtr->moveNext()) {
+        count++;
     }
+    return count;
 }
 
 // =============================================================================
 // (public)
-Query *Query::childQuery()
+std::vector<Item> ItemQuery::itemList(const Item &item)
 {
-    return m_childQuery;
+    std::vector<Item> itemList;
+    if (!m_childQueryUPtr) { return itemList; }
+
+    m_childQueryUPtr->reset(item);
+    while(m_childQueryUPtr->moveNext()) {
+        itemList.push_back(m_childQueryUPtr->current());
+    }
+
+    return itemList;
+}
+
+// =============================================================================
+// (public)
+ItemQuery *ItemQuery::childQuery()
+{
+    return m_childQueryUPtr.get();
+}
+
+// =============================================================================
+// (protected)
+void ItemQuery::add(ItemQueryUPtr query)
+{
+    if (m_childQueryUPtr) {
+        m_childQueryUPtr->add(std::move(query));
+    } else {
+        m_childQueryUPtr = std::move(query);
+    }
 }
 
 } // namespace Model

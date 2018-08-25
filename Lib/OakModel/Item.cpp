@@ -11,8 +11,9 @@
 #include "Item.h"
 
 #include "OakModel.h"
-#include "QueryBase.h"
+#include "ValueQuery.h"
 #include "ServiceFunctions.h"
+#include "QueryBuilder.h"
 
 #include <algorithm>
 
@@ -646,7 +647,7 @@ void Item::updateUniqueValues(Item item)
             vIt->settings().value(UNIQUE) > 0 &&
             vIt->hasDefaultValue()) {
 
-            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->parent()->children(item.def()->name())->toList<std::string>(vIt->name());
+            std::vector<std::string> valueList = QB::createParent()->children(item.def()->name())->ValueUPtr(vIt->name())->toValueList<std::string>(item);
             std::string value = vIt->value<std::string>();
             if (count(valueList, value) == 1) {
                 return;

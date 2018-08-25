@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Item.h"
+#include "ItemQuery.h"
 
 namespace Oak {
 namespace Model {
@@ -18,27 +18,16 @@ namespace Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class Query
+class ItemQueryIgnoreSelf : public ItemQuery
 {
 public:
-    Query();
-    virtual ~Query();
+    ItemQueryIgnoreSelf();
 
-    void reset(Item refItem);
-    virtual bool moveNext();
-    const Item &current(bool recursive = true) const;
-
-    void add(Query *query);
-
-    Query * childQuery();
+    virtual bool moveNext() override;
 
 protected:
-    virtual bool moveCurrentNext() = 0;
+    virtual bool moveCurrentNext() override;
 
-protected:
-    Item m_refItem;
-    Item m_currentItem;
-    Query *m_childQuery = nullptr;
 };
 
 } // namespace Model

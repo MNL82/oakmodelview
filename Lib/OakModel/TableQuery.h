@@ -10,25 +10,26 @@
 
 #pragma once
 
-#include "Query.h"
+#include "ValueQuery.h"
 
 namespace Oak {
 namespace Model {
 
+class TableQuery;
+typedef std::shared_ptr<TableQuery> TableQuerySPtr;
+typedef std::weak_ptr<TableQuery> TableQueryWPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
-class QueryChildren : public Query
+class TableQuery
 {
-public:
-    QueryChildren(const std::string &nodeName);
-
 protected:
-    virtual bool moveCurrentNext() override;
+    TableQuery(ItemQueryUPtr itemQuery);
 
-protected:
-    std::string m_nodeName;
+
 };
 
 } // namespace Model
 } // namespace Oak
+

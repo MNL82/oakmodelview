@@ -10,66 +10,61 @@
 
 #pragma once
 
-#include "Query.h"
+#include "ItemQuery.h"
 
 namespace Oak {
 namespace Model {
 
-class QueryRef;
-typedef std::shared_ptr<QueryRef> QueryRefSPtr;
-typedef std::weak_ptr<QueryRef> QueryRefWPtr;
+class ValueQuery;
+typedef std::shared_ptr<ValueQuery> ValueQuerySPtr;
+typedef std::weak_ptr<ValueQuery> ValueQueryWPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QueryRef
+class ValueQuery
 {
 protected:
-    QueryRef();
+    ValueQuery(const std::string &valueName = "");
+    ValueQuery(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
 
 public:
-    ~QueryRef();
+    ~ValueQuery();
 
-    QueryRefSPtr setValueName(const std::string &valueName);
-
-    QueryRefSPtr children(const std::string nodeName);
-    QueryRefSPtr parent();
-    QueryRefSPtr ignore();
+    ValueQuerySPtr setValueName(const std::string &valueName);
 
     int count(const Item &item);
 
-    void addValueList(Item item, std::vector<UnionValue> &valueList) const;
-    std::vector<UnionValue> getValueList(Item item) const;
+    void addValueList(const Item &item, std::vector<UnionValue> &valueList) const;
+    std::vector<UnionValue> getValueList(const Item &item) const;
 
     template<typename T>
-    std::vector<T> toValueList(Item item);
+    std::vector<T> toValueList(const Item &item);
 
-    std::vector<Item> toItemList(Item item);
+    std::vector<Item> toItemList(const Item &item);
 
-    static QueryRefSPtr MakeSPtr();
-
-protected:
-    void add(Query * query);
+    static ValueQuerySPtr create(const std::string &valueName = "");
+    static ValueQuerySPtr create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
 
 protected:
     std::string m_valueName;
-    Query *m_queryPtr = nullptr;
+    ItemQueryUPtr m_itemQueryPtr = ItemQueryUPtr();
 
-    QueryRefWPtr m_thisWPtr;
+    ValueQueryWPtr m_thisWPtr;
 };
 
 // =============================================================================
 // (public)
 template<typename T>
-std::vector<T> QueryRef::toValueList(Item item)
+std::vector<T> ValueQuery::toValueList(const Item &item)
 {
     assert(!m_valueName.empty());
 
     std::vector<T> valueList;
-    if (m_queryPtr) {
-        m_queryPtr->reset(item);
-        while(m_queryPtr->moveNext()) {
-            Item tempItem = m_queryPtr->current();
+    if (m_itemQueryPtr) {
+        m_itemQueryPtr->reset(item);
+        while(m_itemQueryPtr->moveNext()) {
+            Item tempItem = m_itemQueryPtr->current();
             if (tempItem.hasValue(m_valueName)) {
                 valueList.push_back(tempItem.value(m_valueName).value<T>());
             }

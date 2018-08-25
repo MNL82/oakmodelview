@@ -3,6 +3,7 @@
 #include <QTableWidget>
 
 #include "OakModel.h"
+#include "ItemQuery.h"
 
 namespace Oak {
 namespace View {
@@ -16,11 +17,12 @@ public:
     TableView(QWidget *parent = nullptr);
     virtual ~TableView() override;
 
-    void setBaseRef(Model::QueryRefSPtr baseRef);
-    void addValueRef(Model::QueryRefSPtr valueRef);
+    void setBaseRef(Model::ItemQueryUPtr baseRef);
+    void addValueRef(Model::ValueQuerySPtr valueRef);
+
+    void updateTable();
 
     void setOakModel(Model::OakModel* model);
-    void setRootItem(const Model::Item& item);
 
     void onItemInserted(const Model::Item& parentItem, int index);
     void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
@@ -31,8 +33,8 @@ public:
 protected:
     Model::OakModel * m_model = nullptr;
     Model::Item m_rootItem;
-    Model::QueryRefSPtr m_baseRef;
-    std::vector<Model::QueryRefSPtr> m_valueRefList;
+    Model::ItemQueryUPtr m_baseRef;
+    std::vector<Model::ValueQuerySPtr> m_valueRefList;
 };
 
 } // namespace View

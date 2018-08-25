@@ -8,22 +8,22 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QueryChildren.h"
+#include "ItemQueryChildren.h"
 
 namespace Oak {
 namespace Model {
 
 // =============================================================================
-// (public)
-QueryChildren::QueryChildren(const std::string &nodeName)
-    : Query(), m_nodeName(nodeName)
+// (protected)
+ItemQueryChildren::ItemQueryChildren(const std::string &nodeName)
+    : ItemQuery(), m_nodeName(nodeName)
 {
 
 }
 
 // =============================================================================
 // (public)
-bool QueryChildren::moveCurrentNext()
+bool ItemQueryChildren::moveCurrentNext()
 {
     assert(!m_refItem.isNull());
     if (m_currentItem.isNull()) {

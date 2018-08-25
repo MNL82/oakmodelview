@@ -8,25 +8,25 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QueryIgnore.h"
+#include "ItemQueryIgnoreSelf.h"
 
 namespace Oak {
 namespace Model {
 
 // =============================================================================
 // (public)
-QueryIgnore::QueryIgnore()
-    : Query()
+ItemQueryIgnoreSelf::ItemQueryIgnoreSelf()
+    : ItemQuery()
 {
 
 }
 // =============================================================================
 // (public)
-bool QueryIgnore::moveNext()
+bool ItemQueryIgnoreSelf::moveNext()
 {
-    assert(m_childQuery);
-    if (!Query::moveNext()) { return false; }
-    Query* cq = m_childQuery;
+    assert(m_childQueryUPtr);
+    if (!ItemQuery::moveNext()) { return false; }
+    ItemQuery* cq = m_childQueryUPtr.get();
     while (cq) {
         if (cq->current(false) == m_currentItem) {
             return moveNext();
@@ -38,7 +38,7 @@ bool QueryIgnore::moveNext()
 
 // =============================================================================
 // (public)
-bool QueryIgnore::moveCurrentNext()
+bool ItemQueryIgnoreSelf::moveCurrentNext()
 {
     assert(!m_refItem.isNull());
     if (m_currentItem.isNull()) {

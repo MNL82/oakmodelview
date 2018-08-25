@@ -8,36 +8,39 @@
  * See accompanying file LICENSE in the root folder.
  */
 
+#include "ValueQuery.h"
 
-#include "QueryRef.h"
-
-#include "QueryChildren.h"
-#include "QueryParent.h"
-#include "QueryIgnore.h"
+#include "ItemQueryChildren.h"
+#include "ItemQueryParent.h"
+#include "ItemQueryIgnoreSelf.h"
 
 namespace Oak {
 namespace Model {
 
 // =============================================================================
 // (protected)
-QueryRef::QueryRef()
+ValueQuery::ValueQuery(const std::string &valueName)
 {
-
+    m_valueName = valueName;
 }
 
 // =============================================================================
 // (public)
-QueryRef::~QueryRef()
+ValueQuery::ValueQuery(ItemQueryUPtr itemQueryUPtr, const std::string &valueName)
 {
-    if (m_queryPtr) {
-        delete m_queryPtr;
-        m_queryPtr = nullptr;
-    }
+    m_itemQueryPtr = std::move(itemQueryUPtr);
+    m_valueName = valueName;
 }
 
 // =============================================================================
 // (public)
-QueryRefSPtr QueryRef::setValueName(const std::string &valueName)
+ValueQuery::~ValueQuery()
+{
+}
+
+// =============================================================================
+// (public)
+ValueQuerySPtr ValueQuery::setValueName(const std::string &valueName)
 {
     m_valueName = valueName;
     return m_thisWPtr.lock();
@@ -45,37 +48,13 @@ QueryRefSPtr QueryRef::setValueName(const std::string &valueName)
 
 // =============================================================================
 // (public)
-QueryRefSPtr QueryRef::children(const std::string nodeName)
+int ValueQuery::count(const Item &item)
 {
-    add(new QueryChildren(nodeName));
-    return m_thisWPtr.lock();
-}
+    if (!m_itemQueryPtr) { return -1; }
 
-// =============================================================================
-// (public)
-QueryRefSPtr QueryRef::parent()
-{
-    add(new QueryParent());
-    return m_thisWPtr.lock();
-}
-
-// =============================================================================
-// (public)
-QueryRefSPtr QueryRef::ignore()
-{
-    add(new QueryIgnore());
-    return m_thisWPtr.lock();
-}
-
-// =============================================================================
-// (public)
-int QueryRef::count(const Item &item)
-{
-    if (!m_queryPtr) { return -1; }
-
-    m_queryPtr->reset(item);
+    m_itemQueryPtr->reset(item);
     int count = 0;
-    while(m_queryPtr->moveNext()) {
+    while(m_itemQueryPtr->moveNext()) {
         count++;
     }
     return count;
@@ -83,14 +62,14 @@ int QueryRef::count(const Item &item)
 
 // =============================================================================
 // (public)
-void QueryRef::addValueList(Item item, std::vector<UnionValue> &valueList) const
+void ValueQuery::addValueList(const Item &item, std::vector<UnionValue> &valueList) const
 {
     assert(!m_valueName.empty());
 
-    if (m_queryPtr) {
-        m_queryPtr->reset(item);
-        while(m_queryPtr->moveNext()) {
-            Item tempItem = m_queryPtr->current();
+    if (m_itemQueryPtr) {
+        m_itemQueryPtr->reset(item);
+        while(m_itemQueryPtr->moveNext()) {
+            Item tempItem = m_itemQueryPtr->current();
             if (tempItem.hasValue(m_valueName)) {
                 valueList.push_back(tempItem.value(m_valueName).value());
             }
@@ -104,7 +83,7 @@ void QueryRef::addValueList(Item item, std::vector<UnionValue> &valueList) const
 
 // =============================================================================
 // (public)
-std::vector<UnionValue> QueryRef::getValueList(Item item) const
+std::vector<UnionValue> ValueQuery::getValueList(const Item &item) const
 {
     std::vector<UnionValue> valueList;
     addValueList(item, valueList);
@@ -113,14 +92,14 @@ std::vector<UnionValue> QueryRef::getValueList(Item item) const
 
 // =============================================================================
 // (public)
-std::vector<Item> QueryRef::toItemList(Item item)
+std::vector<Item> ValueQuery::toItemList(const Item &item)
 {
     std::vector<Item> itemList;
-    if (!m_queryPtr) { return itemList; }
+    if (!m_itemQueryPtr) { return itemList; }
 
-    m_queryPtr->reset(item);
-    while(m_queryPtr->moveNext()) {
-        itemList.push_back(m_queryPtr->current());
+    m_itemQueryPtr->reset(item);
+    while(m_itemQueryPtr->moveNext()) {
+        itemList.push_back(m_itemQueryPtr->current());
     }
 
     return itemList;
@@ -128,22 +107,20 @@ std::vector<Item> QueryRef::toItemList(Item item)
 
 // =============================================================================
 // (public static)
-QueryRefSPtr QueryRef::MakeSPtr()
+ValueQuerySPtr ValueQuery::create(const std::string &valueName)
 {
-    QueryRefSPtr sPtr = QueryRefSPtr(new QueryRef());
+    ValueQuerySPtr sPtr = ValueQuerySPtr(new ValueQuery(valueName));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
 
 // =============================================================================
-// (protected)
-void QueryRef::add(Query *query)
+// (public static)
+ValueQuerySPtr ValueQuery::create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName)
 {
-    if (m_queryPtr) {
-        m_queryPtr->add(query);
-    } else {
-        m_queryPtr = query;
-    }
+    ValueQuerySPtr sPtr = ValueQuerySPtr(new ValueQuery(std::move(itemQueryUPtr), valueName));
+    sPtr->m_thisWPtr = sPtr;
+    return sPtr;
 }
 
 } // namespace Model

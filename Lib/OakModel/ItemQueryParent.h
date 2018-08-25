@@ -8,31 +8,25 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QueryParent.h"
+#pragma once
+
+#include "ItemQuery.h"
 
 namespace Oak {
 namespace Model {
 
 // =============================================================================
-// (public)
-QueryParent::QueryParent()
-    : Query()
-{
-
-}
-
+// Class definition
 // =============================================================================
-// (public)
-bool QueryParent::moveCurrentNext()
+class ItemQueryParent : public ItemQuery
 {
-    assert(!m_refItem.isNull());
-    if (m_currentItem.isNull()) {
-        m_currentItem = m_refItem.parent();
-    } else {
-        m_currentItem.clear();
-    }
-    return !m_currentItem.isNull();
-}
+public:
+    ItemQueryParent();
+
+protected:
+    virtual bool moveCurrentNext() override;
+
+};
 
 } // namespace Model
 } // namespace Oak

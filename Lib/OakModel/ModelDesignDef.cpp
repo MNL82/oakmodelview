@@ -13,8 +13,10 @@
 #include "NodeDefBuilder.h"
 #include "ContainerDefBuilder.h"
 #include "ValueDefBuilder.h"
-#include "QueryRef.h"
+#include "ValueQuery.h"
 #include <memory>
+
+#include "QueryBuilder.h"
 
 namespace Oak {
 namespace Model {
@@ -41,8 +43,8 @@ void ModelDesignDef::createModelDesign()
             ->setTooltip("The name will be used if left empty"))
         ->addValueDef(VDB::create(UnionType::String, "KeyValue")
             ->setDisplayName("Key Value")
-            ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("InheritanceIDValue"))
+            ->setOptionsQuery(QB::createChildren("Value")->ValueUPtr("Name"))
+            ->setOptionsExcludedQuery(ValueQuery::create()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
         ->addValueInheritanceId(VDB::create(UnionType::String, "Type")
             ->setDisplayName("Node Type"));
@@ -53,8 +55,8 @@ void ModelDesignDef::createModelDesign()
             ->setDisplayName("Root Inheritance ID"))
         ->addValueDef(VDB::create(UnionType::String, "InheritanceIDValue")
             ->setDisplayName("Value for Inheritance ID")
-            ->setOptionsQuery(QueryRef::MakeSPtr()->children("Value")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->setValueName("KeyValue"))
+            ->setOptionsQuery(QB::createChildren("Value")->ValueUPtr("Name"))
+            ->setOptionsExcludedQuery(ValueQuery::create()->setValueName("KeyValue"))
             ->setSetting("OptionsOnly", true));
 
     /************************** Node(Rerived) **************************/
@@ -93,8 +95,8 @@ void ModelDesignDef::createModelDesign()
     auto ContainerDef = NDB::create("Container")
         ->addValueKey(VDB::create(UnionType::String, "Name")
             ->setDisplayName("Derived ID Value")
-            ->setOptionsQuery(QueryRef::MakeSPtr()->parent()->parent()->children("Node")->setValueName("Name"))
-            ->setOptionsExcludedQuery(QueryRef::MakeSPtr()->ignore()->parent()->children("Container")->setValueName("Name"))
+            ->setOptionsQuery(QB::createParent()->parent()->children("Node")->ValueUPtr("Name"))
+            ->setOptionsExcludedQuery(QB::createIgnoreSelf()->parent()->children("Container")->ValueUPtr("Name"))
             ->setSetting("OptionsOnly", true))
         ->addValueDef(VDB::create(UnionType::Integer, "Min")
             ->setDefaultValue(0))

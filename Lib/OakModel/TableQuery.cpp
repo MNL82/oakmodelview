@@ -8,25 +8,15 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#pragma once
-
-#include "Query.h"
+#include "TableQuery.h"
 
 namespace Oak {
 namespace Model {
 
-// =============================================================================
-// Class definition
-// =============================================================================
-class QueryParent : public Query
+TableQuery::TableQuery(ItemQueryUPtr itemQuery)
 {
-public:
-    QueryParent();
 
-protected:
-    virtual bool moveCurrentNext() override;
-
-};
+}
 
 } // namespace Model
 } // namespace Oak

@@ -50,8 +50,8 @@ public:
     template<typename T>
     ValueDefBuilderSPtr setOptionsExcludedStatic(const std::vector<T> &options);
 
-    ValueDefBuilderSPtr setOptionsQuery(QueryRefSPtr value);
-    ValueDefBuilderSPtr setOptionsExcludedQuery(QueryRefSPtr value);
+    ValueDefBuilderSPtr setOptionsQuery(ValueQuerySPtr value);
+    ValueDefBuilderSPtr setOptionsExcludedQuery(ValueQuerySPtr value);
 
     ValueDefBuilderSPtr setSetting(std::string name, const UnionRef &value);
 

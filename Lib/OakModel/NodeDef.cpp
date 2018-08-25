@@ -12,8 +12,9 @@
 
 #include "NodeDef.h"
 #include "ValueDefBuilder.h"
-#include "QueryBase.h"
+#include "ValueQuery.h"
 #include "ServiceFunctions.h"
+#include "QueryBuilder.h"
 
 namespace Oak {
 namespace Model {
@@ -959,8 +960,8 @@ void NodeDef::onNodeInserted(Node _node) const
     {
         if (vDef->settings().value(REQUIRED) > 0 &&
             vDef->settings().value(UNIQUE) > 0) {
-            std::vector<std::string> valueList = QueryBase::MakeSPtr(item)->ignore()->parent()->children(m_name)->toList<std::string>(vDef->name());
 
+            std::vector<std::string> valueList = QB::createIgnoreSelf()->parent()->children(m_name)->ValueUPtr(vDef->name())->toValueList<std::string>(item);
             if (vDef->options().isUsed() && vDef->settings().value(OPTION_ONLY)) {
                 std::vector<std::string> optionList;
                 if (vDef->options().getOptions(optionList, &item)) {
