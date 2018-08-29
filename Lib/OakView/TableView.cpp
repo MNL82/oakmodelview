@@ -1,5 +1,7 @@
 #include "TableView.h"
 
+#include <QHeaderView>
+
 namespace Oak {
 namespace View {
 
@@ -22,17 +24,16 @@ TableView::~TableView()
 // (public)
 void TableView::setBaseRef(Model::ItemQueryUPtr baseRef)
 {
-    if (m_baseRef != baseRef) {
-        m_baseRef = std::move(baseRef);
-        updateTable();
-    }
+    m_tableQuery.setItemQuery(std::move(baseRef));
+    updateTable();
+
 }
 
 // =============================================================================
 // (public)
 void TableView::addValueRef(Model::ValueQuerySPtr valueRef)
 {
-    m_valueRefList.push_back(valueRef);
+    m_tableQuery.addValueQuery(valueRef);
     updateTable();
 }
 
@@ -43,12 +44,37 @@ void TableView::updateTable()
     clearContents();
 
     if (m_model == nullptr) { return; }
-
     if (m_model->rootItem().isNull()) { return; }
 
     m_rootItem = m_model->rootItem();
-    //if (m_baseRef.)
 
+    int rowCount = m_tableQuery.count(m_rootItem);
+    int columnCount = m_tableQuery.columnCount();
+
+    setRowCount(rowCount);
+    setColumnCount(columnCount);
+    int row = 0;
+
+    m_tableQuery.reset(m_rootItem);
+    while (m_tableQuery.moveNext()) {
+        // Add Table Header
+        if (row == 0) {
+            for (int column = 0; column < columnCount; column++)
+            {
+                const Model::ItemValue &iValue = m_tableQuery.itemValue(column);
+                this->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(iValue.displayName())));
+            }
+            this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        }
+        // Add table values
+        for (int column = 0; column < columnCount; column++)
+        {
+            std::string value = m_tableQuery.value<std::string>(column);
+            QTableWidgetItem *item = new QTableWidgetItem(QString::fromStdString(value));
+            this->setItem(row, column, item);
+        }
+        row++;
+    }
 }
 
 // =============================================================================
@@ -95,35 +121,44 @@ void TableView::setOakModel(Model::OakModel *model)
 // (public)
 void TableView::onItemInserted(const Model::Item &parentItem, int index)
 {
-
+    Q_UNUSED(parentItem)
+    Q_UNUSED(index)
 }
 
 // =============================================================================
 // (public)
 void TableView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
-
+    Q_UNUSED(sourceParentItem)
+    Q_UNUSED(sourceIndex)
+    Q_UNUSED(targetParentItem)
+    Q_UNUSED(targetIndex)
 }
 
 // =============================================================================
 // (public)
 void TableView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
-
+    Q_UNUSED(sourceParentItem)
+    Q_UNUSED(sourceIndex)
+    Q_UNUSED(targetParentItem)
+    Q_UNUSED(targetIndex)
 }
 
 // =============================================================================
 // (public)
 void TableView::onItemRemoved(const Model::Item &parentItem, int index)
 {
-
+    Q_UNUSED(parentItem)
+    Q_UNUSED(index)
 }
 
 // =============================================================================
 // (public)
 void TableView::onItemValueChanged(const Model::Item &item, int valueIndex)
 {
-
+    Q_UNUSED(item)
+    Q_UNUSED(valueIndex)
 }
 
 } // namespace View

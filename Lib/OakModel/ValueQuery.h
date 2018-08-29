@@ -38,6 +38,13 @@ public:
     void addValueList(const Item &item, std::vector<UnionValue> &valueList) const;
     std::vector<UnionValue> getValueList(const Item &item) const;
 
+    void getValue(const Item &item, int index, UnionValue getValue) const;
+
+    const ItemValue &itemValue(const Item &item, int index) const;
+
+    template<typename T>
+    T value(const Item &item, int index) const;
+
     template<typename T>
     std::vector<T> toValueList(const Item &item);
 
@@ -52,6 +59,36 @@ protected:
 
     ValueQueryWPtr m_thisWPtr;
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+T ValueQuery::value(const Item &item, int index) const
+{
+    assert(!m_valueName.empty());
+
+    if (m_itemQueryPtr) {
+        m_itemQueryPtr->reset(item);
+        int i = 0;
+        while(m_itemQueryPtr->moveNext()) {
+            if (i == index) {
+                Item tempItem = m_itemQueryPtr->current();
+                if (tempItem.hasValue(m_valueName)) {
+                    return item.value(m_valueName).value<T>();
+                }
+                return T();
+            }
+            i++;
+        }
+        assert(false);
+    } else {
+        assert(index == 0);
+        if (item.hasValue(m_valueName)) {
+            return item.value(m_valueName).value<T>();
+        }
+    }
+    return T();
+}
 
 // =============================================================================
 // (public)

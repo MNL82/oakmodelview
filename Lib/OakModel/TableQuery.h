@@ -24,11 +24,44 @@ typedef std::weak_ptr<TableQuery> TableQueryWPtr;
 // =============================================================================
 class TableQuery
 {
-protected:
+public:
+    TableQuery();
     TableQuery(ItemQueryUPtr itemQuery);
 
+    void setItemQuery(ItemQueryUPtr itemQuery);
 
+    int columnCount() const;
+    void addValueQuery(ValueQuerySPtr valueQuery);
+
+    void reset(const Item &refItem);
+    bool moveNext();
+
+    std::string columnName() const;
+
+    void getValue(int index, UnionValue value) const;
+
+    const ItemValue &itemValue(int index);
+
+    template<typename T>
+    T value(int index);
+
+    int count(const Item &item);
+
+protected:
+    ItemQueryUPtr m_itemQuery;
+    std::vector<ValueQuerySPtr> m_valueList; // Should be a valueRef (to be entryRef)
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+T TableQuery::value(int index)
+{
+    assert(m_itemQuery);
+    assert(index >= 0);
+    assert(index < static_cast<int>(m_valueList.size()));
+    return m_valueList[index]->value<T>(m_itemQuery->current(), 0);
+}
 
 } // namespace Model
 } // namespace Oak

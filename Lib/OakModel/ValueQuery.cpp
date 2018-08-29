@@ -92,6 +92,63 @@ std::vector<UnionValue> ValueQuery::getValueList(const Item &item) const
 
 // =============================================================================
 // (public)
+void ValueQuery::getValue(const Item &item, int index, UnionValue value) const
+{
+    assert(!m_valueName.empty());
+
+    if (m_itemQueryPtr) {
+        m_itemQueryPtr->reset(item);
+        int i = 0;
+        while(m_itemQueryPtr->moveNext()) {
+            if (i == index) {
+                Item tempItem = m_itemQueryPtr->current();
+                if (tempItem.hasValue(m_valueName)) {
+                    item.value(m_valueName).getValue(value);
+                }
+                return;
+            }
+            i++;
+        }
+        assert(false);
+    } else {
+        assert(index == 0);
+        if (item.hasValue(m_valueName)) {
+            item.value(m_valueName).getValue(value);
+        }
+    }
+}
+
+// =============================================================================
+// (public)
+const ItemValue &ValueQuery::itemValue(const Item &item, int index) const
+{
+    assert(!m_valueName.empty());
+
+    if (m_itemQueryPtr) {
+        m_itemQueryPtr->reset(item);
+        int i = 0;
+        while(m_itemQueryPtr->moveNext()) {
+            if (i == index) {
+                Item tempItem = m_itemQueryPtr->current();
+                if (tempItem.hasValue(m_valueName)) {
+                    return item.value(m_valueName);
+                }
+                return ItemValue::emptyItemValue();
+            }
+            i++;
+        }
+        assert(false);
+    } else {
+        assert(index == 0);
+        if (item.hasValue(m_valueName)) {
+            return item.value(m_valueName);
+        }
+    }
+    return ItemValue::emptyItemValue();
+}
+
+// =============================================================================
+// (public)
 std::vector<Item> ValueQuery::toItemList(const Item &item)
 {
     std::vector<Item> itemList;

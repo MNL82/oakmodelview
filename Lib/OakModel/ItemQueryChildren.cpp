@@ -14,7 +14,7 @@ namespace Oak {
 namespace Model {
 
 // =============================================================================
-// (protected)
+// (public)
 ItemQueryChildren::ItemQueryChildren(const std::string &nodeName)
     : ItemQuery(), m_nodeName(nodeName)
 {

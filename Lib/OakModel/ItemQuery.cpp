@@ -83,7 +83,7 @@ bool ItemQuery::moveNext()
 const Item& ItemQuery::current(bool recursive) const
 {
     if (recursive && m_childQueryUPtr) {
-        return m_childQueryUPtr->current();
+        return m_childQueryUPtr->current(recursive);
     }
     return m_currentItem;
 }
@@ -92,11 +92,9 @@ const Item& ItemQuery::current(bool recursive) const
 // (public)
 int ItemQuery::count(const Item &item)
 {
-    if (!m_childQueryUPtr) { return -1; }
-
-    m_childQueryUPtr->reset(item);
+    reset(item);
     int count = 0;
-    while(m_childQueryUPtr->moveNext()) {
+    while(moveNext()) {
         count++;
     }
     return count;

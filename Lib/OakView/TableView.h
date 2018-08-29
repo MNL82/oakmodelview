@@ -3,7 +3,7 @@
 #include <QTableWidget>
 
 #include "OakModel.h"
-#include "ItemQuery.h"
+#include "TableQuery.h"
 
 namespace Oak {
 namespace View {
@@ -33,8 +33,8 @@ public:
 protected:
     Model::OakModel * m_model = nullptr;
     Model::Item m_rootItem;
-    Model::ItemQueryUPtr m_baseRef;
-    std::vector<Model::ValueQuerySPtr> m_valueRefList;
+
+    Model::TableQuery m_tableQuery;
 };
 
 } // namespace View
