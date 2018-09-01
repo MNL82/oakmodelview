@@ -7,8 +7,6 @@
 # See accompanying file LICENSE in the root folder.
 
 HEADERS += \
-    $$PWD/NodeRefGroup.h \
     $$PWD/NodeRef.h
 
-SOURCES += \
-    $$PWD/NodeRefGroup.cpp
+SOURCES +=

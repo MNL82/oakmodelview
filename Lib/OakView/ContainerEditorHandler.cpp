@@ -34,34 +34,34 @@ QString ContainerEditorHandler::listDisplayName() const
 
 // =============================================================================
 // (public)
-int ContainerEditorHandler::entryCount() const
+int ContainerEditorHandler::itemCount() const
 {
     return m_item.childCount(m_name);
 }
 
 // =============================================================================
 // (public)
-QStringList ContainerEditorHandler::entryList() const
+QStringList ContainerEditorHandler::itemIdList() const
 {
     int count = m_item.childCount(m_name);
-    QStringList eList;
+    QStringList nIdList;
     std::string keyValue;
     QString lName = listDisplayName();
-    QString entryId;
+    QString nodeId;
     for (int i = 0; i < count; i++)
     {
         Model::Item cItem = m_item.childAt(m_name, i);
         if (cItem.hasKey()) {
-            cItem.valueKey().value().get(keyValue);
-            entryId = QString::fromStdString(keyValue);
+            cItem.entryKey().value().get(keyValue);
+            nodeId = QString::fromStdString(keyValue);
         } else {
-            entryId = QString::number(i+1);
+            nodeId = QString::number(i+1);
         }
         //eList.append(QString("%1[%2]").arg(lName).arg(entryId));
-        eList.append(QString("%1").arg(entryId));
+        nIdList.append(QString("%1").arg(nodeId));
     }
 
-    return eList;
+    return nIdList;
 }
 
 // =============================================================================

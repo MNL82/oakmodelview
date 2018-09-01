@@ -12,7 +12,7 @@
 
 #include "Node.h"
 #include "NodeDef.h"
-#include "ItemValue.h"
+#include "Entry.h"
 
 namespace Oak {
 namespace Model {
@@ -36,7 +36,7 @@ public:
     bool operator==(const Item& _item) const;
     bool operator!=(const Item& _item) const;
 
-    const ItemValue& operator()(const std::string &name) const;
+    const Entry& operator()(const std::string &name) const;
 
     Item operator[](int index) const;
 
@@ -55,23 +55,23 @@ public:
     std::vector<std::string> valueNameList() const;
     std::vector<std::string> childNameList() const;
 
-    // ************* ItemValue access *************
-    int valueCount() const;
-    bool hasValue(const std::string &valueName) const;
-    int valueIndex(const ItemValue& value) const;
-    const ItemValue& valueAt(int index) const;
-    const ItemValue& value(const std::string &valueName) const;
+    // ************* Entry Access *************
+    int entryCount() const;
+    bool hasEntry(const std::string &entryName) const;
+    int entryIndex(const Entry& entry) const;
+    const Entry& entryAt(int index) const;
+    const Entry& entry(const std::string &entryName) const;
 
-    typedef std::vector<ItemValue>::const_iterator ValueIterator;
+    typedef std::vector<Entry>::const_iterator entryIterator;
 
-    ValueIterator valueBegin() const;
-    ValueIterator valueEnd() const;
+    entryIterator entryBegin() const;
+    entryIterator entryEnd() const;
 
     bool hasKey() const;
-    const ItemValue& valueKey() const;
+    const Entry& entryKey() const;
 
     bool hasDerivedId() const;
-    const ItemValue& valueDerivedId() const;
+    const Entry& entryDerivedId() const;
 
     // ************* Child Item access *************
     int childCount() const;
@@ -122,7 +122,7 @@ public:
     bool removeChild(const std::string &name, int index) const;
 
 protected:
-    inline void initItemValueList() const;
+    inline void initEntryList() const;
 
     static void updateUniqueValues(Item item);
 
@@ -131,7 +131,7 @@ protected:
     Node m_node;
     const OakModel* m_model;
 
-    mutable std::vector<ItemValue> m_itemValueList;
+    mutable std::vector<Entry> m_entryList;
 };
 
 } // namespace Model

@@ -40,14 +40,14 @@ void TableQuery::setItemQuery(ItemQueryUPtr itemQuery)
 // (public)
 int TableQuery::columnCount() const
 {
-    return static_cast<int>(m_valueList.size());
+    return static_cast<int>(m_entryList.size());
 }
 
 // =============================================================================
 // (public)
-void TableQuery::addValueQuery(ValueQuerySPtr valueQuery)
+void TableQuery::addValueQuery(EntryQuerySPtr valueQuery)
 {
-    m_valueList.push_back(valueQuery);
+    m_entryList.push_back(valueQuery);
 }
 
 // =============================================================================
@@ -79,18 +79,18 @@ void TableQuery::getValue(int index, UnionValue value) const
 {
     assert(m_itemQuery);
     assert(index >= 0);
-    assert(index < static_cast<int>(m_valueList.size()));
-    m_valueList[static_cast<size_t>(index)]->getValue(m_itemQuery->current(), 0, value);
+    assert(index < static_cast<int>(m_entryList.size()));
+    m_entryList[static_cast<size_t>(index)]->getValue(m_itemQuery->current(), 0, value);
 }
 
 // =============================================================================
 // (public)
-const ItemValue &TableQuery::itemValue(int index)
+const Entry &TableQuery::entry(int index)
 {
     assert(m_itemQuery);
     assert(index >= 0);
-    assert(index < static_cast<int>(m_valueList.size()));
-    return m_valueList[static_cast<size_t>(index)]->itemValue(m_itemQuery->current(), 0);
+    assert(index < static_cast<int>(m_entryList.size()));
+    return m_entryList[static_cast<size_t>(index)]->entry(m_itemQuery->current(), 0);
 }
 
 // =============================================================================

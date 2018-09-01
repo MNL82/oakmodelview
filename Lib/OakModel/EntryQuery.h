@@ -15,32 +15,32 @@
 namespace Oak {
 namespace Model {
 
-class ValueQuery;
-typedef std::shared_ptr<ValueQuery> ValueQuerySPtr;
-typedef std::weak_ptr<ValueQuery> ValueQueryWPtr;
+class EntryQuery;
+typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
+typedef std::weak_ptr<EntryQuery> EntryQueryWPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueQuery
+class EntryQuery
 {
 protected:
-    ValueQuery(const std::string &valueName = "");
-    ValueQuery(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
+    EntryQuery(const std::string &valueName = "");
+    EntryQuery(ItemQueryUPtr itemQueryUPtr, const std::string &entryName = "");
 
 public:
-    ~ValueQuery();
+    ~EntryQuery();
 
-    ValueQuerySPtr setValueName(const std::string &valueName);
+    EntryQuerySPtr setValueName(const std::string &entryName);
 
     int count(const Item &item);
 
     void addValueList(const Item &item, std::vector<UnionValue> &valueList) const;
     std::vector<UnionValue> getValueList(const Item &item) const;
 
-    void getValue(const Item &item, int index, UnionValue getValue) const;
+    void getValue(const Item &item, int index, UnionValue value) const;
 
-    const ItemValue &itemValue(const Item &item, int index) const;
+    const Entry &entry(const Item &item, int index) const;
 
     template<typename T>
     T value(const Item &item, int index) const;
@@ -50,22 +50,22 @@ public:
 
     std::vector<Item> toItemList(const Item &item);
 
-    static ValueQuerySPtr create(const std::string &valueName = "");
-    static ValueQuerySPtr create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
+    static EntryQuerySPtr create(const std::string &valueName = "");
+    static EntryQuerySPtr create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
 
 protected:
-    std::string m_valueName;
+    std::string m_entryName;
     ItemQueryUPtr m_itemQueryPtr = ItemQueryUPtr();
 
-    ValueQueryWPtr m_thisWPtr;
+    EntryQueryWPtr m_thisWPtr;
 };
 
 // =============================================================================
 // (public)
 template<typename T>
-T ValueQuery::value(const Item &item, int index) const
+T EntryQuery::value(const Item &item, int index) const
 {
-    assert(!m_valueName.empty());
+    assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
         m_itemQueryPtr->reset(item);
@@ -73,8 +73,8 @@ T ValueQuery::value(const Item &item, int index) const
         while(m_itemQueryPtr->moveNext()) {
             if (i == index) {
                 Item tempItem = m_itemQueryPtr->current();
-                if (tempItem.hasValue(m_valueName)) {
-                    return item.value(m_valueName).value<T>();
+                if (tempItem.hasEntry(m_entryName)) {
+                    return item.entry(m_entryName).value<T>();
                 }
                 return T();
             }
@@ -83,8 +83,8 @@ T ValueQuery::value(const Item &item, int index) const
         assert(false);
     } else {
         assert(index == 0);
-        if (item.hasValue(m_valueName)) {
-            return item.value(m_valueName).value<T>();
+        if (item.hasEntry(m_entryName)) {
+            return item.entry(m_entryName).value<T>();
         }
     }
     return T();
@@ -93,22 +93,22 @@ T ValueQuery::value(const Item &item, int index) const
 // =============================================================================
 // (public)
 template<typename T>
-std::vector<T> ValueQuery::toValueList(const Item &item)
+std::vector<T> EntryQuery::toValueList(const Item &item)
 {
-    assert(!m_valueName.empty());
+    assert(!m_entryName.empty());
 
     std::vector<T> valueList;
     if (m_itemQueryPtr) {
         m_itemQueryPtr->reset(item);
         while(m_itemQueryPtr->moveNext()) {
             Item tempItem = m_itemQueryPtr->current();
-            if (tempItem.hasValue(m_valueName)) {
-                valueList.push_back(tempItem.value(m_valueName).value<T>());
+            if (tempItem.hasEntry(m_entryName)) {
+                valueList.push_back(tempItem.entry(m_entryName).value<T>());
             }
         }
     } else {
-        if (item.hasValue(m_valueName)) {
-            valueList.push_back(item.value(m_valueName).value<T>());
+        if (item.hasEntry(m_entryName)) {
+            valueList.push_back(item.entry(m_entryName).value<T>());
         }
     }
 

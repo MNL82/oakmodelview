@@ -13,7 +13,7 @@
 #include "NodeDefBuilder.h"
 #include "ContainerDefBuilder.h"
 #include "ValueDefBuilder.h"
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 #include <memory>
 
 namespace Oak {

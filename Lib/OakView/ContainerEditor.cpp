@@ -68,7 +68,7 @@ void ContainerEditor::updateEditor()
     QString labelTitle = QString("%1 List:").arg(displayName);
     m_groupBox->setTitle(labelTitle);
 
-    QStringList entryList = m_eHandler->entryList();
+    QStringList entryList = m_eHandler->itemIdList();
     int eCount = entryList.count();
 
     m_addButton->setHidden(!m_eHandler->canInsert(eCount));
@@ -197,7 +197,7 @@ void ContainerEditor::createContextMenu(const QPoint& globalPos, int index)
 // (protected slots)
 void ContainerEditor::onEntryAdded()
 {
-    emit entryInserted(m_eHandler->entryCount());
+    emit entryInserted(m_eHandler->itemCount());
 }
 
 } // namespace View

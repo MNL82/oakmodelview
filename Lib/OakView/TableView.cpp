@@ -1,6 +1,8 @@
 #include "TableView.h"
 
 #include <QHeaderView>
+#include <QHBoxLayout>
+#include <QMouseEvent>
 
 namespace Oak {
 namespace View {
@@ -8,9 +10,87 @@ namespace View {
 // =============================================================================
 // (public)
 TableView::TableView(QWidget *parent)
-    : QTableWidget(parent)
+    : QWidget(parent)
 {
+    setMouseTracking(true);
 
+    m_tableWidget = new QTableWidget();
+    m_tableWidget->setStyleSheet(
+        "QHeaderView::section {"
+        "    background-color: #dddddd;"
+        "    padding: 4px;"
+        "    border-style: none;"
+        "    border-bottom: 1px solid #fffff8;"
+        "    border-right: 1px solid #fffff8;"
+        "}"
+
+        "QHeaderView::section:horizontal"
+        "{"
+        "    border-top: 1px solid #fffff8;"
+        "}"
+
+        "QHeaderView::section:vertical"
+        "{"
+        "    border-left: 1px solid #fffff8;"
+        "}</string>");
+
+    m_toolBar = new QToolBar();
+    m_toolBar->setOrientation(Qt::Vertical);
+    m_toolBar->setIconSize(QSize(16,16));
+    m_toolBar->setVisible(false);
+
+    // Add actions
+    m_actionAdd = new QAction(QPixmap(":/OakView/Resources/add_32.png"), "Add");
+    m_actionAdd->setEnabled(false);
+    connect(m_actionAdd, SIGNAL(triggered()), this, SLOT(onActionAdd()));
+    m_toolBar->addAction(m_actionAdd);
+
+    m_actionDelete = new QAction(QPixmap(":/OakView/Resources/delete_32.png"), "Delete");
+    m_actionDelete->setEnabled(false);
+    m_actionDelete->setShortcut(QKeySequence::Delete);
+    connect(m_actionDelete, SIGNAL(triggered()), this, SLOT(onActionDelete()));
+    m_toolBar->addAction(m_actionDelete);
+
+    m_toolBar->addSeparator();
+
+    m_actionCut = new QAction(QPixmap(":/OakView/Resources/cut_32.png"), "Cut Item");
+    m_actionCut->setEnabled(false);
+    m_actionCut->setShortcut(QKeySequence::Cut);
+    connect(m_actionCut, SIGNAL(triggered()), this, SLOT(onActionCut()));
+    m_toolBar->addAction(m_actionCut);
+
+    m_actionCopy = new QAction(QPixmap(":/OakView/Resources/copy_32.png"), "Copy Item");
+    m_actionCopy->setEnabled(false);
+    m_actionCopy->setShortcut(QKeySequence::Copy);
+    connect(m_actionCopy, SIGNAL(triggered()), this, SLOT(onActionCopy()));
+    m_toolBar->addAction(m_actionCopy);
+
+    m_actionPaste = new QAction(QPixmap(":/OakView/Resources/paste_32.png"), "Paste Item");
+    m_actionPaste->setEnabled(false);
+    m_actionPaste->setShortcut(QKeySequence::Paste);
+    connect(m_actionPaste, SIGNAL(triggered()), this, SLOT(onActionPaste()));
+    m_toolBar->addAction(m_actionPaste);
+
+    m_toolBar->addSeparator();
+
+    m_actionUp = new QAction(QPixmap(":/OakView/Resources/up_32.png"), "Move Up");
+    m_actionUp->setEnabled(false);
+    connect(m_actionUp, SIGNAL(triggered()), this, SLOT(onActionUp()));
+    m_toolBar->addAction(m_actionUp);
+
+    m_actionDown = new QAction(QPixmap(":/OakView/Resources/down_32.png"), "Move Down");
+    m_actionDown->setEnabled(false);
+    connect(m_actionDown, SIGNAL(triggered()), this, SLOT(onActionDown()));
+    m_toolBar->addAction(m_actionDown);
+
+
+
+
+    QHBoxLayout * layout = new QHBoxLayout();
+    layout->setMargin(0);
+    layout->addWidget(m_tableWidget);
+    layout->addWidget(m_toolBar);
+    setLayout(layout);
 }
 
 // =============================================================================
@@ -31,7 +111,7 @@ void TableView::setBaseRef(Model::ItemQueryUPtr baseRef)
 
 // =============================================================================
 // (public)
-void TableView::addValueRef(Model::ValueQuerySPtr valueRef)
+void TableView::addValueRef(Model::EntryQuerySPtr valueRef)
 {
     m_tableQuery.addValueQuery(valueRef);
     updateTable();
@@ -41,7 +121,7 @@ void TableView::addValueRef(Model::ValueQuerySPtr valueRef)
 // (public)
 void TableView::updateTable()
 {
-    clearContents();
+    m_tableWidget->clearContents();
 
     if (m_model == nullptr) { return; }
     if (m_model->rootItem().isNull()) { return; }
@@ -51,8 +131,8 @@ void TableView::updateTable()
     int rowCount = m_tableQuery.count(m_rootItem);
     int columnCount = m_tableQuery.columnCount();
 
-    setRowCount(rowCount);
-    setColumnCount(columnCount);
+    m_tableWidget->setRowCount(rowCount);
+    m_tableWidget->setColumnCount(columnCount);
     int row = 0;
 
     m_tableQuery.reset(m_rootItem);
@@ -61,17 +141,17 @@ void TableView::updateTable()
         if (row == 0) {
             for (int column = 0; column < columnCount; column++)
             {
-                const Model::ItemValue &iValue = m_tableQuery.itemValue(column);
-                this->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(iValue.displayName())));
+                const Model::Entry &iValue = m_tableQuery.entry(column);
+                m_tableWidget->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(iValue.displayName())));
             }
-            this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+            m_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         }
         // Add table values
         for (int column = 0; column < columnCount; column++)
         {
             std::string value = m_tableQuery.value<std::string>(column);
             QTableWidgetItem *item = new QTableWidgetItem(QString::fromStdString(value));
-            this->setItem(row, column, item);
+            m_tableWidget->setItem(row, column, item);
         }
         row++;
     }
@@ -95,7 +175,7 @@ void TableView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloned.remove(this);
         m_model->notifier_itemRemoved.remove(this);
 
-        m_model->notifier_itemValueChanged.remove(this);
+        m_model->notifier_entryChanged.remove(this);
     }
 
     // Change the model
@@ -113,7 +193,7 @@ void TableView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloned.add(this, &TableView::onItemCloned);
         m_model->notifier_itemRemoved.add(this, &TableView::onItemRemoved);
 
-        m_model->notifier_itemValueChanged.add(this, &TableView::onItemValueChanged);
+        m_model->notifier_entryChanged.add(this, &TableView::onEntryChanged);
     }
 }
 
@@ -155,10 +235,23 @@ void TableView::onItemRemoved(const Model::Item &parentItem, int index)
 
 // =============================================================================
 // (public)
-void TableView::onItemValueChanged(const Model::Item &item, int valueIndex)
+void TableView::onEntryChanged(const Model::Item &item, int valueIndex)
 {
     Q_UNUSED(item)
     Q_UNUSED(valueIndex)
+}
+
+// =============================================================================
+// (public)
+bool TableView::event(QEvent *event)
+{
+    if (event->type()==QEvent::Enter) {
+        m_toolBar->setVisible(true);
+    } else if (event->type()==QEvent::Leave) {
+        m_toolBar->setVisible(false);
+    }
+
+    return QWidget::event(event);
 }
 
 } // namespace View

@@ -71,7 +71,7 @@ protected:
     void onItemRemoved(const Item& parentItem, int index) const;
     void onItemBeforeRemoving(const Item &item) const;
 
-    void onItemValueChanged(const Item& item, int valueIndex) const;
+    void onEntryChanged(const Item& item, int valueIndex) const;
 
 public:
     Callback notifier_currentItemChanged;
@@ -86,7 +86,7 @@ public:
     Callback_ItemInt notifier_itemRemoved;
     Callback_Item notifier_itemBeforeRemoving;
 
-    Callback_ItemInt notifier_itemValueChanged;
+    Callback_ItemInt notifier_entryChanged;
 
 protected:
     Item m_rootItem;
@@ -102,7 +102,7 @@ protected:
 #endif // XML_BACKEND
 
     friend class Item;
-    friend class ItemValue;
+    friend class Entry;
 };
 
 } // namespace Model

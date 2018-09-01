@@ -30,8 +30,8 @@ public:
     ContainerEditorHandler(Model::Item item, const std::string &name, QObject *parent = nullptr);
 
     QString listDisplayName() const;
-    int entryCount() const;
-    QStringList entryList() const;
+    int itemCount() const;
+    QStringList itemIdList() const;
 
     bool canInsert(int index) const;
     bool canRemove(int index) const;

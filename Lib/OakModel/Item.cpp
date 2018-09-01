@@ -11,7 +11,7 @@
 #include "Item.h"
 
 #include "OakModel.h"
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 #include "ServiceFunctions.h"
 #include "QueryBuilder.h"
 
@@ -45,7 +45,7 @@ Item::Item(const Item& copy)
     : m_def(copy.m_def),
       m_node(copy.m_node),
       m_model(copy.m_model),
-      m_itemValueList(copy.m_itemValueList)
+      m_entryList(copy.m_entryList)
 {
 
 }
@@ -56,7 +56,7 @@ Item::Item(Item&& move)
     : m_def(std::move(move.m_def)),
       m_node(std::move(move.m_node)),
       m_model(move.m_model),
-      m_itemValueList(std::move(move.m_itemValueList))
+      m_entryList(std::move(move.m_entryList))
 {
 
 }
@@ -66,7 +66,7 @@ Item::Item(Item&& move)
 Item& Item::operator=(const Item& copy)
 {
     if (m_def != copy.m_def) {
-        m_itemValueList.assign(copy.m_itemValueList.begin(), copy.m_itemValueList.end());
+        m_entryList.assign(copy.m_entryList.begin(), copy.m_entryList.end());
     }
     m_def = copy.m_def;
     m_node = copy.m_node;
@@ -78,7 +78,7 @@ Item& Item::operator=(const Item& copy)
 // (public)
 Item& Item::operator=(Item&& move)
 {
-    m_itemValueList = std::move(move.m_itemValueList);
+    m_entryList = std::move(move.m_entryList);
     m_def = std::move(move.m_def);
     m_node = std::move(move.m_node);
     m_model = move.m_model;
@@ -101,9 +101,9 @@ bool Item::operator!=(const Item& _item) const
 
 // =============================================================================
 // (public)
-const ItemValue& Item::operator()(const std::string &valueName) const
+const Entry& Item::operator()(const std::string &valueName) const
 {
-    return value(valueName);
+    return entry(valueName);
 }
 
 // =============================================================================
@@ -141,7 +141,7 @@ void Item::clear()
     m_def = nullptr;
     m_node.clear();
     m_model = nullptr;
-    m_itemValueList.clear();
+    m_entryList.clear();
 }
 
 // =============================================================================
@@ -165,9 +165,9 @@ void Item::setCurrent()
 // (public)
 std::vector<std::string> Item::valueNameList() const
 {
-    initItemValueList();
+    initEntryList();
     std::vector<std::string> nameList;
-    for (const ItemValue& iv: m_itemValueList)
+    for (const Entry& iv: m_entryList)
     {
         nameList.push_back(iv.name());
     }
@@ -191,68 +191,68 @@ std::vector<std::string> Item::childNameList() const
 
 // =============================================================================
 // (public)
-int Item::valueCount() const
+int Item::entryCount() const
 {
-    initItemValueList();
-    return static_cast<int>(m_itemValueList.size());
+    initEntryList();
+    return static_cast<int>(m_entryList.size());
 }
 
 // =============================================================================
 // (public)
-bool Item::hasValue(const std::string &valueName) const
+bool Item::hasEntry(const std::string &entryName) const
 {
-    return m_def->hasValue(valueName);
+    return m_def->hasValue(entryName);
 }
 
 // =============================================================================
 // (public)
-int Item::valueIndex(const ItemValue &value) const
+int Item::entryIndex(const Entry &entry) const
 {
-    initItemValueList();
-    auto it = std::find(m_itemValueList.begin(), m_itemValueList.end(), value);
-    if (it == m_itemValueList.end()) {
+    initEntryList();
+    auto it = std::find(m_entryList.begin(), m_entryList.end(), entry);
+    if (it == m_entryList.end()) {
         return -1;
     } else {
-        return static_cast<int>(std::distance(m_itemValueList.begin(), it));
+        return static_cast<int>(std::distance(m_entryList.begin(), it));
     }
 }
 
 // =============================================================================
 // (public)
-const ItemValue& Item::valueAt(int index) const
+const Entry& Item::entryAt(int index) const
 {
-    initItemValueList();
-    return m_itemValueList.at(static_cast<vSize>(index));
+    initEntryList();
+    return m_entryList.at(static_cast<vSize>(index));
 }
 
 // =============================================================================
 // (public)
-const ItemValue& Item::value(const std::string &valueName) const
+const Entry& Item::entry(const std::string &entryName) const
 {
-    initItemValueList();
-    for (const ItemValue& iv: m_itemValueList)
+    initEntryList();
+    for (const Entry& iv: m_entryList)
     {
-        if (iv.name() == valueName) {
+        if (iv.name() == entryName) {
             return iv;
         }
     }
-    return ItemValue::emptyItemValue();
+    return Entry::emptyEntry();
 }
 
 // =============================================================================
 // (public)
-Item::ValueIterator Item::valueBegin() const
+Item::entryIterator Item::entryBegin() const
 {
-    initItemValueList();
-    return m_itemValueList.begin();
+    initEntryList();
+    return m_entryList.begin();
 }
 
 // =============================================================================
 // (public)
-Item::ValueIterator Item::valueEnd() const
+Item::entryIterator Item::entryEnd() const
 {
-    initItemValueList();
-    return m_itemValueList.end();
+    initEntryList();
+    return m_entryList.end();
 }
 
 // =============================================================================
@@ -265,11 +265,11 @@ bool Item::hasKey() const
 
 // =============================================================================
 // (public)
-const ItemValue& Item::valueKey() const
+const Entry& Item::entryKey() const
 {
-    initItemValueList();
-    if (hasKey()) { return m_itemValueList[static_cast<vSize>(m_def->keyValueDefIndex())]; }
-    return ItemValue::emptyItemValue();
+    initEntryList();
+    if (hasKey()) { return m_entryList[static_cast<vSize>(m_def->keyValueDefIndex())]; }
+    return Entry::emptyEntry();
 }
 
 // =============================================================================
@@ -282,11 +282,11 @@ bool Item::hasDerivedId() const
 
 // =============================================================================
 // (public)
-const ItemValue& Item::valueDerivedId() const
+const Entry& Item::entryDerivedId() const
 {
-    initItemValueList();
-    if (hasDerivedId()) { return m_itemValueList[static_cast<vSize>(m_def->derivedIdValueDefIndex())]; }
-    return ItemValue::emptyItemValue();
+    initEntryList();
+    if (hasDerivedId()) { return m_entryList[static_cast<vSize>(m_def->derivedIdValueDefIndex())]; }
+    return Entry::emptyEntry();
 }
 
 // =============================================================================
@@ -625,13 +625,13 @@ bool Item::removeChild(const std::string &name, int index) const
 
 // =============================================================================
 // (protected)
-void Item::initItemValueList() const
+void Item::initEntryList() const
 {
     assert(m_def);
-    if (m_itemValueList.empty() && m_def && !m_node.isNull()) {
+    if (m_entryList.empty() && m_def && !m_node.isNull()) {
         auto vList = m_def->valueList();
         for (const ValueDef* vi: vList) {
-            m_itemValueList.push_back(ItemValue(vi, m_node, this));
+            m_entryList.push_back(Entry(vi, m_node, this));
         }
     }
 }
@@ -640,8 +640,8 @@ void Item::initItemValueList() const
 // (protected)
 void Item::updateUniqueValues(Item item)
 {
-    Model::Item::ValueIterator vIt = item.valueBegin();
-    Model::Item::ValueIterator vItEnd = item.valueEnd();
+    Model::Item::entryIterator vIt = item.entryBegin();
+    Model::Item::entryIterator vItEnd = item.entryEnd();
     while (vIt != vItEnd) {
         if (vIt->settings().value(REQUIRED) > 0 &&
             vIt->settings().value(UNIQUE) > 0 &&

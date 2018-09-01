@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ItemValue.h"
+#include "Entry.h"
 #include "Item.h"
 #include "OakModel.h"
 
@@ -17,7 +17,7 @@ namespace Model {
 
 // =============================================================================
 // (public)
-ItemValue::ItemValue()
+Entry::Entry()
     : m_valueDef(nullptr),
       m_item(nullptr)
 {
@@ -26,7 +26,7 @@ ItemValue::ItemValue()
 
 // =============================================================================
 // (public)
-ItemValue::ItemValue(const ValueDef* valueDef, const Node& node, const Item *model)
+Entry::Entry(const ValueDef* valueDef, const Node& node, const Item *model)
     : m_valueDef(valueDef),
       m_node(node),
       m_item(model)
@@ -36,7 +36,7 @@ ItemValue::ItemValue(const ValueDef* valueDef, const Node& node, const Item *mod
 
 // =============================================================================
 // (public)
-ItemValue::ItemValue(const ItemValue& copy)
+Entry::Entry(const Entry& copy)
     : m_valueDef(copy.m_valueDef),
       m_node(copy.m_node),
       m_item(copy.m_item)
@@ -46,7 +46,7 @@ ItemValue::ItemValue(const ItemValue& copy)
 
 // =============================================================================
 // (public)
-ItemValue::ItemValue(ItemValue&& move)
+Entry::Entry(Entry&& move)
     : m_valueDef(move.m_valueDef),
       m_node(std::move(move.m_node)),
       m_item(move.m_item)
@@ -56,7 +56,7 @@ ItemValue::ItemValue(ItemValue&& move)
 
 // =============================================================================
 // (public)
-ItemValue& ItemValue::operator=(const ItemValue& copy)
+Entry& Entry::operator=(const Entry& copy)
 {
     m_valueDef = copy.m_valueDef;
     m_node = copy.m_node;
@@ -66,7 +66,7 @@ ItemValue& ItemValue::operator=(const ItemValue& copy)
 
 // =============================================================================
 // (public)
-ItemValue& ItemValue::operator=(ItemValue&& move)
+Entry& Entry::operator=(Entry&& move)
 {
     m_valueDef = move.m_valueDef;
     m_node = std::move(move.m_node);
@@ -76,42 +76,42 @@ ItemValue& ItemValue::operator=(ItemValue&& move)
 
 // =============================================================================
 // (public)
-bool ItemValue::operator==(const ItemValue &_itemValue) const
+bool Entry::operator==(const Entry &_entry) const
 {
-    return m_valueDef == _itemValue.m_valueDef && m_node == _itemValue.m_node;
+    return m_valueDef == _entry.m_valueDef && m_node == _entry.m_node;
 }
 
 // =============================================================================
 // (public)
-bool ItemValue::operator!=(const ItemValue &_itemValue) const
+bool Entry::operator!=(const Entry &_entry) const
 {
-    return m_valueDef != _itemValue.m_valueDef || m_node != _itemValue.m_node;
+    return m_valueDef != _entry.m_valueDef || m_node != _entry.m_node;
 }
 
 // =============================================================================
 // (public)
-bool ItemValue::isNull() const
+bool Entry::isNull() const
 {
     return isDefNull() || isNodeNull();
 }
 
 // =============================================================================
 // (public)
-bool ItemValue::isDefNull() const
+bool Entry::isDefNull() const
 {
     return !m_valueDef || m_valueDef->isNull();
 }
 
 // =============================================================================
 // (public)
-bool ItemValue::isNodeNull() const
+bool Entry::isNodeNull() const
 {
     return m_node.isNull();
 }
 
 // =============================================================================
 // (public)
-const std::string &ItemValue::name() const
+const std::string &Entry::name() const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->name();
@@ -119,7 +119,7 @@ const std::string &ItemValue::name() const
 
 // =============================================================================
 // (public)
-const std::string & ItemValue::displayName() const
+const std::string & Entry::displayName() const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->displayName();
@@ -127,7 +127,7 @@ const std::string & ItemValue::displayName() const
 
 // =============================================================================
 // (public)
-const std::string &ItemValue::tooltip() const
+const std::string &Entry::tooltip() const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->tooltip();
@@ -135,7 +135,7 @@ const std::string &ItemValue::tooltip() const
 
 // =============================================================================
 // (public)
-const Node& ItemValue::node() const
+const Node& Entry::node() const
 {
     assert(m_valueDef != nullptr);
     return m_node;
@@ -143,7 +143,7 @@ const Node& ItemValue::node() const
 
 // =============================================================================
 // (public)
-const ValueDef*ItemValue::valueDef() const
+const ValueDef*Entry::valueDef() const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef;
@@ -151,14 +151,14 @@ const ValueDef*ItemValue::valueDef() const
 
 // =============================================================================
 // (public)
-const Item* ItemValue::item() const
+const Item* Entry::item() const
 {
     return m_item;
 }
 
 // =============================================================================
 // (public)
-UnionValue ItemValue::value(bool useDefault) const
+UnionValue Entry::value(bool useDefault) const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->value(m_node, useDefault);
@@ -166,7 +166,7 @@ UnionValue ItemValue::value(bool useDefault) const
 
 // =============================================================================
 // (public)
-std::string ItemValue::toString(bool useDefault) const
+std::string Entry::toString(bool useDefault) const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->toString(m_node, useDefault);
@@ -174,7 +174,7 @@ std::string ItemValue::toString(bool useDefault) const
 
 // =============================================================================
 // (public)
-bool ItemValue::hasDefaultValue() const
+bool Entry::hasDefaultValue() const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->hasDefaultValue();
@@ -182,7 +182,7 @@ bool ItemValue::hasDefaultValue() const
 
 //// =============================================================================
 //// (public)
-//bool ItemValue::getOptions(std::vector<VariantCRef>& value) const
+//bool Entry::getOptions(std::vector<VariantCRef>& value) const
 //{
 //    assert(m_valueDef != nullptr);
 //    return m_valueDef->getOptions(value);
@@ -190,7 +190,7 @@ bool ItemValue::hasDefaultValue() const
 
 // =============================================================================
 // (public)
-const ValueSettings &ItemValue::settings() const
+const ValueSettings &Entry::settings() const
 {
     assert(m_valueDef != nullptr);
     return m_valueDef->settings();
@@ -198,17 +198,17 @@ const ValueSettings &ItemValue::settings() const
 
 // =============================================================================
 // (public)
-const ItemValue& ItemValue::emptyItemValue()
+const Entry& Entry::emptyEntry()
 {
-    static ItemValue empty;
+    static Entry empty;
     return empty;
 }
 
 // =============================================================================
 // (public)
-void ItemValue::onItemValueChanged() const
+void Entry::onEntryChanged() const
 {
-    m_item->model()->onItemValueChanged(*m_item, m_item->valueIndex(*this));
+    m_item->model()->onEntryChanged(*m_item, m_item->entryIndex(*this));
 }
 
 } // namespace Model

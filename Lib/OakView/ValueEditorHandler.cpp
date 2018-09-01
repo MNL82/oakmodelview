@@ -25,10 +25,10 @@ namespace View {
 
 // =============================================================================
 // (public)
-ValueEditorHandler::ValueEditorHandler(QObject* parent, Model::ItemValue itemValue)
-    : QObject(parent), m_itemValue(itemValue)
+ValueEditorHandler::ValueEditorHandler(QObject* parent, Model::Entry entry)
+    : QObject(parent), m_entry(entry)
 {
-    assert(!itemValue.isDefNull());
+    assert(!entry.isDefNull());
 }
 
 // =============================================================================
@@ -58,7 +58,7 @@ QWidget* ValueEditorHandler::getEditor()
 // (public)
 void ValueEditorHandler::setNode(const Model::Node& node)
 {
-    m_itemValue = Model::ItemValue(m_itemValue.valueDef(), node, m_itemValue.item());
+    m_entry = Model::Entry(m_entry.valueDef(), node, m_entry.item());
 
     updateLabelValue();
     updateEditorValue();
@@ -80,12 +80,12 @@ void ValueEditorHandler::updateEditorValue()
     QCheckBox* checkBox = m_editor->findChild<QCheckBox*>("value");
     if (checkBox) {
         SignalBlocker blocker(checkBox);
-        if (m_itemValue.isNull()) {
+        if (m_entry.isNull()) {
             checkBox->setChecked(false);
             return;
         }
         bool value;
-        m_itemValue.getValue(value);
+        m_entry.getValue(value);
         checkBox->setChecked(value);
         return;
     }
@@ -93,12 +93,12 @@ void ValueEditorHandler::updateEditorValue()
     QLineEdit* lineEdit = m_editor->findChild<QLineEdit*>("value");
     if (lineEdit) {
         SignalBlocker blocker(lineEdit);
-        if (m_itemValue.isNull()) {
+        if (m_entry.isNull()) {
             lineEdit->clear();
             return;
         }
         std::string str;
-        m_itemValue.getValue(str);
+        m_entry.getValue(str);
         lineEdit->setText(QString::fromStdString(str));
         return;
     }
@@ -106,27 +106,27 @@ void ValueEditorHandler::updateEditorValue()
     QComboBox* comboBox = m_editor->findChild<QComboBox*>("value");
     if (comboBox) {
         SignalBlocker blocker(comboBox);
-        if (m_itemValue.isNull()) {
+        if (m_entry.isNull()) {
             comboBox->clear();
             return;
         }
 
         comboBox->clear();
         std::vector<std::string> optionList;
-        m_itemValue.getOptions(optionList);
+        m_entry.getOptions(optionList);
 
         for (const std::string& option: optionList)
         {
             comboBox->addItem(QString::fromStdString(option));
         }
-        if (m_itemValue.settings().value(OPTION_ONLY)) {
+        if (m_entry.settings().value(OPTION_ONLY)) {
             comboBox->setInsertPolicy(QComboBox::NoInsert);
         } else {
             comboBox->setInsertPolicy(QComboBox::InsertAtBottom);
         }
 
         std::string str;
-        m_itemValue.getValue(str);
+        m_entry.getValue(str);
         comboBox->setCurrentText(QString::fromStdString(str));
         return;
     }
@@ -184,8 +184,8 @@ void ValueEditorHandler::createLabel()
 {
     if (m_label != nullptr) { return; }
 
-    m_label = new QLabel(QString::fromStdString(m_itemValue.displayName()));
-    m_label->setToolTip(QString::fromStdString(m_itemValue.tooltip()));
+    m_label = new QLabel(QString::fromStdString(m_entry.displayName()));
+    m_label->setToolTip(QString::fromStdString(m_entry.tooltip()));
     connect(m_label, SIGNAL(destroyed(QObject*)), this, SLOT(onLabelDestroyed()));
 
     updateLabelValue();
@@ -199,7 +199,7 @@ void ValueEditorHandler::createEditor()
 
     QValidator * validator = nullptr;
 
-    auto valueDef = m_itemValue.valueDef();
+    auto valueDef = m_entry.valueDef();
     if (valueDef->valueType() == Model::UnionType::Integer) {
         validator = new QIntValidator();
     } else if (valueDef->valueType() == Model::UnionType::Double) {
@@ -243,9 +243,9 @@ void ValueEditorHandler::createEditor()
         layout->addWidget(lineEdit, 1);
     }
 
-    if (m_itemValue.settings().value(UNIT)) {
+    if (m_entry.settings().value(UNIT)) {
         QLabel* unitLabel = new QLabel();
-        unitLabel->setText(QString::fromStdString(m_itemValue.settings().value(UNIT).getCString()));
+        unitLabel->setText(QString::fromStdString(m_entry.settings().value(UNIT).getCString()));
         unitLabel->setObjectName("unit");
         layout->addWidget(unitLabel);
     }
@@ -259,11 +259,11 @@ void ValueEditorHandler::createEditor()
 
 // =============================================================================
 // (protected)
-void ValueEditorHandler::setItemValue(const Model::UnionRef &value)
+void ValueEditorHandler::setValue(const Model::UnionRef &value)
 {
     // TODO: Add undo/redo stuff here...
 
-    if (m_itemValue.isNull() || !m_itemValue.setValue(value)) {
+    if (m_entry.isNull() || !m_entry.setValue(value)) {
         // ItemValue is not changed
         updateEditorValue();
     } else {
@@ -285,21 +285,21 @@ void ValueEditorHandler::onEditingFinished()
 {
     QCheckBox* checkBox = m_editor->findChild<QCheckBox*>("value");
     if (checkBox) {
-        setItemValue(checkBox->isChecked());
+        setValue(checkBox->isChecked());
         emit valueEditedFinished();
         return;
     }
 
     QLineEdit* lineEdit = m_editor->findChild<QLineEdit*>("value");
     if (lineEdit) {
-        setItemValue(lineEdit->text().toStdString());
+        setValue(lineEdit->text().toStdString());
         emit valueEditedFinished();
         return;
     }
 
     QComboBox* comboBox = m_editor->findChild<QComboBox*>("value");
     if (comboBox) {
-        setItemValue(comboBox->currentText().toStdString());
+        setValue(comboBox->currentText().toStdString());
         emit valueEditedFinished();
         return;
     }

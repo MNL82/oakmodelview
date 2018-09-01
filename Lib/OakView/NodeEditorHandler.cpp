@@ -137,8 +137,8 @@ void NodeEditorHandler::createEditor()
 
     int row = 0;
 
-    Model::Item::ValueIterator vIt = m_item.valueBegin();
-    Model::Item::ValueIterator vItEnd = m_item.valueEnd();
+    Model::Item::entryIterator vIt = m_item.entryBegin();
+    Model::Item::entryIterator vItEnd = m_item.entryEnd();
     while (vIt != vItEnd) {
         if (!m_valueEditorMap.contains(vIt->name())) {
             auto vEditor = new ValueEditorHandler(this, *vIt);

@@ -114,7 +114,7 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloned.remove(this);
         m_model->notifier_itemRemoved.remove(this);
 
-        m_model->notifier_itemValueChanged.remove(this);
+        m_model->notifier_entryChanged.remove(this);
     }
 
     // Change the model
@@ -132,7 +132,7 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloned.add(this, &ListView::onItemCloned);
         m_model->notifier_itemRemoved.add(this, &ListView::onItemRemoved);
 
-        m_model->notifier_itemValueChanged.add(this, &ListView::onItemValueChanged);
+        m_model->notifier_entryChanged.add(this, &ListView::onEntryChanged);
     }
 }
 
@@ -223,7 +223,7 @@ void ListView::onItemRemoved(const Model::Item &parentItem, int index)
 
 // =============================================================================
 // (public)
-void ListView::onItemValueChanged(const Model::Item &item, int valueIndex)
+void ListView::onEntryChanged(const Model::Item &item, int valueIndex)
 {
     if (item.def()->derivedIdValueDefIndex() == valueIndex) {
         // Child items can change when the derived definition change

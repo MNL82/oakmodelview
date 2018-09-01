@@ -13,7 +13,7 @@
 #include "ItemQueryChildren.h"
 #include "ItemQueryIgnoreSelf.h"
 #include "ItemQueryParent.h"
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 
 namespace Oak {
 namespace Model {
@@ -34,9 +34,9 @@ ItemQueryUPtr QueryBuilder::UPtr()
 
 // =============================================================================
 // (public)
-ValueQuerySPtr QueryBuilder::ValueUPtr(const std::string &valueName)
+EntryQuerySPtr QueryBuilder::ValueUPtr(const std::string &valueName)
 {
-    return ValueQuery::create(std::move(m_itemQuery), valueName);
+    return EntryQuery::create(std::move(m_itemQuery), valueName);
 }
 
 // =============================================================================
@@ -107,9 +107,9 @@ QueryBuilderSPtr QueryBuilder::createIgnoreSelf()
 
 // =============================================================================
 // (public)
-ValueQuerySPtr QueryBuilder::createValue(const std::string &valueName)
+EntryQuerySPtr QueryBuilder::createValue(const std::string &valueName)
 {
-    return ValueQuery::create(valueName);
+    return EntryQuery::create(valueName);
 }
 
 } // namespace Model

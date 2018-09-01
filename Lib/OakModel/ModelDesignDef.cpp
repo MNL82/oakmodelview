@@ -13,7 +13,7 @@
 #include "NodeDefBuilder.h"
 #include "ContainerDefBuilder.h"
 #include "ValueDefBuilder.h"
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 #include <memory>
 
 #include "QueryBuilder.h"
@@ -44,7 +44,7 @@ void ModelDesignDef::createModelDesign()
         ->addValueDef(VDB::create(UnionType::String, "KeyValue")
             ->setDisplayName("Key Value")
             ->setOptionsQuery(QB::createChildren("Value")->ValueUPtr("Name"))
-            ->setOptionsExcludedQuery(ValueQuery::create()->setValueName("InheritanceIDValue"))
+            ->setOptionsExcludedQuery(EntryQuery::create()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
         ->addValueInheritanceId(VDB::create(UnionType::String, "Type")
             ->setDisplayName("Node Type"));
@@ -56,7 +56,7 @@ void ModelDesignDef::createModelDesign()
         ->addValueDef(VDB::create(UnionType::String, "InheritanceIDValue")
             ->setDisplayName("Value for Inheritance ID")
             ->setOptionsQuery(QB::createChildren("Value")->ValueUPtr("Name"))
-            ->setOptionsExcludedQuery(ValueQuery::create()->setValueName("KeyValue"))
+            ->setOptionsExcludedQuery(EntryQuery::create()->setValueName("KeyValue"))
             ->setSetting("OptionsOnly", true));
 
     /************************** Node(Rerived) **************************/

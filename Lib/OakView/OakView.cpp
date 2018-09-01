@@ -65,7 +65,7 @@ void OakView::setOakModel(Model::OakModel* model)
         m_model->notifier_itemCloned.remove(this);
         m_model->notifier_itemRemoved.remove(this);
 
-        m_model->notifier_itemValueChanged.remove(this);
+        m_model->notifier_entryChanged.remove(this);
 
         if (!m_model->isNull()) {
             clearTreeStructure();
@@ -87,7 +87,7 @@ void OakView::setOakModel(Model::OakModel* model)
         m_model->notifier_itemCloned.add(this, &OakView::onItemCloned);
         m_model->notifier_itemRemoved.add(this, &OakView::onItemRemoved);
 
-        m_model->notifier_itemValueChanged.add(this, &OakView::onItemValueChanged);
+        m_model->notifier_entryChanged.add(this, &OakView::onEntryChanged);
 
         createTreeStructure();
     }
@@ -395,7 +395,7 @@ QTreeWidgetItem * OakView::getTreeItems(Model::Item item, QTreeWidgetItem *paren
 
     std::vector<std::string> values;
     values.push_back(item.def()->displayName());
-    if (item.def()->hasKey()) { values.push_back(item.valueKey().toString()); }
+    if (item.def()->hasKey()) { values.push_back(item.entryKey().toString()); }
 
     QTreeWidgetItem * elementItem;
     if (parentItem) { elementItem = new QTreeWidgetItem(parentItem, toQStringList(values)); }
@@ -453,7 +453,7 @@ void OakView::onItemRemoved(const Model::Item &parentItem, int index)
 
 // =============================================================================
 // (protected)
-void OakView::onItemValueChanged(const Model::Item &item, int valueIndex)
+void OakView::onEntryChanged(const Model::Item &item, int valueIndex)
 {
     if (item.def()->derivedIdValueDefIndex() == valueIndex) {
         // Child items can change when the derived definition change
@@ -466,7 +466,7 @@ void OakView::onItemValueChanged(const Model::Item &item, int valueIndex)
         blockSignals(false);
     } else if (item.def()->keyValueDefIndex() == valueIndex) {
         QTreeWidgetItem* qItem = NodeIndex(item).qItem(topLevelItem(0));
-        qItem->setText(1, QString::fromStdString(item.valueKey().toString()));
+        qItem->setText(1, QString::fromStdString(item.entryKey().toString()));
     }
 }
 

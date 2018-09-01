@@ -11,7 +11,7 @@
 #include "ValueOptions.h"
 
 #include "UnionRef.h"
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 
 namespace Oak {
 namespace Model {

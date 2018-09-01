@@ -83,7 +83,7 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
             }
         }
 
-        QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
+        QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.entry("name").toString());
         m_label = new QLabel(name);
         m_label->setStyleSheet("Text-align:left");
         m_label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -356,7 +356,7 @@ void ListViewItem::setCurrent()
 void ListViewItem::updateLabel()
 {
     if (m_label) {
-        QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.value("name").toString());
+        QString name = QString::fromStdString(m_item.def()->displayName()) + ": " + QString::fromStdString(m_item.entry("name").toString());
         m_label->setText(name);
     }
 }

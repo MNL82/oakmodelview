@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 
 #include "ItemQueryChildren.h"
 #include "ItemQueryParent.h"
@@ -19,36 +19,36 @@ namespace Model {
 
 // =============================================================================
 // (protected)
-ValueQuery::ValueQuery(const std::string &valueName)
+EntryQuery::EntryQuery(const std::string &valueName)
 {
-    m_valueName = valueName;
+    m_entryName = valueName;
 }
 
 // =============================================================================
 // (public)
-ValueQuery::ValueQuery(ItemQueryUPtr itemQueryUPtr, const std::string &valueName)
+EntryQuery::EntryQuery(ItemQueryUPtr itemQueryUPtr, const std::string &entryName)
 {
     m_itemQueryPtr = std::move(itemQueryUPtr);
-    m_valueName = valueName;
+    m_entryName = entryName;
 }
 
 // =============================================================================
 // (public)
-ValueQuery::~ValueQuery()
+EntryQuery::~EntryQuery()
 {
 }
 
 // =============================================================================
 // (public)
-ValueQuerySPtr ValueQuery::setValueName(const std::string &valueName)
+EntryQuerySPtr EntryQuery::setValueName(const std::string &entryName)
 {
-    m_valueName = valueName;
+    m_entryName = entryName;
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-int ValueQuery::count(const Item &item)
+int EntryQuery::count(const Item &item)
 {
     if (!m_itemQueryPtr) { return -1; }
 
@@ -62,28 +62,28 @@ int ValueQuery::count(const Item &item)
 
 // =============================================================================
 // (public)
-void ValueQuery::addValueList(const Item &item, std::vector<UnionValue> &valueList) const
+void EntryQuery::addValueList(const Item &item, std::vector<UnionValue> &valueList) const
 {
-    assert(!m_valueName.empty());
+    assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
         m_itemQueryPtr->reset(item);
         while(m_itemQueryPtr->moveNext()) {
             Item tempItem = m_itemQueryPtr->current();
-            if (tempItem.hasValue(m_valueName)) {
-                valueList.push_back(tempItem.value(m_valueName).value());
+            if (tempItem.hasEntry(m_entryName)) {
+                valueList.push_back(tempItem.entry(m_entryName).value());
             }
         }
     } else {
-        if (item.hasValue(m_valueName)) {
-            valueList.push_back(item.value(m_valueName).value());
+        if (item.hasEntry(m_entryName)) {
+            valueList.push_back(item.entry(m_entryName).value());
         }
     }
 }
 
 // =============================================================================
 // (public)
-std::vector<UnionValue> ValueQuery::getValueList(const Item &item) const
+std::vector<UnionValue> EntryQuery::getValueList(const Item &item) const
 {
     std::vector<UnionValue> valueList;
     addValueList(item, valueList);
@@ -92,9 +92,9 @@ std::vector<UnionValue> ValueQuery::getValueList(const Item &item) const
 
 // =============================================================================
 // (public)
-void ValueQuery::getValue(const Item &item, int index, UnionValue value) const
+void EntryQuery::getValue(const Item &item, int index, UnionValue value) const
 {
-    assert(!m_valueName.empty());
+    assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
         m_itemQueryPtr->reset(item);
@@ -102,8 +102,8 @@ void ValueQuery::getValue(const Item &item, int index, UnionValue value) const
         while(m_itemQueryPtr->moveNext()) {
             if (i == index) {
                 Item tempItem = m_itemQueryPtr->current();
-                if (tempItem.hasValue(m_valueName)) {
-                    item.value(m_valueName).getValue(value);
+                if (tempItem.hasEntry(m_entryName)) {
+                    item.entry(m_entryName).getValue(value);
                 }
                 return;
             }
@@ -112,17 +112,17 @@ void ValueQuery::getValue(const Item &item, int index, UnionValue value) const
         assert(false);
     } else {
         assert(index == 0);
-        if (item.hasValue(m_valueName)) {
-            item.value(m_valueName).getValue(value);
+        if (item.hasEntry(m_entryName)) {
+            item.entry(m_entryName).getValue(value);
         }
     }
 }
 
 // =============================================================================
 // (public)
-const ItemValue &ValueQuery::itemValue(const Item &item, int index) const
+const Entry &EntryQuery::entry(const Item &item, int index) const
 {
-    assert(!m_valueName.empty());
+    assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
         m_itemQueryPtr->reset(item);
@@ -130,26 +130,26 @@ const ItemValue &ValueQuery::itemValue(const Item &item, int index) const
         while(m_itemQueryPtr->moveNext()) {
             if (i == index) {
                 Item tempItem = m_itemQueryPtr->current();
-                if (tempItem.hasValue(m_valueName)) {
-                    return item.value(m_valueName);
+                if (tempItem.hasEntry(m_entryName)) {
+                    return item.entry(m_entryName);
                 }
-                return ItemValue::emptyItemValue();
+                return Entry::emptyEntry();
             }
             i++;
         }
         assert(false);
     } else {
         assert(index == 0);
-        if (item.hasValue(m_valueName)) {
-            return item.value(m_valueName);
+        if (item.hasEntry(m_entryName)) {
+            return item.entry(m_entryName);
         }
     }
-    return ItemValue::emptyItemValue();
+    return Entry::emptyEntry();
 }
 
 // =============================================================================
 // (public)
-std::vector<Item> ValueQuery::toItemList(const Item &item)
+std::vector<Item> EntryQuery::toItemList(const Item &item)
 {
     std::vector<Item> itemList;
     if (!m_itemQueryPtr) { return itemList; }
@@ -164,18 +164,18 @@ std::vector<Item> ValueQuery::toItemList(const Item &item)
 
 // =============================================================================
 // (public static)
-ValueQuerySPtr ValueQuery::create(const std::string &valueName)
+EntryQuerySPtr EntryQuery::create(const std::string &valueName)
 {
-    ValueQuerySPtr sPtr = ValueQuerySPtr(new ValueQuery(valueName));
+    EntryQuerySPtr sPtr = EntryQuerySPtr(new EntryQuery(valueName));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
 
 // =============================================================================
 // (public static)
-ValueQuerySPtr ValueQuery::create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName)
+EntryQuerySPtr EntryQuery::create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName)
 {
-    ValueQuerySPtr sPtr = ValueQuerySPtr(new ValueQuery(std::move(itemQueryUPtr), valueName));
+    EntryQuerySPtr sPtr = EntryQuerySPtr(new EntryQuery(std::move(itemQueryUPtr), valueName));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }

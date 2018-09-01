@@ -19,9 +19,9 @@ namespace Oak {
 namespace Model {
 
 class Item;
-class ValueQuery;
-typedef std::shared_ptr<ValueQuery> ValueQuerySPtr;
-typedef std::weak_ptr<ValueQuery> ValueQueryWPtr;
+class EntryQuery;
+typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
+typedef std::weak_ptr<EntryQuery> EntryQueryWPtr;
 
 // =============================================================================
 // Class definition
@@ -45,8 +45,8 @@ protected:
     std::vector<UnionValue> m_options;
     std::vector<UnionValue> m_excluded;
 
-    ValueQuerySPtr m_query;
-    ValueQuerySPtr m_queryExcluded;
+    EntryQuerySPtr m_query;
+    EntryQuerySPtr m_queryExcluded;
 
     friend class ValueDef;
     friend class ValueDefBuilder;

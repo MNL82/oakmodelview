@@ -8,8 +8,8 @@
 
 HEADERS += \
     $$PWD/Item.h \
-    $$PWD/ItemValue.h
+    $$PWD/Entry.h
 
 SOURCES += \
     $$PWD/Item.cpp \
-    $$PWD/ItemValue.cpp
+    $$PWD/Entry.cpp

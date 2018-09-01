@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 
 namespace Oak {
 namespace Model {
@@ -31,7 +31,7 @@ public:
     void setItemQuery(ItemQueryUPtr itemQuery);
 
     int columnCount() const;
-    void addValueQuery(ValueQuerySPtr valueQuery);
+    void addValueQuery(EntryQuerySPtr valueQuery);
 
     void reset(const Item &refItem);
     bool moveNext();
@@ -40,7 +40,7 @@ public:
 
     void getValue(int index, UnionValue value) const;
 
-    const ItemValue &itemValue(int index);
+    const Entry &entry(int index);
 
     template<typename T>
     T value(int index);
@@ -49,7 +49,7 @@ public:
 
 protected:
     ItemQueryUPtr m_itemQuery;
-    std::vector<ValueQuerySPtr> m_valueList; // Should be a valueRef (to be entryRef)
+    std::vector<EntryQuerySPtr> m_entryList; // Should be a valueRef (to be entryRef)
 };
 
 // =============================================================================
@@ -59,8 +59,8 @@ T TableQuery::value(int index)
 {
     assert(m_itemQuery);
     assert(index >= 0);
-    assert(index < static_cast<int>(m_valueList.size()));
-    return m_valueList[index]->value<T>(m_itemQuery->current(), 0);
+    assert(index < static_cast<int>(m_entryList.size()));
+    return m_entryList[index]->value<T>(m_itemQuery->current(), 0);
 }
 
 } // namespace Model

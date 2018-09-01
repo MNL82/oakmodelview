@@ -347,19 +347,19 @@ void OakModel::onItemBeforeRemoving(const Item &item) const
 
 // =============================================================================
 // (protected)
-void OakModel::onItemValueChanged(const Item &item, int valueIndex) const
+void OakModel::onEntryChanged(const Item &item, int valueIndex) const
 {
     if (item.def()->derivedIdValueDefIndex() == valueIndex) {
         const NodeDef* def = findNodeDef(item.node());
         assert(def);
         Item newItem(def, item.node(), this);
 
-        notifier_itemValueChanged.trigger(newItem, valueIndex);
+        notifier_entryChanged.trigger(newItem, valueIndex);
         if (item == m_currentItem) {
             setCurrentItem(newItem);
         }
     } else {
-        notifier_itemValueChanged.trigger(item, valueIndex);
+        notifier_entryChanged.trigger(item, valueIndex);
     }
 }
 

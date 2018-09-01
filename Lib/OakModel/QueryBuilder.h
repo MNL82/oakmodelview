@@ -29,7 +29,7 @@ protected:
 
 public:
     ItemQueryUPtr UPtr();
-    ValueQuerySPtr ValueUPtr(const std::string &valueName);
+    EntryQuerySPtr ValueUPtr(const std::string &valueName);
 
     QueryBuilderSPtr children(const std::string &nodeName);
     QueryBuilderSPtr parent();
@@ -39,7 +39,7 @@ public:
     static QueryBuilderSPtr createParent();
     static QueryBuilderSPtr createIgnoreSelf();
 
-    static ValueQuerySPtr createValue(const std::string &valueName);
+    static EntryQuerySPtr createValue(const std::string &valueName);
 
 protected:
     ItemQueryUPtr m_itemQuery;

@@ -11,7 +11,7 @@
 #pragma once
 
 #include "Node.h"
-#include "ItemValue.h"
+#include "Entry.h"
 #include "ValueDef.h"
 
 #include <QObject>
@@ -26,7 +26,7 @@ class ValueEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    ValueEditorHandler(QObject *parent, Model::ItemValue itemValue);
+    ValueEditorHandler(QObject *parent, Model::Entry entry);
     virtual ~ValueEditorHandler();
 
     ValueEditorHandler& operator=(const ValueEditorHandler& copy) = delete;
@@ -47,7 +47,7 @@ public:
 protected:
     virtual void createLabel();
     virtual void createEditor();
-    void setItemValue(const Model::UnionRef& value);
+    void setValue(const Model::UnionRef& value);
 
 protected slots:
     void onValueEdited();
@@ -60,7 +60,7 @@ signals:
     void valueEditedFinished();
 
 protected:
-    Model::ItemValue m_itemValue;
+    Model::Entry m_entry;
     QWidget* m_label = nullptr;
     QWidget* m_editor = nullptr;
 };

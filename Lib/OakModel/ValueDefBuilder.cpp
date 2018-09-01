@@ -117,7 +117,7 @@ ValueDefBuilderSPtr ValueDefBuilder::addOptionStatic(const UnionRef &value)
 
 // =============================================================================
 // (public)
-ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(ValueQuerySPtr value)
+ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(EntryQuerySPtr value)
 {
     assert(m_valueDef);
     m_valueDef->m_options->m_query = value;
@@ -127,7 +127,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(ValueQuerySPtr value)
 
 // =============================================================================
 // (public)
-ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedQuery(ValueQuerySPtr value)
+ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedQuery(EntryQuerySPtr value)
 {
     assert(m_valueDef);
     m_valueDef->m_options->m_queryExcluded = value;

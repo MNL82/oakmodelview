@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QTableWidget>
+#include <QToolBar>
 
 #include "OakModel.h"
 #include "TableQuery.h"
@@ -11,14 +12,14 @@ namespace View {
 // =============================================================================
 // Class definition
 // =============================================================================
-class TableView : public QTableWidget
+class TableView : public QWidget
 {
 public:
     TableView(QWidget *parent = nullptr);
     virtual ~TableView() override;
 
     void setBaseRef(Model::ItemQueryUPtr baseRef);
-    void addValueRef(Model::ValueQuerySPtr valueRef);
+    void addValueRef(Model::EntryQuerySPtr valueRef);
 
     void updateTable();
 
@@ -28,13 +29,26 @@ public:
     void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemRemoved(const Model::Item& parentItem, int index);
-    void onItemValueChanged(const Model::Item &item, int valueIndex);
+    void onEntryChanged(const Model::Item &item, int valueIndex);
+
+    virtual bool event(QEvent *event) override;
 
 protected:
     Model::OakModel * m_model = nullptr;
     Model::Item m_rootItem;
 
     Model::TableQuery m_tableQuery;
+
+    QTableWidget *m_tableWidget;
+    QToolBar *m_toolBar;
+
+    QAction * m_actionAdd;
+    QAction * m_actionDelete;
+    QAction * m_actionUp;
+    QAction * m_actionDown;
+    QAction * m_actionCut;
+    QAction * m_actionCopy;
+    QAction * m_actionPaste;
 };
 
 } // namespace View

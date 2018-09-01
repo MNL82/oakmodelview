@@ -12,7 +12,7 @@
 
 #include "NodeDef.h"
 #include "ValueDefBuilder.h"
-#include "ValueQuery.h"
+#include "EntryQuery.h"
 #include "ServiceFunctions.h"
 #include "QueryBuilder.h"
 

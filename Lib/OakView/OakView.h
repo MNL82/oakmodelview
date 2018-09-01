@@ -57,7 +57,7 @@ protected:
     void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemRemoved(const Model::Item& parentItem, int index);
 
-    void onItemValueChanged(const Model::Item& item, int valueIndex);
+    void onEntryChanged(const Model::Item& item, int valueIndex);
 
 protected slots:
     void createTreeStructure();
