@@ -3,6 +3,7 @@
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QMouseEvent>
+#include <QDebug>
 
 namespace Oak {
 namespace View {
@@ -38,6 +39,8 @@ TableView::TableView(QWidget *parent)
     m_toolBar->setOrientation(Qt::Vertical);
     m_toolBar->setIconSize(QSize(16,16));
     m_toolBar->setVisible(false);
+
+
 
     // Add actions
     m_actionAdd = new QAction(QPixmap(":/OakView/Resources/add_32.png"), "Add");
@@ -91,6 +94,9 @@ TableView::TableView(QWidget *parent)
     layout->addWidget(m_tableWidget);
     layout->addWidget(m_toolBar);
     setLayout(layout);
+
+    connect(m_tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
+    connect(m_tableWidget, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(onItemChanged(QTableWidgetItem*)));
 }
 
 // =============================================================================
@@ -122,6 +128,7 @@ void TableView::addValueRef(Model::EntryQuerySPtr valueRef)
 void TableView::updateTable()
 {
     m_tableWidget->clearContents();
+    disableAllActions();
 
     if (m_model == nullptr) { return; }
     if (m_model->rootItem().isNull()) { return; }
@@ -131,6 +138,7 @@ void TableView::updateTable()
     int rowCount = m_tableQuery.count(m_rootItem);
     int columnCount = m_tableQuery.columnCount();
 
+    m_tableWidget->blockSignals(true);
     m_tableWidget->setRowCount(rowCount);
     m_tableWidget->setColumnCount(columnCount);
     int row = 0;
@@ -155,6 +163,8 @@ void TableView::updateTable()
         }
         row++;
     }
+    m_tableWidget->blockSignals(false);
+    updateAllActions();
 }
 
 // =============================================================================
@@ -198,7 +208,82 @@ void TableView::setOakModel(Model::OakModel *model)
 }
 
 // =============================================================================
-// (public)
+// (protected slots)
+void TableView::onSelectionChanged()
+{
+    updateAllActions();
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onActionAdd()
+{
+
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onActionDelete()
+{
+
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onActionUp()
+{
+
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onActionDown()
+{
+
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onActionCut()
+{
+
+}
+// =============================================================================
+// (protected slots)
+
+void TableView::onActionCopy()
+{
+
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onActionPaste()
+{
+
+}
+
+// =============================================================================
+// (protected slots)
+void TableView::onItemChanged(QTableWidgetItem *item)
+{
+    m_tableQuery.reset(m_rootItem);
+    int row = 0;
+    while (m_tableQuery.moveNext()) {
+        if (row == item->row()) {
+            if (!m_tableQuery.entry(item->column()).setValue(item->text().toStdString())) {
+                m_tableWidget->blockSignals(true);
+                item->setText(QString::fromStdString(m_tableQuery.value<std::string>(item->column())));
+                m_tableWidget->blockSignals(false);
+            }
+            return;
+        }
+        row++;
+    }
+}
+
+// =============================================================================
+// (protected)
 void TableView::onItemInserted(const Model::Item &parentItem, int index)
 {
     Q_UNUSED(parentItem)
@@ -206,7 +291,7 @@ void TableView::onItemInserted(const Model::Item &parentItem, int index)
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void TableView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
     Q_UNUSED(sourceParentItem)
@@ -216,7 +301,7 @@ void TableView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void TableView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
 {
     Q_UNUSED(sourceParentItem)
@@ -226,7 +311,7 @@ void TableView::onItemCloned(const Model::Item &sourceParentItem, int sourceInde
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void TableView::onItemRemoved(const Model::Item &parentItem, int index)
 {
     Q_UNUSED(parentItem)
@@ -234,7 +319,7 @@ void TableView::onItemRemoved(const Model::Item &parentItem, int index)
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void TableView::onEntryChanged(const Model::Item &item, int valueIndex)
 {
     Q_UNUSED(item)
@@ -242,7 +327,7 @@ void TableView::onEntryChanged(const Model::Item &item, int valueIndex)
 }
 
 // =============================================================================
-// (public)
+// (protected)
 bool TableView::event(QEvent *event)
 {
     if (event->type()==QEvent::Enter) {
@@ -252,6 +337,49 @@ bool TableView::event(QEvent *event)
     }
 
     return QWidget::event(event);
+}
+
+// =============================================================================
+// (protected)
+void TableView::disableAllActions()
+{
+    m_actionAdd->setEnabled(false);
+    m_actionDelete->setEnabled(false);
+    m_actionUp->setEnabled(false);
+    m_actionDown->setEnabled(false);
+    m_actionCut->setEnabled(false);
+    m_actionCopy->setEnabled(false);
+    m_actionPaste->setEnabled(false);
+}
+
+// =============================================================================
+// (protected)
+void TableView::updateAllActions()
+{
+    QList<int> selectedRows;
+    QList<QTableWidgetItem*> selectedItems = m_tableWidget->selectedItems();
+    for (QTableWidgetItem *item: selectedItems)
+    {
+        if (!selectedRows.contains(item->row())) {
+            selectedRows.push_back(item->row());
+        }
+    }
+    m_actionAdd->setEnabled(true);
+
+    if (selectedRows.count() == 0) {
+        m_actionDelete->setEnabled(false);
+        m_actionUp->setEnabled(false);
+        m_actionCut->setEnabled(false);
+        m_actionCopy->setEnabled(false);
+    } else {
+        m_actionDelete->setEnabled(true);
+        m_actionUp->setDisabled(selectedRows.contains(0));
+        m_actionDown->setDisabled(selectedRows.contains(m_tableWidget->rowCount()-1));
+        m_actionCut->setEnabled(true);
+        m_actionCopy->setEnabled(true);
+    }
+
+    m_actionPaste->setDisabled(m_cutItems.empty() && m_copyItems.empty());
 }
 
 } // namespace View

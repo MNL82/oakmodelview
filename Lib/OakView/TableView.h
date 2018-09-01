@@ -14,6 +14,7 @@ namespace View {
 // =============================================================================
 class TableView : public QWidget
 {
+    Q_OBJECT
 public:
     TableView(QWidget *parent = nullptr);
     virtual ~TableView() override;
@@ -25,6 +26,20 @@ public:
 
     void setOakModel(Model::OakModel* model);
 
+protected slots:
+    void onSelectionChanged();
+
+    void onActionAdd();
+    void onActionDelete();
+    void onActionUp();
+    void onActionDown();
+    void onActionCut();
+    void onActionCopy();
+    void onActionPaste();
+
+    void onItemChanged(QTableWidgetItem *item);
+
+protected:
     void onItemInserted(const Model::Item& parentItem, int index);
     void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
@@ -32,6 +47,9 @@ public:
     void onEntryChanged(const Model::Item &item, int valueIndex);
 
     virtual bool event(QEvent *event) override;
+
+    void disableAllActions();
+    void updateAllActions();
 
 protected:
     Model::OakModel * m_model = nullptr;
@@ -49,6 +67,9 @@ protected:
     QAction * m_actionCut;
     QAction * m_actionCopy;
     QAction * m_actionPaste;
+
+    QList<Model::Item> m_cutItems;
+    QList<Model::Item> m_copyItems;
 };
 
 } // namespace View
