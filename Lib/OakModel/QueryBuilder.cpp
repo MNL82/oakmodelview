@@ -11,8 +11,9 @@
 #include "QueryBuilder.h"
 
 #include "ItemQueryChildren.h"
-#include "ItemQueryIgnoreSelf.h"
 #include "ItemQueryParent.h"
+#include "ItemQuerySiblings.h"
+#include "ItemQueryIgnoreSelf.h"
 #include "EntryQuery.h"
 
 namespace Oak {
@@ -65,15 +66,27 @@ QueryBuilderSPtr QueryBuilder::parent()
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::ignoreSelf()
+QueryBuilderSPtr QueryBuilder::siblings(bool matchName)
 {
     if (m_itemQuery) {
-        m_itemQuery->add(ItemQueryUPtr(new ItemQueryIgnoreSelf()));
+        m_itemQuery->add(ItemQueryUPtr(new ItemQuerySiblings(matchName)));
     } else {
-        m_itemQuery = ItemQueryUPtr(new ItemQueryIgnoreSelf());
+        m_itemQuery = ItemQueryUPtr(new ItemQuerySiblings(matchName));
     }
     return m_thisWPtr.lock();
 }
+
+//// =============================================================================
+//// (public)
+//QueryBuilderSPtr QueryBuilder::ignoreSelf()
+//{
+//    if (m_itemQuery) {
+//        m_itemQuery->add(ItemQueryUPtr(new ItemQueryIgnoreSelf()));
+//    } else {
+//        m_itemQuery = ItemQueryUPtr(new ItemQueryIgnoreSelf());
+//    }
+//    return m_thisWPtr.lock();
+//}
 
 // =============================================================================
 // (public)
@@ -97,13 +110,23 @@ QueryBuilderSPtr QueryBuilder::createParent()
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::createIgnoreSelf()
+QueryBuilderSPtr QueryBuilder::createSiblings(bool matchName)
 {
     QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
-    sPtr->ignoreSelf();
+    sPtr->siblings(matchName);
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
+
+//// =============================================================================
+//// (public)
+//QueryBuilderSPtr QueryBuilder::createIgnoreSelf()
+//{
+//    QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
+//    sPtr->ignoreSelf();
+//    sPtr->m_thisWPtr = sPtr;
+//    return sPtr;
+//}
 
 // =============================================================================
 // (public)

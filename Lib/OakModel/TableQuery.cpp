@@ -52,53 +52,92 @@ void TableQuery::addValueQuery(EntryQuerySPtr valueQuery)
 
 // =============================================================================
 // (public)
-void TableQuery::reset(const Item &refItem)
-{
-    assert(m_itemQuery);
-    m_itemQuery->reset(refItem);
-}
-
-// =============================================================================
-// (public)
-bool TableQuery::moveNext()
-{
-    assert(m_itemQuery);
-    return m_itemQuery->moveNext();
-}
-
-// =============================================================================
-// (public)
-std::string TableQuery::columnName() const
-{
-    return std::string();
-}
-
-// =============================================================================
-// (public)
-void TableQuery::getValue(int index, UnionValue value) const
-{
-    assert(m_itemQuery);
-    assert(index >= 0);
-    assert(index < static_cast<int>(m_entryList.size()));
-    m_entryList[static_cast<size_t>(index)]->getValue(m_itemQuery->current(), 0, value);
-}
-
-// =============================================================================
-// (public)
-const Entry &TableQuery::entry(int index)
-{
-    assert(m_itemQuery);
-    assert(index >= 0);
-    assert(index < static_cast<int>(m_entryList.size()));
-    return m_entryList[static_cast<size_t>(index)]->entry(m_itemQuery->current(), 0);
-}
-
-// =============================================================================
-// (public)
 int TableQuery::count(const Item &item)
 {
     assert(m_itemQuery);
     return m_itemQuery->count(item);
+}
+
+// =============================================================================
+// (public)
+const ItemQuery &TableQuery::itemQuery() const
+{
+    return *m_itemQuery.get();
+}
+
+// =============================================================================
+// (public)
+TableQuery::IteratorUPtr TableQuery::begin(const Item &refItem) const
+{
+    IteratorUPtr it(new Iterator(*this));
+    it->first(refItem);
+    return it;
+}
+
+// =============================================================================
+// (public)
+TableQuery::IteratorUPtr TableQuery::rBegin(const Item &refItem) const
+{
+    IteratorUPtr it(new Iterator(*this));
+    it->last(refItem);
+    return it;
+}
+
+// =============================================================================
+// Iterator functions
+// =============================================================================
+
+// =============================================================================
+// (public)
+TableQuery::Iterator::Iterator(const TableQuery &tableQuery)
+    : ItemQuery::Iterator(tableQuery.itemQuery())
+{
+    m_tableQuery = &tableQuery;
+
+    size_t count = static_cast<size_t>(m_tableQuery->columnCount());
+    for (size_t i = 0; i < count; i++)
+    {
+        m_entryIteratorList.push_back(new EntryQuery::Iterator(*m_tableQuery->m_entryList[i].get()));
+    }
+}
+
+// =============================================================================
+// (public)
+TableQuery::Iterator::~Iterator()
+{
+    for (auto eIt: m_entryIteratorList)
+    {
+        delete eIt;
+    }
+    m_entryIteratorList.clear();
+    m_tableQuery = nullptr;
+    ItemQuery::Iterator::~Iterator();
+}
+
+// =============================================================================
+// (public)
+const Entry &TableQuery::Iterator::entry(int index) const
+{
+    if (!isValid() ||
+        index >= static_cast<int>(m_entryIteratorList.size())) {
+        return Entry::emptyEntry();
+    }
+
+    auto eIt = m_entryIteratorList[static_cast<size_t>(index)];
+    Item i = item();
+    if (eIt->first(i)) {
+        return eIt->entry();
+    }
+    return Entry::emptyEntry();
+}
+
+// =============================================================================
+// (public)
+void TableQuery::Iterator::getValue(int index, UnionValue value) const
+{
+    const Entry &e = entry(index);
+    if (e.isNull()) { return; }
+    e.getValue(value);
 }
 
 } // namespace Model

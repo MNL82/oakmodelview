@@ -24,7 +24,12 @@ public:
     ItemQueryChildren(const std::string &nodeName);
 
 protected:
-    virtual bool moveCurrentNext() override;
+//    virtual bool moveCurrentNext() override;
+
+    virtual Item first(const Item &refItem) const override;
+    virtual Item last(const Item &refItem) const override;
+    virtual Item next(const Item &refItem, const Item &cItem) const override;
+    virtual Item previous(const Item &refItem, const Item &cItem) const override;
 
 protected:
     std::string m_nodeName;

@@ -92,6 +92,8 @@ protected:
     const ValueDef* m_valueDef;
     Node m_node;
     const Item* m_item;
+
+    friend class Item;
 };
 
 // =============================================================================

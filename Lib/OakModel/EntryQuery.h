@@ -35,12 +35,13 @@ public:
 
     int count(const Item &item);
 
-    void addValueList(const Item &item, std::vector<UnionValue> &valueList) const;
-    std::vector<UnionValue> getValueList(const Item &item) const;
+    const Entry &entry(const Item &item, int index) const;
+
+    void getValueList(const Item &item, std::vector<UnionValue> &valueList) const;
+    std::vector<UnionValue> valueList(const Item &item) const;
 
     void getValue(const Item &item, int index, UnionValue value) const;
 
-    const Entry &entry(const Item &item, int index) const;
 
     template<typename T>
     T value(const Item &item, int index) const;
@@ -50,6 +51,8 @@ public:
 
     std::vector<Item> toItemList(const Item &item);
 
+    const ItemQuery &itemQuery() const;
+
     static EntryQuerySPtr create(const std::string &valueName = "");
     static EntryQuerySPtr create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
 
@@ -58,6 +61,35 @@ protected:
     ItemQueryUPtr m_itemQueryPtr = ItemQueryUPtr();
 
     EntryQueryWPtr m_thisWPtr;
+
+public:
+    // Iterator navigation implementation
+    class Iterator : public ItemQuery::Iterator {
+
+    public:
+        Iterator(const EntryQuery &entryQuery);
+
+        virtual ~Iterator() override;
+
+        void getValue(UnionValue value) const;
+
+        template<typename T>
+        T value() const;
+
+        const Entry &entry() const;
+
+    protected:
+        const EntryQuery *m_entryQuery;
+
+        friend class EntryQuery;
+    };
+    typedef std::unique_ptr<Iterator> IteratorUPtr;
+
+
+    IteratorUPtr begin(const Item &refItem) const;
+    IteratorUPtr rBegin(const Item &refItem) const;
+
+    friend class Iterator;
 };
 
 // =============================================================================
@@ -68,16 +100,18 @@ T EntryQuery::value(const Item &item, int index) const
     assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
-        m_itemQueryPtr->reset(item);
+
         int i = 0;
-        while(m_itemQueryPtr->moveNext()) {
+        auto it = m_itemQueryPtr->begin(item);
+        while(it->isValid()) {
             if (i == index) {
-                Item tempItem = m_itemQueryPtr->current();
+                auto tempItem = it->item();
                 if (tempItem.hasEntry(m_entryName)) {
                     return item.entry(m_entryName).value<T>();
                 }
                 return T();
             }
+            it->next();
             i++;
         }
         assert(false);
@@ -99,12 +133,13 @@ std::vector<T> EntryQuery::toValueList(const Item &item)
 
     std::vector<T> valueList;
     if (m_itemQueryPtr) {
-        m_itemQueryPtr->reset(item);
-        while(m_itemQueryPtr->moveNext()) {
-            Item tempItem = m_itemQueryPtr->current();
+        auto it = m_itemQueryPtr->begin(item);
+        while (it->isValid()) {
+            Item tempItem = it->item();
             if (tempItem.hasEntry(m_entryName)) {
                 valueList.push_back(tempItem.entry(m_entryName).value<T>());
             }
+            it->next();
         }
     } else {
         if (item.hasEntry(m_entryName)) {
@@ -113,6 +148,14 @@ std::vector<T> EntryQuery::toValueList(const Item &item)
     }
 
     return valueList;
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+T EntryQuery::Iterator::value() const
+{
+    return entry().value<T>();
 }
 
 } // namespace Model

@@ -27,23 +27,61 @@ public:
     ItemQuery();
     virtual ~ItemQuery();
 
-    void reset(const Item &refItem);
-    virtual bool moveNext();
-    const Item &current(bool recursive = true) const;
+    int count(const Item &refItem);
+    std::vector<Item> itemList(const Item &refItem);
 
-    int count(const Item &item);
-    std::vector<Item> itemList(const Item &item);
+    bool hasChildQuery() const;
 
     ItemQuery *childQuery();
 
 protected:
     void add(ItemQueryUPtr query);
-    virtual bool moveCurrentNext() = 0;
+
+    virtual Item first(const Item &refItem) const;
+    virtual Item last(const Item &refItem) const;
+    virtual Item next(const Item &refItem, const Item &cItem) const;
+    virtual Item previous(const Item &refItem, const Item &cItem) const;
 
 protected:
     Item m_refItem;
     Item m_currentItem;
     ItemQueryUPtr m_childQueryUPtr = ItemQueryUPtr();
+
+
+    // Iterator navigation implementation
+public:
+    class Iterator {
+
+    public:
+        Iterator(const ItemQuery & query);
+
+        virtual ~Iterator();
+
+        bool isValid() const;
+//        Iterator &operator++(int);
+//        Iterator &operator--(int);
+        bool next();
+        bool previous();
+
+        const Item & item() const;
+
+        bool first(const Item &refItem);
+        bool last(const Item &refItem);
+
+    protected:
+        const ItemQuery *m_query;
+        Item m_refItem;
+        Item m_currentItem;
+
+        Iterator *m_childIterator;
+
+        friend class ItemQuery;
+    };
+    typedef std::unique_ptr<Iterator> IteratorUPtr;
+
+    IteratorUPtr begin(const Item &refItem) const;
+    IteratorUPtr rBegin(const Item &refItem) const;
+
 
     friend class QueryBuilder;
 };

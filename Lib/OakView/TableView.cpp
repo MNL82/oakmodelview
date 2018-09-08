@@ -143,25 +143,25 @@ void TableView::updateTable()
     m_tableWidget->setColumnCount(columnCount);
     int row = 0;
 
-    m_tableQuery.reset(m_rootItem);
-    while (m_tableQuery.moveNext()) {
+    auto it = m_tableQuery.begin(m_rootItem);
+    while (it->isValid()) {
         // Add Table Header
         if (row == 0) {
             for (int column = 0; column < columnCount; column++)
             {
-                const Model::Entry &iValue = m_tableQuery.entry(column);
-                m_tableWidget->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(iValue.displayName())));
+                m_tableWidget->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(it->entry(column).displayName())));
             }
             m_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         }
         // Add table values
         for (int column = 0; column < columnCount; column++)
         {
-            std::string value = m_tableQuery.value<std::string>(column);
+            std::string value = it->value<std::string>(column);
             QTableWidgetItem *item = new QTableWidgetItem(QString::fromStdString(value));
             m_tableWidget->setItem(row, column, item);
         }
         row++;
+        it->next();
     }
     m_tableWidget->blockSignals(false);
     updateAllActions();
@@ -267,18 +267,20 @@ void TableView::onActionPaste()
 // (protected slots)
 void TableView::onItemChanged(QTableWidgetItem *item)
 {
-    m_tableQuery.reset(m_rootItem);
+    auto it = m_tableQuery.begin(m_rootItem);
     int row = 0;
-    while (m_tableQuery.moveNext()) {
+    while (it->isValid()) {
         if (row == item->row()) {
-            if (!m_tableQuery.entry(item->column()).setValue(item->text().toStdString())) {
+            auto entry = it->entry(item->column());
+            if (!entry.setValue(item->text().toStdString())) {
                 m_tableWidget->blockSignals(true);
-                item->setText(QString::fromStdString(m_tableQuery.value<std::string>(item->column())));
+                item->setText(QString::fromStdString(entry.value<std::string>(item->column())));
                 m_tableWidget->blockSignals(false);
             }
             return;
         }
         row++;
+        it->next();
     }
 }
 
@@ -369,6 +371,7 @@ void TableView::updateAllActions()
     if (selectedRows.count() == 0) {
         m_actionDelete->setEnabled(false);
         m_actionUp->setEnabled(false);
+        m_actionDown->setDisabled(false);
         m_actionCut->setEnabled(false);
         m_actionCopy->setEnabled(false);
     } else {

@@ -53,7 +53,7 @@ bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Item *item
 
     std::vector<UnionValue>::const_iterator it;
     if (item && m_query) {
-        std::vector<UnionValue> oList = m_query->getValueList(*item);
+        std::vector<UnionValue> oList = m_query->valueList(*item);
         for(const UnionValue &option: oList)
         {
             it = std::find(options.begin(), options.end(), option);
@@ -64,7 +64,7 @@ bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Item *item
     }
 
     if (item && m_queryExcluded) {
-        std::vector<UnionValue> oList = m_queryExcluded->getValueList(*item);
+        std::vector<UnionValue> oList = m_queryExcluded->valueList(*item);
         for(const UnionValue &option: oList)
         {
             it = std::find(options.begin(), options.end(), option);

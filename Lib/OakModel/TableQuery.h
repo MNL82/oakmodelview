@@ -33,34 +33,49 @@ public:
     int columnCount() const;
     void addValueQuery(EntryQuerySPtr valueQuery);
 
-    void reset(const Item &refItem);
-    bool moveNext();
-
-    std::string columnName() const;
-
-    void getValue(int index, UnionValue value) const;
-
-    const Entry &entry(int index);
-
-    template<typename T>
-    T value(int index);
-
     int count(const Item &item);
+
+    const ItemQuery &itemQuery() const;
 
 protected:
     ItemQueryUPtr m_itemQuery;
     std::vector<EntryQuerySPtr> m_entryList; // Should be a valueRef (to be entryRef)
+
+public:
+    // Iterator navigation implementation
+    class Iterator : public ItemQuery::Iterator {
+
+    public:
+        Iterator(const TableQuery &tableQuery);
+
+        virtual ~Iterator() override;
+
+        const Entry &entry(int index) const;
+        void getValue(int index, UnionValue value) const;
+
+        template<typename T>
+        T value(int index);
+
+    protected:
+        const TableQuery *m_tableQuery;
+        std::vector<EntryQuery::Iterator*> m_entryIteratorList;
+
+        friend class TableQuery;
+    };
+    typedef std::unique_ptr<Iterator> IteratorUPtr;
+
+    IteratorUPtr begin(const Item &refItem) const;
+    IteratorUPtr rBegin(const Item &refItem) const;
 };
 
 // =============================================================================
 // (public)
 template<typename T>
-T TableQuery::value(int index)
+T TableQuery::Iterator::value(int index)
 {
-    assert(m_itemQuery);
-    assert(index >= 0);
-    assert(index < static_cast<int>(m_entryList.size()));
-    return m_entryList[index]->value<T>(m_itemQuery->current(), 0);
+    const Entry &e = entry(index);
+    if (e.isNull()) { T(); }
+    return e.value<T>();
 }
 
 } // namespace Model

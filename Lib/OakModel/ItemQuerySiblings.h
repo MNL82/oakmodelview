@@ -18,16 +18,20 @@ namespace Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class ItemQueryParent : public ItemQuery
+class ItemQuerySiblings : public ItemQuery
 {
 public:
-    ItemQueryParent();
+    ItemQuerySiblings(bool matchName = true);
 
 protected:
-//    virtual bool moveCurrentNext() override;
-
     virtual Item first(const Item &refItem) const override;
     virtual Item last(const Item &refItem) const override;
+    virtual Item next(const Item &refItem, const Item &cItem) const override;
+    virtual Item previous(const Item &refItem, const Item &cItem) const override;
+
+protected:
+    bool m_matchName;
+    mutable Item m_parent;
 };
 
 } // namespace Model

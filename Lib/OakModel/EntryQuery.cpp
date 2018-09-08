@@ -50,29 +50,40 @@ EntryQuerySPtr EntryQuery::setValueName(const std::string &entryName)
 // (public)
 int EntryQuery::count(const Item &item)
 {
-    if (!m_itemQueryPtr) { return -1; }
-
-    m_itemQueryPtr->reset(item);
-    int count = 0;
-    while(m_itemQueryPtr->moveNext()) {
-        count++;
-    }
-    return count;
+    if (!m_itemQueryPtr) { return 1; }
+    return m_itemQueryPtr->count(item);
 }
 
 // =============================================================================
 // (public)
-void EntryQuery::addValueList(const Item &item, std::vector<UnionValue> &valueList) const
+const Entry &EntryQuery::entry(const Item &item, int index) const
+{
+    assert(!m_entryName.empty());
+
+    int i = 0;
+    auto it = begin(item);
+    while (it->isValid()) {
+        if (i == index) { return it->entry(); }
+        i++;
+        it->next();
+    }
+    return Entry::emptyEntry();
+}
+
+// =============================================================================
+// (public)
+void EntryQuery::getValueList(const Item &item, std::vector<UnionValue> &valueList) const
 {
     assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
-        m_itemQueryPtr->reset(item);
-        while(m_itemQueryPtr->moveNext()) {
-            Item tempItem = m_itemQueryPtr->current();
+        auto it = m_itemQueryPtr->begin(item);
+        while (it->isValid()) {
+            auto tempItem = it->item();
             if (tempItem.hasEntry(m_entryName)) {
                 valueList.push_back(tempItem.entry(m_entryName).value());
             }
+            it->next();
         }
     } else {
         if (item.hasEntry(m_entryName)) {
@@ -83,10 +94,10 @@ void EntryQuery::addValueList(const Item &item, std::vector<UnionValue> &valueLi
 
 // =============================================================================
 // (public)
-std::vector<UnionValue> EntryQuery::getValueList(const Item &item) const
+std::vector<UnionValue> EntryQuery::valueList(const Item &item) const
 {
     std::vector<UnionValue> valueList;
-    addValueList(item, valueList);
+    getValueList(item, valueList);
     return valueList;
 }
 
@@ -97,17 +108,18 @@ void EntryQuery::getValue(const Item &item, int index, UnionValue value) const
     assert(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
-        m_itemQueryPtr->reset(item);
         int i = 0;
-        while(m_itemQueryPtr->moveNext()) {
+        auto it = m_itemQueryPtr->begin(item);
+        while (it->isValid()) {
             if (i == index) {
-                Item tempItem = m_itemQueryPtr->current();
+                auto tempItem = it->item();
                 if (tempItem.hasEntry(m_entryName)) {
                     item.entry(m_entryName).getValue(value);
                 }
                 return;
             }
             i++;
+            it->next();
         }
         assert(false);
     } else {
@@ -120,46 +132,25 @@ void EntryQuery::getValue(const Item &item, int index, UnionValue value) const
 
 // =============================================================================
 // (public)
-const Entry &EntryQuery::entry(const Item &item, int index) const
-{
-    assert(!m_entryName.empty());
-
-    if (m_itemQueryPtr) {
-        m_itemQueryPtr->reset(item);
-        int i = 0;
-        while(m_itemQueryPtr->moveNext()) {
-            if (i == index) {
-                Item tempItem = m_itemQueryPtr->current();
-                if (tempItem.hasEntry(m_entryName)) {
-                    return item.entry(m_entryName);
-                }
-                return Entry::emptyEntry();
-            }
-            i++;
-        }
-        assert(false);
-    } else {
-        assert(index == 0);
-        if (item.hasEntry(m_entryName)) {
-            return item.entry(m_entryName);
-        }
-    }
-    return Entry::emptyEntry();
-}
-
-// =============================================================================
-// (public)
 std::vector<Item> EntryQuery::toItemList(const Item &item)
 {
     std::vector<Item> itemList;
     if (!m_itemQueryPtr) { return itemList; }
 
-    m_itemQueryPtr->reset(item);
-    while(m_itemQueryPtr->moveNext()) {
-        itemList.push_back(m_itemQueryPtr->current());
+    auto it = m_itemQueryPtr->begin(item);
+    while (it->isValid()) {
+        itemList.push_back(it->item());
+        it->next();
     }
 
     return itemList;
+}
+
+// =============================================================================
+// (public)
+const ItemQuery &EntryQuery::itemQuery() const
+{
+    return *m_itemQueryPtr.get();
 }
 
 // =============================================================================
@@ -178,6 +169,59 @@ EntryQuerySPtr EntryQuery::create(ItemQueryUPtr itemQueryUPtr, const std::string
     EntryQuerySPtr sPtr = EntryQuerySPtr(new EntryQuery(std::move(itemQueryUPtr), valueName));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
+}
+
+// =============================================================================
+// (public)
+EntryQuery::IteratorUPtr EntryQuery::begin(const Item &refItem) const
+{
+    IteratorUPtr it(new Iterator(*this));
+    it->first(refItem);
+    return it;
+}
+
+// =============================================================================
+// (public)
+EntryQuery::IteratorUPtr EntryQuery::rBegin(const Item &refItem) const
+{
+    IteratorUPtr it(new Iterator(*this));
+    it->last(refItem);
+    return it;
+}
+
+// =============================================================================
+// Iterator functions
+// =============================================================================
+
+// =============================================================================
+// (public)
+EntryQuery::Iterator::Iterator(const EntryQuery &entryQuery)
+    : ItemQuery::Iterator(entryQuery.itemQuery())
+{
+    m_entryQuery = &entryQuery;
+}
+
+// =============================================================================
+// (public)
+EntryQuery::Iterator::~Iterator()
+{
+    m_entryQuery = nullptr;
+    ItemQuery::Iterator::~Iterator();
+}
+
+// =============================================================================
+// (public)
+void EntryQuery::Iterator::getValue(UnionValue value) const
+{
+    entry().getValue(value);
+}
+
+// =============================================================================
+// (public)
+const Entry &EntryQuery::Iterator::entry() const
+{
+    assert(!m_entryQuery->m_entryName.empty());
+    return this->item().entry(m_entryQuery->m_entryName);
 }
 
 } // namespace Model
