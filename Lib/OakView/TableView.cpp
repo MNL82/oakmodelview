@@ -217,7 +217,8 @@ void TableView::onSelectionChanged()
 // (protected slots)
 void TableView::onActionAdd()
 {
-
+    m_tableQuery.itemQuery().addItem(m_rootItem);
+    updateTable();
 }
 
 // =============================================================================

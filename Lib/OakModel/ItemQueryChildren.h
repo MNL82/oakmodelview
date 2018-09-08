@@ -23,9 +23,9 @@ class ItemQueryChildren : public ItemQuery
 public:
     ItemQueryChildren(const std::string &nodeName);
 
-protected:
-//    virtual bool moveCurrentNext() override;
+    virtual Item addItem(const Item &refItem) const override;
 
+protected:
     virtual Item first(const Item &refItem) const override;
     virtual Item last(const Item &refItem) const override;
     virtual Item next(const Item &refItem, const Item &cItem) const override;

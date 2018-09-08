@@ -74,11 +74,27 @@ ItemQuery *ItemQuery::childQuery()
 }
 
 // =============================================================================
+// (public)
+Item ItemQuery::addItem(const Item &refItem) const
+{
+    Item item = last(refItem);
+
+    // Default ItemQuery can not add Item
+    if (item.isNull()) {
+        return Item();
+    }
+
+    if (m_childQueryUPtr) {
+        return std::move(m_childQueryUPtr->addItem(item));
+    }
+}
+
+// =============================================================================
 // (protected)
-void ItemQuery::add(ItemQueryUPtr query)
+void ItemQuery::addChildQuery(ItemQueryUPtr query)
 {
     if (m_childQueryUPtr) {
-        m_childQueryUPtr->add(std::move(query));
+        m_childQueryUPtr->addChildQuery(std::move(query));
     } else {
         m_childQueryUPtr = std::move(query);
     }

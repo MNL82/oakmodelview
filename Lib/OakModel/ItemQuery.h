@@ -34,8 +34,10 @@ public:
 
     ItemQuery *childQuery();
 
+    virtual Item addItem(const Item &refItem) const;
+
 protected:
-    void add(ItemQueryUPtr query);
+    void addChildQuery(ItemQueryUPtr query);
 
     virtual Item first(const Item &refItem) const;
     virtual Item last(const Item &refItem) const;

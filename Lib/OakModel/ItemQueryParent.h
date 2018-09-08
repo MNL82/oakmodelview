@@ -24,8 +24,6 @@ public:
     ItemQueryParent();
 
 protected:
-//    virtual bool moveCurrentNext() override;
-
     virtual Item first(const Item &refItem) const override;
     virtual Item last(const Item &refItem) const override;
 };

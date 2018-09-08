@@ -21,26 +21,33 @@ ItemQueryChildren::ItemQueryChildren(const std::string &nodeName)
 
 }
 
-//// =============================================================================
-//// (public)
-//bool ItemQueryChildren::moveCurrentNext()
-//{
-//    assert(!m_refItem.isNull());
-//    if (m_currentItem.isNull()) {
-//        if (m_nodeName.empty()) {
-//            m_currentItem = m_refItem.firstChild();
-//        } else {
-//            m_currentItem = m_refItem.firstChild(m_nodeName);
-//        }
-//    } else {
-//        if (m_nodeName.empty()) {
-//            m_currentItem = m_refItem.nextChild(m_currentItem);
-//        } else {
-//            m_currentItem = m_refItem.nextChild(m_nodeName, m_currentItem);
-//        }
-//    }
-//    return !m_currentItem.isNull();
-//}
+// =============================================================================
+// (public)
+Item ItemQueryChildren::addItem(const Item &refItem) const
+{
+    Item item = last(refItem);
+
+
+    if (item.isNull()) {
+        if (m_nodeName.empty()) { // Can not add child node when name is not specified
+            return Item();
+        }
+        // Add missing child node is possible
+        int index = -1;
+        item = refItem.insertChild(m_nodeName, index);
+        if (!m_childQueryUPtr) { // No child query means task completed
+            return item;
+        }
+    }
+
+    if (m_childQueryUPtr) {
+        return std::move(m_childQueryUPtr->addItem(item));
+    } else {
+        // Add missing child node is possible
+        int index = -1;
+        return std::move(refItem.insertChild(m_nodeName, index));
+    }
+}
 
 // =============================================================================
 // (public)

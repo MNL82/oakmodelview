@@ -21,19 +21,6 @@ ItemQueryParent::ItemQueryParent()
 
 }
 
-//// =============================================================================
-//// (public)
-//bool ItemQueryParent::moveCurrentNext()
-//{
-//    assert(!m_refItem.isNull());
-//    if (m_currentItem.isNull()) {
-//        m_currentItem = m_refItem.parent();
-//    } else {
-//        m_currentItem.clear();
-//    }
-//    return !m_currentItem.isNull();
-//}
-
 // =============================================================================
 // (public)
 Item ItemQueryParent::first(const Item &refItem) const
