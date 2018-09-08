@@ -35,9 +35,9 @@ ItemQueryUPtr QueryBuilder::UPtr()
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::ValueUPtr(const std::string &valueName)
+EntryQuerySPtr QueryBuilder::ValueUPtr(const std::string &entryName)
 {
-    return EntryQuery::create(std::move(m_itemQuery), valueName);
+    return EntryQuery::create(std::move(m_itemQuery), entryName);
 }
 
 // =============================================================================
@@ -130,9 +130,9 @@ QueryBuilderSPtr QueryBuilder::createSiblings(bool matchName)
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::createValue(const std::string &valueName)
+EntryQuerySPtr QueryBuilder::createEntry(const std::string &entryName)
 {
-    return EntryQuery::create(valueName);
+    return EntryQuery::create(entryName);
 }
 
 } // namespace Model

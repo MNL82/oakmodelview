@@ -67,7 +67,7 @@ public:
     class Iterator : public ItemQuery::Iterator {
 
     public:
-        Iterator(const EntryQuery &entryQuery);
+        Iterator(const EntryQuery &entryQuery, const Item *refItem = nullptr);
 
         virtual ~Iterator() override;
 
@@ -85,9 +85,9 @@ public:
     };
     typedef std::unique_ptr<Iterator> IteratorUPtr;
 
-
-    IteratorUPtr begin(const Item &refItem) const;
-    IteratorUPtr rBegin(const Item &refItem) const;
+    IteratorUPtr iterator(const Item &refItem) const;
+//    IteratorUPtr begin(const Item &refItem) const;
+//    IteratorUPtr rBegin(const Item &refItem) const;
 
     friend class Iterator;
 };
@@ -102,8 +102,8 @@ T EntryQuery::value(const Item &item, int index) const
     if (m_itemQueryPtr) {
 
         int i = 0;
-        auto it = m_itemQueryPtr->begin(item);
-        while(it->isValid()) {
+        auto it = m_itemQueryPtr->iterator(item);
+        while(it->next()) {
             if (i == index) {
                 auto tempItem = it->item();
                 if (tempItem.hasEntry(m_entryName)) {
@@ -111,7 +111,6 @@ T EntryQuery::value(const Item &item, int index) const
                 }
                 return T();
             }
-            it->next();
             i++;
         }
         assert(false);
@@ -133,13 +132,12 @@ std::vector<T> EntryQuery::toValueList(const Item &item)
 
     std::vector<T> valueList;
     if (m_itemQueryPtr) {
-        auto it = m_itemQueryPtr->begin(item);
-        while (it->isValid()) {
+        auto it = m_itemQueryPtr->iterator(item);
+        while (it->next()) {
             Item tempItem = it->item();
             if (tempItem.hasEntry(m_entryName)) {
                 valueList.push_back(tempItem.entry(m_entryName).value<T>());
             }
-            it->next();
         }
     } else {
         if (item.hasEntry(m_entryName)) {

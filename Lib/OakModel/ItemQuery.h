@@ -51,7 +51,7 @@ public:
     class Iterator {
 
     public:
-        Iterator(const ItemQuery & query);
+        Iterator(const ItemQuery & query, const Item *refItem = nullptr);
 
         virtual ~Iterator();
 
@@ -75,8 +75,9 @@ public:
     };
     typedef std::unique_ptr<Iterator> IteratorUPtr;
 
-    IteratorUPtr begin(const Item &refItem) const;
-    IteratorUPtr rBegin(const Item &refItem) const;
+    IteratorUPtr iterator(const Item &refItem) const;
+//    IteratorUPtr begin(const Item &refItem) const;
+//    IteratorUPtr rBegin(const Item &refItem) const;
 
 
     friend class QueryBuilder;

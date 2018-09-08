@@ -34,11 +34,10 @@ ItemQuery::~ItemQuery()
 // (public)
 int ItemQuery::count(const Item &refItem)
 {
-    auto it = begin(refItem);
+    auto it = iterator(refItem);
     int count = 0;
-    while (it->isValid()) {
+    while (it->next()) {
         count++;
-        it->next();
     }
     return count;
 }
@@ -50,10 +49,9 @@ std::vector<Item> ItemQuery::itemList(const Item &refItem)
     std::vector<Item> itemList;
     if (!m_childQueryUPtr) { return itemList; }
 
-    auto it = begin(refItem);
-    while (it->isValid()) {
+    auto it = iterator(refItem);
+    while (it->next()) {
         itemList.push_back(it->item());
-        it->next();
     }
 
     return itemList;
@@ -118,21 +116,29 @@ Item ItemQuery::next(const Item &refItem, const Item &cItem) const
 
 // =============================================================================
 // (public)
-ItemQuery::IteratorUPtr ItemQuery::begin(const Item &refItem) const
+ItemQuery::IteratorUPtr ItemQuery::iterator(const Item &refItem) const
 {
-    IteratorUPtr it(new Iterator(*this));
-    it->first(refItem);
+    IteratorUPtr it(new Iterator(*this, &refItem));
     return it;
 }
 
-// =============================================================================
-// (public)
-ItemQuery::IteratorUPtr ItemQuery::rBegin(const Item &refItem) const
-{
-    IteratorUPtr it(new Iterator(*this));
-    it->last(refItem);
-    return it;
-}
+//// =============================================================================
+//// (public)
+//ItemQuery::IteratorUPtr ItemQuery::begin(const Item &refItem) const
+//{
+//    IteratorUPtr it(new Iterator(*this));
+//    it->first(refItem);
+//    return it;
+//}
+
+//// =============================================================================
+//// (public)
+//ItemQuery::IteratorUPtr ItemQuery::rBegin(const Item &refItem) const
+//{
+//    IteratorUPtr it(new Iterator(*this));
+//    it->last(refItem);
+//    return it;
+//}
 
 // =============================================================================
 // Iterator functions
@@ -140,9 +146,10 @@ ItemQuery::IteratorUPtr ItemQuery::rBegin(const Item &refItem) const
 
 // =============================================================================
 // (public)
-ItemQuery::Iterator::Iterator(const ItemQuery &query)
+ItemQuery::Iterator::Iterator(const ItemQuery &query, const Item *refItem)
 {
     m_query = &query;
+    m_refItem = refItem;
     if (m_query && m_query->hasChildQuery()) {
         m_childIterator = new Iterator(*m_query->m_childQueryUPtr.get());
     } else {
@@ -171,6 +178,10 @@ bool ItemQuery::Iterator::isValid() const
 // (public)
 bool ItemQuery::Iterator::next()
 {
+    if (m_currentItem.isNull()) {
+        return first(*m_refItem);
+    }
+
     if (!m_childIterator) { // No child query
         // Move next
         if (m_query) {
@@ -205,6 +216,10 @@ bool ItemQuery::Iterator::next()
 // (public)
 bool ItemQuery::Iterator::previous()
 {
+    if (m_currentItem.isNull()) {
+        return last(*m_refItem);
+    }
+
     if (!m_childIterator) { // No child query
         // Move previous
         if (m_query) {

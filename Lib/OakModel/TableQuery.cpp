@@ -67,21 +67,29 @@ const ItemQuery &TableQuery::itemQuery() const
 
 // =============================================================================
 // (public)
-TableQuery::IteratorUPtr TableQuery::begin(const Item &refItem) const
+TableQuery::IteratorUPtr TableQuery::iterator(const Item &refItem) const
 {
-    IteratorUPtr it(new Iterator(*this));
-    it->first(refItem);
+    IteratorUPtr it(new Iterator(*this, &refItem));
     return it;
 }
 
-// =============================================================================
-// (public)
-TableQuery::IteratorUPtr TableQuery::rBegin(const Item &refItem) const
-{
-    IteratorUPtr it(new Iterator(*this));
-    it->last(refItem);
-    return it;
-}
+//// =============================================================================
+//// (public)
+//TableQuery::IteratorUPtr TableQuery::begin(const Item &refItem) const
+//{
+//    IteratorUPtr it(new Iterator(*this));
+//    it->first(refItem);
+//    return it;
+//}
+
+//// =============================================================================
+//// (public)
+//TableQuery::IteratorUPtr TableQuery::rBegin(const Item &refItem) const
+//{
+//    IteratorUPtr it(new Iterator(*this));
+//    it->last(refItem);
+//    return it;
+//}
 
 // =============================================================================
 // Iterator functions
@@ -89,10 +97,11 @@ TableQuery::IteratorUPtr TableQuery::rBegin(const Item &refItem) const
 
 // =============================================================================
 // (public)
-TableQuery::Iterator::Iterator(const TableQuery &tableQuery)
+TableQuery::Iterator::Iterator(const TableQuery &tableQuery, const Item *refItem)
     : ItemQuery::Iterator(tableQuery.itemQuery())
 {
     m_tableQuery = &tableQuery;
+    m_refItem = refItem;
 
     size_t count = static_cast<size_t>(m_tableQuery->columnCount());
     for (size_t i = 0; i < count; i++)

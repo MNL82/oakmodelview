@@ -46,7 +46,7 @@ public:
     class Iterator : public ItemQuery::Iterator {
 
     public:
-        Iterator(const TableQuery &tableQuery);
+        Iterator(const TableQuery &tableQuery, const Item *refItem = nullptr);
 
         virtual ~Iterator() override;
 
@@ -64,8 +64,9 @@ public:
     };
     typedef std::unique_ptr<Iterator> IteratorUPtr;
 
-    IteratorUPtr begin(const Item &refItem) const;
-    IteratorUPtr rBegin(const Item &refItem) const;
+    IteratorUPtr iterator(const Item &refItem) const;
+//    IteratorUPtr begin(const Item &refItem) const;
+//    IteratorUPtr rBegin(const Item &refItem) const;
 };
 
 // =============================================================================

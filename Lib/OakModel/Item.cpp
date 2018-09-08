@@ -65,6 +65,10 @@ Item::Item(Item&& move)
 // (public)
 Item& Item::operator=(const Item& copy)
 {
+    m_def = copy.m_def;
+    m_node = copy.m_node;
+    m_model = copy.m_model;
+
     if (m_def == copy.m_def) {  // NodeDef is the same: Entry list is still valid
         if (!m_entryList.empty()) { // Entry list is initialized
             // Update node for entry lists
@@ -76,9 +80,6 @@ Item& Item::operator=(const Item& copy)
         m_entryList.assign(copy.m_entryList.begin(), copy.m_entryList.end());
     }
 
-    m_def = copy.m_def;
-    m_node = copy.m_node;
-    m_model = copy.m_model;
     return *this;
 }
 

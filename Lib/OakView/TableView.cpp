@@ -143,8 +143,8 @@ void TableView::updateTable()
     m_tableWidget->setColumnCount(columnCount);
     int row = 0;
 
-    auto it = m_tableQuery.begin(m_rootItem);
-    while (it->isValid()) {
+    auto it = m_tableQuery.iterator(m_rootItem);
+    while (it->next()) {
         // Add Table Header
         if (row == 0) {
             for (int column = 0; column < columnCount; column++)
@@ -161,7 +161,6 @@ void TableView::updateTable()
             m_tableWidget->setItem(row, column, item);
         }
         row++;
-        it->next();
     }
     m_tableWidget->blockSignals(false);
     updateAllActions();
@@ -267,9 +266,9 @@ void TableView::onActionPaste()
 // (protected slots)
 void TableView::onItemChanged(QTableWidgetItem *item)
 {
-    auto it = m_tableQuery.begin(m_rootItem);
     int row = 0;
-    while (it->isValid()) {
+    auto it = m_tableQuery.iterator(m_rootItem);
+    while (it->next()) {
         if (row == item->row()) {
             auto entry = it->entry(item->column());
             if (!entry.setValue(item->text().toStdString())) {
@@ -280,7 +279,6 @@ void TableView::onItemChanged(QTableWidgetItem *item)
             return;
         }
         row++;
-        it->next();
     }
 }
 
