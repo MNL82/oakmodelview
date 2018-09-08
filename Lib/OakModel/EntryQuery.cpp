@@ -12,7 +12,6 @@
 
 #include "ItemQueryChildren.h"
 #include "ItemQueryParent.h"
-#include "ItemQueryIgnoreSelf.h"
 
 namespace Oak {
 namespace Model {

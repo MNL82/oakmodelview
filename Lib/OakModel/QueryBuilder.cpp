@@ -13,7 +13,6 @@
 #include "ItemQueryChildren.h"
 #include "ItemQueryParent.h"
 #include "ItemQuerySiblings.h"
-#include "ItemQueryIgnoreSelf.h"
 #include "EntryQuery.h"
 
 namespace Oak {
@@ -45,7 +44,7 @@ EntryQuerySPtr QueryBuilder::ValueUPtr(const std::string &entryName)
 QueryBuilderSPtr QueryBuilder::children(const std::string &nodeName)
 {
     if (m_itemQuery) {
-        m_itemQuery->add(ItemQueryUPtr(new ItemQueryChildren(nodeName)));
+        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQueryChildren(nodeName)));
     } else {
         m_itemQuery = ItemQueryUPtr(new ItemQueryChildren(nodeName));
     }
@@ -57,7 +56,7 @@ QueryBuilderSPtr QueryBuilder::children(const std::string &nodeName)
 QueryBuilderSPtr QueryBuilder::parent()
 {
     if (m_itemQuery) {
-        m_itemQuery->add(ItemQueryUPtr(new ItemQueryParent()));
+        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQueryParent()));
     } else {
         m_itemQuery = ItemQueryUPtr(new ItemQueryParent());
     }
@@ -69,7 +68,7 @@ QueryBuilderSPtr QueryBuilder::parent()
 QueryBuilderSPtr QueryBuilder::siblings(bool matchName)
 {
     if (m_itemQuery) {
-        m_itemQuery->add(ItemQueryUPtr(new ItemQuerySiblings(matchName)));
+        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQuerySiblings(matchName)));
     } else {
         m_itemQuery = ItemQueryUPtr(new ItemQuerySiblings(matchName));
     }

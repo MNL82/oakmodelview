@@ -9,7 +9,6 @@
 SOURCES += \
     $$PWD/ItemQuery.cpp \
     $$PWD/ItemQueryChildren.cpp \
-    $$PWD/ItemQueryIgnoreSelf.cpp \
     $$PWD/ItemQueryParent.cpp \
     $$PWD/TableQuery.cpp \
     $$PWD/QueryBuilder.cpp \
@@ -19,7 +18,6 @@ SOURCES += \
 HEADERS += \
     $$PWD/ItemQuery.h \
     $$PWD/ItemQueryChildren.h \
-    $$PWD/ItemQueryIgnoreSelf.h \
     $$PWD/ItemQueryParent.h \
     $$PWD/TableQuery.h \
     $$PWD/QueryBuilder.h \
