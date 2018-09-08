@@ -43,8 +43,6 @@ protected:
     virtual Item previous(const Item &refItem, const Item &cItem) const;
 
 protected:
-    Item m_refItem;
-    Item m_currentItem;
     ItemQueryUPtr m_childQueryUPtr = ItemQueryUPtr();
 
 
@@ -58,8 +56,6 @@ public:
         virtual ~Iterator();
 
         bool isValid() const;
-//        Iterator &operator++(int);
-//        Iterator &operator--(int);
         bool next();
         bool previous();
 
@@ -70,7 +66,7 @@ public:
 
     protected:
         const ItemQuery *m_query;
-        Item m_refItem;
+        const Item *m_refItem;
         Item m_currentItem;
 
         Iterator *m_childIterator;

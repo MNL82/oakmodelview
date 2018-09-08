@@ -174,7 +174,7 @@ bool ItemQuery::Iterator::next()
     if (!m_childIterator) { // No child query
         // Move next
         if (m_query) {
-            m_currentItem = m_query->next(m_refItem, m_currentItem);
+            m_currentItem = m_query->next(*m_refItem, m_currentItem);
         } else {
             m_currentItem.clear();
         }
@@ -190,7 +190,7 @@ bool ItemQuery::Iterator::next()
             m_currentItem.clear();
             return isValid();
         }
-        m_currentItem = m_query->next(m_refItem, m_currentItem);
+        m_currentItem = m_query->next(*m_refItem, m_currentItem);
         if (m_currentItem.isNull()) { // End of Query
             return isValid();
         } else {
@@ -208,7 +208,7 @@ bool ItemQuery::Iterator::previous()
     if (!m_childIterator) { // No child query
         // Move previous
         if (m_query) {
-            m_currentItem = m_query->previous(m_refItem, m_currentItem);
+            m_currentItem = m_query->previous(*m_refItem, m_currentItem);
         } else {
             m_currentItem.clear();
         }
@@ -224,7 +224,7 @@ bool ItemQuery::Iterator::previous()
             m_currentItem.clear();
             return isValid();
         }
-        m_currentItem = m_query->previous(m_refItem, m_currentItem);
+        m_currentItem = m_query->previous(*m_refItem, m_currentItem);
         if (m_currentItem.isNull()) { // End of Query
             return isValid();
         } else {
@@ -249,12 +249,12 @@ const Item &ItemQuery::Iterator::item() const
 // (public)
 bool ItemQuery::Iterator::first(const Item &refItem)
 {
-    m_refItem = refItem;
+    m_refItem = &refItem;
 
     if (m_query) {
-        m_currentItem = m_query->first(m_refItem);
+        m_currentItem = m_query->first(*m_refItem);
     } else {
-        m_currentItem = m_refItem;
+        m_currentItem = *m_refItem;
     }
 
     if (m_currentItem.isNull()) { return false; }
@@ -272,12 +272,12 @@ bool ItemQuery::Iterator::first(const Item &refItem)
 // (public)
 bool ItemQuery::Iterator::last(const Item &refItem)
 {
-    m_refItem = refItem;
+    m_refItem = &refItem;
 
     if (m_query) {
-        m_currentItem = m_query->last(m_refItem);
+        m_currentItem = m_query->last(*m_refItem);
     } else {
-        m_currentItem = m_refItem;
+        m_currentItem = *m_refItem;
     }
 
     if (m_currentItem.isNull()) { return false; }
