@@ -75,21 +75,157 @@ ItemQuery *ItemQuery::childQuery()
 
 // =============================================================================
 // (public)
+bool ItemQuery::canInsertItem(const Item &refItem, int &index) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            if (m_childQueryUPtr->canInsertItem(item, index)) {
+                return true;
+            }
+            item = next(refItem, item);
+        }
+        return false;
+    } else {
+        // Default ItemQuery can not insert items
+        return false;
+    }
+}
+
+// =============================================================================
+// (public)
 Item ItemQuery::insertItem(const Item &refItem, int index) const
 {
-    if (index == -1) {
-        Item item = last(refItem);
-
-        // Default ItemQuery can not add Item
-        if (item.isNull()) {
-            return Item();
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            Item newItem = m_childQueryUPtr->insertItem(item, index);
+            if (!newItem.isNull()) {
+                return newItem;
+            }
+            item = next(refItem, item);
         }
-
-        if (m_childQueryUPtr) {
-            return std::move(m_childQueryUPtr->insertItem(item, -1));
-        }
+        return Item();
+    } else {
+        // Default ItemQuery can not insert items
+        return Item();
     }
-    return Item();
+}
+
+// =============================================================================
+// (public)
+bool ItemQuery::canCloneItem(const Item &refItem, int &index, const Item &cloneItem) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            if (m_childQueryUPtr->canCloneItem(item, index, cloneItem)) {
+                return true;
+            }
+            item = next(refItem, item);
+        }
+        return false;
+    } else {
+        // Default ItemQuery can not clone items
+        return false;
+    }
+}
+
+// =============================================================================
+// (public)
+Item ItemQuery::cloneItem(const Item &refItem, int &index, const Item &cloneItem) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            Item newItem = m_childQueryUPtr->cloneItem(item, index, cloneItem);
+            if (!newItem.isNull()) {
+                return newItem;
+            }
+            item = next(refItem, item);
+        }
+        return Item();
+    } else {
+        // Default ItemQuery can not clone items
+        return Item();
+    }
+}
+
+// =============================================================================
+// (public)
+bool ItemQuery::canMoveItem(const Item &refItem, int &index, const Item &moveItem) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            if (m_childQueryUPtr->canMoveItem(item, index, moveItem)) {
+                return true;
+            }
+            item = next(refItem, item);
+        }
+        return false;
+    } else {
+        // Default ItemQuery can not move items
+        return false;
+    }
+}
+
+// =============================================================================
+// (public)
+Item ItemQuery::moveItem(const Item &refItem, int &index, const Item &moveItem) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            Item newItem = m_childQueryUPtr->moveItem(item, index, moveItem);
+            if (!newItem.isNull()) {
+                return newItem;
+            }
+            item = next(refItem, item);
+        }
+        return Item();
+    } else {
+        // Default ItemQuery can not move items
+        return Item();
+    }
+}
+
+// =============================================================================
+// (public)
+bool ItemQuery::canRemoveItem(const Item &refItem, int index) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            if (m_childQueryUPtr->canRemoveItem(item, index)) {
+                return true;
+            }
+            item = next(refItem, item);
+        }
+        return false;
+    } else {
+        // Default ItemQuery can not remove items
+        return false;
+    }
+}
+
+// =============================================================================
+// (public)
+bool ItemQuery::removeItem(const Item &refItem, int index) const
+{
+    if (m_childQueryUPtr) {
+        Item item = first(refItem);
+        while (!item.isNull()) {
+            if (m_childQueryUPtr->removeItem(item, index)) {
+                return true;
+            }
+            item = next(refItem, item);
+        }
+        return false;
+    } else {
+        // Default ItemQuery can not remove items
+        return false;
+    }
 }
 
 // =============================================================================

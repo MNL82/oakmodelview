@@ -51,6 +51,8 @@ protected:
     void disableAllActions();
     void updateAllActions();
 
+    QList<int> selectedRows() const;
+
 protected:
     Model::OakModel * m_model = nullptr;
     Model::Item m_rootItem;

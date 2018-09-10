@@ -463,7 +463,7 @@ Item Item::insertChild(const std::string &name, int &index) const
 
 // =============================================================================
 // (public)
-bool Item::canCloneChild(int& index, Item cloneItem) const
+bool Item::canCloneChild(int& index, const Item &cloneItem) const
 {
     assert(m_def);
     return m_def->containerGroup().canCloneNode(m_node, index, cloneItem.m_node);
@@ -471,7 +471,7 @@ bool Item::canCloneChild(int& index, Item cloneItem) const
 
 // =============================================================================
 // (public)
-bool Item::canCloneChild(const std::string &name, int &index, Item cloneItem) const
+bool Item::canCloneChild(const std::string &name, int &index, const Item &cloneItem) const
 {
     assert(m_def);
     return m_def->container(name).canCloneNode(m_node, index, cloneItem.m_node);
@@ -479,7 +479,7 @@ bool Item::canCloneChild(const std::string &name, int &index, Item cloneItem) co
 
 // =============================================================================
 // (public)
-Item Item::cloneChild(int& index, Item cloneItem) const
+Item Item::cloneChild(int& index, const Item &cloneItem) const
 {
     assert(m_def);
     if (m_model) {
@@ -502,7 +502,7 @@ Item Item::cloneChild(int& index, Item cloneItem) const
 
 // =============================================================================
 // (public)
-Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
+Item Item::cloneChild(const std::string &name, int &index, const Item &cloneItem) const
 {
     assert(m_def);
     if (m_model) {
@@ -525,7 +525,7 @@ Item Item::cloneChild(const std::string &name, int &index, Item cloneItem) const
 
 // =============================================================================
 // (public)
-bool Item::canMoveChild(int& index, Item moveItem) const
+bool Item::canMoveChild(int& index, const Item &moveItem) const
 {
     assert(m_def);
     return m_def->containerGroup().canMoveNode(m_node, index, moveItem.m_node);
@@ -533,7 +533,7 @@ bool Item::canMoveChild(int& index, Item moveItem) const
 
 // =============================================================================
 // (public)
-bool Item::canMoveChild(const std::string &name, int &index, Item moveItem) const
+bool Item::canMoveChild(const std::string &name, int &index, const Item &moveItem) const
 {
     assert(m_def);
     return m_def->container(name).canMoveNode(m_node, index, moveItem.m_node);
@@ -541,7 +541,7 @@ bool Item::canMoveChild(const std::string &name, int &index, Item moveItem) cons
 
 // =============================================================================
 // (public)
-Item Item::moveChild(int& index, Item moveItem) const
+Item Item::moveChild(int& index, const Item &moveItem) const
 {
     assert(m_def);
     if (m_model) {
@@ -567,7 +567,7 @@ Item Item::moveChild(int& index, Item moveItem) const
 
 // =============================================================================
 // (public)
-Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
+Item Item::moveChild(const std::string &name, int &index, const Item &moveItem) const
 {
     assert(m_def);
     if (m_model) {

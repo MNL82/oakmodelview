@@ -103,17 +103,17 @@ public:
 
     Item insertChild(const std::string &name, int &index) const;
 
-    bool canCloneChild(int &index, Item cloneItem) const;
-    bool canCloneChild(const std::string &name, int &index, Item cloneItem) const;
+    bool canCloneChild(int &index, const Item &cloneItem) const;
+    bool canCloneChild(const std::string &name, int &index, const Item &cloneItem) const;
 
-    Item cloneChild(int &index, Item cloneItem) const;
-    Item cloneChild(const std::string &name, int &index, Item cloneItem) const;
+    Item cloneChild(int &index, const Item &cloneItem) const;
+    Item cloneChild(const std::string &name, int &index, const Item &cloneItem) const;
 
-    bool canMoveChild(int &index, Item moveItem) const;
-    bool canMoveChild(const std::string &name, int &index, Item moveItem) const;
+    bool canMoveChild(int &index, const Item &moveItem) const;
+    bool canMoveChild(const std::string &name, int &index, const Item &moveItem) const;
 
-    Item moveChild(int &index, Item moveItem) const;
-    Item moveChild(const std::string &name, int &index, Item moveItem) const;
+    Item moveChild(int &index, const Item &moveItem) const;
+    Item moveChild(const std::string &name, int &index, const Item &moveItem) const;
 
     bool canRemoveChild(int index) const;
     bool canRemoveChild(const std::string &name, int index) const;

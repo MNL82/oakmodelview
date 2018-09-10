@@ -34,7 +34,17 @@ public:
 
     ItemQuery *childQuery();
 
-    virtual Item insertItem(const Item &refItem, int index = 0) const;
+    virtual bool canInsertItem(const Item &refItem, int &index) const;
+    virtual Item insertItem(const Item &refItem, int index) const;
+
+    virtual bool canCloneItem(const Item &refItem, int &index, const Item &cloneItem) const;
+    virtual Item cloneItem(const Item &refItem, int &index, const Item &cloneItem) const;
+
+    virtual bool canMoveItem(const Item &refItem, int &index, const Item &moveItem) const;
+    virtual Item moveItem(const Item &refItem, int &index, const Item &moveItem) const;
+
+    virtual bool canRemoveItem(const Item &refItem, int index) const;
+    virtual bool removeItem(const Item &refItem, int index) const;
 
 protected:
     void addChildQuery(ItemQueryUPtr query);

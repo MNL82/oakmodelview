@@ -23,8 +23,17 @@ class ItemQueryChildren : public ItemQuery
 public:
     ItemQueryChildren(const std::string &nodeName);
 
-    virtual Item insertItem(const Item &refItem, int index = 0) const override;
+    virtual bool canInsertItem(const Item &refItem, int &index) const override;
+    virtual Item insertItem(const Item &refItem, int index) const override;
 
+    virtual bool canCloneItem(const Item &refItem, int &index, const Item &cloneItem) const override;
+    virtual Item cloneItem(const Item &refItem, int &index, const Item &cloneItem) const override;
+
+    virtual bool canMoveItem(const Item &refItem, int &index, const Item &moveItem) const override;
+    virtual Item moveItem(const Item &refItem, int &index, const Item &moveItem) const override;
+
+    virtual bool canRemoveItem(const Item &refItem, int index) const override;
+    virtual bool removeItem(const Item &refItem, int index) const override;
 protected:
     virtual Item first(const Item &refItem) const override;
     virtual Item last(const Item &refItem) const override;

@@ -219,7 +219,7 @@ void TableView::onSelectionChanged()
 // (protected slots)
 void TableView::onActionAdd()
 {
-    m_tableQuery.itemQuery().insertItem(m_rootItem);
+    m_tableQuery.itemQuery().insertItem(m_rootItem, -1);
     updateTable();
 }
 
@@ -227,7 +227,10 @@ void TableView::onActionAdd()
 // (protected slots)
 void TableView::onActionDelete()
 {
-
+    QList<int> rows = selectedRows();
+    if (rows.empty()) { return; }
+    m_tableQuery.itemQuery().removeItem(m_rootItem, rows.first());
+    updateTable();
 }
 
 // =============================================================================
@@ -359,37 +362,40 @@ void TableView::disableAllActions()
 // (protected)
 void TableView::updateAllActions()
 {
-    QList<int> selectedRows;
-    QList<QTableWidgetItem*> selectedItems = m_tableWidget->selectedItems();
-    for (QTableWidgetItem *item: selectedItems)
-    {
-        if (!selectedRows.contains(item->row())) {
-            selectedRows.push_back(item->row());
-        }
-    }
-
-    auto it = m_tableQuery.itemQuery().iterator(m_rootItem);
-    if (it->previous()) {
-
-    }
+    QList<int> rows = selectedRows();
 
     m_actionAdd->setEnabled(true);
 
-    if (selectedRows.count() == 0) {
+    if (rows.count() == 0) {
         m_actionDelete->setEnabled(false);
         m_actionUp->setEnabled(false);
         m_actionDown->setDisabled(false);
         m_actionCut->setEnabled(false);
         m_actionCopy->setEnabled(false);
     } else {
-        m_actionDelete->setEnabled(true);
-        m_actionUp->setDisabled(selectedRows.contains(0));
-        m_actionDown->setDisabled(selectedRows.contains(m_tableWidget->rowCount()-1));
+        m_actionDelete->setEnabled(m_tableQuery.itemQuery().canRemoveItem(m_rootItem, rows.first()));
+        m_actionUp->setDisabled(rows.contains(0));
+        m_actionDown->setDisabled(rows.contains(m_tableWidget->rowCount()-1));
         m_actionCut->setEnabled(true);
         m_actionCopy->setEnabled(true);
     }
 
     m_actionPaste->setDisabled(m_cutItems.empty() && m_copyItems.empty());
+}
+
+// =============================================================================
+// (protected)
+QList<int> TableView::selectedRows() const
+{
+    QList<int> list;
+    QList<QTableWidgetItem*> selectedItems = m_tableWidget->selectedItems();
+    for (QTableWidgetItem *item: selectedItems)
+    {
+        if (!list.contains(item->row())) {
+            list.push_back(item->row());
+        }
+    }
+    return list;
 }
 
 } // namespace View
