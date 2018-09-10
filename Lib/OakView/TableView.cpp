@@ -1,5 +1,7 @@
 #include "TableView.h"
 
+#include "ItemQuery.h"
+
 #include <QHeaderView>
 #include <QHBoxLayout>
 #include <QMouseEvent>
@@ -217,7 +219,7 @@ void TableView::onSelectionChanged()
 // (protected slots)
 void TableView::onActionAdd()
 {
-    m_tableQuery.itemQuery().addItem(m_rootItem);
+    m_tableQuery.itemQuery().insertItem(m_rootItem);
     updateTable();
 }
 
@@ -365,6 +367,12 @@ void TableView::updateAllActions()
             selectedRows.push_back(item->row());
         }
     }
+
+    auto it = m_tableQuery.itemQuery().iterator(m_rootItem);
+    if (it->previous()) {
+
+    }
+
     m_actionAdd->setEnabled(true);
 
     if (selectedRows.count() == 0) {

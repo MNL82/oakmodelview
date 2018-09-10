@@ -75,18 +75,21 @@ ItemQuery *ItemQuery::childQuery()
 
 // =============================================================================
 // (public)
-Item ItemQuery::addItem(const Item &refItem) const
+Item ItemQuery::insertItem(const Item &refItem, int index) const
 {
-    Item item = last(refItem);
+    if (index == -1) {
+        Item item = last(refItem);
 
-    // Default ItemQuery can not add Item
-    if (item.isNull()) {
-        return Item();
-    }
+        // Default ItemQuery can not add Item
+        if (item.isNull()) {
+            return Item();
+        }
 
-    if (m_childQueryUPtr) {
-        return std::move(m_childQueryUPtr->addItem(item));
+        if (m_childQueryUPtr) {
+            return std::move(m_childQueryUPtr->insertItem(item, -1));
+        }
     }
+    return Item();
 }
 
 // =============================================================================

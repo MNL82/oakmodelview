@@ -23,7 +23,7 @@ class ItemQueryChildren : public ItemQuery
 public:
     ItemQueryChildren(const std::string &nodeName);
 
-    virtual Item addItem(const Item &refItem) const override;
+    virtual Item insertItem(const Item &refItem, int index = 0) const override;
 
 protected:
     virtual Item first(const Item &refItem) const override;
