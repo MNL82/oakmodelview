@@ -34,7 +34,6 @@ public:
     QueryBuilderSPtr children(const std::string &nodeName);
     QueryBuilderSPtr parent();
     QueryBuilderSPtr siblings(bool matchName = true);
-//    QueryBuilderSPtr ignoreSelf();
 
     static QueryBuilderSPtr createChildren(const std::string &nodeName);
     static QueryBuilderSPtr createParent();
@@ -42,6 +41,8 @@ public:
     //static QueryBuilderSPtr createIgnoreSelf();
 
     static EntryQuerySPtr createEntry(const std::string &entryName);
+
+    static ItemQueryUPtr duplicate(const ItemQueryUPtr &c);
 
 protected:
     ItemQueryUPtr m_itemQuery;

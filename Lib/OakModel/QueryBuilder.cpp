@@ -117,21 +117,39 @@ QueryBuilderSPtr QueryBuilder::createSiblings(bool matchName)
     return sPtr;
 }
 
-//// =============================================================================
-//// (public)
-//QueryBuilderSPtr QueryBuilder::createIgnoreSelf()
-//{
-//    QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
-//    sPtr->ignoreSelf();
-//    sPtr->m_thisWPtr = sPtr;
-//    return sPtr;
-//}
-
 // =============================================================================
 // (public)
 EntryQuerySPtr QueryBuilder::createEntry(const std::string &entryName)
 {
     return EntryQuery::create(entryName);
+}
+
+// =============================================================================
+// (public)
+ItemQueryUPtr QueryBuilder::duplicate(const ItemQueryUPtr &c)
+{
+    {
+        ItemQueryChildren * itemQuery = dynamic_cast<ItemQueryChildren * >(c.get());
+        if (itemQuery) {
+            return ItemQueryUPtr(new ItemQueryChildren(*itemQuery));
+        }
+    }
+
+    {
+        ItemQueryParent * itemQuery = dynamic_cast<ItemQueryParent * >(c.get());
+        if (itemQuery) {
+            return ItemQueryUPtr(new ItemQueryParent(*itemQuery));
+        }
+    }
+
+    {
+        ItemQuerySiblings * itemQuery = dynamic_cast<ItemQuerySiblings * >(c.get());
+        if (itemQuery) {
+            return ItemQueryUPtr(new ItemQuerySiblings(*itemQuery));
+        }
+    }
+
+    return ItemQueryUPtr(new ItemQuery(*c.get()));
 }
 
 } // namespace Model

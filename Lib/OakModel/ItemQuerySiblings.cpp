@@ -12,6 +12,22 @@ ItemQuerySiblings::ItemQuerySiblings(bool matchName)
 
 // =============================================================================
 // (public)
+ItemQuerySiblings::ItemQuerySiblings(const ItemQuerySiblings &copy)
+    : ItemQuery(copy)
+{
+    m_matchName = copy.m_matchName;
+}
+
+// =============================================================================
+// (public)
+ItemQuerySiblings::ItemQuerySiblings(ItemQuerySiblings &&move)
+    : ItemQuery(move)
+{
+    m_matchName = move.m_matchName;
+}
+
+// =============================================================================
+// (public)
 Item ItemQuerySiblings::first(const Item &refItem) const
 {
     m_parent = refItem.parent();

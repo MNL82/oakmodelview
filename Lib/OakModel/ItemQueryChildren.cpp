@@ -23,6 +23,22 @@ ItemQueryChildren::ItemQueryChildren(const std::string &nodeName)
 
 // =============================================================================
 // (public)
+ItemQueryChildren::ItemQueryChildren(const ItemQueryChildren &copy)
+    : ItemQuery(copy)
+{
+    m_nodeName = copy.m_nodeName;
+}
+
+// =============================================================================
+// (public)
+ItemQueryChildren::ItemQueryChildren(ItemQueryChildren &&move)
+    : ItemQuery(move)
+{
+    m_nodeName = std::move(move.m_nodeName);
+}
+
+// =============================================================================
+// (public)
 bool ItemQueryChildren::canInsertItem(const Item &refItem, int &index) const
 {
     if (m_childQueryUPtr) {

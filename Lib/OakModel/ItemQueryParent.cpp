@@ -23,6 +23,22 @@ ItemQueryParent::ItemQueryParent()
 
 // =============================================================================
 // (public)
+ItemQueryParent::ItemQueryParent(const ItemQueryParent &copy)
+    : ItemQuery(copy)
+{
+
+}
+
+// =============================================================================
+// (public)
+ItemQueryParent::ItemQueryParent(ItemQueryParent &&move)
+    : ItemQuery(move)
+{
+
+}
+
+// =============================================================================
+// (public)
 Item ItemQueryParent::first(const Item &refItem) const
 {
     return refItem.parent();

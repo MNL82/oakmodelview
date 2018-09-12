@@ -22,6 +22,8 @@ class ItemQueryChildren : public ItemQuery
 {
 public:
     ItemQueryChildren(const std::string &nodeName);
+    ItemQueryChildren(const ItemQueryChildren& copy);
+    ItemQueryChildren(ItemQueryChildren&& move);
 
     virtual bool canInsertItem(const Item &refItem, int &index) const override;
     virtual Item insertItem(const Item &refItem, int index) const override;

@@ -25,6 +25,9 @@ class ItemQuery
 {
 public:
     ItemQuery();
+    ItemQuery(const ItemQuery& copy);
+    ItemQuery(ItemQuery&& move);
+
     virtual ~ItemQuery();
 
     int count(const Item &refItem);
@@ -71,7 +74,7 @@ public:
         bool next();
         bool previous();
 
-        const Item & item() const;
+        const Item &item() const;
 
         bool first(const Item &refItem);
         bool last(const Item &refItem);

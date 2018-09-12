@@ -9,6 +9,7 @@
  */
 
 #include "ItemQuery.h"
+#include "QueryBuilder.h"
 
 #include <utility>
 
@@ -20,6 +21,20 @@ namespace Model {
 ItemQuery::ItemQuery()
 {
 
+}
+
+// =============================================================================
+// (public)
+ItemQuery::ItemQuery(const ItemQuery& copy)
+{
+    m_childQueryUPtr = QueryBuilder::duplicate(copy.m_childQueryUPtr);
+}
+
+// =============================================================================
+// (public)
+ItemQuery::ItemQuery(ItemQuery&& move)
+{
+    m_childQueryUPtr = std::move(move.m_childQueryUPtr);
 }
 
 // =============================================================================

@@ -22,6 +22,8 @@ class ItemQuerySiblings : public ItemQuery
 {
 public:
     ItemQuerySiblings(bool matchName = true);
+    ItemQuerySiblings(const ItemQuerySiblings& copy);
+    ItemQuerySiblings(ItemQuerySiblings&& move);
 
 protected:
     virtual Item first(const Item &refItem) const override;

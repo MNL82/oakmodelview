@@ -22,6 +22,8 @@ class ItemQueryParent : public ItemQuery
 {
 public:
     ItemQueryParent();
+    ItemQueryParent(const ItemQueryParent& copy);
+    ItemQueryParent(ItemQueryParent&& move);
 
 protected:
     virtual Item first(const Item &refItem) const override;
