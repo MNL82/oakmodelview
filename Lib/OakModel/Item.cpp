@@ -454,7 +454,8 @@ Item Item::insertChild(const std::string &name, int &index) const
 {
     assert(m_def);
     const auto& container = m_def->container(name);
-    Item childItem(container.containerDef(), container.insertNode(m_node, index), m_model);
+    Node node = container.insertNode(m_node, index);
+    Item childItem(container.containerDef()->getDerived(node), node, m_model);
     if (m_model && !childItem.isNull()) {
         m_model->onItemInserted(*this, childIndex(childItem));
     }
