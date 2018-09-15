@@ -465,15 +465,6 @@ bool ContainerDef::canMoveNode(Node _node, int &index, Node moveNode) const
     Node moveNodeParent = moveDef->parentNode(moveNode);
     if (moveNodeParent.isNull()) { return false; }
 
-    // Handle special case where the 'moveNode' is already a child of 'node'
-    if (_node == moveNodeParent) {
-        if (index == count) { return false; }
-
-        if (index == -1) { index = count-1; }
-
-        return true;
-    }
-
     // Find the node definition of 'moveNode' parent
     const ContainerDef* moveParentContainer = moveDef->parentContainer(moveNodeParent);
     if (moveParentContainer == nullptr) { return false; }
@@ -481,6 +472,20 @@ bool ContainerDef::canMoveNode(Node _node, int &index, Node moveNode) const
     // Find the index of the 'moveNode'
     int moveIndex = moveParentContainer->nodeIndex(moveNodeParent, moveNode);
     if (moveIndex == -1) { return false; }
+
+    // Handle special case where the 'moveNode' is already a child of 'node'
+    if (_node == moveNodeParent) {
+        if (index == count) { return false; }
+
+        if (index == -1) {
+            if (moveIndex == count-1) { return false; } // Can not move to its own position
+            index = count-1;
+        } else if (moveIndex == index) {
+            return false;  // Can not move to its own position
+        }
+
+        return true;
+    }
 
     // Check if the 'moveNode' can be removed
     if (!moveParentContainer->canRemoveNode(moveNodeParent, moveIndex)) { return false; }
