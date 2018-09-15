@@ -542,7 +542,7 @@ bool Item::canMoveChild(const std::string &name, int &index, const Item &moveIte
 
 // =============================================================================
 // (public)
-Item Item::moveChild(int& index, const Item &moveItem) const
+Item Item::moveChild(int& index, Item moveItem) const
 {
     assert(m_def);
     if (m_model) {
@@ -568,7 +568,7 @@ Item Item::moveChild(int& index, const Item &moveItem) const
 
 // =============================================================================
 // (public)
-Item Item::moveChild(const std::string &name, int &index, const Item &moveItem) const
+Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
 {
     assert(m_def);
     if (m_model) {

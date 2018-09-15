@@ -112,8 +112,8 @@ public:
     bool canMoveChild(int &index, const Item &moveItem) const;
     bool canMoveChild(const std::string &name, int &index, const Item &moveItem) const;
 
-    Item moveChild(int &index, const Item &moveItem) const;
-    Item moveChild(const std::string &name, int &index, const Item &moveItem) const;
+    Item moveChild(int &index, Item moveItem) const;
+    Item moveChild(const std::string &name, int &index, Item moveItem) const;
 
     bool canRemoveChild(int index) const;
     bool canRemoveChild(const std::string &name, int index) const;
