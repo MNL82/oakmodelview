@@ -112,19 +112,19 @@ void ActionToolBar::currentItemChanged()
         m_actionCopy->setEnabled(true);
 
         if (!m_copyItem.isNull()) {
-            index2 = index+1;
+            index2 = index;
             if (pItem.canCloneChild(index2, m_copyItem)) {
                 m_actionPaste->setEnabled(true);
             } else {
-                index2 = 0;
+                index2 = -1;
                 m_actionPaste->setEnabled(item.canCloneChild(index2, m_copyItem));
             }
         } else if (!m_cutItem.isNull()) {
-            index2 = index+1;
+            index2 = index;
             if (pItem.canMoveChild(index2, m_cutItem)) {
                 m_actionPaste->setEnabled(true);
             } else {
-                index2 = 0;
+                index2 = -1;
                 m_actionPaste->setEnabled(item.canMoveChild(index2, m_cutItem));
             }
         } else {
