@@ -32,11 +32,14 @@ Item::Item()
 // =============================================================================
 // (public)
 Item::Item(const NodeDef* nodeDef, Node node, const OakModel* model)
-    : m_def(nodeDef),
-      m_node(node),
+    : m_node(node),
       m_model(model)
 {
-
+    if (nodeDef == nullptr || node.isNull()) {
+        m_def = nodeDef;
+    } else {
+        m_def = nodeDef->getDerivedOrThis(node);
+    }
 }
 
 // =============================================================================
@@ -455,7 +458,7 @@ Item Item::insertChild(const std::string &name, int &index) const
     assert(m_def);
     const auto& container = m_def->container(name);
     Node node = container.insertNode(m_node, index);
-    Item childItem(container.containerDef()->getDerived(node), node, m_model);
+    Item childItem(container.containerDef(), node, m_model);
     if (m_model && !childItem.isNull()) {
         m_model->onItemInserted(*this, childIndex(childItem));
     }
