@@ -37,7 +37,7 @@ protected:
     void disableAllActions();
 
 protected slots:
-    void onActionAdd();
+    void onActionInsert();
     void onActionDelete();
     void onActionUp();
     void onActionDown();
@@ -51,7 +51,7 @@ protected:
     Model::Item m_cutItem;
     Model::Item m_copyItem;
 
-    QAction * m_actionAdd;
+    QAction * m_actionInsert;
     QAction * m_actionDelete;
     QAction * m_actionUp;
     QAction * m_actionDown;

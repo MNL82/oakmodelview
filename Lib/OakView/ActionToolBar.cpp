@@ -23,12 +23,12 @@ namespace View {
 ActionToolBar::ActionToolBar(QWidget *parent)
     : QToolBar("Model Actions", parent)
 {
-    m_actionAdd = new QAction(QPixmap(":/OakView/Resources/add_32.png"), "Add");
-    m_actionAdd->setEnabled(false);
-    connect(m_actionAdd, SIGNAL(triggered()), this, SLOT(onActionAdd()));
-    addAction(m_actionAdd);
+    m_actionInsert = new QAction(QPixmap(":/OakView/Resources/add_32.png"), "Insert item before");
+    m_actionInsert->setEnabled(false);
+    connect(m_actionInsert, SIGNAL(triggered()), this, SLOT(onActionInsert()));
+    addAction(m_actionInsert);
 
-    m_actionDelete = new QAction(QPixmap(":/OakView/Resources/delete_32.png"), "Delete");
+    m_actionDelete = new QAction(QPixmap(":/OakView/Resources/delete_32.png"), "Delete item");
     m_actionDelete->setEnabled(false);
     m_actionDelete->setShortcut(QKeySequence::Delete);
     connect(m_actionDelete, SIGNAL(triggered()), this, SLOT(onActionDelete()));
@@ -36,19 +36,19 @@ ActionToolBar::ActionToolBar(QWidget *parent)
 
     addSeparator();
 
-    m_actionCut = new QAction(QPixmap(":/OakView/Resources/cut_32.png"), "Cut Item");
+    m_actionCut = new QAction(QPixmap(":/OakView/Resources/cut_32.png"), "Cut item");
     m_actionCut->setEnabled(false);
     m_actionCut->setShortcut(QKeySequence::Cut);
     connect(m_actionCut, SIGNAL(triggered()), this, SLOT(onActionCut()));
     addAction(m_actionCut);
 
-    m_actionCopy = new QAction(QPixmap(":/OakView/Resources/copy_32.png"), "Copy Item");
+    m_actionCopy = new QAction(QPixmap(":/OakView/Resources/copy_32.png"), "Copy item");
     m_actionCopy->setEnabled(false);
     m_actionCopy->setShortcut(QKeySequence::Copy);
     connect(m_actionCopy, SIGNAL(triggered()), this, SLOT(onActionCopy()));
     addAction(m_actionCopy);
 
-    m_actionPaste = new QAction(QPixmap(":/OakView/Resources/paste_32.png"), "Paste Item");
+    m_actionPaste = new QAction(QPixmap(":/OakView/Resources/paste_32.png"), "Paste item before");
     m_actionPaste->setEnabled(false);
     m_actionPaste->setShortcut(QKeySequence::Paste);
     connect(m_actionPaste, SIGNAL(triggered()), this, SLOT(onActionPaste()));
@@ -56,12 +56,12 @@ ActionToolBar::ActionToolBar(QWidget *parent)
 
     addSeparator();
 
-    m_actionUp = new QAction(QPixmap(":/OakView/Resources/up_32.png"), "Move Up");
+    m_actionUp = new QAction(QPixmap(":/OakView/Resources/up_32.png"), "Move item up");
     m_actionUp->setEnabled(false);
     connect(m_actionUp, SIGNAL(triggered()), this, SLOT(onActionUp()));
     addAction(m_actionUp);
 
-    m_actionDown = new QAction(QPixmap(":/OakView/Resources/down_32.png"), "Move Down");
+    m_actionDown = new QAction(QPixmap(":/OakView/Resources/down_32.png"), "Move item down");
     m_actionDown->setEnabled(false);
     connect(m_actionDown, SIGNAL(triggered()), this, SLOT(onActionDown()));
     addAction(m_actionDown);
@@ -102,7 +102,7 @@ void ActionToolBar::currentItemChanged()
     Model::Item pItem = item.parent();
     if (!pItem.isNodeNull()) {
         int index = pItem.childIndex(item);
-        m_actionAdd->setEnabled(pItem.canInsertChild(item.def()->name(), index));
+        m_actionInsert->setEnabled(pItem.canInsertChild(item.def()->name(), index));
         m_actionDelete->setEnabled(pItem.canRemoveChild(index));
         int index2 = index-1;
         m_actionUp->setEnabled(index2 >= 0 && pItem.canMoveChild(index2, item));
@@ -165,7 +165,7 @@ void ActionToolBar::itemBeforeRemoving(const Model::Item &item)
 // (protected)
 void ActionToolBar::disableAllActions()
 {
-    m_actionAdd->setEnabled(false);
+    m_actionInsert->setEnabled(false);
     m_actionDelete->setEnabled(false);
     m_actionUp->setEnabled(false);
     m_actionDown->setEnabled(false);
@@ -176,7 +176,7 @@ void ActionToolBar::disableAllActions()
 
 // =============================================================================
 // (protected slots)
-void ActionToolBar::onActionAdd()
+void ActionToolBar::onActionInsert()
 {
     Model::Item item = m_model->currentItem();
     Model::Item pItem = item.parent();
