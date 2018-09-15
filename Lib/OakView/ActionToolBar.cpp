@@ -184,6 +184,7 @@ void ActionToolBar::onActionAdd()
     if (pItem.canInsertChild(item.def()->name(), index)) {
         Model::Item newItem = pItem.insertChild(item.def()->name(), index);
         m_model->setCurrentItem(newItem);
+        setFocus(); // Return focus to the action tool bar from whatever view inserted the item
     }
 }
 
@@ -196,6 +197,7 @@ void ActionToolBar::onActionDelete()
         Model::Item pItem = item.parent();
         int index = pItem.childIndex(item);
         pItem.removeChild(index);
+        setFocus(); // Return focus to the action tool bar from whatever view deleted the item
     }
 }
 
@@ -207,6 +209,7 @@ void ActionToolBar::onActionUp()
     Model::Item pItem = item.parent();
     int index = pItem.childIndex(item)-1;
     pItem.moveChild(index, item);
+    setFocus(); // Return focus to the action tool bar from whatever view moved the item
 }
 
 // =============================================================================
@@ -217,6 +220,7 @@ void ActionToolBar::onActionDown()
     Model::Item pItem = item.parent();
     int index = pItem.childIndex(item)+1;
     pItem.moveChild(index, item);
+    setFocus(); // Return focus to the action tool bar from whatever view moved the item
 }
 
 // =============================================================================
@@ -251,6 +255,7 @@ void ActionToolBar::onActionPaste()
             Model::Item newItem = item.cloneChild(index, m_copyItem);
             m_model->setCurrentItem(newItem);
         }
+        setFocus(); // Return focus to the action tool bar from whatever view copied the item
     } else if (!m_cutItem.isNull()) {
         Model::Item item = m_model->currentItem();
         Model::Item pItem = item.parent();
@@ -265,6 +270,7 @@ void ActionToolBar::onActionPaste()
         }
         m_cutItem = Model::Item();
         m_actionPaste->setEnabled(false);
+        setFocus(); // Return focus to the action tool bar from whatever view moved the item
     }
 }
 
