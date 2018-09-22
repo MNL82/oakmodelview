@@ -195,8 +195,8 @@ void ActionToolBar::onActionDelete()
     if (QMessageBox::question(this, "Delete", "Are you sure you want to delete current item?") == QMessageBox::Yes) {
         Model::Item item = m_model->currentItem();
         Model::Item pItem = item.parent();
-        int index = pItem.childIndex(item);
-        pItem.removeChild(index);
+        int index = pItem.childIndex(item.def()->name(), item);
+        pItem.removeChild(item.def()->name(), index);
         setFocus(); // Return focus to the action tool bar from whatever view deleted the item
     }
 }

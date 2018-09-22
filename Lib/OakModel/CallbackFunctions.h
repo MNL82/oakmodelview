@@ -14,6 +14,7 @@
 #include <functional>
 
 #include "Item.h"
+#include "ItemIndex.h"
 
 namespace Oak {
 namespace Model {
@@ -120,6 +121,32 @@ public:
 
 protected:
     std::map<void*, std::function<void(const Item&)>> m_functionMap;
+};
+
+// =============================================================================
+// Class definition
+// =============================================================================
+class Callback_ItemIndex
+{
+public:
+    Callback_ItemIndex();
+
+    template<typename T>
+    void add(T* funcObj, void (T::*func)(const ItemIndex&))
+    {
+        if (funcObj == nullptr) {
+            assert(false);
+            return;
+        }
+        m_functionMap[funcObj] = std::bind(func, funcObj, std::placeholders::_1);
+    }
+
+    void remove(void* funcObj = nullptr);
+
+    void trigger(const ItemIndex &itemIndex) const;
+
+protected:
+    std::map<void*, std::function<void(const ItemIndex&)>> m_functionMap;
 };
 
 } // namespace Model

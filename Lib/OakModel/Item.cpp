@@ -614,6 +614,7 @@ bool Item::removeChild(int index) const
 {
     assert(m_def);
     if (m_def->containerGroup().canRemoveNode(m_node, index)) {
+
         if (m_model) {
             m_model->onItemBeforeRemoving(childAt(index));
         }
@@ -632,8 +633,25 @@ bool Item::removeChild(int index) const
 bool Item::removeChild(const std::string &name, int index) const
 {
     assert(m_def);
-    int index2 = childIndex(childAt(name, index));
-    return removeChild(index2);
+    if (m_def->container(name).canRemoveNode(m_node, index)) {
+
+        ItemIndexUPtr iIndex = ItemIndex::create(childAt(name, index));
+        if (m_model) {
+            m_model->onItemBeforeRemoving(childAt(index));
+        }
+
+        m_def->containerGroup().removeNode(m_node, index);
+        if (m_model) {
+            m_model->onItemRemoved(*this, index);
+            m_model->onItemRemoved2(*iIndex.get());
+        }
+        return true;
+    }
+    return false;
+
+
+//    int index2 = childIndex(childAt(name, index));
+//    return removeChild(index2);
 }
 
 // =============================================================================

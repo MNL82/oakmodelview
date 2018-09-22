@@ -367,7 +367,7 @@ QString ListViewItem::createStyleSheetCurrent(QColor color)
 {
     QString colorStr = QString("%1,%2,%3").arg(color.red()).arg(color.green()).arg(color.blue());
     QString stylesheet = QString(".QFrame { "
-                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 180), stop: 0.4 rgba(%1, 180), stop: 1 white); "
+                                 "  background: qlineargradient(x1:0, y1:1, x2:1, y2:0, stop: 0 rgba(%1, 30), stop: 0.4 rgba(%1, 30), stop: 1 white); "
                                  "}"
                                  ".QPushButton:hover { "
                                  "  background: rgba(%1, 100);"

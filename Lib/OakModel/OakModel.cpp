@@ -162,10 +162,11 @@ const Item& OakModel::currentItem() const
 
 // =============================================================================
 // (public)
-void OakModel::setCurrentItem(Item item) const
+void OakModel::setCurrentItem(Item item, bool forceUpdate) const
 {
-    if (m_currentItem != item) {
+    if (m_currentItem != item || forceUpdate) {
         m_currentItem = item;
+        m_currentItemIndex = ItemIndex::create(m_currentItem);
         notifier_currentItemChanged.trigger();
     }
 }
@@ -268,8 +269,7 @@ void OakModel::onItemMoved(const Item &sourceParentItem, int sourceIndex, const 
 
     Item movedItem = targetParentItem.childAt(targetIndex);
     if (sourceParentItem == targetParentItem) {
-        m_currentItem = targetParentItem.childAt(targetIndex);
-        notifier_currentItemChanged.trigger();
+        setCurrentItem(targetParentItem.childAt(targetIndex), true);
         return;
     }
 
@@ -278,7 +278,7 @@ void OakModel::onItemMoved(const Item &sourceParentItem, int sourceIndex, const 
     while (!item.isNull()) {
         if (movedItem == item) {
             // The current item has been moved
-            notifier_currentItemChanged.trigger();
+            setCurrentItem(m_currentItem, true);
             return;
         }
         item = item.parent();
@@ -305,37 +305,37 @@ void OakModel::onItemRemoved(const Item &parentItem, int index) const
     // Notify the view
     notifier_itemRemoved.trigger(parentItem, index);
 
-    if (m_currentItem.isNull()) { setCurrentItem(m_rootItem); }
+//    if (m_currentItem.isNull()) { setCurrentItem(m_rootItem); }
 
-    // The current Item needs to be updated if it has been removed
-    // Check if is has been removed
-    Item item = m_currentItem;
-    Item pItem = item.parent();
-    while(!pItem.isNull()) {
-        // The parent of the removed item has been updated to not contain the removed item
-        if (pItem.childIndex(item) < 0) {
-            // The current item has been removed
-            // Now it finds the best candidate to replace it
+//    // The current Item needs to be updated if it has been removed
+//    // Check if is has been removed
+//    Item item = m_currentItem;
+//    Item pItem = item.parent();
+//    while(!pItem.isNull()) {
+//        // The parent of the removed item has been updated to not contain the removed item
+//        if (pItem.childIndex(item) < 0) {
+//            // The current item has been removed
+//            // Now it finds the best candidate to replace it
 
-            // First the next sibling
-            item = parentItem.childAt(index);
-            if (!item.isNull()) {
-                setCurrentItem(item);
-                return;
-            }
-            // Secound the previous sibling
-            item = parentItem.childAt(index-1);
-            if (!item.isNull()) {
-                setCurrentItem(item);
-                return;
-            }
-            // Thrid the parent
-            setCurrentItem(parentItem);
-            return;
-        }
-        item = pItem;
-        pItem = item.parent();
-    }
+//            // First the next sibling
+//            item = parentItem.childAt(index);
+//            if (!item.isNull()) {
+//                setCurrentItem(item);
+//                return;
+//            }
+//            // Secound the previous sibling
+//            item = parentItem.childAt(index-1);
+//            if (!item.isNull()) {
+//                setCurrentItem(item);
+//                return;
+//            }
+//            // Thrid the parent
+//            setCurrentItem(parentItem);
+//            return;
+//        }
+//        item = pItem;
+//        pItem = item.parent();
+//    }
 }
 
 // =============================================================================
@@ -360,6 +360,44 @@ void OakModel::onEntryChanged(const Item &item, int valueIndex) const
         }
     } else {
         notifier_entryChanged.trigger(item, valueIndex);
+    }
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onItemRemoved2(const ItemIndex &itemIndex) const
+{
+    // Notify the view
+    notifier_itemRemoved2.trigger(itemIndex);
+
+    if (m_currentItem.isNull()) {
+        return;
+    }
+
+    if (m_currentItemIndex->contains(itemIndex)) {
+        // The current item is no longer valid
+        if (m_currentItemIndex->depth() == itemIndex.depth()) {
+            // The deleted item is the current item
+            int depth = itemIndex.depth() - 1;
+            Item parentItem = itemIndex.item(m_rootItem, depth);
+            const ItemIndex &lastItemIndex = itemIndex.childItemIndex(depth);
+            int count = parentItem.childCount(lastItemIndex.name());
+            if (count > lastItemIndex.index()) {
+                // Set the next sibling as the current item
+                setCurrentItem(parentItem.childAt(lastItemIndex.name(), lastItemIndex.index()));
+            } else if (count > 0) {
+                // Set the previous sibling as the current item
+                setCurrentItem(parentItem.childAt(lastItemIndex.name(), count-1));
+            } else {
+                // Set the parent item as the current item
+                setCurrentItem(parentItem);
+            }
+        } else {
+            // The parent item is removed so clear the current item
+            setCurrentItem(Item());
+        }
+
+        return;
     }
 }
 

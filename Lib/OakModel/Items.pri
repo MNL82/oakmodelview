@@ -9,9 +9,11 @@
 HEADERS += \
     $$PWD/Item.h \
     $$PWD/Entry.h \
-    $$PWD/ItemIndex.h
+    $$PWD/ItemIndex.h \
+    $$PWD/ItemChangedObserver.h
 
 SOURCES += \
     $$PWD/Item.cpp \
     $$PWD/Entry.cpp \
-    $$PWD/ItemIndex.cpp
+    $$PWD/ItemIndex.cpp \
+    $$PWD/ItemChangedObserver.cpp

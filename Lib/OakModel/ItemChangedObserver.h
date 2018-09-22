@@ -15,36 +15,16 @@
 namespace Oak {
 namespace Model {
 
-class ItemIndex;
-typedef std::unique_ptr<ItemIndex> ItemIndexUPtr;
+class ItemChangedObserver;
+typedef std::unique_ptr<ItemChangedObserver> ItemChangedObserverUPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ItemIndex
+class ItemChangedObserver
 {
 public:
-    ItemIndex();
-    ~ItemIndex();
-
-    const std::string &name() const;
-    int index() const;
-
-    int depth() const;
-
-    bool contains(const ItemIndex &itemIndex);
-
-    Item item(const Item &rootItem, int depth = -1) const;
-
-    const ItemIndex &childItemIndex(int depth) const;
-
-    static ItemIndexUPtr create(const Item &_item, bool namedIndex = true);
-
-protected:
-    std::string m_name;
-    int m_index;
-
-    ItemIndex *m_childIndex;
+    ItemChangedObserver();
 };
 
 } // namespace Model

@@ -43,6 +43,7 @@ public:
     void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
     void onItemRemoved(const Model::Item& parentItem, int index);
+    void onItemRemoved2(const Model::ItemIndex &itemIndex);
     void onEntryChanged(const Model::Item &item, int valueIndex);
 
     int maxDepth() const;

@@ -50,7 +50,7 @@ public:
     void setRootItem(const Item& item);
 
     const Item& currentItem() const;
-    void setCurrentItem(Item item) const;
+    void setCurrentItem(Item item, bool forceUpdate = false) const;
 
 #ifdef XML_BACKEND
     const std::string& xmlDocFilePath() { return m_xmlDocFilePath; }
@@ -73,6 +73,8 @@ protected:
 
     void onEntryChanged(const Item& item, int valueIndex) const;
 
+    void onItemRemoved2(const ItemIndex& itemIndex) const;
+
 public:
     Callback notifier_currentItemChanged;
     Callback notifier_rootNodeChanged;
@@ -88,9 +90,12 @@ public:
 
     Callback_ItemInt notifier_entryChanged;
 
+    Callback_ItemIndex notifier_itemRemoved2;
+
 protected:
     Item m_rootItem;
     mutable Item m_currentItem;
+    mutable ItemIndexUPtr m_currentItemIndex;
 
     // Used only to keep the definition alive (Smart Pointer)
     NodeDefSPtr m_def;

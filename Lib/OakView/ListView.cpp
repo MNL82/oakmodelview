@@ -113,6 +113,7 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemMoved.remove(this);
         m_model->notifier_itemCloned.remove(this);
         m_model->notifier_itemRemoved.remove(this);
+        m_model->notifier_itemRemoved2.remove(this);
 
         m_model->notifier_entryChanged.remove(this);
     }
@@ -131,6 +132,7 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemMoved.add(this, &ListView::onItemMoved);
         m_model->notifier_itemCloned.add(this, &ListView::onItemCloned);
         m_model->notifier_itemRemoved.add(this, &ListView::onItemRemoved);
+        m_model->notifier_itemRemoved2.add(this, &ListView::onItemRemoved2);
 
         m_model->notifier_entryChanged.add(this, &ListView::onEntryChanged);
     }
@@ -219,6 +221,13 @@ void ListView::onItemRemoved(const Model::Item &parentItem, int index)
     if (viewItem != nullptr) {
         viewItem->onItemRemoved(index);
     }
+}
+
+// =============================================================================
+// (public)
+void ListView::onItemRemoved2(const Model::ItemIndex &itemIndex)
+{
+    const Model::ItemIndex &parentItem = itemIndex;
 }
 
 // =============================================================================
