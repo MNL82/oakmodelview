@@ -50,6 +50,7 @@ public:
     void setRootItem(const Item& item);
 
     const Item& currentItem() const;
+    const ItemIndex& currentItemIndex() const;
     void setCurrentItem(Item item, bool forceUpdate = false) const;
 
 #ifdef XML_BACKEND
@@ -64,16 +65,21 @@ public:
     //  untill a match is found
     const NodeDef *findNodeDef(Node node) const;
 
+    ItemIndexUPtr convertItemIndexToNamed(const ItemIndex &itemIndex) const;
+    ItemIndexUPtr convertItemIndexToUnnamed(const ItemIndex &itemIndex) const;
+
 protected:
-    void onItemInserted(const Item& parentItem, int index) const;
-    void onItemMoved(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
-    void onItemCloned(const Item& sourceParentItem, int sourceIndex, const Item& targetParentItem, int targetIndex) const;
-    void onItemRemoved(const Item& parentItem, int index) const;
-    void onItemBeforeRemoving(const Item &item) const;
+    void onItemInserteAfter(const ItemIndex& itemIndex) const;
+    void onItemMoveAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex) const;
+    void onItemMoveBefore(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex) const;
+    void onItemCloneAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex) const;
 
-    void onEntryChanged(const Item& item, int valueIndex) const;
+    void onItemRemoveAfter(const ItemIndex& itemIndex) const;
+    void onItemRemoveBefore(const ItemIndex& itemIndex) const;
 
-    void onItemRemoved2(const ItemIndex& itemIndex) const;
+    void onEntryChangeAfter(const ItemIndex& itemIndex, int valueIndex) const;
+    void onEntryTypeChangeAfter(const ItemIndex& itemIndex) const;
+    void onEntryKeyChangeAfter(const ItemIndex& itemIndex) const;
 
 public:
     Callback notifier_currentItemChanged;
@@ -82,15 +88,17 @@ public:
 
     Callback notifier_destroyed;
 
-    Callback_ItemInt notifier_itemInserted;
-    Callback_ItemIntItemInt notifier_itemMoved;
-    Callback_ItemIntItemInt notifier_itemCloned;
-    Callback_ItemInt notifier_itemRemoved;
-    Callback_Item notifier_itemBeforeRemoving;
+    Callback_ItemIndex notifier_itemInserteAfter;
+    Callback_ItemIndexItemIndex notifier_itemMoveBefore;
+    Callback_ItemIndexItemIndex notifier_itemMoveAfter;
+    Callback_ItemIndexItemIndex notifier_itemCloneAfter;
 
-    Callback_ItemInt notifier_entryChanged;
+    Callback_ItemIndex notifier_itemRemoveBefore;
+    Callback_ItemIndex notifier_itemRemoveAfter;
 
-    Callback_ItemIndex notifier_itemRemoved2;
+    Callback_ItemIndexInt notifier_entryChangeAfter;
+    Callback_ItemIndex notifier_entryTypeChangeAfter;
+    Callback_ItemIndex notifier_entryKeyChangeAfter;
 
 protected:
     Item m_rootItem;

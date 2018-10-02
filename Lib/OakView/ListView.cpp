@@ -105,17 +105,13 @@ void ListView::setOakModel(Model::OakModel *model)
     if (m_model) {
         // Disconnect the old model
         m_model->notifier_currentItemChanged.remove(this);
-//        m_model->notifier_rootNodeDefChanged.remove(this);
-//        m_model->notifier_rootNodeChanged.remove(this);
-//        m_model->notifier_destroyed.remove(this);
 
-        m_model->notifier_itemInserted.remove(this);
-        m_model->notifier_itemMoved.remove(this);
-        m_model->notifier_itemCloned.remove(this);
-        m_model->notifier_itemRemoved.remove(this);
-        m_model->notifier_itemRemoved2.remove(this);
-
-        m_model->notifier_entryChanged.remove(this);
+        m_model->notifier_itemInserteAfter.remove(this);
+        m_model->notifier_itemMoveBefore.remove(this);
+        m_model->notifier_itemMoveAfter.remove(this);
+        m_model->notifier_itemCloneAfter.remove(this);
+        m_model->notifier_itemRemoveBefore.remove(this);
+        m_model->notifier_entryChangeAfter.remove(this);
     }
 
     // Change the model
@@ -124,17 +120,14 @@ void ListView::setOakModel(Model::OakModel *model)
     if (m_model) {
         // connect the new mobel
         m_model->notifier_currentItemChanged.add(this, &ListView::currentItemChanged);
-//        m_model->notifier_rootNodeDefChanged.add(this, &ListView::updateTreeStructure);
-//        m_model->notifier_rootNodeChanged.add(this, &ListView::updateTreeStructure);
-//        m_model->notifier_destroyed.add(this, &ListView::modelDestroyed);
 
-        m_model->notifier_itemInserted.add(this, &ListView::onItemInserted);
-        m_model->notifier_itemMoved.add(this, &ListView::onItemMoved);
-        m_model->notifier_itemCloned.add(this, &ListView::onItemCloned);
-        m_model->notifier_itemRemoved.add(this, &ListView::onItemRemoved);
-        m_model->notifier_itemRemoved2.add(this, &ListView::onItemRemoved2);
-
-        m_model->notifier_entryChanged.add(this, &ListView::onEntryChanged);
+        m_model->notifier_itemInserteAfter.add(this, &ListView::onItemInserteAfter);
+        m_model->notifier_itemMoveBefore.add(this, &ListView::onItemMoveBefore);
+        m_model->notifier_itemMoveAfter.add(this, &ListView::onItemMoveAfter);
+        m_model->notifier_itemCloneAfter.add(this, &ListView::onItemCloneAfter);
+        m_model->notifier_itemRemoveBefore.add(this, &ListView::onItemRemoveBefore);
+        m_model->notifier_entryTypeChangeAfter.add(this, &ListView::onEntryTypeChangeAfter);
+        m_model->notifier_entryKeyChangeAfter.add(this, &ListView::onEntryKeyChangeAfter);
     }
 }
 
@@ -150,6 +143,8 @@ void ListView::setRootItem(const Model::Item &item)
         //Clear existing item before creating a new one
     }
     m_rootItem = new ListViewItem(this, item, 0);
+    m_rootItemIndex = Model::ItemIndex::create(item);
+
     m_scrollArea->setWidget(m_rootItem);
     m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
 
@@ -160,7 +155,7 @@ void ListView::setRootItem(const Model::Item &item)
 // (public)
 void ListView::currentItemChanged()
 {
-    ListViewItem * currentViewItem = getViewItem(m_model->currentItem());
+    ListViewItem * currentViewItem = getViewItem(m_model->currentItemIndex());
 
     if (currentViewItem == m_currentViewItem) { return; }
 
@@ -182,72 +177,6 @@ void ListView::currentItemChanged()
                 pItem->setExspanded(true);
                 pItem = pItem->parent();
             }
-        }
-    }
-}
-
-// =============================================================================
-// (public)
-void ListView::onItemInserted(const Model::Item &parentItem, int index)
-{
-    ListViewItem * viewItem = getViewItem(parentItem);
-    if (viewItem != nullptr) {
-        viewItem->onItemInserted(index);
-    }
-}
-
-// =============================================================================
-// (public)
-void ListView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
-{
-    onItemRemoved(sourceParentItem, sourceIndex);
-    onItemInserted(targetParentItem, targetIndex);
-}
-
-// =============================================================================
-// (public)
-void ListView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
-{
-    Q_UNUSED(sourceParentItem);
-    Q_UNUSED(sourceIndex);
-    onItemInserted(targetParentItem, targetIndex);
-}
-
-// =============================================================================
-// (public)
-void ListView::onItemRemoved(const Model::Item &parentItem, int index)
-{
-    ListViewItem * viewItem = getViewItem(parentItem);
-    if (viewItem != nullptr) {
-        viewItem->onItemRemoved(index);
-    }
-}
-
-// =============================================================================
-// (public)
-void ListView::onItemRemoved2(const Model::ItemIndex &itemIndex)
-{
-    const Model::ItemIndex &parentItem = itemIndex;
-}
-
-// =============================================================================
-// (public)
-void ListView::onEntryChanged(const Model::Item &item, int valueIndex)
-{
-    if (item.def()->derivedIdValueDefIndex() == valueIndex) {
-        // Child items can change when the derived definition change
-        Model::Item pItem = item.parent();
-        int index = pItem.childIndex(item);
-
-        onItemRemoved(pItem, index);
-        onItemInserted(pItem, index);
-
-        currentItemChanged();
-    } else if (item.def()->keyValueDefIndex() == valueIndex) {
-        // Child items can change when the derived definition change
-        ListViewItem * viewItem = getViewItem(item);
-        if (viewItem != nullptr) {
-            viewItem->updateLabel();
         }
     }
 }
@@ -282,30 +211,15 @@ void ListView::resizeEvent(QResizeEvent *event)
 
 // =============================================================================
 // (protected)
-ListViewItem * ListView::getViewItem(const Model::Item &item)
+ListViewItem *ListView::getViewItem(const Model::ItemIndex &itemIndex)
 {
-    if (m_rootItem == nullptr || item.isNull()) { return nullptr; }
-    if (item == m_rootItem->item()) {
-        return m_rootItem;
-    }
-    std::vector<Model::Item> itemList;
-    itemList.push_back(item);
+    // Return if change is outside root item
+    if (!itemIndex.contains(*m_rootItemIndex.get())) { return nullptr; }
 
-    Model::Item pItem = item.parent();
-    while (pItem != m_rootItem->item()) {
-        if (pItem.isNull()) { return nullptr; }
-        itemList.push_back(pItem);
-        pItem = pItem.parent();
-    }
+    // Get the item index relative to the root item
+    const Model::ItemIndex &relItemIndex = itemIndex.childItemIndex(m_rootItemIndex->depth());
 
-    ListViewItem * viewItem = m_rootItem;
-    auto it = itemList.rbegin();
-    while (it != itemList.rend()) {
-        viewItem = viewItem->child(*it);
-        it++;
-    }
-
-    return viewItem;
+    return m_rootItem->child(relItemIndex);
 }
 
 // =============================================================================
@@ -320,6 +234,78 @@ void ListView::createDragItems() const
 void ListView::clearDragItems() const
 {
 
+}
+
+// =============================================================================
+// (protected)
+void ListView::onItemInserteAfter(const Model::ItemIndex &itemIndex)
+{
+    // Return if change is outside root item
+    if (!itemIndex.contains(*m_rootItemIndex.get())) { return; }
+
+    // Get the item index relative to the root item
+    const Model::ItemIndex &relItemIndex = itemIndex.childItemIndex(m_rootItemIndex->depth());
+
+    m_rootItem->onItemInserteAfter(relItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void ListView::onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+{
+    Q_UNUSED(sourceItemIndex);
+    onItemInserteAfter(targetItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void ListView::onItemMoveBefore(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+{
+    Q_UNUSED(targetItemIndex);
+    onItemRemoveBefore(sourceItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void ListView::onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+{
+    Q_UNUSED(sourceItemIndex);
+    onItemInserteAfter(targetItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void ListView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
+{
+    // Return if change is outside root item
+    if (!itemIndex.contains(*m_rootItemIndex.get())) { return; }
+
+    // Get the item index relative to the root item
+    const Model::ItemIndex &relItemIndex = itemIndex.childItemIndex(m_rootItemIndex->depth());
+
+    m_rootItem->onItemRemoveBefore(relItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void ListView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
+{
+    // Child items can change when the derived definition change
+    onItemRemoveBefore(itemIndex);
+    onItemInserteAfter(itemIndex);
+
+    currentItemChanged();
+}
+
+// =============================================================================
+// (protected)
+void ListView::onEntryKeyChangeAfter(const Model::ItemIndex &itemIndex)
+{
+    // Child items can change when the derived definition change
+    ListViewItem * viewItem = getViewItem(itemIndex);
+    if (viewItem != nullptr) {
+        viewItem->updateLabel();
+    }
 }
 
 // =============================================================================

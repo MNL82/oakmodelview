@@ -181,5 +181,71 @@ void Callback_ItemIndex::trigger(const ItemIndex &itemIndex) const
     }
 }
 
+// =============================================================================
+// (public)
+Callback_ItemIndexItemIndex::Callback_ItemIndexItemIndex()
+{
+
+}
+
+// =============================================================================
+// (public)
+void Callback_ItemIndexItemIndex::remove(void *funcObj)
+{
+    if (funcObj == nullptr) {
+        m_functionMap.clear();
+    } else {
+        auto it = m_functionMap.find(funcObj);
+        while (it != m_functionMap.end()) {
+            m_functionMap.erase(it);
+            it = m_functionMap.find(funcObj);
+        }
+    }
+}
+
+// =============================================================================
+// (public)
+void Callback_ItemIndexItemIndex::trigger(const ItemIndex &itemIndex1, const ItemIndex &itemIndex2) const
+{
+    for (auto func: m_functionMap)
+    {
+        //qDebug() << "Callback_ItemIndexItemIndex::trigger()";
+        func.second(itemIndex1, itemIndex2);
+    }
+}
+
+// =============================================================================
+// (public)
+Callback_ItemIndexInt::Callback_ItemIndexInt()
+{
+
+}
+
+// =============================================================================
+// (public)
+void Callback_ItemIndexInt::remove(void *funcObj)
+{
+    if (funcObj == nullptr) {
+        m_functionMap.clear();
+    } else {
+        auto it = m_functionMap.find(funcObj);
+        while (it != m_functionMap.end()) {
+            m_functionMap.erase(it);
+            it = m_functionMap.find(funcObj);
+        }
+    }
+}
+
+// =============================================================================
+// (public)
+void Callback_ItemIndexInt::trigger(const ItemIndex &itemIndex, int index) const
+{
+    for (auto func: m_functionMap)
+    {
+        //qDebug() << "Callback_ItemIndexInt::trigger()";
+        func.second(itemIndex, index);
+    }
+}
+
 } // namespace Model
 } // namespace Oak

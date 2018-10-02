@@ -162,6 +162,17 @@ const Item& OakModel::currentItem() const
 
 // =============================================================================
 // (public)
+const ItemIndex &OakModel::currentItemIndex() const
+{
+    if (m_currentItemIndex) {
+        return *m_currentItemIndex.get();
+    } else {
+        return ItemIndex::emptyItemIndex();
+    }
+}
+
+// =============================================================================
+// (public)
 void OakModel::setCurrentItem(Item item, bool forceUpdate) const
 {
     if (m_currentItem != item || forceUpdate) {
@@ -254,133 +265,166 @@ const NodeDef* OakModel::findNodeDef(Node node) const
 }
 
 // =============================================================================
-// (protected)
-void OakModel::onItemInserted(const Item &parentItem, int index) const
+// (public)
+ItemIndexUPtr OakModel::convertItemIndexToNamed(const ItemIndex &itemIndex) const
 {
-    notifier_itemInserted.trigger(parentItem, index);
-}
+    assert(!m_rootItem.isNull());
+    assert(!itemIndex.isNull());
 
-// =============================================================================
-// (protected)
-void OakModel::onItemMoved(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
-{
-    // Notify the view
-    notifier_itemMoved.trigger(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
+    ItemIndex * newRootItemIndex = nullptr;
+    const ItemIndex * sItemIndex = &itemIndex;
+    ItemIndex *tItemIndex;
+    Item item = m_rootItem;
 
-    Item movedItem = targetParentItem.childAt(targetIndex);
-    if (sourceParentItem == targetParentItem) {
-        setCurrentItem(targetParentItem.childAt(targetIndex), true);
-        return;
-    }
-
-    // TODO: Check if this works when drag and drop move is implemented
-    Item item = m_currentItem;
-    while (!item.isNull()) {
-        if (movedItem == item) {
-            // The current item has been moved
-            setCurrentItem(m_currentItem, true);
-            return;
+    while (true) {
+        if (sItemIndex->isNamed(true)) { // The all of the remaining item index is already named
+            tItemIndex = new ItemIndex(*sItemIndex); // Copy the item index
+            break;
         }
-        item = item.parent();
+        if (sItemIndex->isNamed()) {
+            item = sItemIndex->item(item);
+            tItemIndex = new ItemIndex(sItemIndex->name(), sItemIndex->index());
+        } else {
+            // Item index needs to be converted from unnamed to named
+            int index = sItemIndex->index();
+            Item childItem = sItemIndex->item(item, 1);
+            std::string name = childItem.def()->name();
+            if (item.def()->containerCount() > 1) {
+                // Index needs to be updated if more than one container
+                index = item.childIndex(name, childItem);
+            }
+            item = childItem;
+            tItemIndex = new ItemIndex(name, index);
+        }
+
+        if (newRootItemIndex == nullptr) {
+            newRootItemIndex = tItemIndex;
+        } else {
+            newRootItemIndex->lastItemIndex().setChildItemIndex(tItemIndex);
+        }
+
+        if (!sItemIndex->hasChildItemIndex()) {
+            // Conversion is complete
+            break;
+        }
+        sItemIndex = &sItemIndex->childItemIndex();
+    }
+
+    return ItemIndexUPtr(newRootItemIndex);
+}
+
+// =============================================================================
+// (public)
+ItemIndexUPtr OakModel::convertItemIndexToUnnamed(const ItemIndex &itemIndex) const
+{
+    assert(!m_rootItem.isNull());
+    assert(!itemIndex.isNull());
+
+    ItemIndex * newRootItemIndex = nullptr;
+    const ItemIndex * sItemIndex = &itemIndex;
+    ItemIndex *tItemIndex;
+    Item item = m_rootItem;
+
+    while (true) {
+        if (sItemIndex->isUnnamed(true)) { // The all of the remaining item index is already unnamed
+            tItemIndex = new ItemIndex(*sItemIndex); // Copy the item index
+            break;
+        }
+        if (sItemIndex->isUnnamed()) {
+            item = sItemIndex->item(item);
+            tItemIndex = new ItemIndex(sItemIndex->index());
+        } else {
+            // Item index needs to be converted from named to unnamed
+            int index = sItemIndex->index();
+            Item childItem = sItemIndex->item(item, 1);
+            if (item.def()->containerCount() > 1) {
+                // Index needs to be updated if more than one container
+                index = item.childIndex(childItem);
+            }
+            item = childItem;
+            tItemIndex = new ItemIndex(index);
+        }
+
+        if (newRootItemIndex == nullptr) {
+            newRootItemIndex = tItemIndex;
+        } else {
+            newRootItemIndex->lastItemIndex().setChildItemIndex(tItemIndex);
+        }
+
+        if (!sItemIndex->hasChildItemIndex()) {
+            // Conversion is complete
+            break;
+        }
+        sItemIndex = &sItemIndex->childItemIndex();
+    }
+
+    return ItemIndexUPtr(newRootItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onItemRemoveBefore(const ItemIndex &itemIndex) const
+{
+    notifier_itemRemoveBefore.trigger(itemIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onItemInserteAfter(const ItemIndex &itemIndex) const
+{
+    notifier_itemInserteAfter.trigger(itemIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onItemMoveAfter(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex) const
+{
+    notifier_itemMoveAfter.trigger(sourceItemIndex, targetItemIndex);
+
+    // Check if the current item have moved and update it if so
+    ItemIndexUPtr currentItemIndex = ItemIndex::create(m_currentItem);
+    if (!currentItemIndex) {
+        setCurrentItem(targetItemIndex.item(m_rootItem));
+    } else if (!m_currentItemIndex->equal(*currentItemIndex.get())) {
+        setCurrentItem(m_currentItem, true);
     }
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onItemCloned(const Item &sourceParentItem, int sourceIndex, const Item &targetParentItem, int targetIndex) const
+void OakModel::onItemMoveBefore(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex) const
 {
-    // Notify the view
-    notifier_itemCloned.trigger(sourceParentItem, sourceIndex, targetParentItem, targetIndex);
+    notifier_itemMoveBefore.trigger(sourceItemIndex, targetItemIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onItemCloneAfter(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex) const
+{
+    notifier_itemCloneAfter.trigger(sourceItemIndex, targetItemIndex);
 
     // Change the current item to the clone if it was the one cloned
-    if (sourceParentItem.childAt(sourceIndex) == m_currentItem) {
-        setCurrentItem(targetParentItem.childAt(targetIndex));
+    if (m_currentItemIndex->equal(sourceItemIndex)) {
+        setCurrentItem(targetItemIndex.item(m_rootItem));
     }
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onItemRemoved(const Item &parentItem, int index) const
+void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
 {
     // Notify the view
-    notifier_itemRemoved.trigger(parentItem, index);
+    notifier_itemRemoveAfter.trigger(itemIndex);
 
-//    if (m_currentItem.isNull()) { setCurrentItem(m_rootItem); }
-
-//    // The current Item needs to be updated if it has been removed
-//    // Check if is has been removed
-//    Item item = m_currentItem;
-//    Item pItem = item.parent();
-//    while(!pItem.isNull()) {
-//        // The parent of the removed item has been updated to not contain the removed item
-//        if (pItem.childIndex(item) < 0) {
-//            // The current item has been removed
-//            // Now it finds the best candidate to replace it
-
-//            // First the next sibling
-//            item = parentItem.childAt(index);
-//            if (!item.isNull()) {
-//                setCurrentItem(item);
-//                return;
-//            }
-//            // Secound the previous sibling
-//            item = parentItem.childAt(index-1);
-//            if (!item.isNull()) {
-//                setCurrentItem(item);
-//                return;
-//            }
-//            // Thrid the parent
-//            setCurrentItem(parentItem);
-//            return;
-//        }
-//        item = pItem;
-//        pItem = item.parent();
-//    }
-}
-
-// =============================================================================
-// (protected)
-void OakModel::onItemBeforeRemoving(const Item &item) const
-{
-    notifier_itemBeforeRemoving.trigger(item);
-}
-
-// =============================================================================
-// (protected)
-void OakModel::onEntryChanged(const Item &item, int valueIndex) const
-{
-    if (item.def()->derivedIdValueDefIndex() == valueIndex) {
-        const NodeDef* def = findNodeDef(item.node());
-        assert(def);
-        Item newItem(def, item.node(), this);
-
-        notifier_entryChanged.trigger(newItem, valueIndex);
-        if (item == m_currentItem) {
-            setCurrentItem(newItem);
-        }
-    } else {
-        notifier_entryChanged.trigger(item, valueIndex);
-    }
-}
-
-// =============================================================================
-// (protected)
-void OakModel::onItemRemoved2(const ItemIndex &itemIndex) const
-{
-    // Notify the view
-    notifier_itemRemoved2.trigger(itemIndex);
-
-    if (m_currentItem.isNull()) {
-        return;
-    }
+    // Check if the current item is removed and update it if so
+    if (m_currentItem.isNull()) { return; }
 
     if (m_currentItemIndex->contains(itemIndex)) {
         // The current item is no longer valid
         if (m_currentItemIndex->depth() == itemIndex.depth()) {
             // The deleted item is the current item
-            int depth = itemIndex.depth() - 1;
-            Item parentItem = itemIndex.item(m_rootItem, depth);
-            const ItemIndex &lastItemIndex = itemIndex.childItemIndex(depth);
+            Item parentItem = itemIndex.itemParent(m_rootItem);
+            const ItemIndex &lastItemIndex = itemIndex.lastItemIndex();
             int count = parentItem.childCount(lastItemIndex.name());
             if (count > lastItemIndex.index()) {
                 // Set the next sibling as the current item
@@ -399,6 +443,35 @@ void OakModel::onItemRemoved2(const ItemIndex &itemIndex) const
 
         return;
     }
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, int valueIndex) const
+{
+    notifier_entryChangeAfter.trigger(itemIndex, valueIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onEntryTypeChangeAfter(const ItemIndex &itemIndex) const
+{
+    Item item = itemIndex.item(m_rootItem);
+    const NodeDef* def = findNodeDef(item.node());
+    assert(def);
+    Item newItem(def, item.node(), this);
+
+    notifier_entryTypeChangeAfter.trigger(itemIndex);
+    if (item == m_currentItem) {
+        setCurrentItem(newItem);
+    }
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onEntryKeyChangeAfter(const ItemIndex &itemIndex) const
+{
+    notifier_entryKeyChangeAfter.trigger(itemIndex);
 }
 
 #endif // XML_BACKEND

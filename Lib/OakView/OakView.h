@@ -34,7 +34,7 @@ public:
 
     void currentItemChanged();
 
-    void setCurrentItem(const Model::Item& item);
+    void setCurrentItem(const Model::ItemIndex &itemIndex);
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
@@ -52,12 +52,16 @@ protected:
 
     QTreeWidgetItem * getTreeItems(Model::Item item, QTreeWidgetItem *parentItem = nullptr);
 
-    void onItemInserted(const Model::Item& parentItem, int index);
-    void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
-    void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
-    void onItemRemoved(const Model::Item& parentItem, int index);
+    void onItemInserteAfter(const Model::ItemIndex& itemIndex);
+    void onItemMoveAfter(const Model::ItemIndex& sourceItemIndex, const Model::ItemIndex& targetItemIndex);
+    void onItemCloneAfter(const Model::ItemIndex& sourceItemIndex, const Model::ItemIndex& targetItemIndex);
+    void onItemRemoveBefore(const Model::ItemIndex& itemIndex);
 
-    void onEntryChanged(const Model::Item& item, int valueIndex);
+    void onEntryTypeChangeAfter(const Model::ItemIndex& itemIndex);
+    void onEntryKeyChangeAfter(const Model::ItemIndex& itemIndex);
+
+    QTreeWidgetItem * widgetFromIndex(const Model::ItemIndex &itemIndex, bool parentWidget = false);
+    Model::ItemIndexUPtr indexFromWidget(QTreeWidgetItem *itemWidget);
 
 protected slots:
     void createTreeStructure();

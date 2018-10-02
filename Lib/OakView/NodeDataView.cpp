@@ -64,7 +64,7 @@ void NodeDataView::setModel(Model::OakModel* model)
 
         m_model->notifier_destroyed.remove(this);
 
-        m_model->notifier_entryChanged.remove(this);
+        m_model->notifier_entryChangeAfter.remove(this);
     }
 
     // Change the model
@@ -76,7 +76,7 @@ void NodeDataView::setModel(Model::OakModel* model)
         m_model->notifier_rootNodeDefChanged.add(this, &NodeDataView::clearEditorCash);
 
         m_model->notifier_destroyed.add(this, &NodeDataView::modelDestroyed);
-        m_model->notifier_entryChanged.add(this, &NodeDataView::onEntryChanged);
+        m_model->notifier_entryChangeAfter.add(this, &NodeDataView::onEntryChangeAfter);
 
         if (!m_model->currentItem().isNull()) {
             currentItemChanged();
@@ -175,17 +175,12 @@ void NodeDataView::setCurrentWidget(int index)
 
 // =============================================================================
 // (protected)
-void NodeDataView::onEntryChanged(const Model::Item &item, int valueIndex)
+void NodeDataView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, int valueIndex)
 {
-    if (item == m_model->currentItem()) {
-        if (item.def()->derivedIdValueDefIndex() == valueIndex) {
-            auto node = item.node();
-            auto def = m_model->findNodeDef(node);
-            if (def) {
-                m_model->setCurrentItem(Model::Item(def, node, m_model));
-            }
-        }
+
+    if (m_model->currentItemIndex().equal(itemIndex)) {
         // Pass on the event to the current editor
+        const Model::Item &item = m_model->currentItem();
         getEditorHandler(item)->updateEditorValue(item.def()->value(valueIndex).name());
     }
 }

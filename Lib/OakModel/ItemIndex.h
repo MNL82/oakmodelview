@@ -25,26 +25,54 @@ class ItemIndex
 {
 public:
     ItemIndex();
+    ItemIndex(int index);
+    ItemIndex(const std::string &name, int index);
+    ItemIndex(const ItemIndex &itemIndex);
     ~ItemIndex();
+
+    bool isNull() const;
+    bool isNamed(bool recursive = false) const;
+    bool isUnnamed(bool recursive = false) const;
+
+    bool equal(const ItemIndex &itemIndex) const;
+    int depthWhereEqual(const ItemIndex &itemIndex) const;
 
     const std::string &name() const;
     int index() const;
 
+    // Returns how many levels down the ItemIndex points
     int depth() const;
 
-    bool contains(const ItemIndex &itemIndex);
+    bool contains(const ItemIndex &itemIndex) const;
 
     Item item(const Item &rootItem, int depth = -1) const;
+    Item itemParent(const Item &rootItem) const;
 
-    const ItemIndex &childItemIndex(int depth) const;
+    bool hasChildItemIndex() const;
+
+    const ItemIndex &childItemIndex(int depth = 1) const;
+    ItemIndex &childItemIndex(int depth = 1);
+    const ItemIndex &lastItemIndex() const;
+    ItemIndex &lastItemIndex();
+
+    static ItemIndex &emptyItemIndex();
 
     static ItemIndexUPtr create(const Item &_item, bool namedIndex = true);
+
+    // Manual creation of ItemIndex
+    void setChildItemIndex(ItemIndex *itemIndex);
+
+    // ************* Convert index to grouped of seperate format *************
+    int convertIndexToUnnamed(const Item &_item) const;
+    int convertIndexToNamed(const Item &_item, std::string &name) const;
 
 protected:
     std::string m_name;
     int m_index;
 
     ItemIndex *m_childIndex;
+
+    static ItemIndex s_itemIndex;
 };
 
 } // namespace Model

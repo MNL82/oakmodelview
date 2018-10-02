@@ -121,6 +121,12 @@ public:
     bool removeChild(int index) const;
     bool removeChild(const std::string &name, int index) const;
 
+
+    // ************* Convert child index *************
+    int convertChildIndexToUnnamed(const std::string &name, int index) const;
+    int convertChildIndexToNamed(std::string &name, int index) const;
+
+
 protected:
     inline void initEntryList() const;
 

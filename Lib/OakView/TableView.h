@@ -40,11 +40,11 @@ protected slots:
     void onItemChanged(QTableWidgetItem *item);
 
 protected:
-    void onItemInserted(const Model::Item& parentItem, int index);
-    void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
-    void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
-    void onItemRemoved(const Model::Item& parentItem, int index);
-    void onEntryChanged(const Model::Item &item, int valueIndex);
+    void onItemInserteAfter(const Model::ItemIndex &itemIndex);
+    void onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
+    void onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
+    void onItemRemoveBefore(const Model::ItemIndex& tItemIndex);
+    void onEntryChangeAfter(const Model::ItemIndex &itemIndex, int valueIndex);
 
     virtual bool event(QEvent *event) override;
 

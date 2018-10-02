@@ -181,12 +181,12 @@ void TableView::setOakModel(Model::OakModel *model)
         m_model->notifier_rootNodeChanged.remove(this);
 //        m_model->notifier_destroyed.remove(this);
 
-        m_model->notifier_itemInserted.remove(this);
-        m_model->notifier_itemMoved.remove(this);
-        m_model->notifier_itemCloned.remove(this);
-        m_model->notifier_itemRemoved.remove(this);
+        m_model->notifier_itemInserteAfter.remove(this);
+        m_model->notifier_itemMoveAfter.remove(this);
+        m_model->notifier_itemCloneAfter.remove(this);
+        m_model->notifier_itemRemoveAfter.remove(this);
 
-        m_model->notifier_entryChanged.remove(this);
+        m_model->notifier_entryChangeAfter.remove(this);
     }
 
     // Change the model
@@ -199,12 +199,12 @@ void TableView::setOakModel(Model::OakModel *model)
         m_model->notifier_rootNodeChanged.add(this, &TableView::updateTable);
 //        m_model->notifier_destroyed.add(this, &ListView::modelDestroyed);
 
-        m_model->notifier_itemInserted.add(this, &TableView::onItemInserted);
-        m_model->notifier_itemMoved.add(this, &TableView::onItemMoved);
-        m_model->notifier_itemCloned.add(this, &TableView::onItemCloned);
-        m_model->notifier_itemRemoved.add(this, &TableView::onItemRemoved);
+        m_model->notifier_itemInserteAfter.add(this, &TableView::onItemInserteAfter);
+        m_model->notifier_itemMoveAfter.add(this, &TableView::onItemMoveAfter);
+        m_model->notifier_itemCloneAfter.add(this, &TableView::onItemCloneAfter);
+        m_model->notifier_itemRemoveBefore.add(this, &TableView::onItemRemoveBefore);
 
-        m_model->notifier_entryChanged.add(this, &TableView::onEntryChanged);
+        m_model->notifier_entryChangeAfter.add(this, &TableView::onEntryChangeAfter);
     }
 }
 
@@ -290,45 +290,39 @@ void TableView::onItemChanged(QTableWidgetItem *item)
 
 // =============================================================================
 // (protected)
-void TableView::onItemInserted(const Model::Item &parentItem, int index)
+void TableView::onItemInserteAfter(const Model::ItemIndex &itemIndex)
 {
-    Q_UNUSED(parentItem)
-    Q_UNUSED(index)
+    Q_UNUSED(itemIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onItemMoved(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
+void TableView::onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
 {
-    Q_UNUSED(sourceParentItem)
-    Q_UNUSED(sourceIndex)
-    Q_UNUSED(targetParentItem)
-    Q_UNUSED(targetIndex)
+    Q_UNUSED(sourceItemIndex)
+    Q_UNUSED(targetItemIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onItemCloned(const Model::Item &sourceParentItem, int sourceIndex, const Model::Item &targetParentItem, int targetIndex)
+void TableView::onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
 {
-    Q_UNUSED(sourceParentItem)
-    Q_UNUSED(sourceIndex)
-    Q_UNUSED(targetParentItem)
-    Q_UNUSED(targetIndex)
+    Q_UNUSED(sourceItemIndex)
+    Q_UNUSED(targetItemIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onItemRemoved(const Model::Item &parentItem, int index)
+void TableView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 {
-    Q_UNUSED(parentItem)
-    Q_UNUSED(index)
+    Q_UNUSED(itemIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onEntryChanged(const Model::Item &item, int valueIndex)
+void TableView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, int valueIndex)
 {
-    Q_UNUSED(item)
+    Q_UNUSED(itemIndex)
     Q_UNUSED(valueIndex)
 }
 

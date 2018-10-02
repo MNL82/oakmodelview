@@ -11,6 +11,7 @@
 #include "Entry.h"
 #include "Item.h"
 #include "OakModel.h"
+#include "ItemIndex.h"
 
 namespace Oak {
 namespace Model {
@@ -208,7 +209,18 @@ const Entry& Entry::emptyEntry()
 // (public)
 void Entry::onEntryChanged() const
 {
-    m_item->model()->onEntryChanged(*m_item, m_item->entryIndex(*this));
+    if (m_item->model() == nullptr) { return; }
+
+    int index = m_item->entryIndex(*this);
+    ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
+
+    if (m_item->def()->derivedIdValueDefIndex() == index) {
+        m_item->model()->onEntryTypeChangeAfter(*iIndex.get());
+    } else if (m_item->def()->keyValueDefIndex() == index) {
+        m_item->model()->onEntryKeyChangeAfter(*iIndex.get());
+    }
+
+    m_item->model()->onEntryChangeAfter(*iIndex.get(), index);
 }
 
 } // namespace Model

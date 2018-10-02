@@ -13,6 +13,7 @@
 #include <QWidget>
 
 #include "Item.h"
+#include "ItemIndex.h"
 
 
 class QVBoxLayout;
@@ -42,10 +43,13 @@ public:
 
     ListViewItem * child(const Model::Item &item);
     ListViewItem * child(int index);
+    ListViewItem * child(const Model::ItemIndex &itemIndex);
 
     ListViewItem * parent();
     ListViewItem * nextSibling();
     ListViewItem * previousSibling();
+
+    int childIndex(ListViewItem* child) const;
 
     void giveFocus();
 
@@ -53,11 +57,6 @@ public:
     void setExspanded(bool value);
 
     virtual QSize sizeHint() const override;
-
-    void onItemInserted(int index);
-    void onItemRemoved(int index);
-
-    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
     void clearCurrent();
     void setCurrent();
@@ -67,7 +66,13 @@ public:
 protected:
     QString createStyleSheetCurrent(QColor color);
     QString createStyleSheetNormal(QColor color);
+
     void updateFixedheight();
+
+    void onItemInserteAfter(const Model::ItemIndex &itemIndex);
+    void onItemRemoveBefore(const Model::ItemIndex &itemIndex);
+
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
 protected slots:
     void onHeightChanged(int change);
@@ -94,6 +99,8 @@ protected:
 
     QString m_styleSheetNormal;
     QString m_styleSheetCurrent;
+
+    friend class ListView;
 };
 
 } // namespace View

@@ -28,7 +28,6 @@ SOURCES += \
     ContainerEditor.cpp \
     ServiceFunctions.cpp \
     NodeDataView.cpp \
-    NodeIndex.cpp \
     OakView.cpp \
     ListView.cpp \
     TableView.cpp \
@@ -43,7 +42,6 @@ HEADERS += \
     ContainerEditor.h \
     ServiceFunctions.h \
     NodeDataView.h \
-    NodeIndex.h \
     OakView.h \
     ListView.h \
     TableView.h \

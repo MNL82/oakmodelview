@@ -76,7 +76,7 @@ void ActionToolBar::setModel(Model::OakModel *model)
     if (m_model) {
         // Disconnect the old model
         m_model->notifier_currentItemChanged.remove(this);
-        m_model->notifier_itemBeforeRemoving.remove(this);
+        m_model->notifier_itemRemoveBefore.remove(this);
     }
 
     // Change the model
@@ -85,7 +85,7 @@ void ActionToolBar::setModel(Model::OakModel *model)
     if (m_model) {
         // connect the new mobel
         m_model->notifier_currentItemChanged.add(this, &ActionToolBar::currentItemChanged);
-        m_model->notifier_itemBeforeRemoving.add(this, &ActionToolBar::itemBeforeRemoving);
+        m_model->notifier_itemRemoveBefore.add(this, &ActionToolBar::itemRemoveBefore);
     }
 }
 
@@ -138,8 +138,9 @@ void ActionToolBar::currentItemChanged()
 
 // =============================================================================
 // (protected)
-void ActionToolBar::itemBeforeRemoving(const Model::Item &item)
+void ActionToolBar::itemRemoveBefore(const Model::ItemIndex &itemIndex)
 {
+    Model::Item item = itemIndex.item(m_model->rootItem());
     Model::Item cItem = m_cutItem;
     while (!cItem.isNull()) {
         if (cItem == item) {

@@ -32,7 +32,7 @@ public:
 
 protected:
     void currentItemChanged();
-    void itemBeforeRemoving(const Model::Item &item);
+    void itemRemoveBefore(const Model::ItemIndex &itemIndex);
 
     void disableAllActions();
 

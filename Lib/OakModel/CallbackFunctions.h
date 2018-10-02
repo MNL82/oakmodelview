@@ -149,5 +149,57 @@ protected:
     std::map<void*, std::function<void(const ItemIndex&)>> m_functionMap;
 };
 
+// =============================================================================
+// Class definition
+// =============================================================================
+class Callback_ItemIndexItemIndex
+{
+public:
+    Callback_ItemIndexItemIndex();
+
+    template<typename T>
+    void add(T* funcObj, void (T::*func)(const ItemIndex&, const ItemIndex&))
+    {
+        if (funcObj == nullptr) {
+            assert(false);
+            return;
+        }
+        m_functionMap[funcObj] = std::bind(func, funcObj, std::placeholders::_1, std::placeholders::_2);
+    }
+
+    void remove(void* funcObj = nullptr);
+
+    void trigger(const ItemIndex &itemIndex1, const ItemIndex &itemIndex2) const;
+
+protected:
+    std::map<void*, std::function<void(const ItemIndex&, const ItemIndex&)>> m_functionMap;
+};
+
+// =============================================================================
+// Class definition
+// =============================================================================
+class Callback_ItemIndexInt
+{
+public:
+    Callback_ItemIndexInt();
+
+    template<typename T>
+    void add(T* funcObj, void (T::*func)(const ItemIndex&, int))
+    {
+        if (funcObj == nullptr) {
+            assert(false);
+            return;
+        }
+        m_functionMap[funcObj] = std::bind(func, funcObj, std::placeholders::_1, std::placeholders::_2);
+    }
+
+    void remove(void* funcObj = nullptr);
+
+    void trigger(const ItemIndex &itemIndex, int index) const;
+
+protected:
+    std::map<void*, std::function<void(const ItemIndex&, int)>> m_functionMap;
+};
+
 } // namespace Model
 } // namespace Oak

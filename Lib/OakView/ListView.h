@@ -13,6 +13,7 @@
 #include <QFrame>
 
 #include "OakModel.h"
+#include "ItemIndex.h"
 
 class QScrollArea;
 class QGridLayout;
@@ -39,23 +40,24 @@ public:
 
     void currentItemChanged();
 
-    void onItemInserted(const Model::Item& parentItem, int index);
-    void onItemMoved(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
-    void onItemCloned(const Model::Item& sourceParentItem, int sourceIndex, const Model::Item& targetParentItem, int targetIndex);
-    void onItemRemoved(const Model::Item& parentItem, int index);
-    void onItemRemoved2(const Model::ItemIndex &itemIndex);
-    void onEntryChanged(const Model::Item &item, int valueIndex);
-
     int maxDepth() const;
     void setMaxDepth(int maxDepth);
 
     void resizeEvent(QResizeEvent *event) override;
 
 protected:
-    ListViewItem * getViewItem(const Model::Item &item);
+    ListViewItem * getViewItem(const Model::ItemIndex &itemIndex);
 
     void createDragItems() const;
     void clearDragItems() const;
+
+    void onItemInserteAfter(const Model::ItemIndex &itemIndex);
+    void onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
+    void onItemMoveBefore(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
+    void onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
+    void onItemRemoveBefore(const Model::ItemIndex &itemIndex);
+    void onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex);
+    void onEntryKeyChangeAfter(const Model::ItemIndex &itemIndex);
 
 protected slots:
     void adjustItemWidth();
@@ -64,6 +66,7 @@ protected slots:
 protected:
     Model::OakModel * m_model = nullptr;
     ListViewItem * m_rootItem = nullptr;
+    Model::ItemIndexUPtr m_rootItemIndex;
 
     ListViewItem * m_currentViewItem = nullptr;
 

@@ -460,7 +460,8 @@ Item Item::insertChild(const std::string &name, int &index) const
     Node node = container.insertNode(m_node, index);
     Item childItem(container.containerDef(), node, m_model);
     if (m_model && !childItem.isNull()) {
-        m_model->onItemInserted(*this, childIndex(childItem));
+        ItemIndexUPtr iIndex = ItemIndex::create(childItem);
+        m_model->onItemInserteAfter(*iIndex.get());
     }
     return childItem;
 }
@@ -488,13 +489,14 @@ Item Item::cloneChild(int& index, const Item &cloneItem) const
     assert(m_def);
     if (m_model) {
         // Cash data needed to notify change
-        Item sourceParentItem = cloneItem.parent();
-        int sourceIndex = sourceParentItem.childIndex(cloneItem);
+        ItemIndexUPtr sourceItemIndex = ItemIndex::create(cloneItem);
         // Perform the cloneing
         Item item = Item(cloneItem.m_def, m_def->containerGroup().cloneNode(m_node, index, cloneItem.m_node), m_model);
+
         // Notify everyone if cloning did not fail
         if (!item.isNull()) {
-            m_model->onItemCloned(sourceParentItem, sourceIndex, *this, index);
+            ItemIndexUPtr targetItemIndex = ItemIndex::create(item);
+            m_model->onItemCloneAfter(*sourceItemIndex.get(), *targetItemIndex.get());
         }
         updateUniqueValues(item);
 
@@ -511,13 +513,15 @@ Item Item::cloneChild(const std::string &name, int &index, const Item &cloneItem
     assert(m_def);
     if (m_model) {
         // Cash data needed to notify change
-        Item sourceParentItem = cloneItem.parent();
-        int sourceIndex = sourceParentItem.childIndex(cloneItem);
+        ItemIndexUPtr sourceItemIndex = ItemIndex::create(cloneItem);
+
         // Perform the cloneing
         Item item = Item(cloneItem.m_def, m_def->container(name).cloneNode(m_node, index, cloneItem.m_node), m_model);
+
         // Notify everyone if cloning did not fail
         if (!item.isNull()) {
-            m_model->onItemCloned(sourceParentItem, sourceIndex, *this, childIndex(item));
+            ItemIndexUPtr targetItemIndex = ItemIndex::create(item);
+            m_model->onItemCloneAfter(*sourceItemIndex.get(), *targetItemIndex.get());
         }
         updateUniqueValues(item);
 
@@ -549,18 +553,27 @@ Item Item::moveChild(int& index, Item moveItem) const
 {
     assert(m_def);
     if (m_model) {
+        // Check if item can be moved
+        if (!m_def->containerGroup().canMoveNode(m_node, index, moveItem.m_node)) { return Item(); }
+
         // Cash data needed to notify change
-        Item sourceParentItem = moveItem.parent();
-        int sourceIndex = sourceParentItem.childIndex(moveItem);
+        ItemIndexUPtr sourceItemIndex = ItemIndex::create(moveItem);
+        ItemIndexUPtr targetItemIndex = ItemIndex::create(*this);
+        targetItemIndex->setChildItemIndex(new ItemIndex(index));
 
-        m_model->onItemBeforeRemoving(sourceParentItem.childAt(sourceIndex));
+        // Notify before move
+        m_model->onItemMoveBefore(*sourceItemIndex.get(), *targetItemIndex.get());
 
-        // Perform the cloneing
+        // Perform the move
         Item item = Item(moveItem.m_def, m_def->containerGroup().moveNode(m_node, index, moveItem.m_node), m_model);
-        // Notify everyone if cloning did not fail
-        if (!item.isNull()) {
-            m_model->onItemMoved(sourceParentItem, sourceIndex, *this, index);
-        }
+
+        assert(!item.isNull());
+
+        targetItemIndex = ItemIndex::create(item);
+
+        // Notify after move
+        m_model->onItemMoveAfter(*sourceItemIndex.get(), *targetItemIndex.get());
+
         updateUniqueValues(item);
 
         return item;
@@ -575,15 +588,27 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
 {
     assert(m_def);
     if (m_model) {
+        // Check if item can be moved
+        if (!m_def->container(name).canMoveNode(m_node, index, moveItem.m_node)) { return Item(); }
+
         // Cash data needed to notify change
-        Item sourceParentItem = moveItem.parent();
-        int sourceIndex = sourceParentItem.childIndex(moveItem);
-        // Perform the cloneing
+        ItemIndexUPtr sourceItemIndex = ItemIndex::create(moveItem);
+        ItemIndexUPtr targetItemIndex = ItemIndex::create(*this);
+        targetItemIndex->setChildItemIndex(new ItemIndex(name, index));
+
+        // Notify before move
+        m_model->onItemMoveBefore(*sourceItemIndex.get(), *targetItemIndex.get());
+
+        // Perform the move
         Item item = Item(moveItem.m_def, m_def->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
-        // Notify everyone if cloning did not fail
-        if (!item.isNull()) {
-            m_model->onItemMoved(sourceParentItem, sourceIndex, *this, childIndex(item));
-        }
+
+        assert(!item.isNull());
+
+        targetItemIndex = ItemIndex::create(item);
+
+        // Notify after move
+        m_model->onItemMoveAfter(*sourceItemIndex.get(), *targetItemIndex.get());
+
         updateUniqueValues(item);
 
         return item;
@@ -615,13 +640,14 @@ bool Item::removeChild(int index) const
     assert(m_def);
     if (m_def->containerGroup().canRemoveNode(m_node, index)) {
 
+        ItemIndexUPtr iIndex = ItemIndex::create(childAt(index));
         if (m_model) {
-            m_model->onItemBeforeRemoving(childAt(index));
+            m_model->onItemRemoveBefore(*iIndex.get());
         }
 
         m_def->containerGroup().removeNode(m_node, index);
         if (m_model) {
-            m_model->onItemRemoved(*this, index);
+            m_model->onItemRemoveAfter(*iIndex.get());
         }
         return true;
     }
@@ -637,21 +663,38 @@ bool Item::removeChild(const std::string &name, int index) const
 
         ItemIndexUPtr iIndex = ItemIndex::create(childAt(name, index));
         if (m_model) {
-            m_model->onItemBeforeRemoving(childAt(index));
+            m_model->onItemRemoveBefore(*iIndex.get());
         }
 
-        m_def->containerGroup().removeNode(m_node, index);
+        m_def->container(name).removeNode(m_node, index);
         if (m_model) {
-            m_model->onItemRemoved(*this, index);
-            m_model->onItemRemoved2(*iIndex.get());
+            m_model->onItemRemoveAfter(*iIndex.get());
         }
         return true;
     }
     return false;
+}
 
+// =============================================================================
+// (public)
+int Item::convertChildIndexToUnnamed(const std::string &name, int index) const
+{
+    if (m_def->containerCount() == 1) { return index; }
+    Item childItem = childAt(name, index);
+    return childIndex(childItem);
+}
 
-//    int index2 = childIndex(childAt(name, index));
-//    return removeChild(index2);
+// =============================================================================
+// (public)
+int Item::convertChildIndexToNamed(std::string &name, int index) const
+{
+    if (m_def->containerCount() == 1) {
+        name = m_def->container(0).containerDef()->name();
+        return index;
+    }
+    Item childItem = childAt(index);
+    name = childItem.def()->name();
+    return childIndex(name, childItem);
 }
 
 // =============================================================================

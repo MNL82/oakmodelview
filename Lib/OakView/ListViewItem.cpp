@@ -41,6 +41,8 @@ ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int dep
     m_depth = depth;
     m_parent = parent;
 
+    setObjectName(QString::fromStdString(item.def()->name()));
+
     int deltaDepth = m_listView->maxDepth() - m_depth;
     bool canHaveChildren = deltaDepth > 0 && m_item.def()->containerCount() > 0;
 
@@ -184,6 +186,22 @@ ListViewItem *ListViewItem::child(int index)
 
 // =============================================================================
 // (public)
+ListViewItem *ListViewItem::child(const Model::ItemIndex &itemIndex)
+{
+    int index = itemIndex.convertIndexToUnnamed(m_item);
+    assert(index >= 0);
+
+    ListViewItem * childItem = child(index);
+    assert(childItem);
+    if (itemIndex.hasChildItemIndex()) { // Look deeper
+        return childItem->child(itemIndex.childItemIndex());
+    } else { // Found the child ListViewItem
+        return childItem;
+    }
+}
+
+// =============================================================================
+// (public)
 ListViewItem *ListViewItem::parent()
 {
     return m_parent;
@@ -207,6 +225,19 @@ ListViewItem *ListViewItem::previousSibling()
     int index = m_parent->childViewItemIndex(this);
     assert(index != -1);
     return m_parent->child(index-1);
+}
+
+// =============================================================================
+// (public)
+int ListViewItem::childIndex(ListViewItem *child) const
+{
+    int count = m_childItemLayout->count();
+    for (int i = 0; i < count; i++) {
+        if (m_childItemLayout->itemAt(i)->widget() == child) {
+            return i;
+        }
+    }
+    return false;
 }
 
 // =============================================================================
@@ -240,97 +271,6 @@ void ListViewItem::setExspanded(bool value)
 QSize ListViewItem::sizeHint() const
 {
     return QSize(200, m_height);
-}
-
-// =============================================================================
-// (public)
-void ListViewItem::onItemInserted(int index)
-{
-    Model::Item cItem = m_item.childAt(index);
-    QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1, this);
-    connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
-
-    m_childItemLayout->insertWidget(index, w);
-
-    if (m_childItemLayout->count() == 1) {
-        m_exspandbuttom->setEnabled(true);
-        setExspanded(isExspanded());
-    } else {
-        onHeightChanged(w->sizeHint().height() + SPACING_H);
-    }
-}
-
-// =============================================================================
-// (public)
-void ListViewItem::onItemRemoved(int index)
-{
-    assert(index >= 0 && index < m_childItemLayout->count());
-
-    QLayoutItem * layoutItem = m_childItemLayout->takeAt(index);
-    QWidget * w = layoutItem->widget();
-
-    onHeightChanged(-w->sizeHint().height() - SPACING_H);
-    if (m_childItemLayout->count() == 0) {
-        m_exspandbuttom->setEnabled(false);
-        m_childItemWidget->setHidden(true);
-    }
-
-    delete layoutItem;
-    delete w;
-}
-
-// =============================================================================
-// (public)
-bool ListViewItem::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == m_itemFrame) {
-        if (event->type() == QEvent::FocusIn) {
-            m_item.model()->setCurrentItem(m_item);
-            return true;
-        }
-        if (event->type() == QEvent::KeyPress) {
-            QKeyEvent * kEvent = dynamic_cast<QKeyEvent*>(event);
-            if (kEvent->key() == Qt::Key_Down) {
-                if (isExspanded() && childCount() > 0) {
-                    child(0)->giveFocus();
-                    return true;
-                }
-                ListViewItem * item1 = this;
-                while(item1 != nullptr) {
-                    ListViewItem * item2 = item1->nextSibling();
-                    if (item2) {
-                        item2->giveFocus();
-                        return true;
-                    }
-                    item1 = item1->parent();
-                }
-                return true;
-            } else if (kEvent->key() == Qt::Key_Up) {
-                ListViewItem * sItem = previousSibling();
-                if (sItem) {
-                    while (sItem->isExspanded() && sItem->childCount() > 0) {
-                        sItem = sItem->child(sItem->childCount()-1);
-                    }
-                    sItem->giveFocus();
-                } else {
-                    ListViewItem * pItem = parent();
-                    if (pItem != nullptr) {
-                        pItem->giveFocus();
-                    }
-                }
-                return true;
-            } else if (kEvent->key() == Qt::Key_Right) {
-                if (m_childItemLayout && m_childItemLayout->count() > 0) {
-                    setExspanded(true);
-                }
-            } else if (kEvent->key() == Qt::Key_Left) {
-                if (m_childItemLayout && m_childItemLayout->count() > 0) {
-                    setExspanded(false);
-                }
-            }
-        }
-    }
-    return false;
 }
 
 // =============================================================================
@@ -417,7 +357,111 @@ void ListViewItem::updateFixedheight()
 }
 
 // =============================================================================
-// (public)
+// (protected)
+void ListViewItem::onItemInserteAfter(const Model::ItemIndex &itemIndex)
+{
+    int index = itemIndex.convertIndexToUnnamed(m_item);
+    assert(index >= 0);
+
+    if (itemIndex.hasChildItemIndex()) {
+        child(index)->onItemInserteAfter(itemIndex.childItemIndex());
+    } else {
+        Model::Item cItem = m_item.childAt(index);
+        QWidget * w = new ListViewItem(m_listView, cItem, m_depth+1, this);
+        connect(w, SIGNAL(heightChanged(int)), this, SLOT(onHeightChanged(int)));
+
+        m_childItemLayout->insertWidget(index, w);
+
+        if (m_childItemLayout->count() == 1) {
+            m_exspandbuttom->setEnabled(true);
+            setExspanded(isExspanded());
+        } else {
+            onHeightChanged(w->sizeHint().height() + SPACING_H);
+        }
+    }
+}
+
+// =============================================================================
+// (protected)
+void ListViewItem::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
+{
+    int index = itemIndex.convertIndexToUnnamed(m_item);
+    assert(index >= 0);
+
+    if (itemIndex.hasChildItemIndex()) {
+        child(index)->onItemRemoveBefore(itemIndex.childItemIndex());
+    } else {
+        // Remove the child ListViewItem
+        QLayoutItem * layoutItem = m_childItemLayout->takeAt(index);
+        QWidget * w = layoutItem->widget();
+
+        onHeightChanged(-w->sizeHint().height() - SPACING_H);
+        if (m_childItemLayout->count() == 0) {
+            m_exspandbuttom->setEnabled(false);
+            m_childItemWidget->setHidden(true);
+        }
+
+        delete layoutItem;
+        delete w;
+    }
+}
+
+// =============================================================================
+// (protected)
+bool ListViewItem::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_itemFrame) {
+        if (event->type() == QEvent::FocusIn) {
+            m_item.model()->setCurrentItem(m_item);
+            return true;
+        }
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent * kEvent = dynamic_cast<QKeyEvent*>(event);
+            if (kEvent->key() == Qt::Key_Down) {
+                if (isExspanded() && childCount() > 0) {
+                    child(0)->giveFocus();
+                    return true;
+                }
+                ListViewItem * item1 = this;
+                while(item1 != nullptr) {
+                    ListViewItem * item2 = item1->nextSibling();
+                    if (item2) {
+                        item2->giveFocus();
+                        return true;
+                    }
+                    item1 = item1->parent();
+                }
+                return true;
+            } else if (kEvent->key() == Qt::Key_Up) {
+                ListViewItem * sItem = previousSibling();
+                if (sItem) {
+                    while (sItem->isExspanded() && sItem->childCount() > 0) {
+                        sItem = sItem->child(sItem->childCount()-1);
+                    }
+                    sItem->giveFocus();
+                } else {
+                    ListViewItem * pItem = parent();
+                    if (pItem != nullptr) {
+                        pItem->giveFocus();
+                    }
+                }
+                return true;
+            } else if (kEvent->key() == Qt::Key_Right) {
+                if (m_childItemLayout && m_childItemLayout->count() > 0) {
+                    setExspanded(true);
+                }
+            } else if (kEvent->key() == Qt::Key_Left) {
+                if (m_childItemLayout && m_childItemLayout->count() > 0) {
+                    setExspanded(false);
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// =============================================================================
+// (protected slots)
 void ListViewItem::onHeightChanged(int change)
 {
     if (m_childItemWidget->isHidden()) { return; }
@@ -427,7 +471,7 @@ void ListViewItem::onHeightChanged(int change)
 }
 
 // =============================================================================
-// (public)
+// (protected slots)
 void ListViewItem::onExspandChanged()
 {
     setExspanded(!isExspanded());
