@@ -10,15 +10,14 @@ QT       += widgets
 
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++11
+
+include(../Configure.pri)
 
 INCLUDEPATH += \
     . \
     .. \
     ../OakXML \
     ../OakModel
-
-include(Configure.pri)
 
 SOURCES += \
     ValueEditorHandler.cpp \

@@ -8,10 +8,8 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++11
 
-DEFINES += XML_BACKEND
-DEFINES += NOMINMAX
+include(../Configure.pri)
 
 unix::QMAKE_CXXFLAGS += -std=gnu++0x
 

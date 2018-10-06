@@ -8,17 +8,16 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += c++11
 
 unix::QMAKE_CXXFLAGS += -std=gnu++0x
+
+include(../Configure.pri)
 
 INCLUDEPATH += \
     . \
     .. \
     ../OakXML
 
-include(Configure.pri)
-include(Variants.pri)
 include(Definitions.pri)
 include(Builders.pri)
 include(Reference.pri)

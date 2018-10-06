@@ -32,9 +32,10 @@ public:
     UnionRef(const int &i);
     UnionRef(const double &d);
     UnionRef(const std::string &s);
-    UnionRef(const UnionValue& v);
+    UnionRef(const std::chrono::system_clock::time_point &dt);
+    UnionRef(const UnionValue &v);
 
-    UnionRef(const UnionRef& copy);
+    UnionRef(const UnionRef &copy);
 
     ~UnionRef();
 
@@ -78,6 +79,7 @@ public:
     double getDouble() const;
     const std::string& getCString() const;
     std::string& getString();
+    const std::chrono::system_clock::time_point &getDateTime() const;
 
     template<typename T>
     bool canGet(T& target, bool allowConversion = true, Conversion* properties = nullptr) const;
@@ -121,6 +123,8 @@ bool UnionRef::canGet(T &target, bool allowConversion, Conversion *properties) c
             return canConvert(target, *r.d, properties);
         case UnionType::String:
             return canConvert(target, *r.s, properties);
+        case UnionType::DateTime:
+            return canConvert(target, *r.dt, properties);
         default:
             assert(false);
             return false;
@@ -149,6 +153,8 @@ bool UnionRef::get(T &target, bool allowConversion, Conversion *properties) cons
             return convert(target, *r.d, properties);
         case UnionType::String:
             return convert(target, *r.s, properties);
+        case UnionType::DateTime:
+            return convert(target, *r.dt, properties);
         default:
             assert(false);
             return false;

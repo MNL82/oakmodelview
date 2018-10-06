@@ -35,6 +35,9 @@ UnionType Union::GetType(type_info info)
     if (typeid(char) == info) {
         return UnionType::Char;
     }
+    if (typeid(std::chrono::system_clock::time_point) == info) {
+        return UnionType::DateTime;
+    }
     return UnionType::Undefined;
 }
 
@@ -71,6 +74,13 @@ UnionType Union::GetType(double)
 UnionType Union::GetType(const std::string &)
 {
     return UnionType::String;
+}
+
+// =============================================================================
+// (public)
+UnionType Union::GetType(const std::chrono::system_clock::time_point &)
+{
+    return UnionType::DateTime;
 }
 
 // =============================================================================

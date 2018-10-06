@@ -11,6 +11,7 @@
 #include "ConvertFunctions.h"
 
 #include <iomanip>
+#include <ctime>
 #include <sstream>
 #include <assert.h>
 
@@ -168,6 +169,24 @@ bool convert(std::string &dest, const char *source, Conversion* )
     if (source == nullptr) { return false; }
     dest.assign(source);
     return true;
+}
+
+// =============================================================================
+// (public)
+bool convert(std::string &dest, const std::chrono::system_clock::time_point &src, Conversion *properties)
+{
+//    UNUSED(properties)
+//    std::time_t now_c = std::chrono::system_clock::to_time_t(src);
+//    std::tm now_tm = *std::localtime(&now_c);
+//    dest = std::put_time(&now_c, "%F %T");
+    return false;
+}
+
+// =============================================================================
+// (public)
+bool convert(std::chrono::system_clock::time_point &dest, const std::string &src, Conversion *properties)
+{
+    return false;
 }
 
 // =============================================================================

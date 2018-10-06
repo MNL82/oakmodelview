@@ -11,13 +11,14 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 
 namespace Oak {
 namespace Model {
 
-enum class UnionType { Undefined = -1, Char = 0, Bool = 1, Integer = 2, Double = 3, String = 4 };
-typedef union UValue { bool b; int i; double d; std::string *s; } UValue;
-typedef union UPtr { const char *c; const bool *b; const int *i; const double *d; const std::string *s; } UPtr;
+enum class UnionType { Undefined = -1, Char = 0, Bool = 1, Integer = 2, Double = 3, String = 4, DateTime = 5 };
+typedef union UValue { bool b; int i; double d; std::string *s; std::chrono::system_clock::time_point *dt; } UValue;
+typedef union UPtr { const char *c; const bool *b; const int *i; const double *d; const std::string *s; const std::chrono::system_clock::time_point *dt; } UPtr;
 
 class UnionRef;
 class UnionValue;
@@ -34,6 +35,7 @@ public:
     static UnionType GetType(int);
     static UnionType GetType(double);
     static UnionType GetType(const std::string&);
+    static UnionType GetType(const  std::chrono::system_clock::time_point&);
     static UnionType GetType(UnionType t);
     static UnionType GetType(const UnionRef& ur);
     static UnionType GetType(const UnionValue& uv);
@@ -51,7 +53,6 @@ UnionType Union::GetValueType(const T &v)
     return (type == UnionType::Char) ? UnionType::String : type;
 
 }
-
 
 } // namespace Model
 } // namespace Oak

@@ -66,12 +66,22 @@ UnionValue::UnionValue(const std::string &s)
 
 // =============================================================================
 // (public)
+UnionValue::UnionValue(const std::chrono::system_clock::time_point &dt)
+    : t(UnionType::DateTime)
+{
+    v.dt = new std::chrono::system_clock::time_point(dt);
+}
+
+// =============================================================================
+// (public)
 UnionValue::UnionValue(UnionType type)
     : t(type)
 {
     assert(static_cast<int>(type) > 0);
     if (type == UnionType::String) {
         v.s = new std::string();
+    } else if (type == UnionType::DateTime) {
+        v.dt = new std::chrono::system_clock::time_point();
     } else {
         v.i = 0;
     }
@@ -107,6 +117,9 @@ UnionValue::~UnionValue()
     if (t == UnionType::String) {
         delete v.s;
         v.s = nullptr;
+    } else if (t == UnionType::DateTime) {
+        delete v.dt;
+        v.dt = nullptr;
     }
 }
 
@@ -120,6 +133,15 @@ UnionValue &UnionValue::operator=(const UnionRef &value)
             return *this;
         } else {
             delete v.s;
+        }
+    }
+
+    if (t == UnionType::DateTime) {
+        if (value.t == UnionType::DateTime) {
+            *v.dt = *value.r.dt;
+            return *this;
+        } else {
+            delete v.dt;
         }
     }
 
@@ -143,6 +165,9 @@ UnionValue &UnionValue::operator=(const UnionRef &value)
             break;
         case UnionType::String:
             v.s = new std::string(*value.r.s);
+            break;
+        case UnionType::DateTime:
+            v.dt = new std::chrono::system_clock::time_point(*value.r.dt);
             break;
         default:
             assert(false);
@@ -236,6 +261,8 @@ UnionValue &UnionValue::operator=(UnionValue &&move)
 {
     if (t == UnionType::String) {
         delete v.s;
+    } else if (t == UnionType::DateTime) {
+        delete v.dt;
     }
     t = move.t;
     memcpy(&v, &move.v, sizeof(v));
@@ -262,6 +289,8 @@ UnionValue::operator bool() const
             return v.d != 0.0;
         case UnionType::String:
             return !v.s->empty();
+        case UnionType::DateTime:
+            return true;
         default:
             assert(false);
     }

@@ -32,6 +32,7 @@ public:
     UnionValue(int i);
     UnionValue(double d);
     UnionValue(const std::string &s);
+    UnionValue(const std::chrono::system_clock::time_point &dt);
     UnionValue(UnionType type);
 
     UnionValue(const UnionRef& uRef);

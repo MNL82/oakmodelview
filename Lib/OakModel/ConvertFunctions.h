@@ -11,6 +11,7 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 #include <vector>
 
 #include "Conversion.h"
@@ -40,6 +41,9 @@ bool convert(double& dest, const std::string& src, Conversion* properties = null
 bool convert(std::string& dest, double src, Conversion* properties = nullptr);
 
 bool convert(std::string& dest, const char * source, Conversion* properties = nullptr);
+
+bool convert(std::string& dest, const std::chrono::system_clock::time_point &src, Conversion* properties = nullptr);
+bool convert(std::chrono::system_clock::time_point& dest, const std::string &src, Conversion* properties = nullptr);
 
 template<typename T>
 bool convert(T& dest, const T& source, Conversion* properties = nullptr)

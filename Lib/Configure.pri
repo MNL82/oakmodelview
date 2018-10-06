@@ -6,8 +6,7 @@
 # This library is distributed under the MIT License.
 # See accompanying file LICENSE in the root folder.
 
-HEADERS += \
-    $$PWD/ConvertFunctions.h
+DEFINES += XML_BACKEND
+DEFINES += NOMINMAX
 
-SOURCES += \
-    $$PWD/ConvertFunctions.cpp
+CONFIG += c++17
