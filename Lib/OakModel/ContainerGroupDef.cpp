@@ -13,7 +13,7 @@
 #include "NodeDef.h"
 #include "ContainerDef.h"
 
-#include <assert.h>
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace Model {
@@ -22,7 +22,7 @@ namespace Model {
 // (public)
 ContainerGroupDef::ContainerGroupDef(const NodeDef *hostDef)
 {
-    assert(hostDef);
+    ASSERT(hostDef);
     m_hostDef = hostDef;
 
     updateContainerList();
@@ -204,7 +204,7 @@ Node ContainerGroupDef::nextNode(Node _node, Node refNode, const NodeDef** nodeD
         it++;
     }
     // Never found the refNode
-    assert(false);
+    ASSERT(false);
     if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
@@ -237,7 +237,7 @@ Node ContainerGroupDef::previousNode(Node _node, Node refNode, const NodeDef** n
         }
     }
     // Never found the refNode
-    assert(false);
+    ASSERT(false);
     if (nodeDef) { *nodeDef = nullptr; }
     return Node();
 }
@@ -255,7 +255,7 @@ bool ContainerGroupDef::canInsertNode(Node _node, const UnionRef &name, int &ind
         }
     }
     // Failed to find a Container with the given name
-    assert(false);
+    ASSERT(false);
     return false;
 }
 
@@ -272,7 +272,7 @@ Node ContainerGroupDef::insertNode(Node _node, const UnionRef &name, int &index)
         }
     }
     // Failed to find a Container with the given name
-    assert(false);
+    ASSERT(false);
     return Node();
 }
 
@@ -305,7 +305,7 @@ Node ContainerGroupDef::cloneNode(Node _node, int &index, Node cloneNode) const
         }
     }
     // Failed to find a Container with the given name
-    assert(false);
+    ASSERT(false);
     return Node();
 }
 
@@ -338,7 +338,7 @@ Node ContainerGroupDef::moveNode(Node _node, int &index, Node moveNode) const
         }
     }
     // Failed to find a Container with the given name
-    assert(false);
+    ASSERT(false);
     return Node();
 }
 

@@ -12,6 +12,8 @@
 
 #include "XMLChildRef.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -60,7 +62,7 @@ ValueDefBuilderSPtr ValueDefBuilder::use(ValueDef *valueDef)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setName(const std::string &value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_name = value;
     return m_thisWPtr.lock();
 }
@@ -69,7 +71,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setName(const std::string &value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setDisplayName(const std::string &value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_displayName = value;
     return m_thisWPtr.lock();
 }
@@ -78,7 +80,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setDisplayName(const std::string &value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setTooltip(const std::string &value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_tooltip = value;
     return m_thisWPtr.lock();
 }
@@ -87,7 +89,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setTooltip(const std::string &value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setDefaultValue(const UnionRef &value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_defaultValue = value;
     return m_thisWPtr.lock();
 }
@@ -96,8 +98,8 @@ ValueDefBuilderSPtr ValueDefBuilder::setDefaultValue(const UnionRef &value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setDefaultConversion(ConversionSPtr value)
 {
-    assert(m_valueDef);
-    assert(value);
+    ASSERT(m_valueDef);
+    ASSERT(value);
     m_valueDef->m_defaultConversion = value;
     return m_thisWPtr.lock();
 }
@@ -106,11 +108,11 @@ ValueDefBuilderSPtr ValueDefBuilder::setDefaultConversion(ConversionSPtr value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::addOptionStatic(const UnionRef &value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     if (m_valueDef->valueType() == UnionValue::GetType(value)) {
         m_valueDef->m_options->m_options.push_back(value);
     } else {
-        assert(false);
+        ASSERT(false);
     }
     return m_thisWPtr.lock();
 }
@@ -119,7 +121,7 @@ ValueDefBuilderSPtr ValueDefBuilder::addOptionStatic(const UnionRef &value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(EntryQuerySPtr value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_options->m_query = value;
 
     return m_thisWPtr.lock();
@@ -129,7 +131,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(EntryQuerySPtr value)
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedQuery(EntryQuerySPtr value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_options->m_queryExcluded = value;
     return m_thisWPtr.lock();
 }
@@ -138,7 +140,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedQuery(EntryQuerySPtr valu
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setSetting(std::string name, const UnionRef &value)
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     m_valueDef->m_settings.setValue(name, value);
     return m_thisWPtr.lock();
 }
@@ -148,8 +150,8 @@ ValueDefBuilderSPtr ValueDefBuilder::setSetting(std::string name, const UnionRef
 // (public)
 ValueDefBuilderSPtr ValueDefBuilder::setXMLValueRef(XML::ValueRefUPtr value)
 {
-    assert(m_valueDef);
-    assert(value);
+    ASSERT(m_valueDef);
+    ASSERT(value);
     m_valueDef->m_valueRef = std::move(value);
     return m_thisWPtr.lock();
 }
@@ -159,7 +161,7 @@ ValueDefBuilderSPtr ValueDefBuilder::setXMLValueRef(XML::ValueRefUPtr value)
 // (public)
 const ValueDef &ValueDefBuilder::valueDef() const
 {
-    assert(m_valueDef);
+    ASSERT(m_valueDef);
     return *m_valueDef;
 }
 
@@ -167,7 +169,7 @@ const ValueDef &ValueDefBuilder::valueDef() const
 // (public)
 ValueDefUPtr ValueDefBuilder::get()
 {
-    assert(m_valueDefUPtr);
+    ASSERT(m_valueDefUPtr);
     return std::move(m_valueDefUPtr);
 }
 

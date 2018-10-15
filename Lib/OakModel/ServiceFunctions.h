@@ -120,7 +120,7 @@ std::unique_ptr<TO> dynamic_unique_pointer_cast(std::unique_ptr<FROM>&& old)
         old.release();
         return std::unique_ptr<TO>(ptr);
     }
-    assert(false);
+    ASSERT(false);
     return std::unique_ptr<TO>(nullptr);
 }
 

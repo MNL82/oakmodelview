@@ -10,12 +10,14 @@
 
 #include "Item.h"
 
+#include <algorithm>
+
 #include "OakModel.h"
 #include "EntryQuery.h"
 #include "ServiceFunctions.h"
 #include "QueryBuilder.h"
 
-#include <algorithm>
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace Model {
@@ -167,7 +169,7 @@ const OakModel* Item::model() const
 // (public)
 void Item::setCurrent()
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_model) {
         m_model->setCurrentItem(*this);
     }
@@ -190,7 +192,7 @@ std::vector<std::string> Item::valueNameList() const
 // (public)
 std::vector<std::string> Item::childNameList() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     std::vector<const ContainerDef*> containerList;
     m_def->getContainerList(containerList);
     std::vector<std::string> nameList;
@@ -271,7 +273,7 @@ Item::entryIterator Item::entryEnd() const
 // (public)
 bool Item::hasKey() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->hasKey();
 }
 
@@ -288,7 +290,7 @@ const Entry& Item::entryKey() const
 // (public)
 bool Item::hasDerivedId() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->hasDerivedId();
 }
 
@@ -305,7 +307,7 @@ const Entry& Item::entryDerivedId() const
 // (public)
 int Item::childCount() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->containerGroup().nodeCount(m_node);
 }
 
@@ -313,7 +315,7 @@ int Item::childCount() const
 // (public)
 int Item::childCount(const std::string &name) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->container(name).nodeCount(m_node);
 }
 
@@ -321,7 +323,7 @@ int Item::childCount(const std::string &name) const
 // (public)
 int Item::childIndex(const Item& refChild) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->containerGroup().nodeIndex(m_node, refChild.node());
 }
 
@@ -329,7 +331,7 @@ int Item::childIndex(const Item& refChild) const
 // (public)
 int Item::childIndex(const std::string &name, const Item &refChild) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->container(name).nodeIndex(m_node, refChild.node());
 }
 
@@ -337,7 +339,7 @@ int Item::childIndex(const std::string &name, const Item &refChild) const
 // (public)
 Item Item::childAt(int index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childeNodeDef;
     Node childNode = m_def->containerGroup().node(m_node, index, &childeNodeDef);
     return Item(childeNodeDef, childNode, m_model);
@@ -347,7 +349,7 @@ Item Item::childAt(int index) const
 // (public)
 Item Item::childAt(const std::string &name, int index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childeNodeDef;
     Node childNode = m_def->container(name).node(m_node, index, &childeNodeDef);
     return Item(childeNodeDef, childNode, m_model);
@@ -357,7 +359,7 @@ Item Item::childAt(const std::string &name, int index) const
 // (public)
 Item Item::firstChild() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->containerGroup().firstNode(m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -367,7 +369,7 @@ Item Item::firstChild() const
 // (public)
 Item Item::firstChild(const std::string &name) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->container(name).firstNode(m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -377,7 +379,7 @@ Item Item::firstChild(const std::string &name) const
 // (public)
 Item Item::lastChild() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->containerGroup().lastNode(m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -387,7 +389,7 @@ Item Item::lastChild() const
 // (public)
 Item Item::lastChild(const std::string &name) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->container(name).lastNode(m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -397,7 +399,7 @@ Item Item::lastChild(const std::string &name) const
 // (public)
 Item Item::nextChild(const Item& refChild) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->containerGroup().nextNode(m_node, refChild.m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -407,7 +409,7 @@ Item Item::nextChild(const Item& refChild) const
 // (public)
 Item Item::nextChild(const std::string &name, const Item& refChild) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->container(name).nextNode(refChild.m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -417,7 +419,7 @@ Item Item::nextChild(const std::string &name, const Item& refChild) const
 // (public)
 Item Item::previousChild(const Item& refChild) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->containerGroup().previousNode(m_node, refChild.m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -427,7 +429,7 @@ Item Item::previousChild(const Item& refChild) const
 // (public)
 Item Item::previousChild(const std::string &name, const Item& refChild) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* childNodeDef;
     Node childNode = m_def->container(name).previousNode(refChild.m_node, &childNodeDef);
     return Item(childNodeDef, childNode, m_model);
@@ -437,7 +439,7 @@ Item Item::previousChild(const std::string &name, const Item& refChild) const
 // (public)
 Item Item::parent() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const NodeDef* parentNodeDef;
     Node parentNode = m_def->parentNode(m_node, &parentNodeDef);
     return Item(parentNodeDef, parentNode, m_model);
@@ -447,7 +449,7 @@ Item Item::parent() const
 // (public)
 bool Item::canInsertChild(const std::string &name, int &index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->container(name).canInsertNode(m_node, index);
 }
 
@@ -455,7 +457,7 @@ bool Item::canInsertChild(const std::string &name, int &index) const
 // (public)
 Item Item::insertChild(const std::string &name, int &index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     const auto& container = m_def->container(name);
     Node node = container.insertNode(m_node, index);
     Item childItem(container.containerDef(), node, m_model);
@@ -470,7 +472,7 @@ Item Item::insertChild(const std::string &name, int &index) const
 // (public)
 bool Item::canCloneChild(int& index, const Item &cloneItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->containerGroup().canCloneNode(m_node, index, cloneItem.m_node);
 }
 
@@ -478,7 +480,7 @@ bool Item::canCloneChild(int& index, const Item &cloneItem) const
 // (public)
 bool Item::canCloneChild(const std::string &name, int &index, const Item &cloneItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->container(name).canCloneNode(m_node, index, cloneItem.m_node);
 }
 
@@ -486,7 +488,7 @@ bool Item::canCloneChild(const std::string &name, int &index, const Item &cloneI
 // (public)
 Item Item::cloneChild(int& index, const Item &cloneItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_model) {
         // Cash data needed to notify change
         ItemIndexUPtr sourceItemIndex = ItemIndex::create(cloneItem);
@@ -510,7 +512,7 @@ Item Item::cloneChild(int& index, const Item &cloneItem) const
 // (public)
 Item Item::cloneChild(const std::string &name, int &index, const Item &cloneItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_model) {
         // Cash data needed to notify change
         ItemIndexUPtr sourceItemIndex = ItemIndex::create(cloneItem);
@@ -535,7 +537,7 @@ Item Item::cloneChild(const std::string &name, int &index, const Item &cloneItem
 // (public)
 bool Item::canMoveChild(int& index, const Item &moveItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->containerGroup().canMoveNode(m_node, index, moveItem.m_node);
 }
 
@@ -543,7 +545,7 @@ bool Item::canMoveChild(int& index, const Item &moveItem) const
 // (public)
 bool Item::canMoveChild(const std::string &name, int &index, const Item &moveItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->container(name).canMoveNode(m_node, index, moveItem.m_node);
 }
 
@@ -551,7 +553,7 @@ bool Item::canMoveChild(const std::string &name, int &index, const Item &moveIte
 // (public)
 Item Item::moveChild(int& index, Item moveItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_model) {
         // Check if item can be moved
         if (!m_def->containerGroup().canMoveNode(m_node, index, moveItem.m_node)) { return Item(); }
@@ -567,7 +569,7 @@ Item Item::moveChild(int& index, Item moveItem) const
         // Perform the move
         Item item = Item(moveItem.m_def, m_def->containerGroup().moveNode(m_node, index, moveItem.m_node), m_model);
 
-        assert(!item.isNull());
+        ASSERT(!item.isNull());
 
         targetItemIndex = ItemIndex::create(item);
 
@@ -586,7 +588,7 @@ Item Item::moveChild(int& index, Item moveItem) const
 // (public)
 Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_model) {
         // Check if item can be moved
         if (!m_def->container(name).canMoveNode(m_node, index, moveItem.m_node)) { return Item(); }
@@ -602,7 +604,7 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
         // Perform the move
         Item item = Item(moveItem.m_def, m_def->container(name).moveNode(m_node, index, moveItem.m_node), m_model);
 
-        assert(!item.isNull());
+        ASSERT(!item.isNull());
 
         targetItemIndex = ItemIndex::create(item);
 
@@ -621,7 +623,7 @@ Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
 // (public)
 bool Item::canRemoveChild(int index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->containerGroup().canRemoveNode(m_node, index);
 }
 
@@ -629,7 +631,7 @@ bool Item::canRemoveChild(int index) const
 // (public)
 bool Item::canRemoveChild(const std::string &name, int index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     return m_def->container(name).canRemoveNode(m_node, index);
 }
 
@@ -637,7 +639,7 @@ bool Item::canRemoveChild(const std::string &name, int index) const
 // (public)
 bool Item::removeChild(int index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_def->containerGroup().canRemoveNode(m_node, index)) {
 
         ItemIndexUPtr iIndex = ItemIndex::create(childAt(index));
@@ -658,7 +660,7 @@ bool Item::removeChild(int index) const
 // (public)
 bool Item::removeChild(const std::string &name, int index) const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_def->container(name).canRemoveNode(m_node, index)) {
 
         ItemIndexUPtr iIndex = ItemIndex::create(childAt(name, index));
@@ -701,7 +703,7 @@ int Item::convertChildIndexToNamed(std::string &name, int index) const
 // (protected)
 void Item::initEntryList() const
 {
-    assert(m_def);
+    ASSERT(m_def);
     if (m_entryList.empty() && m_def && !m_node.isNull()) {
         auto vList = m_def->valueList();
         for (const ValueDef* vi: vList) {

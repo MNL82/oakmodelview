@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include <assert.h>
+#include "../ServiceFunctions/Assert.h"
 
 #include "ValueSettings.h"
 #include "UnionRef.h"
@@ -42,7 +42,7 @@ const UnionValue &ValueSettings::value(const std::string &settingName, const Uni
     if (it != m_settingsMap.end()) {
         return it->second;
     }
-    assert(!defaultValue.isNull());
+    ASSERT(!defaultValue.isNull());
     return defaultValue;
 }
 

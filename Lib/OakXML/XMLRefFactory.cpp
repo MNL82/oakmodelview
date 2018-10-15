@@ -22,6 +22,8 @@
 #include "XMLValueRef.h"
 #include "XMLServiceFunctions.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 #include <sstream>
 #include <iostream>
 
@@ -71,12 +73,12 @@ RefGroupUPtr RefFactory::MakeGroupRef(const std::string &elementRef)
         case 3: {
             bool ok;
             int index = toInteger(sList[2], &ok);
-            assert(ok);
+            ASSERT(ok);
             refList.push_back(MakeSingle(sList[0], sList[1], index));
             break;
         }
         default:
-            assert(false);
+            ASSERT(false);
         }
     }
     RefGroupUPtr refGroup = RefGroup::MakeUPtr();
@@ -111,7 +113,7 @@ RefUPtr RefFactory::MakeSingle(const std::string &refType, const std::string &re
         // refValue is the parent tagName. If empty the link is to the direct parent
         return ParentRef::MakeUPtr(refValue);
     } else {
-        assert(false);
+        ASSERT(false);
         return Ref::MakeUPtr();
     }
 }

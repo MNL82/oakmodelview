@@ -10,14 +10,16 @@
 
 #include "ContainerEditor.h"
 
-#include "NodeDef.h"
-#include "ContainerEditorHandler.h"
-
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
 #include <QContextMenuEvent>
 #include <QMenu>
+
+#include "NodeDef.h"
+#include "ContainerEditorHandler.h"
+
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace View {
@@ -84,7 +86,7 @@ void ContainerEditor::updateEditor()
     for (int i = 0; i < qMin(eCount, m_count); i++)
     {
         QLabel* label = dynamic_cast<QLabel*>(m_listLayout->itemAtPosition(i, 0)->widget());
-        assert(label);
+        ASSERT(label);
         label->setText(entryList.at(i));
     }
 

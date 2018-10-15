@@ -10,8 +10,7 @@
 
 #include "CallbackFunctions.h"
 
-#include <assert.h>
-//#include <QDebug>
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace Model {

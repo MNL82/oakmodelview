@@ -14,8 +14,9 @@
 #include <algorithm>
 #include <fstream>
 #include <sys/stat.h>
-#include <assert.h>
 #include <utility>
+
+#include "../ServiceFunctions/Assert.h"
 
 #define BUFFER_SIZE 1000000
 

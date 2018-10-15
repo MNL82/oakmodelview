@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sys/stat.h>
-#include <assert.h>
+#include "../ServiceFunctions/Assert.h"
 #include <utility>
 
 #define BUFFER_SIZE 1000000
@@ -168,7 +168,7 @@ std::string fromDouble(double value, char f, int prec)
 //        case 'g':
 //            break;
 //        default:
-//            assert(true);
+//            ASSERT(true);
 //            break;
 //    }
     return std::string();
@@ -419,7 +419,7 @@ std::vector<double> toDoubleList(const std::vector<std::string> &values)
 bool toBool(BoolState value)
 {
     // The value can not be converted to a bool if undefined
-    assert(value != BoolState_Undefined);
+    ASSERT(value != BoolState_Undefined);
     return value == BoolState_True;
 }
 

@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
-#include <assert.h>
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace Model {
@@ -154,7 +154,7 @@ bool convert(std::string& dest, double src, Conversion* properties)
         stream << std::fixed;
         break;
     default:
-        assert(false);
+        ASSERT(false);
         break;
     }
     stream << std::setprecision(properties->doubleToStringPrecision()) << src;

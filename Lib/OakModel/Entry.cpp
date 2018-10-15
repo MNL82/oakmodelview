@@ -13,6 +13,8 @@
 #include "OakModel.h"
 #include "ItemIndex.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -114,7 +116,7 @@ bool Entry::isNodeNull() const
 // (public)
 const std::string &Entry::name() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->name();
 }
 
@@ -122,7 +124,7 @@ const std::string &Entry::name() const
 // (public)
 const std::string & Entry::displayName() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->displayName();
 }
 
@@ -130,7 +132,7 @@ const std::string & Entry::displayName() const
 // (public)
 const std::string &Entry::tooltip() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->tooltip();
 }
 
@@ -138,7 +140,7 @@ const std::string &Entry::tooltip() const
 // (public)
 const Node& Entry::node() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_node;
 }
 
@@ -146,7 +148,7 @@ const Node& Entry::node() const
 // (public)
 const ValueDef*Entry::valueDef() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef;
 }
 
@@ -161,7 +163,7 @@ const Item* Entry::item() const
 // (public)
 UnionValue Entry::value(bool useDefault) const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->value(m_node, useDefault);
 }
 
@@ -169,7 +171,7 @@ UnionValue Entry::value(bool useDefault) const
 // (public)
 std::string Entry::toString(bool useDefault) const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->toString(m_node, useDefault);
 }
 
@@ -177,7 +179,7 @@ std::string Entry::toString(bool useDefault) const
 // (public)
 bool Entry::hasDefaultValue() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->hasDefaultValue();
 }
 
@@ -185,7 +187,7 @@ bool Entry::hasDefaultValue() const
 //// (public)
 //bool Entry::getOptions(std::vector<VariantCRef>& value) const
 //{
-//    assert(m_valueDef != nullptr);
+//    ASSERT(m_valueDef != nullptr);
 //    return m_valueDef->getOptions(value);
 //}
 
@@ -193,7 +195,7 @@ bool Entry::hasDefaultValue() const
 // (public)
 const ValueSettings &Entry::settings() const
 {
-    assert(m_valueDef != nullptr);
+    ASSERT(m_valueDef != nullptr);
     return m_valueDef->settings();
 }
 

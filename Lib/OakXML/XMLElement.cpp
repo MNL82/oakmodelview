@@ -15,7 +15,7 @@
 #include "XMLServiceFunctions.h"
 
 #include <regex>
-#include <assert.h>
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace XML {

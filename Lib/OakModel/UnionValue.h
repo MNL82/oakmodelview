@@ -15,8 +15,6 @@
 #include "Conversion.h"
 #include "ConvertFunctions.h"
 
-#include <assert.h>
-
 namespace Oak {
 namespace Model {
 

@@ -18,7 +18,6 @@
 
 #include <string>
 #include <vector>
-#include <assert.h>
 
 #include "Node.h"
 #include "NodeSettings.h"

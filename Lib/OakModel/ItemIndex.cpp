@@ -10,6 +10,7 @@
 
 #include "ItemIndex.h"
 
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace Model {
@@ -184,7 +185,7 @@ Item ItemIndex::item(const Item &rootItem, int depth) const
     if (isNull()) { return rootItem; }
     Item item = (m_name.empty()) ? rootItem.childAt(m_index) : rootItem.childAt(m_name, m_index);
     if (!m_childIndex || depth == 1 || item.isNull()) {
-        assert(depth == 1 || depth < -1);
+        ASSERT(depth == 1 || depth < -1);
         return item;
     }
     return m_childIndex->item(item, --depth);

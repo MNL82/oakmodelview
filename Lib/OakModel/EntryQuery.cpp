@@ -13,6 +13,8 @@
 #include "ItemQueryChildren.h"
 #include "ItemQueryParent.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -57,7 +59,7 @@ int EntryQuery::count(const Item &item)
 // (public)
 const Entry &EntryQuery::entry(const Item &item, int index) const
 {
-    assert(!m_entryName.empty());
+    ASSERT(!m_entryName.empty());
 
     int i = 0;
     auto it = iterator(item);
@@ -72,7 +74,7 @@ const Entry &EntryQuery::entry(const Item &item, int index) const
 // (public)
 void EntryQuery::getValueList(const Item &item, std::vector<UnionValue> &valueList) const
 {
-    assert(!m_entryName.empty());
+    ASSERT(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
         auto it = m_itemQueryPtr->iterator(item);
@@ -102,7 +104,7 @@ std::vector<UnionValue> EntryQuery::valueList(const Item &item) const
 // (public)
 void EntryQuery::getValue(const Item &item, int index, UnionValue value) const
 {
-    assert(!m_entryName.empty());
+    ASSERT(!m_entryName.empty());
 
     if (m_itemQueryPtr) {
         int i = 0;
@@ -117,9 +119,9 @@ void EntryQuery::getValue(const Item &item, int index, UnionValue value) const
             }
             i++;
         }
-        assert(false);
+        ASSERT(false);
     } else {
-        assert(index == 0);
+        ASSERT(index == 0);
         if (item.hasEntry(m_entryName)) {
             item.entry(m_entryName).getValue(value);
         }
@@ -224,7 +226,7 @@ void EntryQuery::Iterator::getValue(UnionValue value) const
 // (public)
 const Entry &EntryQuery::Iterator::entry() const
 {
-    assert(!m_entryQuery->m_entryName.empty());
+    ASSERT(!m_entryQuery->m_entryName.empty());
     return this->item().entry(m_entryQuery->m_entryName);
 }
 

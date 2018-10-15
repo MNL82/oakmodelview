@@ -10,12 +10,12 @@
 
 #include "ValueDef.h"
 
+#include <algorithm>
+
 #include "ValueOptions.h"
 #include "XMLChildRef.h"
 
-#include "assert.h"
-
-#include <algorithm>
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak {
 namespace Model {
@@ -198,7 +198,7 @@ int ValueDef::compareValue(Node _node, const UnionRef &value, bool useDefault, b
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
     return -2;
@@ -221,7 +221,7 @@ bool ValueDef::hasValue(Node _node) const
     }
 
     // _node.type() returns an unhandled type that needs to be implemented
-    assert(false);
+    ASSERT(false);
     return false;
 }
 
@@ -244,7 +244,7 @@ bool ValueDef::canGetValue(Node _node, const UnionRef &value, bool useDefault, b
     }
 
     // _node.type() returns an unhandled type that needs to be implemented
-    assert(false);
+    ASSERT(false);
     return false;
 }
 
@@ -283,7 +283,7 @@ bool ValueDef::getValue(Node _node, UnionRef value, bool useDefault, bool allowC
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
     return false;
 }
@@ -345,7 +345,7 @@ bool ValueDef::canSetValue(Node _node, const UnionRef &value, bool allowConversi
         break;
     }
     // _node.type() returns an unhandled type that needs to be implemented
-    assert(false);
+    ASSERT(false);
 
     return false;
 }
@@ -387,7 +387,7 @@ bool ValueDef::setValue(Node _node, const UnionRef &value, bool allowConversion,
         break;
     }
     // _node.type() returns an unhandled type that needs to be implemented
-    assert(false);
+    ASSERT(false);
     return false;
 }
 

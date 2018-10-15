@@ -11,6 +11,9 @@
 #include "UnionRef.h"
 #include "UnionValue.h"
 
+
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -88,7 +91,7 @@ UnionRef::UnionRef(const UnionValue &v)
     } else if (t == UnionType::DateTime) {
         r.dt = v.v.dt;
     } else {
-        assert(false);
+        ASSERT(false);
     }
 }
 
@@ -112,7 +115,7 @@ UnionRef::~UnionRef()
 UnionRef &UnionRef::operator=(const UnionRef &copy)
 {
     bool result = copy.get(*this);
-    assert(result);
+    ASSERT(result);
     return *this;
 }
 
@@ -196,7 +199,7 @@ int UnionRef::compare(UnionRef value, bool allowConversion, Conversion *properti
         case UnionType::DateTime:
             return *r.dt == *value.r.dt ? 0 : (r.dt > value.r.dt) ? 1 : -1;
         default:
-            assert(false);
+            ASSERT(false);
     }
     return -1000;
 }
@@ -226,7 +229,7 @@ UnionType UnionRef::type() const
 // (public)
 bool UnionRef::getBool() const
 {
-    assert(t == UnionType::Bool);
+    ASSERT(t == UnionType::Bool);
     return *r.b;
 }
 
@@ -234,7 +237,7 @@ bool UnionRef::getBool() const
 // (public)
 int UnionRef::getInt() const
 {
-    assert(t == UnionType::Integer);
+    ASSERT(t == UnionType::Integer);
     return *r.i;
 }
 
@@ -242,7 +245,7 @@ int UnionRef::getInt() const
 // (public)
 double UnionRef::getDouble() const
 {
-    assert(t == UnionType::Double);
+    ASSERT(t == UnionType::Double);
     return *r.d;
 }
 
@@ -250,7 +253,7 @@ double UnionRef::getDouble() const
 // (public)
 const std::string& UnionRef::getCString() const
 {
-    assert(t == UnionType::String);
+    ASSERT(t == UnionType::String);
     return *r.s;
 }
 
@@ -258,7 +261,7 @@ const std::string& UnionRef::getCString() const
 // (public)
 std::string &UnionRef::getString()
 {
-    assert(t == UnionType::String);
+    ASSERT(t == UnionType::String);
     return *const_cast<std::string*>(r.s);
 }
 
@@ -266,7 +269,7 @@ std::string &UnionRef::getString()
 // (public)
 const std::chrono::system_clock::time_point &UnionRef::getDateTime() const
 {
-    assert(t == UnionType::DateTime);
+    ASSERT(t == UnionType::DateTime);
     return *r.dt;
 }
 
@@ -293,7 +296,7 @@ bool UnionRef::canGet(UnionRef &target, bool allowConversion, Conversion *proper
         case UnionType::DateTime:
             return canGet(*const_cast<std::chrono::system_clock::time_point*>(target.r.dt), allowConversion, properties);
         default:
-            assert(false);
+            ASSERT(false);
             return false;
     }
 }
@@ -321,7 +324,7 @@ bool UnionRef::get(UnionRef &target, bool allowConversion, Conversion *propertie
         case UnionType::DateTime:
             return get(*const_cast<std::chrono::system_clock::time_point*>(target.r.dt), allowConversion, properties);
         default:
-            assert(false);
+            ASSERT(false);
             return false;
     }
 }

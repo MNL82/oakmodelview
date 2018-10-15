@@ -12,6 +12,8 @@
 
 #include "ContainerDefBuilder.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -34,16 +36,16 @@ NodeDefBuilder::NodeDefBuilder(const std::string &name, const UnionRef &derivedI
 NodeDefBuilder::NodeDefBuilder(NodeDefSPtr derivedBaseNode, const UnionRef &derivedId)
 {
     // derivedBase has to be a valid pointer
-    assert(derivedBaseNode);
+    ASSERT(derivedBaseNode);
 
     // derivedBase has to have an valid derivedId
-    assert(!derivedBaseNode->derivedId().isNull());
+    ASSERT(!derivedBaseNode->derivedId().isNull());
 
     // The derivedId's have to be unique
-    assert(!derivedBaseNode->validateForAny(derivedId));
+    ASSERT(!derivedBaseNode->validateForAny(derivedId));
 
     // DerivedId's of derived definitions have to be of the same derivedId type
-    assert(derivedBaseNode->derivedId().type() == UnionValue::GetType(derivedId));
+    ASSERT(derivedBaseNode->derivedId().type() == UnionValue::GetType(derivedId));
 
     m_nodeDef = NodeDef::MakeSPtr(derivedBaseNode->name(), derivedId);
 
@@ -114,7 +116,7 @@ NodeDefBuilderSPtr NodeDefBuilder::use(NodeDefSPtr nodeDef)
 // (public)
 NodeDefSPtr NodeDefBuilder::get()
 {
-    assert(m_nodeDef);
+    ASSERT(m_nodeDef);
     return m_nodeDef;
 }
 
@@ -122,10 +124,10 @@ NodeDefSPtr NodeDefBuilder::get()
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::addValueDef(ValueDefBuilderSPtr valueDef)
 {
-    assert(m_nodeDef);
-    assert(valueDef);
+    ASSERT(m_nodeDef);
+    ASSERT(valueDef);
     // A NodeDef can only have
-    assert(!hasValueI(m_nodeDef, valueDef));
+    ASSERT(!hasValueI(m_nodeDef, valueDef));
 
     m_nodeDef->m_valueList.push_back(valueDef->get());
 
@@ -136,11 +138,11 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueDef(ValueDefBuilderSPtr valueDef)
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
 {
-    assert(m_nodeDef);
-    assert(valueDefKey);
+    ASSERT(m_nodeDef);
+    ASSERT(valueDefKey);
 
     // Derived node definitions inherate its node id value from its base and can not have it's own
-    assert(!m_nodeDef->hasDerivedBase());
+    ASSERT(!m_nodeDef->hasDerivedBase());
 
     if (valueDefKey->valueDef().settings().value(UNIQUE) != 0) {
         valueDefKey->setSetting(UNIQUE, 1);
@@ -160,17 +162,17 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr valueDefDerivedId)
 {
-    assert(m_nodeDef);
-    assert(valueDefDerivedId);
+    ASSERT(m_nodeDef);
+    ASSERT(valueDefDerivedId);
 
     // The node must have an derived id
-    assert(!m_nodeDef->derivedId().isNull());
+    ASSERT(!m_nodeDef->derivedId().isNull());
 
     // The value type of the derivedId and the derivedIdValue must match
-    assert(m_nodeDef->derivedId().type() == valueDefDerivedId->valueDef().valueType());
+    ASSERT(m_nodeDef->derivedId().type() == valueDefDerivedId->valueDef().valueType());
 
     // Derived node definitions inherate its derived id value from its base and can not have it's own
-    assert(!m_nodeDef->hasDerivedBase());
+    ASSERT(!m_nodeDef->hasDerivedBase());
 
     //
     std::vector<UnionRef> optionList;
@@ -191,11 +193,11 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr val
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::addContainerDef(ContainerDefBuilderSPtr cDef)
 {
-    assert(m_nodeDef);
-    assert(cDef);
+    ASSERT(m_nodeDef);
+    ASSERT(cDef);
 
     // Check if the NodeDef will be referenced twice (Not sure this is needed)
-    assert(!hasContainerI(m_nodeDef, cDef->containerDef()));
+    ASSERT(!hasContainerI(m_nodeDef, cDef->containerDef()));
 
     auto containerDef = cDef->get();
 
@@ -215,7 +217,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addContainerDef(ContainerDefBuilderSPtr cDef)
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::setDisplayName(const std::string& displayName)
 {
-    assert(m_nodeDef);
+    ASSERT(m_nodeDef);
     m_nodeDef->m_displayName = displayName;
     return m_thisWPtr.lock();
 }
@@ -224,7 +226,7 @@ NodeDefBuilderSPtr NodeDefBuilder::setDisplayName(const std::string& displayName
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::setColor(int red, int green, int blue, int alpha)
 {
-    assert(m_nodeDef);
+    ASSERT(m_nodeDef);
     m_nodeDef->m_color.set(red, green, blue, alpha);
     return m_thisWPtr.lock();
 }
@@ -232,7 +234,7 @@ NodeDefBuilderSPtr NodeDefBuilder::setColor(int red, int green, int blue, int al
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::setImagePath(const std::string &imagePath)
 {
-    assert(m_nodeDef);
+    ASSERT(m_nodeDef);
     m_nodeDef->m_imagePath = imagePath;
     return m_thisWPtr.lock();
 }
@@ -242,8 +244,8 @@ NodeDefBuilderSPtr NodeDefBuilder::setImagePath(const std::string &imagePath)
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::setTagName(const std::string &tagName)
 {
-    assert(m_nodeDef);
-    assert(XML::Element::validateTagName(tagName));
+    ASSERT(m_nodeDef);
+    ASSERT(XML::Element::validateTagName(tagName));
     if (m_nodeDef->m_tagName == tagName) { return m_thisWPtr.lock(); }
 
     NodeDefSPtr derivedRoot = m_nodeDef;

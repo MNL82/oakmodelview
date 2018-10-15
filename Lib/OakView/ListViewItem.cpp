@@ -20,6 +20,8 @@
 
 #include "ListView.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 #define SPACING_H 4
 #define BEFORE 10
 #define CONTENT_HEIGHT 24
@@ -34,7 +36,7 @@ namespace View {
 ListViewItem::ListViewItem(ListView * listView, const Model::Item &item, int depth, ListViewItem * parent)
     : QWidget(nullptr)
 {
-    assert(listView != nullptr);
+    ASSERT(listView != nullptr);
 
     m_listView = listView;
     m_item = item;
@@ -189,10 +191,10 @@ ListViewItem *ListViewItem::child(int index)
 ListViewItem *ListViewItem::child(const Model::ItemIndex &itemIndex)
 {
     int index = itemIndex.convertIndexToUnnamed(m_item);
-    assert(index >= 0);
+    ASSERT(index >= 0);
 
     ListViewItem * childItem = child(index);
-    assert(childItem);
+    ASSERT(childItem);
     if (itemIndex.hasChildItemIndex()) { // Look deeper
         return childItem->child(itemIndex.childItemIndex());
     } else { // Found the child ListViewItem
@@ -213,7 +215,7 @@ ListViewItem *ListViewItem::nextSibling()
 {
     if (m_parent == nullptr) { return nullptr; }
     int index = m_parent->childViewItemIndex(this);
-    assert(index != -1);
+    ASSERT(index != -1);
     return m_parent->child(index+1);
 }
 
@@ -223,7 +225,7 @@ ListViewItem *ListViewItem::previousSibling()
 {
     if (m_parent == nullptr) { return nullptr; }
     int index = m_parent->childViewItemIndex(this);
-    assert(index != -1);
+    ASSERT(index != -1);
     return m_parent->child(index-1);
 }
 
@@ -361,7 +363,7 @@ void ListViewItem::updateFixedheight()
 void ListViewItem::onItemInserteAfter(const Model::ItemIndex &itemIndex)
 {
     int index = itemIndex.convertIndexToUnnamed(m_item);
-    assert(index >= 0);
+    ASSERT(index >= 0);
 
     if (itemIndex.hasChildItemIndex()) {
         child(index)->onItemInserteAfter(itemIndex.childItemIndex());
@@ -386,7 +388,7 @@ void ListViewItem::onItemInserteAfter(const Model::ItemIndex &itemIndex)
 void ListViewItem::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 {
     int index = itemIndex.convertIndexToUnnamed(m_item);
-    assert(index >= 0);
+    ASSERT(index >= 0);
 
     if (itemIndex.hasChildItemIndex()) {
         child(index)->onItemRemoveBefore(itemIndex.childItemIndex());

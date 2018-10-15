@@ -12,6 +12,8 @@
 
 #include "XMLListRef.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace XML {
 
@@ -31,7 +33,7 @@ ListRef::ListRef(RefUPtr listBaseRef, const std::string &elementTagName, ChildRe
       m_tagName(elementTagName),
       m_subRef(std::move(elementSubRef))
 {
-    assert(!m_tagName.empty());
+    ASSERT(!m_tagName.empty());
 }
 
 // =============================================================================
@@ -453,7 +455,7 @@ void ListRef::setListBaseRef(RefUPtr value)
 // (public)
 void ListRef::setTagName(const std::string &value)
 {
-    assert(!value.empty());
+    ASSERT(!value.empty());
     m_tagName = value;
 }
 

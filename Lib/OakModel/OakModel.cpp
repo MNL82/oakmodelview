@@ -13,6 +13,8 @@
 #include <list>
 #include <QDebug>
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -68,7 +70,7 @@ bool OakModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
         return true;
     }
 
-    assert(false);
+    ASSERT(false);
     return false;
 }
 
@@ -268,8 +270,8 @@ const NodeDef* OakModel::findNodeDef(Node node) const
 // (public)
 ItemIndexUPtr OakModel::convertItemIndexToNamed(const ItemIndex &itemIndex) const
 {
-    assert(!m_rootItem.isNull());
-    assert(!itemIndex.isNull());
+    ASSERT(!m_rootItem.isNull());
+    ASSERT(!itemIndex.isNull());
 
     ItemIndex * newRootItemIndex = nullptr;
     const ItemIndex * sItemIndex = &itemIndex;
@@ -317,8 +319,8 @@ ItemIndexUPtr OakModel::convertItemIndexToNamed(const ItemIndex &itemIndex) cons
 // (public)
 ItemIndexUPtr OakModel::convertItemIndexToUnnamed(const ItemIndex &itemIndex) const
 {
-    assert(!m_rootItem.isNull());
-    assert(!itemIndex.isNull());
+    ASSERT(!m_rootItem.isNull());
+    ASSERT(!itemIndex.isNull());
 
     ItemIndex * newRootItemIndex = nullptr;
     const ItemIndex * sItemIndex = &itemIndex;
@@ -458,7 +460,7 @@ void OakModel::onEntryTypeChangeAfter(const ItemIndex &itemIndex) const
 {
     Item item = itemIndex.item(m_rootItem);
     const NodeDef* def = findNodeDef(item.node());
-    assert(def);
+    ASSERT(def);
     Item newItem(def, item.node(), this);
 
     notifier_entryTypeChangeAfter.trigger(itemIndex);

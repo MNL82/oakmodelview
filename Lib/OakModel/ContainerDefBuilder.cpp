@@ -13,6 +13,8 @@
 
 #include "NodeDef.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -20,10 +22,10 @@ namespace Model {
 // (protected)
 ContainerDefBuilder::ContainerDefBuilder(NodeDefBuilderSPtr nodeDefBuilder, int minCount, int maxCount)
 {
-    assert(nodeDefBuilder);
-    assert(minCount >= 0);
-    assert(maxCount > 0);
-    assert(maxCount >= minCount);
+    ASSERT(nodeDefBuilder);
+    ASSERT(minCount >= 0);
+    ASSERT(maxCount > 0);
+    ASSERT(maxCount >= minCount);
 
     m_containerDefUPtr = ContainerDef::MakeUPtr(nodeDefBuilder->get(), minCount, maxCount);
     m_containerDef = m_containerDefUPtr.get();
@@ -39,7 +41,7 @@ ContainerDefBuilder::ContainerDefBuilder(NodeDefBuilderSPtr nodeDefBuilder, int 
 // (protected)
 ContainerDefBuilder::ContainerDefBuilder(ContainerDef *containerDef)
 {
-    assert(containerDef);
+    ASSERT(containerDef);
     m_containerDef = containerDef;
 }
 
@@ -65,7 +67,7 @@ ContainerDefBuilderSPtr ContainerDefBuilder::use(ContainerDef *containerDef)
 // (public)
 ContainerDefUPtr ContainerDefBuilder::get()
 {
-    assert(m_containerDefUPtr);
+    ASSERT(m_containerDefUPtr);
     return std::move(m_containerDefUPtr);
 }
 
@@ -73,7 +75,7 @@ ContainerDefUPtr ContainerDefBuilder::get()
 // (public)
 const ContainerDef &ContainerDefBuilder::containerDef() const
 {
-    assert(m_containerDef);
+    ASSERT(m_containerDef);
     return *m_containerDef;
 }
 
@@ -81,8 +83,8 @@ const ContainerDef &ContainerDefBuilder::containerDef() const
 // (public)
 ContainerDefBuilderSPtr ContainerDefBuilder::setNodeDefElement(NodeDefSPtr nodeDef)
 {
-    assert(m_containerDef);
-    assert(nodeDef);
+    ASSERT(m_containerDef);
+    ASSERT(nodeDef);
 
 #ifdef XML_BACKEND
     // todo: Update m_elementListRef so that it refers to a alement with the same name as the new container definition
@@ -96,7 +98,7 @@ ContainerDefBuilderSPtr ContainerDefBuilder::setNodeDefElement(NodeDefSPtr nodeD
 // (public)
 ContainerDefBuilderSPtr ContainerDefBuilder::setNodeDefParent(NodeDefSPtr hostDef)
 {
-    assert(m_containerDef);
+    ASSERT(m_containerDef);
 
     m_containerDef->m_hostDef = hostDef;
     return m_thisWPtr.lock();
@@ -106,8 +108,8 @@ ContainerDefBuilderSPtr ContainerDefBuilder::setNodeDefParent(NodeDefSPtr hostDe
 // (public)
 ContainerDefBuilderSPtr ContainerDefBuilder::setMinMaxCount(int minCount, int maxCount)
 {
-    assert(m_containerDef);
-    assert(minCount >= 0 && maxCount >= minCount);
+    ASSERT(m_containerDef);
+    ASSERT(minCount >= 0 && maxCount >= minCount);
 
     m_containerDef->m_minCount = minCount;
     m_containerDef->m_maxCount = maxCount;
@@ -120,7 +122,7 @@ ContainerDefBuilderSPtr ContainerDefBuilder::setMinMaxCount(int minCount, int ma
 // (public)
 ContainerDefBuilderSPtr ContainerDefBuilder::setElementListRef(XML::ListRef listRef)
 {
-    assert(m_containerDef);
+    ASSERT(m_containerDef);
 
     // todo: Validate listRef
     // It needs to reference a list of tags with the same tag name as the container node definition

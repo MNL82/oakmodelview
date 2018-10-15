@@ -10,6 +10,8 @@
 
 #include "TableQuery.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -54,7 +56,7 @@ void TableQuery::addValueQuery(EntryQuerySPtr valueQuery)
 // (public)
 int TableQuery::count(const Item &item)
 {
-    assert(m_itemQuery);
+    ASSERT(m_itemQuery);
     return m_itemQuery->count(item);
 }
 

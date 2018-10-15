@@ -12,6 +12,8 @@
 
 #include "XMLChildRef.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace XML {
 
@@ -22,7 +24,7 @@ ChildRef::ChildRef(std::string tagName, int index)
       m_tagName(tagName),
       m_index(index)
 {
-    assert(m_index >= 0);
+    ASSERT(m_index >= 0);
 }
 
 // =============================================================================

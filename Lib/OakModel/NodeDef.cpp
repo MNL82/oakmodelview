@@ -16,6 +16,8 @@
 #include "ServiceFunctions.h"
 #include "QueryBuilder.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -27,7 +29,7 @@ namespace Model {
 // The NodeDef has a derivedId but no base definition, so it is the root NodeDef of a inheritance hierarchy
 NodeDef::NodeDef(const std::string &_name)
 {
-    assert(!_name.empty());
+    ASSERT(!_name.empty());
 
     m_name = _name;
 
@@ -42,8 +44,8 @@ NodeDef::NodeDef(const std::string &_name)
 // (public)
 NodeDef::NodeDef(const std::string &_name, const UnionRef &_derivedId)
 {
-    assert(!_name.empty());
-    assert(!_derivedId.isNull());
+    ASSERT(!_name.empty());
+    ASSERT(!_derivedId.isNull());
 
     m_name = _name;
     m_derivedId = _derivedId;
@@ -81,7 +83,7 @@ NodeDef::NodeDef(NodeDef &&move)
 NodeDef &NodeDef::operator=(const NodeDef &copy)
 {
     // Copy of self is not allowed
-    assert(this != &copy);
+    ASSERT(this != &copy);
 
     m_name = copy.m_name;
     m_tagName = copy.m_tagName;
@@ -198,7 +200,7 @@ const Color &NodeDef::color() const
     if (hasDerivedBase()) {
         return derivedBase()->color();
     }
-    assert(false);
+    ASSERT(false);
     return m_color;
 }
 
@@ -225,7 +227,7 @@ const std::string &NodeDef::imagePath() const
     if (hasDerivedBase()) {
         return derivedBase()->imagePath();
     }
-    assert(false);
+    ASSERT(false);
     return m_imagePath;
 }
 
@@ -247,7 +249,7 @@ NodeDefSPtr NodeDef::sPtr() const
 // (public)
 void NodeDef::setWPtr(NodeDefSPtr sPtr)
 {
-    assert(sPtr.get() == this);
+    ASSERT(sPtr.get() == this);
     m_thisWPtr = sPtr;
 }
 
@@ -379,7 +381,7 @@ bool NodeDef::validateForThis(Node _node) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
         return false;
     }
 
@@ -689,7 +691,7 @@ const ContainerDef &NodeDef::container(int index) const
         return *m_containerList[static_cast<vSize>(index)];
     }
 
-    assert(false);
+    ASSERT(false);
     return ContainerDef::emptyChildNodeDef();
 }
 
@@ -708,7 +710,7 @@ const ContainerDef &NodeDef::container(const std::string& _name) const
         return m_derivedBase.lock()->container(_name);
     }
 
-    assert(false);
+    ASSERT(false);
     return ContainerDef::emptyChildNodeDef();
 }
 

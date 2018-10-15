@@ -10,6 +10,8 @@
 
 #include "Node.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -67,7 +69,7 @@ bool Node::operator==(const Node &_node) const
 #endif // XML_BACKEND
     default:
         // m_type contains an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
     return false;
@@ -94,7 +96,7 @@ void Node::clear()
 #endif // XML_BACKEND
     default:
         // m_type contains an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
     m_type = Type::UNDEFINED;
 }
@@ -114,7 +116,7 @@ bool Node::isNull() const
     }
 
     // m_type contains an unhandled type that needs to be implemented
-    assert(false);
+    ASSERT(false);
     return true;
 }
 
@@ -145,7 +147,7 @@ bool Node::isXML() const
 // (public)
 XML::Element &Node::xmlNode()
 {
-    assert(m_type ==Type::XML);
+    ASSERT(m_type ==Type::XML);
     return m_xmlNode;
 }
 #endif // XML_BACKEND

@@ -13,6 +13,9 @@
 #include "UnionRef.h"
 #include "ConvertFunctions.h"
 
+
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace Model {
 
@@ -77,7 +80,7 @@ UnionValue::UnionValue(const std::chrono::system_clock::time_point &dt)
 UnionValue::UnionValue(UnionType type)
     : t(type)
 {
-    assert(static_cast<int>(type) > 0);
+    ASSERT(static_cast<int>(type) > 0);
     if (type == UnionType::String) {
         v.s = new std::string();
     } else if (type == UnionType::DateTime) {
@@ -170,7 +173,7 @@ UnionValue &UnionValue::operator=(const UnionRef &value)
             v.dt = new std::chrono::system_clock::time_point(*value.r.dt);
             break;
         default:
-            assert(false);
+            ASSERT(false);
     }
 
     return *this;
@@ -279,7 +282,7 @@ UnionValue::operator bool() const
 {
     switch (t) {
         case UnionType::Undefined:
-            assert(false);
+            ASSERT(false);
             return false;
         case UnionType::Bool:
             return v.b;
@@ -292,7 +295,7 @@ UnionValue::operator bool() const
         case UnionType::DateTime:
             return true;
         default:
-            assert(false);
+            ASSERT(false);
     }
     return false;
 }
@@ -322,7 +325,7 @@ UnionRef UnionValue::getRef()
 // (public)
 bool UnionValue::getBool() const
 {
-    assert(t == UnionType::Bool);
+    ASSERT(t == UnionType::Bool);
     return v.b;
 }
 
@@ -330,7 +333,7 @@ bool UnionValue::getBool() const
 // (public)
 int UnionValue::getInt() const
 {
-    assert(t == UnionType::Integer);
+    ASSERT(t == UnionType::Integer);
     return v.i;
 }
 
@@ -338,7 +341,7 @@ int UnionValue::getInt() const
 // (public)
 double UnionValue::getDouble() const
 {
-    assert(t == UnionType::Double);
+    ASSERT(t == UnionType::Double);
     return v.d;
 }
 
@@ -346,7 +349,7 @@ double UnionValue::getDouble() const
 // (public)
 const std::string& UnionValue::getCString() const
 {
-    assert(t == UnionType::String);
+    ASSERT(t == UnionType::String);
     return *v.s;
 }
 
@@ -354,7 +357,7 @@ const std::string& UnionValue::getCString() const
 // (public)
 std::string& UnionValue::getString()
 {
-    assert(t == UnionType::String);
+    ASSERT(t == UnionType::String);
     return *v.s;
 }
 

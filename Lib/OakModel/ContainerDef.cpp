@@ -10,7 +10,7 @@
 
 #include "ContainerDef.h"
 
-#include <assert.h>
+#include "../ServiceFunctions/Assert.h"
 
 #include "NodeDef.h"
 #include "Item.h"
@@ -40,10 +40,10 @@ ContainerDef::ContainerDef(NodeDefSPtr nodeDef, int min, int max)
     , m_elementListRef(nodeDef->tagName())
 #endif // XML_BACKEND
 {
-    assert(m_containerDef);
-    assert(m_minCount >= 0);
-    assert(m_maxCount > 0);
-    assert(m_maxCount >= m_minCount);
+    ASSERT(m_containerDef);
+    ASSERT(m_minCount >= 0);
+    ASSERT(m_maxCount > 0);
+    ASSERT(m_maxCount >= m_minCount);
 }
 
 // =============================================================================
@@ -148,7 +148,7 @@ bool ContainerDef::validate(Node _node) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
     return false;
 }
@@ -157,7 +157,7 @@ bool ContainerDef::validate(Node _node) const
 // (public)
 int ContainerDef::minCount() const
 {
-    assert(m_minCount >= 0);
+    ASSERT(m_minCount >= 0);
     return m_minCount;
 }
 
@@ -165,7 +165,7 @@ int ContainerDef::minCount() const
 // (public)
 int ContainerDef::maxCount() const
 {
-    assert(m_maxCount > 0);
+    ASSERT(m_maxCount > 0);
     return m_maxCount;
 }
 
@@ -182,7 +182,7 @@ int ContainerDef::nodeCount(Node _node) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
     return -1;
 }
@@ -200,7 +200,7 @@ int ContainerDef::nodeIndex(Node _node, Node refNode) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
     return -1;
 }
@@ -220,7 +220,7 @@ Node ContainerDef::node(Node _node, int index, const NodeDef** nodeDef) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
     if (nodeDef) {
@@ -244,7 +244,7 @@ Node ContainerDef::firstNode(Node _node, const NodeDef** nodeDef) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
    if (nodeDef) {
@@ -268,7 +268,7 @@ Node ContainerDef::lastNode(Node _node, const NodeDef** nodeDef) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
     if (nodeDef) {
@@ -292,7 +292,7 @@ Node ContainerDef::nextNode(Node refNode, const NodeDef** nodeDef) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
     if (nodeDef) {
@@ -316,7 +316,7 @@ Node ContainerDef::previousNode(Node refNode, const NodeDef** nodeDef) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
 
     if (nodeDef) {
@@ -351,7 +351,7 @@ Node ContainerDef::hostNode(Node refdNode) const
 #endif // XML_BACKEND
     default:
         // _node.type() returns an unhandled type that needs to be implemented
-        assert(false);
+        ASSERT(false);
     }
     return Node();
 }
@@ -396,7 +396,7 @@ Node ContainerDef::insertNode(Node _node, int &index) const
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
-            assert(false);
+            ASSERT(false);
             return newNode;
         }
     }
@@ -435,7 +435,7 @@ Node ContainerDef::cloneNode(Node _node, int &index, Node cloneNode) const
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
-            assert(false);
+            ASSERT(false);
             return newNode;
         }
     }
@@ -508,7 +508,7 @@ Node ContainerDef::moveNode(Node _node, int &index, Node moveNode) const
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
-            assert(false);
+            ASSERT(false);
             return newNode;
         }
     }
@@ -549,7 +549,7 @@ bool ContainerDef::removeNode(Node _node, int index) const
 #endif // XML_BACKEND
         default:
             // _node.type() returns an unhandled type that needs to be implemented
-            assert(false);
+            ASSERT(false);
         }
     }
     return false;

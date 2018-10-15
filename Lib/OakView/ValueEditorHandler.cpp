@@ -20,6 +20,8 @@
 #include "ValueOptions.h"
 #include "ServiceFunctions.h"
 
+#include "../ServiceFunctions/Assert.h"
+
 namespace Oak {
 namespace View {
 
@@ -28,7 +30,7 @@ namespace View {
 ValueEditorHandler::ValueEditorHandler(QObject* parent, Model::Entry entry)
     : QObject(parent), m_entry(entry)
 {
-    assert(!entry.isDefNull());
+    ASSERT(!entry.isDefNull());
 }
 
 // =============================================================================
