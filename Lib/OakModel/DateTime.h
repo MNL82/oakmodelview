@@ -98,6 +98,7 @@ public:
     std::string toString(const ProcessedDateTime & pdt) const;
 
     static const DateTime & emptyDateTime();
+    static const DateTime & defaultDateTime();
 
 protected:
     static int _monthDaySum(size_t month);

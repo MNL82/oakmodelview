@@ -13,12 +13,14 @@
 #include <string>
 #include <chrono>
 
+#include "DateTime.h"
+
 namespace Oak {
 namespace Model {
 
 enum class UnionType { Undefined = -1, Char = 0, Bool = 1, Integer = 2, Double = 3, String = 4, DateTime = 5 };
-typedef union UValue { bool b; int i; double d; std::string *s; std::chrono::system_clock::time_point *dt; } UValue;
-typedef union UPtr { const char *c; const bool *b; const int *i; const double *d; const std::string *s; const std::chrono::system_clock::time_point *dt; } UPtr;
+typedef union UValue { bool b; int i; double d; std::string *s; DateTime *dt; } UValue;
+typedef union UPtr { const char *c; const bool *b; const int *i; const double *d; const std::string *s; const DateTime *dt; } UPtr;
 
 class UnionRef;
 class UnionValue;
@@ -35,7 +37,7 @@ public:
     static UnionType GetType(int);
     static UnionType GetType(double);
     static UnionType GetType(const std::string&);
-    static UnionType GetType(const  std::chrono::system_clock::time_point&);
+    static UnionType GetType(const DateTime&);
     static UnionType GetType(UnionType t);
     static UnionType GetType(const UnionRef& ur);
     static UnionType GetType(const UnionValue& uv);

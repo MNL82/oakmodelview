@@ -32,7 +32,7 @@ public:
     UnionRef(const int &i);
     UnionRef(const double &d);
     UnionRef(const std::string &s);
-    UnionRef(const std::chrono::system_clock::time_point &dt);
+    UnionRef(const DateTime &dt);
     UnionRef(const UnionValue &v);
 
     UnionRef(const UnionRef &copy);
@@ -79,7 +79,7 @@ public:
     double getDouble() const;
     const std::string& getCString() const;
     std::string& getString();
-    const std::chrono::system_clock::time_point &getDateTime() const;
+    const DateTime &getDateTime() const;
 
     template<typename T>
     bool canGet(T& target, bool allowConversion = true, Conversion* properties = nullptr) const;

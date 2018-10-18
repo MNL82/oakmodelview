@@ -67,7 +67,7 @@ UnionRef::UnionRef(const std::string &s)
 
 // =============================================================================
 // (public)
-UnionRef::UnionRef(const std::chrono::system_clock::time_point &dt)
+UnionRef::UnionRef(const DateTime &dt)
     : t(UnionType::DateTime)
 {
     r.dt = &dt;
@@ -267,7 +267,7 @@ std::string &UnionRef::getString()
 
 // =============================================================================
 // (public)
-const std::chrono::system_clock::time_point &UnionRef::getDateTime() const
+const DateTime &UnionRef::getDateTime() const
 {
     ASSERT(t == UnionType::DateTime);
     return *r.dt;
@@ -294,7 +294,7 @@ bool UnionRef::canGet(UnionRef &target, bool allowConversion, Conversion *proper
         case UnionType::String:
             return canGet(*const_cast<std::string*>(target.r.s), allowConversion, properties);
         case UnionType::DateTime:
-            return canGet(*const_cast<std::chrono::system_clock::time_point*>(target.r.dt), allowConversion, properties);
+            return canGet(*const_cast<DateTime*>(target.r.dt), allowConversion, properties);
         default:
             ASSERT(false);
             return false;
@@ -322,7 +322,7 @@ bool UnionRef::get(UnionRef &target, bool allowConversion, Conversion *propertie
         case UnionType::String:
             return get(*const_cast<std::string*>(target.r.s), allowConversion, properties);
         case UnionType::DateTime:
-            return get(*const_cast<std::chrono::system_clock::time_point*>(target.r.dt), allowConversion, properties);
+            return get(*const_cast<DateTime*>(target.r.dt), allowConversion, properties);
         default:
             ASSERT(false);
             return false;

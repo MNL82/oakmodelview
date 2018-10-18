@@ -173,20 +173,23 @@ bool convert(std::string &dest, const char *source, Conversion* )
 
 // =============================================================================
 // (public)
-bool convert(std::string &dest, const std::chrono::system_clock::time_point &src, Conversion *properties)
+bool convert(std::string &dest, const DateTime &src, Conversion *properties)
 {
-//    UNUSED(properties)
-//    std::time_t now_c = std::chrono::system_clock::to_time_t(src);
-//    std::tm now_tm = *std::localtime(&now_c);
-//    dest = std::put_time(&now_c, "%F %T");
-    return false;
+    UNUSED(properties);
+    if (src.isNull()) { return false; }
+    dest = src.toString(DateTime::TimeZone::UTC, nullptr);
+    return true;
 }
 
 // =============================================================================
 // (public)
-bool convert(std::chrono::system_clock::time_point &dest, const std::string &src, Conversion *properties)
+bool convert(DateTime &dest, const std::string &src, Conversion *properties)
 {
-    return false;
+    UNUSED(properties);
+    DateTime dt(src, DateTime::TimeZone::UTC);
+    if (dt.isNull()) { return false; }
+    dest = dt;
+    return true;
 }
 
 // =============================================================================
@@ -261,6 +264,20 @@ bool canConvert(std::string&, const double&, Conversion*)
 bool canConvert(std::string &, const char *source, Conversion*)
 {
     return source != nullptr;
+}
+
+// =============================================================================
+// (public)
+bool canConvert(std::string &, const DateTime &src, Conversion *)
+{
+    return !src.isNull();
+}
+
+// =============================================================================
+// (public)
+bool canConvert(DateTime &, const std::string &src, Conversion *)
+{
+    return !DateTime(src, DateTime::TimeZone::UTC).isNull();
 }
 
 } // namespace Model

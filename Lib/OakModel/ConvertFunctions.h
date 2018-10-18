@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "Conversion.h"
+#include "DateTime.h"
 
 namespace Oak {
 namespace Model {
@@ -42,8 +43,8 @@ bool convert(std::string& dest, double src, Conversion* properties = nullptr);
 
 bool convert(std::string& dest, const char * source, Conversion* properties = nullptr);
 
-bool convert(std::string& dest, const std::chrono::system_clock::time_point &src, Conversion* properties = nullptr);
-bool convert(std::chrono::system_clock::time_point& dest, const std::string &src, Conversion* properties = nullptr);
+bool convert(std::string& dest, const DateTime &src, Conversion* properties = nullptr);
+bool convert(DateTime &dest, const std::string &src, Conversion* properties = nullptr);
 
 template<typename T>
 bool convert(T& dest, const T& source, Conversion* properties = nullptr)
@@ -119,6 +120,9 @@ bool canConvert(std::string& dest, const int& src, Conversion* properties = null
 bool canConvert(std::string& dest, const double& src, Conversion* properties = nullptr);
 
 bool canConvert(std::string& dest, const char * source, Conversion* properties = nullptr);
+
+bool canConvert(std::string &dest, const DateTime &src, Conversion *properties);
+bool canConvert(DateTime &dest, const std::string &src, Conversion *properties);
 
 template<typename T>
 bool canConvert(T& dest, const char * source, Conversion* properties = nullptr)

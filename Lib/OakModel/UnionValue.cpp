@@ -69,10 +69,10 @@ UnionValue::UnionValue(const std::string &s)
 
 // =============================================================================
 // (public)
-UnionValue::UnionValue(const std::chrono::system_clock::time_point &dt)
+UnionValue::UnionValue(const DateTime &dt)
     : t(UnionType::DateTime)
 {
-    v.dt = new std::chrono::system_clock::time_point(dt);
+    v.dt = new DateTime(dt);
 }
 
 // =============================================================================
@@ -84,7 +84,7 @@ UnionValue::UnionValue(UnionType type)
     if (type == UnionType::String) {
         v.s = new std::string();
     } else if (type == UnionType::DateTime) {
-        v.dt = new std::chrono::system_clock::time_point();
+        v.dt = new DateTime(DateTime::defaultDateTime());
     } else {
         v.i = 0;
     }
@@ -170,7 +170,7 @@ UnionValue &UnionValue::operator=(const UnionRef &value)
             v.s = new std::string(*value.r.s);
             break;
         case UnionType::DateTime:
-            v.dt = new std::chrono::system_clock::time_point(*value.r.dt);
+            v.dt = new DateTime(*value.r.dt);
             break;
         default:
             ASSERT(false);

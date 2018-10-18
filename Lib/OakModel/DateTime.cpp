@@ -49,6 +49,7 @@ DateTime::DateTime(const std::string &inputStr, TimeZone timeZone, const char * 
     iss >> std::get_time(&tm, format);
 
     if (iss.fail()) {
+        m_time = _emptyTimePoint();
         TRACE(L"Faild to construct DateTime from string %S (%S)", inputStr.c_str(), format);
         return;
     }
@@ -81,7 +82,7 @@ DateTime::DateTime(const std::string &inputStr, TimeZone timeZone, const char * 
     if (inputStr != outputStr) {
         TRACE(L"Testing faild: %S != %S", inputStr.c_str(), outputStr.c_str());
         m_time = _emptyTimePoint();
-        ASSERT(false);
+        //ASSERT(false);
     }
     // TESTING END
 }
@@ -321,6 +322,14 @@ std::string DateTime::toString(const ProcessedDateTime &pdt) const
 const DateTime &DateTime::emptyDateTime()
 {
     static DateTime s_emptyDateTime = DateTime();
+    return s_emptyDateTime;
+}
+
+// =============================================================================
+// (public)
+const DateTime &DateTime::defaultDateTime()
+{
+    static DateTime s_emptyDateTime = DateTime(2000, 1, 1, 0, 0, 0, TimeZone::UTC);
     return s_emptyDateTime;
 }
 
