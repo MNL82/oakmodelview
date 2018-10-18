@@ -8,6 +8,8 @@
  * See accompanying file LICENSE in the root folder.
  */
 
+#pragma once
+
 #if WIN32
 
 #include <crtdbg.h>
