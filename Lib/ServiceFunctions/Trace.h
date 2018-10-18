@@ -8,6 +8,8 @@
  * See accompanying file LICENSE in the root folder.
  */
 
+#pragma once
+
 #include "Assert.h"
 
 #ifdef WIN32
@@ -29,6 +31,7 @@ struct Tracer
     template <typename... Args>
     void operator() (const wchar_t * format, Args... args) const
     {
+        if (blocked()) { return; }
         wchar_t buffer [256];
 
         auto count = swprintf_s(buffer,
@@ -46,7 +49,15 @@ struct Tracer
 
         OutputDebugString(buffer);
     }
+
+    static bool &blocked()
+    {
+        static bool blocked = false;
+        return blocked;
+    }
 };
+
+
 
 #else
 // Todo: Implement linux/mac tracer function here!
@@ -55,10 +66,13 @@ struct Tracer
 #ifdef _DEBUG
 #ifdef WIN32
 #define TRACE Tracer(__FILE__, __LINE__)
+#define TRACE_BLOCK Tracer::blocked()
 #else
 // Todo: Implement linux/mac TRACE macro here!
 #define TRACE __noop
+#define TRACE_BLOCK __noop
 #endif
 #else
 #define TRACE __noop
+#define TRACE_BLOCK __noop
 #endif
