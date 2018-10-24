@@ -148,6 +148,8 @@ public:
     virtual const NodeDef* getDerivedOrThis(const UnionRef& derivedId, const NodeDef* excluding = nullptr) const;
     virtual const NodeDef* getDerivedOrThis(Node node, const NodeDef* excluding = nullptr) const;
 
+    void getDerivedList(std::vector<const NodeDef *> &dList, bool recursive = true) const;
+
 protected:
     UnionValue m_derivedId;
     NodeDefWPtr m_derivedBase = NodeDefWPtr();
@@ -188,7 +190,7 @@ public:
     virtual ValueDef& value(const std::string &valueName);
 
     std::vector<const ValueDef*> valueList() const;
-    void getValueList(std::vector<const ValueDef*>& vList) const;
+    void getValueList(std::vector<const ValueDef*>& vList, bool includeDerived = true) const;
 
     bool hasKey() const;
     const ValueDef& keyValueDef() const;
@@ -225,6 +227,7 @@ public:
     virtual const NodeDef* childDef(int index) const;
     virtual const NodeDef* childDef(const std::string &_name) const;
     virtual const NodeDef* childDef(Node childNode) const;
+    void getChildDefList(std::vector<const NodeDef *> &cList, bool includeDerived = true) const;
 
 protected:
     std::vector<ContainerDefUPtr> m_containerList;

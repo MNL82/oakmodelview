@@ -39,6 +39,12 @@ public:
     template<typename T>
     bool getOptions(std::vector<T>& options, const Item *item, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
+    bool hasQuery() const;
+    bool hasQueryExcluded() const;
+
+    const EntryQuery *query() const;
+    const EntryQuery *queryExcluded() const;
+
     static const ValueOptions& empty();
 
 protected:

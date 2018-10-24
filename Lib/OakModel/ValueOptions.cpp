@@ -94,6 +94,34 @@ bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Item *item
 
 // =============================================================================
 // (public)
+bool ValueOptions::hasQuery() const
+{
+    return m_query.operator bool();
+}
+
+// =============================================================================
+// (public)
+bool ValueOptions::hasQueryExcluded() const
+{
+    return m_queryExcluded.operator bool();
+}
+
+// =============================================================================
+// (public)
+const EntryQuery *ValueOptions::query() const
+{
+    return m_query.get();
+}
+
+// =============================================================================
+// (public)
+const EntryQuery *ValueOptions::queryExcluded() const
+{
+    return m_queryExcluded.get();
+}
+
+// =============================================================================
+// (public)
 const ValueOptions &ValueOptions::empty()
 {
     static ValueOptions vo;

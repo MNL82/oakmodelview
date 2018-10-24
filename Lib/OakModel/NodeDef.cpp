@@ -278,7 +278,7 @@ void NodeDef::derivedIdListAll(std::vector<UnionRef> &idList) const
 // (public)
 void NodeDef::derivedIdListFromDerived(std::vector<UnionRef> &idList) const
 {
-    for (NodeDefSPtr derivedNode: m_derivedDirectList) {
+    for (const NodeDefSPtr &derivedNode: m_derivedDirectList) {
         derivedNode->derivedIdListFromThisAndDerived(idList);
     }
 }
@@ -319,7 +319,7 @@ const NodeDef* NodeDef::getDerivedAny(Node node) const
 // (public)
 const NodeDef* NodeDef::getDerived(const UnionRef &derivedId, const NodeDef* excluding) const
 {
-    for (NodeDefSPtr dDef: m_derivedDirectList) {
+    for (const NodeDefSPtr &dDef: m_derivedDirectList) {
         const NodeDef* dDef2 = dDef->getDerivedOrThis(derivedId, excluding);
         if (dDef2) { return dDef2; }
     }
@@ -330,7 +330,7 @@ const NodeDef* NodeDef::getDerived(const UnionRef &derivedId, const NodeDef* exc
 // (public)
 const NodeDef* NodeDef::getDerived(Node node, const NodeDef* excluding) const
 {
-    for (NodeDefSPtr dDef: m_derivedDirectList) {
+    for (const NodeDefSPtr &dDef: m_derivedDirectList) {
         const NodeDef* dDef2 = dDef->getDerivedOrThis(node, excluding);
         if (dDef2) { return dDef2; }
     }
@@ -353,6 +353,18 @@ const NodeDef* NodeDef::getDerivedOrThis(Node node, const NodeDef* excluding) co
     if (excluding == this) { return nullptr; }
     if (validateForThis(node)) { return this; }
     return getDerived(node, excluding);
+}
+
+// =============================================================================
+// (public)
+void NodeDef::getDerivedList(std::vector<const NodeDef *> &dList, bool recursive) const
+{
+    for (const NodeDefSPtr &dDef: m_derivedDirectList) {
+        dList.push_back(dDef.get());
+        if (recursive) {
+            dDef->getDerivedList(dList, true);
+        }
+    }
 }
 
 // =============================================================================
@@ -404,7 +416,7 @@ bool NodeDef::validateForThis(Node _node) const
 // (public)
 bool NodeDef::validateForDerived(const UnionRef &derivedId, const NodeDef* excluding) const
 {
-    for (NodeDefSPtr derivedDef: m_derivedDirectList) {
+    for (const NodeDefSPtr &derivedDef: m_derivedDirectList) {
         if (derivedDef->validateForThisOrDerived(derivedId, excluding)) {
             return true;
         }
@@ -416,7 +428,7 @@ bool NodeDef::validateForDerived(const UnionRef &derivedId, const NodeDef* exclu
 // (public)
 bool NodeDef::validateForDerived(Node node, const NodeDef* excluding) const
 {
-    for (NodeDefSPtr derivedDef: m_derivedDirectList) {
+    for (const NodeDefSPtr &derivedDef: m_derivedDirectList) {
         if (derivedDef->validateForThisOrDerived(node, excluding)) {
             return true;
         }
@@ -613,9 +625,9 @@ std::vector<const ValueDef *> NodeDef::valueList() const
 
 // =============================================================================
 // (public)
-void NodeDef::getValueList(std::vector<const ValueDef*>& vList) const
+void NodeDef::getValueList(std::vector<const ValueDef*>& vList, bool includeDerived) const
 {
-    if (hasDerivedBase()) {
+    if (includeDerived && hasDerivedBase()) {
         m_derivedBase.lock()->getValueList(vList);
     }
     for (const auto& v: m_valueList)
@@ -794,6 +806,18 @@ const NodeDef* NodeDef::childDef(Node childNode) const
         return childDef(childNode);
     }
     return nullptr;
+}
+
+// =============================================================================
+// (public)
+void NodeDef::getChildDefList(std::vector<const NodeDef *> &cList, bool includeDerived) const
+{
+    if (includeDerived && hasDerivedBase()) {
+        m_derivedBase.lock()->getChildDefList(cList, includeDerived);
+    }
+    for (const auto& _child: m_containerList) {
+        cList.push_back(_child.get()->containerDef());
+    }
 }
 
 // =============================================================================

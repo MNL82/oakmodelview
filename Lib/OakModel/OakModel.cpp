@@ -13,7 +13,8 @@
 #include <list>
 #include <QDebug>
 
-#include "../ServiceFunctions/Assert.h"
+#include "../ServiceFunctions/Trace.h"
+#include "ItemServiceFunctions.h"
 
 namespace Oak {
 namespace Model {
@@ -115,6 +116,17 @@ void OakModel::setRootNodeDef(NodeDefSPtr def)
 void OakModel::setRootNodeDef(const NodeDef *def)
 {
     if (m_rootItem.def() != def) {
+        // TODO: Register queries
+
+        // Find all option queries in the node definition tree
+        std::vector<NodeEntryQuery> queryList;
+        std::vector<NodeEntryQuery> queryExcludedList;
+        findOptionQueries(def, queryList, queryExcludedList, true);
+
+
+
+
+
         Node currentNode = m_currentItem.node();
         // Clear the current item before it becomes invalid
         setCurrentItem(Item());
@@ -452,6 +464,10 @@ void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
 void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, int valueIndex) const
 {
     notifier_entryChangeAfter.trigger(itemIndex, valueIndex);
+
+
+    // TODO: Check for references to the changed value
+
 }
 
 // =============================================================================
