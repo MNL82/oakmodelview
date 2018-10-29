@@ -21,6 +21,9 @@
 namespace Oak {
 namespace Model {
 
+class ObserverInterface;
+typedef std::unique_ptr<ObserverInterface> ObserverInterfaceUPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
@@ -81,6 +84,9 @@ protected:
     void onEntryTypeChangeAfter(const ItemIndex& itemIndex) const;
     void onEntryKeyChangeAfter(const ItemIndex& itemIndex) const;
 
+    void createObservers();
+    void clearObservers();
+
 public:
     Callback notifier_currentItemChanged;
     Callback notifier_rootNodeChanged;
@@ -104,6 +110,8 @@ protected:
     Item m_rootItem;
     mutable Item m_currentItem;
     mutable ItemIndexUPtr m_currentItemIndex;
+
+    std::vector<ObserverInterfaceUPtr> m_observerList;
 
     // Used only to keep the definition alive (Smart Pointer)
     NodeDefSPtr m_def;

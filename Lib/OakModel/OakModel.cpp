@@ -15,6 +15,7 @@
 
 #include "../ServiceFunctions/Trace.h"
 #include "ItemServiceFunctions.h"
+#include "ObserverInterface.h"
 
 namespace Oak {
 namespace Model {
@@ -116,23 +117,17 @@ void OakModel::setRootNodeDef(NodeDefSPtr def)
 void OakModel::setRootNodeDef(const NodeDef *def)
 {
     if (m_rootItem.def() != def) {
-        // TODO: Register queries
-
-        // Find all option queries in the node definition tree
-        std::vector<NodeEntryQuery> queryList;
-        std::vector<NodeEntryQuery> queryExcludedList;
-        findOptionQueries(def, queryList, queryExcludedList, true);
-
-
-
-
-
         Node currentNode = m_currentItem.node();
         // Clear the current item before it becomes invalid
         setCurrentItem(Item());
 
+        clearObservers();
+
         // Update the root definition and trigger event
         m_rootItem = Item(def, m_rootItem.node(), this);
+
+        createObservers();
+
         notifier_rootNodeDefChanged.trigger();
 
         // Set the current item to the same node as before
@@ -238,6 +233,8 @@ bool OakModel::saveXMLRootNode(const std::string& filePath)
         return false;
     }
 }
+
+#endif // XML_BACKEND
 
 // =============================================================================
 // (public)
@@ -492,7 +489,36 @@ void OakModel::onEntryKeyChangeAfter(const ItemIndex &itemIndex) const
     notifier_entryKeyChangeAfter.trigger(itemIndex);
 }
 
-#endif // XML_BACKEND
+// =============================================================================
+// (public)
+void OakModel::createObservers()
+{
+    // Insert code to create new observers here (Do not connect)
+
+    /******************* Create Option Observers ******************/
+    // Find all option queries in the node definition tree
+    std::vector<NodeEntryQuery> queryList;
+    std::vector<NodeEntryQuery> queryExcludedList;
+    findOptionQueries(m_rootItem.def(), queryList, queryExcludedList, true);
+
+    //
+
+    for (ObserverInterfaceUPtr &observer: m_observerList)
+    {
+        observer->connect();
+    }
+}
+
+// =============================================================================
+// (public)
+void OakModel::clearObservers()
+{
+    for (ObserverInterfaceUPtr &observer: m_observerList)
+    {
+        observer->disconnect();
+    }
+    m_observerList.clear();
+}
 
 } // namespace Model
 } // namespace Oak
