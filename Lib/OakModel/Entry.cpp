@@ -222,7 +222,7 @@ void Entry::onEntryChanged() const
         m_item->model()->onEntryKeyChangeAfter(*iIndex.get());
     }
 
-    m_item->model()->onEntryChangeAfter(*iIndex.get(), index);
+    m_item->model()->onEntryChangeAfter(*iIndex.get(), m_valueDef->name());
 }
 
 } // namespace Model

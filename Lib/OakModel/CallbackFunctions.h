@@ -201,5 +201,31 @@ protected:
     std::map<void*, std::function<void(const ItemIndex&, int)>> m_functionMap;
 };
 
+// =============================================================================
+// Class definition
+// =============================================================================
+class Callback_ItemIndexString
+{
+public:
+    Callback_ItemIndexString();
+
+    template<typename T>
+    void add(T* funcObj, void (T::*func)(const ItemIndex&, const std::string &))
+    {
+        if (funcObj == nullptr) {
+            assert(false);
+            return;
+        }
+        m_functionMap[funcObj] = std::bind(func, funcObj, std::placeholders::_1, std::placeholders::_2);
+    }
+
+    void remove(void* funcObj = nullptr);
+
+    void trigger(const ItemIndex &itemIndex, const std::string & name) const;
+
+protected:
+    std::map<void*, std::function<void(const ItemIndex&, const std::string &)>> m_functionMap;
+};
+
 } // namespace Model
 } // namespace Oak

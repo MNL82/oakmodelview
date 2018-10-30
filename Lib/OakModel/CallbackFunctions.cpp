@@ -246,5 +246,38 @@ void Callback_ItemIndexInt::trigger(const ItemIndex &itemIndex, int index) const
     }
 }
 
+// =============================================================================
+// (public)
+Callback_ItemIndexString::Callback_ItemIndexString()
+{
+
+}
+
+// =============================================================================
+// (public)
+void Callback_ItemIndexString::remove(void *funcObj)
+{
+    if (funcObj == nullptr) {
+        m_functionMap.clear();
+    } else {
+        auto it = m_functionMap.find(funcObj);
+        while (it != m_functionMap.end()) {
+            m_functionMap.erase(it);
+            it = m_functionMap.find(funcObj);
+        }
+    }
+}
+
+// =============================================================================
+// (public)
+void Callback_ItemIndexString::trigger(const ItemIndex &itemIndex, const std::string &name) const
+{
+    for (auto func: m_functionMap)
+    {
+        //qDebug() << "Callback_ItemIndexInt::trigger()";
+        func.second(itemIndex, name);
+    }
+}
+
 } // namespace Model
 } // namespace Oak

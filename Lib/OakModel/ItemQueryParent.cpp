@@ -10,6 +10,8 @@
 
 #include "ItemQueryParent.h"
 
+#include "../ServiceFunctions/Trace.h"
+
 namespace Oak {
 namespace Model {
 
@@ -38,17 +40,27 @@ ItemQueryParent::ItemQueryParent(ItemQueryParent &&move)
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQueryParent::first(const Item &refItem) const
 {
     return refItem.parent();
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQueryParent::last(const Item &refItem) const
 {
     return refItem.parent();
+}
+
+// =============================================================================
+// (protected)
+const NodeDef *ItemQueryParent::_nodeDef(const NodeDef *nDef) const
+{
+    // TODO: Node can have multiple parents! Fix this...
+    ASSERT(nDef);
+    ASSERT(nDef->parentContainerCount() == 1); // Do not work unleass there are only one parent container
+    return nDef->parentContainer(0)->hostDef();
 }
 
 } // namespace Model

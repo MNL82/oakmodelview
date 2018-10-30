@@ -7,7 +7,9 @@
 # See accompanying file LICENSE in the root folder.
 
 SOURCES += \
-    $$PWD/ObserverInterface.cpp
+    $$PWD/ObserverInterface.cpp \
+    $$PWD/OptionsObserver.cpp
 
 HEADERS += \
-    $$PWD/ObserverInterface.h
+    $$PWD/ObserverInterface.h \
+    $$PWD/OptionsObserver.h

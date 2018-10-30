@@ -34,8 +34,9 @@ public:
     std::vector<Item> itemList(const Item &refItem);
 
     bool hasChildQuery() const;
-
     ItemQuery *childQuery();
+
+    const NodeDef * nodeDef(const NodeDef *nDef) const;
 
     virtual bool canInsertItem(const Item &refItem, int &index) const;
     virtual Item insertItem(const Item &refItem, int index) const;
@@ -56,6 +57,8 @@ protected:
     virtual Item last(const Item &refItem) const;
     virtual Item next(const Item &refItem, const Item &cItem) const;
     virtual Item previous(const Item &refItem, const Item &cItem) const;
+
+    virtual const NodeDef * _nodeDef(const NodeDef *nDef) const;
 
 protected:
     ItemQueryUPtr m_childQueryUPtr = ItemQueryUPtr();

@@ -31,6 +31,7 @@ protected:
 public:
     ~EntryQuery();
 
+    const std::string &valueName() const;
     EntryQuerySPtr setValueName(const std::string &entryName);
 
     int count(const Item &item);

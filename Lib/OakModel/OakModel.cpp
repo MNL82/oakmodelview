@@ -15,7 +15,7 @@
 
 #include "../ServiceFunctions/Trace.h"
 #include "ItemServiceFunctions.h"
-#include "ObserverInterface.h"
+#include "OptionsObserver.h"
 
 namespace Oak {
 namespace Model {
@@ -458,9 +458,9 @@ void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (protected)
-void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, int valueIndex) const
+void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, const std::string &valueName) const
 {
-    notifier_entryChangeAfter.trigger(itemIndex, valueIndex);
+    notifier_entryChangeAfter.trigger(itemIndex, valueName);
 
 
     // TODO: Check for references to the changed value
@@ -497,10 +497,13 @@ void OakModel::createObservers()
 
     /******************* Create Option Observers ******************/
     // Find all option queries in the node definition tree
-    std::vector<NodeEntryQuery> queryList;
-    std::vector<NodeEntryQuery> queryExcludedList;
+    std::vector<NodeValueDefPair> queryList;
+    std::vector<NodeValueDefPair> queryExcludedList;
     findOptionQueries(m_rootItem.def(), queryList, queryExcludedList, true);
-
+    for (const auto & query: queryList)
+    {
+        m_observerList.push_back(std::make_unique<OptionsObserver>(this, query.first, query.second));
+    }
     //
 
     for (ObserverInterfaceUPtr &observer: m_observerList)

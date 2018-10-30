@@ -9,6 +9,7 @@
  */
 
 #include <algorithm>
+#include <functional>
 
 #include "NodeDef.h"
 #include "ValueDefBuilder.h"
@@ -554,6 +555,31 @@ bool NodeDef::hasValue(const std::string &valueName) const
 
 // =============================================================================
 // (public)
+int NodeDef::valueIndex(const ValueDef *valueDef) const
+{
+    int i = 0;
+    for (const ValueDefUPtr &value: m_valueList)
+    {
+        if (value.get() == valueDef) { break; }
+        i++;
+    }
+
+    if (i != static_cast<int>(m_valueList.size()))  {   // ValueDef found
+        if (hasDerivedBase()) { // Derived base ValueDef's comes first
+            i += derivedBase()->valueCount();
+        }
+        return i;
+    } else {                                            // ValueDef NOT found
+        if (hasDerivedBase()) {
+            return derivedBase()->valueIndex(valueDef);
+        } else {
+            return -1;
+        }
+    }
+}
+
+// =============================================================================
+// (public)
 const ValueDef &NodeDef::value(int index) const
 {
     if (hasDerivedBase()) {
@@ -709,7 +735,7 @@ const ContainerDef &NodeDef::container(int index) const
 
 // =============================================================================
 // (public)
-const ContainerDef &NodeDef::container(const std::string& _name) const
+const ContainerDef &NodeDef::container(const std::string& _name, bool includeDerived) const
 {
     for (const auto& _child: m_containerList)
     {
@@ -719,10 +745,26 @@ const ContainerDef &NodeDef::container(const std::string& _name) const
     }
 
     if (hasDerivedBase()) {
-        return m_derivedBase.lock()->container(_name);
+        const ContainerDef & childContainer = m_derivedBase.lock()->container(_name, false);
+        if (!childContainer.isNull()) { return childContainer; }
     }
 
-    ASSERT(false);
+    if (includeDerived) {
+        // Check if a child container with _name exists on a derived NodeDef
+        std::vector<const NodeDef*> dList;
+        getDerivedList(dList, true);
+        for (const NodeDef *dDef: dList)
+        {
+            for (const auto& _child: dDef->m_containerList)
+            {
+                if (_child->containerDef()->name() == _name) {
+                    return *_child.get();
+                }
+            }
+        }
+    }
+
+    ASSERT(false); // Not sure assert is right here? (it just didn't find any)
     return ContainerDef::emptyChildNodeDef();
 }
 
@@ -786,9 +828,9 @@ const NodeDef* NodeDef::childDef(int index) const
 
 // =============================================================================
 // (public)
-const NodeDef* NodeDef::childDef(const std::string &_name) const
+const NodeDef* NodeDef::childDef(const std::string &_name, bool includeDerived) const
 {
-    return container(_name).containerDef();
+    return container(_name, includeDerived).containerDef();
 }
 
 // =============================================================================

@@ -17,7 +17,7 @@ namespace Model {
 
 // =============================================================================
 // (public)
-void findOptionQueries(const NodeDef *def, std::vector<NodeEntryQuery> &queryList, std::vector<NodeEntryQuery> &queryExcludedList, bool recursive)
+void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryList, std::vector<NodeValueDefPair> &queryExcludedList, bool recursive)
 {
     std::vector<const ValueDef *> valueDefList;
     getValueDefList(valueDefList, def);
@@ -25,10 +25,10 @@ void findOptionQueries(const NodeDef *def, std::vector<NodeEntryQuery> &queryLis
     for (const ValueDef *vDef: valueDefList) {
         //TRACE(L"Searching %S:%S", def->displayName().c_str(), vDef->displayName().c_str());
         if (vDef->options().hasQuery()) {
-            queryList.push_back({ def, vDef->options().query() });
+            queryList.push_back({ def, vDef });
         }
         if (vDef->options().hasQueryExcluded()) {
-            queryExcludedList.push_back({ def, vDef->options().queryExcluded() });
+            queryExcludedList.push_back({ def, vDef });
         }
     }
 

@@ -184,6 +184,7 @@ public:
 public:
     virtual int valueCount() const;
     virtual bool hasValue(const std::string &valueName) const;
+    virtual int valueIndex(const ValueDef *valueDef) const;
     virtual const ValueDef& value(int index) const;
     virtual const ValueDef& value(const std::string &valueName) const;
     virtual ValueDef& value(int index);
@@ -215,7 +216,7 @@ protected:
 public:
     virtual int containerCount() const;
     virtual const ContainerDef& container(int index) const;
-    const ContainerDef &container(const std::string &_name) const;
+    const ContainerDef &container(const std::string &_name, bool includeDerived = false) const;
 
     virtual const ContainerDef& container(Node childNode) const;
 
@@ -225,7 +226,7 @@ public:
     virtual const ContainerGroupDef& containerGroup() const;
 
     virtual const NodeDef* childDef(int index) const;
-    virtual const NodeDef* childDef(const std::string &_name) const;
+    virtual const NodeDef* childDef(const std::string &_name, bool includeDerived = false) const;
     virtual const NodeDef* childDef(Node childNode) const;
     void getChildDefList(std::vector<const NodeDef *> &cList, bool includeDerived = true) const;
 

@@ -28,6 +28,8 @@ public:
 protected:
     virtual Item first(const Item &refItem) const override;
     virtual Item last(const Item &refItem) const override;
+
+    virtual const NodeDef *_nodeDef(const NodeDef *nDef) const override;
 };
 
 } // namespace Model

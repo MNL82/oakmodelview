@@ -41,6 +41,13 @@ EntryQuery::~EntryQuery()
 
 // =============================================================================
 // (public)
+const std::string &EntryQuery::valueName() const
+{
+    return m_entryName;
+}
+
+// =============================================================================
+// (public)
 EntryQuerySPtr EntryQuery::setValueName(const std::string &entryName)
 {
     m_entryName = entryName;

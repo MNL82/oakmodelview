@@ -111,7 +111,8 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemMoveAfter.remove(this);
         m_model->notifier_itemCloneAfter.remove(this);
         m_model->notifier_itemRemoveBefore.remove(this);
-        m_model->notifier_entryChangeAfter.remove(this);
+        m_model->notifier_entryTypeChangeAfter.remove(this);
+        m_model->notifier_entryKeyChangeAfter.remove(this);
     }
 
     // Change the model

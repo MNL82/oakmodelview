@@ -175,13 +175,12 @@ void NodeDataView::setCurrentWidget(int index)
 
 // =============================================================================
 // (protected)
-void NodeDataView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, int valueIndex)
+void NodeDataView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName)
 {
 
     if (m_model->currentItemIndex().equal(itemIndex)) {
         // Pass on the event to the current editor
-        const Model::Item &item = m_model->currentItem();
-        getEditorHandler(item)->updateEditorValue(item.def()->value(valueIndex).name());
+        getEditorHandler(m_model->currentItem())->updateEditorValue(valueName);
     }
 }
 

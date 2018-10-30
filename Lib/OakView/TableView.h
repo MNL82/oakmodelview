@@ -44,7 +44,7 @@ protected:
     void onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
     void onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
     void onItemRemoveBefore(const Model::ItemIndex& tItemIndex);
-    void onEntryChangeAfter(const Model::ItemIndex &itemIndex, int valueIndex);
+    void onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName);
 
     virtual bool event(QEvent *event) override;
 

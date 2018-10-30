@@ -10,6 +10,9 @@
 
 #include "ObserverInterface.h"
 
+
+#include "../ServiceFunctions/Trace.h"
+
 #include "OakModel.h"
 
 namespace Oak {
@@ -20,6 +23,7 @@ namespace Model {
 ObserverInterface::ObserverInterface(OakModel *model)
     : m_model { model }
 {
+    ASSERT(model);
 }
 // =============================================================================
 // (public)

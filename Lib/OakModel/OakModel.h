@@ -80,7 +80,7 @@ protected:
     void onItemRemoveAfter(const ItemIndex& itemIndex) const;
     void onItemRemoveBefore(const ItemIndex& itemIndex) const;
 
-    void onEntryChangeAfter(const ItemIndex& itemIndex, int valueIndex) const;
+    void onEntryChangeAfter(const ItemIndex& itemIndex, const std::string &valueName) const;
     void onEntryTypeChangeAfter(const ItemIndex& itemIndex) const;
     void onEntryKeyChangeAfter(const ItemIndex& itemIndex) const;
 
@@ -102,7 +102,7 @@ public:
     Callback_ItemIndex notifier_itemRemoveBefore;
     Callback_ItemIndex notifier_itemRemoveAfter;
 
-    Callback_ItemIndexInt notifier_entryChangeAfter;
+    Callback_ItemIndexString notifier_entryChangeAfter;
     Callback_ItemIndex notifier_entryTypeChangeAfter;
     Callback_ItemIndex notifier_entryKeyChangeAfter;
 

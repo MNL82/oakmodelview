@@ -90,6 +90,16 @@ ItemQuery *ItemQuery::childQuery()
 
 // =============================================================================
 // (public)
+const NodeDef *ItemQuery::nodeDef(const NodeDef *nDef) const
+{
+    if (hasChildQuery()) {
+        return m_childQueryUPtr->nodeDef(_nodeDef(nDef));
+    }
+    return _nodeDef(nDef);
+}
+
+// =============================================================================
+// (public)
 bool ItemQuery::canInsertItem(const Item &refItem, int &index) const
 {
     if (m_childQueryUPtr) {
@@ -285,30 +295,19 @@ Item ItemQuery::next(const Item &refItem, const Item &cItem) const
 }
 
 // =============================================================================
+// (protected)
+const NodeDef *ItemQuery::_nodeDef(const NodeDef *nDef) const
+{
+    return nDef;
+}
+
+// =============================================================================
 // (public)
 ItemQuery::IteratorUPtr ItemQuery::iterator(const Item &refItem) const
 {
     IteratorUPtr it(new Iterator(*this, &refItem));
     return it;
 }
-
-//// =============================================================================
-//// (public)
-//ItemQuery::IteratorUPtr ItemQuery::begin(const Item &refItem) const
-//{
-//    IteratorUPtr it(new Iterator(*this));
-//    it->first(refItem);
-//    return it;
-//}
-
-//// =============================================================================
-//// (public)
-//ItemQuery::IteratorUPtr ItemQuery::rBegin(const Item &refItem) const
-//{
-//    IteratorUPtr it(new Iterator(*this));
-//    it->last(refItem);
-//    return it;
-//}
 
 // =============================================================================
 // Iterator functions

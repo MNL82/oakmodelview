@@ -320,10 +320,10 @@ void TableView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void TableView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, int valueIndex)
+void TableView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName)
 {
     Q_UNUSED(itemIndex)
-    Q_UNUSED(valueIndex)
+    Q_UNUSED(valueName)
 }
 
 // =============================================================================

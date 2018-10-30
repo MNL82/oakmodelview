@@ -249,6 +249,13 @@ Item ItemQueryChildren::previous(const Item &refItem, const Item &cItem) const
     return refItem.previousChild(m_nodeName, cItem);
 }
 
+// =============================================================================
+// (public)
+const NodeDef *ItemQueryChildren::_nodeDef(const NodeDef *nDef) const
+{
+    if (nDef == nullptr) { return nullptr; }
+    return nDef->childDef(m_nodeName, true);
+}
 
 } // namespace Model
 } // namespace Oak
