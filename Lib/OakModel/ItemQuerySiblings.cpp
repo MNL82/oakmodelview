@@ -5,9 +5,8 @@ namespace Model {
 
 // =============================================================================
 // (public)
-ItemQuerySiblings::ItemQuerySiblings(bool matchName)
+ItemQuerySiblings::ItemQuerySiblings()
 {
-    m_matchName = matchName;
 }
 
 // =============================================================================
@@ -15,7 +14,6 @@ ItemQuerySiblings::ItemQuerySiblings(bool matchName)
 ItemQuerySiblings::ItemQuerySiblings(const ItemQuerySiblings &copy)
     : ItemQuery(copy)
 {
-    m_matchName = copy.m_matchName;
 }
 
 // =============================================================================
@@ -23,20 +21,14 @@ ItemQuerySiblings::ItemQuerySiblings(const ItemQuerySiblings &copy)
 ItemQuerySiblings::ItemQuerySiblings(ItemQuerySiblings &&move)
     : ItemQuery(move)
 {
-    m_matchName = move.m_matchName;
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQuerySiblings::first(const Item &refItem) const
 {
     m_parent = refItem.parent();
-    Item sibling;
-    if (m_matchName) {
-        sibling = m_parent.firstChild(refItem.def()->name());
-    } else {
-        sibling = m_parent.firstChild();
-    }
+    Item sibling = m_parent.firstChild(refItem.def()->name());
 
     if (refItem == sibling) {
         // Skip self
@@ -47,16 +39,11 @@ Item ItemQuerySiblings::first(const Item &refItem) const
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQuerySiblings::last(const Item &refItem) const
 {
     m_parent = refItem.parent();
-    Item sibling;
-    if (m_matchName) {
-        sibling = m_parent.lastChild(refItem.def()->name());
-    } else {
-        sibling = m_parent.lastChild();
-    }
+    Item sibling = m_parent.lastChild(refItem.def()->name());
 
     if (refItem == sibling) {
         // Skip self
@@ -67,15 +54,10 @@ Item ItemQuerySiblings::last(const Item &refItem) const
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQuerySiblings::next(const Item &refItem, const Item &cItem) const
 {
-    Item sibling;
-    if (m_matchName) {
-        sibling = m_parent.nextChild(refItem.def()->name(), cItem);
-    } else {
-        sibling = m_parent.nextChild(cItem);
-    }
+    Item sibling = m_parent.nextChild(refItem.def()->name(), cItem);
 
     if (refItem == sibling) {
         // Skip self
@@ -86,15 +68,10 @@ Item ItemQuerySiblings::next(const Item &refItem, const Item &cItem) const
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQuerySiblings::previous(const Item &refItem, const Item &cItem) const
 {
-    Item sibling;
-    if (m_matchName) {
-        sibling = m_parent.previousChild(refItem.def()->name(), cItem);
-    } else {
-        sibling = m_parent.previousChild(cItem);
-    }
+    Item sibling = m_parent.previousChild(refItem.def()->name(), cItem);
 
     if (refItem == sibling) {
         // Skip self

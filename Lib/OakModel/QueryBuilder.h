@@ -33,12 +33,11 @@ public:
 
     QueryBuilderSPtr children(const std::string &nodeName);
     QueryBuilderSPtr parent();
-    QueryBuilderSPtr siblings(bool matchName = true);
+    QueryBuilderSPtr siblings();
 
     static QueryBuilderSPtr createChildren(const std::string &nodeName);
     static QueryBuilderSPtr createParent();
-    static QueryBuilderSPtr createSiblings(bool matchName = true);
-    //static QueryBuilderSPtr createIgnoreSelf();
+    static QueryBuilderSPtr createSiblings();
 
     static EntryQuerySPtr createEntry(const std::string &entryName);
 

@@ -21,7 +21,7 @@ namespace Model {
 class ItemQuerySiblings : public ItemQuery
 {
 public:
-    ItemQuerySiblings(bool matchName = true);
+    ItemQuerySiblings();
     ItemQuerySiblings(const ItemQuerySiblings& copy);
     ItemQuerySiblings(ItemQuerySiblings&& move);
 
@@ -32,7 +32,6 @@ protected:
     virtual Item previous(const Item &refItem, const Item &cItem) const override;
 
 protected:
-    bool m_matchName;
     mutable Item m_parent;
 };
 

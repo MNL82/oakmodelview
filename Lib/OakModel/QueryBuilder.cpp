@@ -65,27 +65,15 @@ QueryBuilderSPtr QueryBuilder::parent()
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::siblings(bool matchName)
+QueryBuilderSPtr QueryBuilder::siblings()
 {
     if (m_itemQuery) {
-        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQuerySiblings(matchName)));
+        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQuerySiblings()));
     } else {
-        m_itemQuery = ItemQueryUPtr(new ItemQuerySiblings(matchName));
+        m_itemQuery = ItemQueryUPtr(new ItemQuerySiblings());
     }
     return m_thisWPtr.lock();
 }
-
-//// =============================================================================
-//// (public)
-//QueryBuilderSPtr QueryBuilder::ignoreSelf()
-//{
-//    if (m_itemQuery) {
-//        m_itemQuery->add(ItemQueryUPtr(new ItemQueryIgnoreSelf()));
-//    } else {
-//        m_itemQuery = ItemQueryUPtr(new ItemQueryIgnoreSelf());
-//    }
-//    return m_thisWPtr.lock();
-//}
 
 // =============================================================================
 // (public)
@@ -109,10 +97,10 @@ QueryBuilderSPtr QueryBuilder::createParent()
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::createSiblings(bool matchName)
+QueryBuilderSPtr QueryBuilder::createSiblings()
 {
     QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
-    sPtr->siblings(matchName);
+    sPtr->siblings();
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
