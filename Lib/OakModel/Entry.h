@@ -86,7 +86,8 @@ public:
     bool operator<<(const T& value) const;
 
 protected:
-    void onEntryChanged() const;
+    void onEntryChangeBefore() const;
+    void onEntryChangeAfter() const;
 
 protected:
     const ValueDef* m_valueDef;
@@ -138,9 +139,12 @@ template<typename T>
 bool Entry::setValue(const T &value) const
 {
     assert(m_valueDef != nullptr);
+    if (m_item) {
+        onEntryChangeBefore();
+    }
     bool result = m_valueDef->setValue(m_node, value, true);
-    if (result && m_item) {
-        onEntryChanged();
+    if (m_item) {
+        onEntryChangeAfter();
     }
     return result;
 }

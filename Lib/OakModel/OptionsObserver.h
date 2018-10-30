@@ -13,6 +13,7 @@
 #include <string>
 
 #include "ObserverInterface.h"
+#include "UnionValue.h"
 
 namespace Oak {
 namespace Model {
@@ -33,6 +34,7 @@ public:
     virtual void disconnect() override;
 
 protected:
+    void onEntryChangeBefore(const ItemIndex& itemIndex, const std::string &valueName);
     void onEntryChangeAfter(const ItemIndex& itemIndex, const std::string &valueName);
 
 protected:
@@ -41,6 +43,8 @@ protected:
 
     const NodeDef *m_sourceNodeDef;
     std::string m_sourceValueName;
+
+    UnionValue m_valueBeforeChange;
 };
 
 

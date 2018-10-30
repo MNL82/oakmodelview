@@ -40,6 +40,7 @@ OptionsObserver::OptionsObserver(OakModel *model, const NodeDef *optionsNodeDef,
 // (public)
 void OptionsObserver::connect()
 {
+    m_model->notifier_entryChangeBefore.add(this, &OptionsObserver::onEntryChangeBefore);
     m_model->notifier_entryChangeAfter.add(this, &OptionsObserver::onEntryChangeAfter);
 }
 
@@ -47,7 +48,21 @@ void OptionsObserver::connect()
 // (public)
 void OptionsObserver::disconnect()
 {
+    m_model->notifier_entryChangeBefore.remove(this);
     m_model->notifier_entryChangeAfter.remove(this);
+}
+
+// =============================================================================
+// (public)
+void OptionsObserver::onEntryChangeBefore(const ItemIndex &itemIndex, const std::string &valueName)
+{
+    // If not valid return as fast as possible
+    if (m_sourceValueName != valueName) { return; }
+    if (m_sourceNodeDef->name() != itemIndex.lastItemIndex().name()) { return; }
+
+    Item sourceItem = itemIndex.item(m_model->rootItem());
+
+    m_valueBeforeChange = sourceItem.entry(valueName).value();
 }
 
 // =============================================================================
@@ -60,8 +75,18 @@ void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::
 
     Item sourceItem = itemIndex.item(m_model->rootItem());
 
+    UnionValue newValue = sourceItem.entry(valueName).value();
 
-    TRACE(L"Options value changed!!!");
+    if (m_valueBeforeChange == newValue) { return; }
+
+    // TODO: Loop though all existing nodes with
+
+
+    // TESTING...
+    std::string vb, va;
+    m_valueBeforeChange.get(vb);
+    newValue.get(va);
+    TRACE(L"Options value have changed from %S to %S", vb.c_str(), va.c_str());
 }
 
 } // namespace Model

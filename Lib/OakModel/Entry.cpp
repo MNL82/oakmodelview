@@ -208,8 +208,17 @@ const Entry& Entry::emptyEntry()
 }
 
 // =============================================================================
-// (public)
-void Entry::onEntryChanged() const
+// (protected)
+void Entry::onEntryChangeBefore() const
+{
+    if (m_item->model() == nullptr) { return; }
+    ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
+    m_item->model()->onEntryChangeBefore(*iIndex.get(), m_valueDef->name());
+}
+
+// =============================================================================
+// (protected)
+void Entry::onEntryChangeAfter() const
 {
     if (m_item->model() == nullptr) { return; }
 

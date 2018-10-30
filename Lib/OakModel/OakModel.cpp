@@ -458,13 +458,16 @@ void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (protected)
+void OakModel::onEntryChangeBefore(const ItemIndex &itemIndex, const std::string &valueName) const
+{
+    notifier_entryChangeBefore.trigger(itemIndex, valueName);
+}
+
+// =============================================================================
+// (protected)
 void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, const std::string &valueName) const
 {
     notifier_entryChangeAfter.trigger(itemIndex, valueName);
-
-
-    // TODO: Check for references to the changed value
-
 }
 
 // =============================================================================
