@@ -10,6 +10,8 @@
 
 #include "ItemQueryChildren.h"
 
+#include "../ServiceFunctions/Trace.h"
+
 namespace Oak {
 namespace Model {
 
@@ -18,7 +20,7 @@ namespace Model {
 ItemQueryChildren::ItemQueryChildren(const std::string &nodeName)
     : ItemQuery(), m_nodeName(nodeName)
 {
-
+    ASSERT(!m_nodeName.empty());
 }
 
 // =============================================================================
@@ -50,14 +52,10 @@ bool ItemQueryChildren::canInsertItem(const Item &refItem, int &index) const
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            return false;
+        if (refItem.canInsertChild(m_nodeName, index)) {
+            return true;
         } else {
-            if (refItem.canInsertChild(m_nodeName, index)) {
-                return true;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return false;
@@ -77,15 +75,11 @@ Item ItemQueryChildren::insertItem(const Item &refItem, int index) const
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            return Item();
+        Item newItem = refItem.insertChild(m_nodeName, index);
+        if (!newItem.isNull()) {
+            return newItem;
         } else {
-            Item newItem = refItem.insertChild(m_nodeName, index);
-            if (!newItem.isNull()) {
-                return newItem;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return Item();
@@ -104,18 +98,10 @@ bool ItemQueryChildren::canCloneItem(const Item &refItem, int &index, const Item
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            if (refItem.canCloneChild(index, cloneItem)) {
-                return true;
-            } else {
-                index -= refItem.childCount();
-            }
+        if (refItem.canCloneChild(m_nodeName, index, cloneItem)) {
+            return true;
         } else {
-            if (refItem.canCloneChild(m_nodeName, index, cloneItem)) {
-                return true;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return false;
@@ -135,20 +121,11 @@ Item ItemQueryChildren::cloneItem(const Item &refItem, int &index, const Item &c
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            Item newItem = refItem.cloneChild(index, cloneItem);
-            if (!newItem.isNull()) {
-                return newItem;
-            } else {
-                index -= refItem.childCount();
-            }
+        Item newItem = refItem.cloneChild(m_nodeName, index, cloneItem);
+        if (!newItem.isNull()) {
+            return newItem;
         } else {
-            Item newItem = refItem.cloneChild(m_nodeName, index, cloneItem);
-            if (!newItem.isNull()) {
-                return newItem;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return Item();
@@ -167,18 +144,10 @@ bool ItemQueryChildren::canMoveItem(const Item &refItem, int &index, const Item 
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            if (refItem.canMoveChild(index, moveItem)) {
-                return true;
-            } else {
-                index -= refItem.childCount();
-            }
+        if (refItem.canMoveChild(m_nodeName, index, moveItem)) {
+            return true;
         } else {
-            if (refItem.canMoveChild(m_nodeName, index, moveItem)) {
-                return true;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return false;
@@ -198,20 +167,11 @@ Item ItemQueryChildren::moveItem(const Item &refItem, int &index, const Item &mo
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            Item newItem = refItem.moveChild(index, moveItem);
-            if (!newItem.isNull()) {
-                return newItem;
-            } else {
-                index -= refItem.childCount();
-            }
+        Item newItem = refItem.moveChild(m_nodeName, index, moveItem);
+        if (!newItem.isNull()) {
+            return newItem;
         } else {
-            Item newItem = refItem.moveChild(m_nodeName, index, moveItem);
-            if (!newItem.isNull()) {
-                return newItem;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return Item();
@@ -230,18 +190,10 @@ bool ItemQueryChildren::canRemoveItem(const Item &refItem, int index) const
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            if (refItem.canRemoveChild(index)) {
-                return true;
-            } else {
-                index -= refItem.childCount();
-            }
+        if (refItem.canRemoveChild(m_nodeName, index)) {
+            return true;
         } else {
-            if (refItem.canRemoveChild(m_nodeName, index)) {
-                return true;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return false;
@@ -260,67 +212,43 @@ bool ItemQueryChildren::removeItem(const Item &refItem, int index) const
             item = next(refItem, item);
         }
     } else {
-        if (m_nodeName.empty()) {
-            refItem.removeChild(index);
-            if (refItem.removeChild(index)) {
-                return true;
-            } else {
-                index -= refItem.childCount();
-            }
+        if (refItem.removeChild(m_nodeName, index)) {
+            return true;
         } else {
-            if (refItem.removeChild(m_nodeName, index)) {
-                return true;
-            } else {
-                index -= refItem.childCount(m_nodeName);
-            }
+            index -= refItem.childCount(m_nodeName);
         }
     }
     return false;
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQueryChildren::first(const Item &refItem) const
 {
-    if (m_nodeName.empty()) {
-        return refItem.firstChild();
-    } else {
-        return refItem.firstChild(m_nodeName);
-    }
+    return refItem.firstChild(m_nodeName);
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQueryChildren::last(const Item &refItem) const
 {
-    if (m_nodeName.empty()) {
-        return refItem.lastChild();
-    } else {
-        return refItem.lastChild(m_nodeName);
-    }
+    return refItem.lastChild(m_nodeName);
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQueryChildren::next(const Item &refItem, const Item &cItem) const
 {
-    if (m_nodeName.empty()) {
-        return refItem.nextChild(cItem);
-    } else {
-        return refItem.nextChild(m_nodeName, cItem);
-    }
+    return refItem.nextChild(m_nodeName, cItem);
 }
 
 // =============================================================================
-// (public)
+// (protected)
 Item ItemQueryChildren::previous(const Item &refItem, const Item &cItem) const
 {
-    if (m_nodeName.empty()) {
-        return refItem.previousChild(cItem);
-    } else {
-        return refItem.previousChild(m_nodeName, cItem);
-    }
+    return refItem.previousChild(m_nodeName, cItem);
 }
+
 
 } // namespace Model
 } // namespace Oak

@@ -36,6 +36,7 @@ public:
 
     virtual bool canRemoveItem(const Item &refItem, int index) const override;
     virtual bool removeItem(const Item &refItem, int index) const override;
+
 protected:
     virtual Item first(const Item &refItem) const override;
     virtual Item last(const Item &refItem) const override;
