@@ -81,26 +81,24 @@ void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::
 
     if (m_valueBeforeChange == newValue) { return; }
 
-    // TODO: Loop though all existing nodes with
+    // Get the query used to find the option list
     const EntryQuery *query = m_optionsValueDef->options().query();
+
     // Create an inverse query that points from the option values to the entry where there can be chosen
     EntryQuerySPtr inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->EntryUPtr(m_optionsValueDef->name());
 
-
-
-    // TESTING...
-    TRACE(L"Usesed option values");
+    // Loop though all the entries where the option have been used
     auto it = inverseQuery->iterator(sourceItem);
     while (it->next()) {
-        std::string str;
-        it->entry().getValue(str);
-        TRACE(L"> %S", str.c_str());
+        UnionValue value = it->entry().value();
+        if (value == m_valueBeforeChange) {
+            // Update the value if it is the one changed
+            it->entry().setValue(newValue);
+        } else if (it->item() == m_model->currentItem()) {
+            // Update the current item because the option list have changed
+            m_model->setCurrentItem(m_model->currentItem(), true);
+        }
     }
-
-    std::string vb, va;
-    m_valueBeforeChange.get(vb);
-    newValue.get(va);
-    TRACE(L"Options value have changed from %S to %S", vb.c_str(), va.c_str());
 
     m_valueBeforeChange = UnionValue();
 }

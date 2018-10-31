@@ -10,12 +10,10 @@ HEADERS += \
     $$PWD/Item.h \
     $$PWD/Entry.h \
     $$PWD/ItemIndex.h \
-    $$PWD/ItemChangedObserver.h \
     $$PWD/ItemServiceFunctions.h
 
 SOURCES += \
     $$PWD/Item.cpp \
     $$PWD/Entry.cpp \
     $$PWD/ItemIndex.cpp \
-    $$PWD/ItemChangedObserver.cpp \
     $$PWD/ItemServiceFunctions.cpp
