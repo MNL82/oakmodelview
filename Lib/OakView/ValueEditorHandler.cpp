@@ -116,11 +116,13 @@ void ValueEditorHandler::updateEditorValue()
         comboBox->clear();
         std::vector<std::string> optionList;
         m_entry.getOptions(optionList);
-
+        QStringList qOptionList;
         for (const std::string& option: optionList)
         {
-            comboBox->addItem(QString::fromStdString(option));
+            qOptionList.append(QString::fromStdString(option));
         }
+        comboBox->addItems(qOptionList);
+
         if (m_entry.settings().value(OPTION_ONLY)) {
             comboBox->setInsertPolicy(QComboBox::NoInsert);
         } else {
@@ -129,6 +131,10 @@ void ValueEditorHandler::updateEditorValue()
 
         std::string str;
         m_entry.getValue(str);
+        QString qStr = QString::fromStdString(str);
+        if (!qOptionList.contains(qStr)) {
+            comboBox->addItem(qStr);
+        }
         comboBox->setCurrentText(QString::fromStdString(str));
         return;
     }
