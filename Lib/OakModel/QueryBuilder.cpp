@@ -15,6 +15,8 @@
 #include "ItemQuerySiblings.h"
 #include "EntryQuery.h"
 
+#include "../ServiceFunctions/Trace.h"
+
 namespace Oak {
 namespace Model {
 
@@ -34,43 +36,61 @@ ItemQueryUPtr QueryBuilder::UPtr()
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::ValueUPtr(const std::string &entryName)
+EntryQuerySPtr QueryBuilder::EntryUPtr(const std::string &entryName)
 {
     return EntryQuery::create(std::move(m_itemQuery), entryName);
 }
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::children(const std::string &nodeName)
+QueryBuilderSPtr QueryBuilder::children(const std::string &nodeName, bool invertOrder)
 {
     if (m_itemQuery) {
-        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQueryChildren(nodeName)));
+        if (invertOrder) {
+            ItemQueryUPtr tempQuery = std::make_unique<ItemQueryChildren>(nodeName);
+            tempQuery->addChildQuery(std::move(m_itemQuery));
+            m_itemQuery = std::move(tempQuery);
+        } else {
+            m_itemQuery->addChildQuery(std::make_unique<ItemQueryChildren>(nodeName));
+        }
     } else {
-        m_itemQuery = ItemQueryUPtr(new ItemQueryChildren(nodeName));
+        m_itemQuery = std::make_unique<ItemQueryChildren>(nodeName);
     }
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::parent()
+QueryBuilderSPtr QueryBuilder::parent(bool invertOrder)
 {
     if (m_itemQuery) {
-        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQueryParent()));
+        if (invertOrder) {
+            ItemQueryUPtr tempQuery = std::make_unique<ItemQueryParent>();
+            tempQuery->addChildQuery(std::move(m_itemQuery));
+            m_itemQuery = std::move(tempQuery);
+        } else {
+            m_itemQuery->addChildQuery(std::make_unique<ItemQueryParent>());
+        }
     } else {
-        m_itemQuery = ItemQueryUPtr(new ItemQueryParent());
+        m_itemQuery = std::make_unique<ItemQueryParent>();
     }
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::siblings()
+QueryBuilderSPtr QueryBuilder::siblings(bool invertOrder)
 {
     if (m_itemQuery) {
-        m_itemQuery->addChildQuery(ItemQueryUPtr(new ItemQuerySiblings()));
+        if (invertOrder) {
+            ItemQueryUPtr tempQuery = std::make_unique<ItemQuerySiblings>();
+            tempQuery->addChildQuery(std::move(m_itemQuery));
+            m_itemQuery = std::move(tempQuery);
+        } else {
+            m_itemQuery->addChildQuery(std::make_unique<ItemQuerySiblings>());
+        }
     } else {
-        m_itemQuery = ItemQueryUPtr(new ItemQuerySiblings());
+        m_itemQuery = std::make_unique<ItemQuerySiblings>();
     }
     return m_thisWPtr.lock();
 }
@@ -79,7 +99,7 @@ QueryBuilderSPtr QueryBuilder::siblings()
 // (public)
 QueryBuilderSPtr QueryBuilder::createChildren(const std::string &nodeName)
 {
-    QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
+    QueryBuilderSPtr sPtr = std::make_shared<QueryBuilder>();
     sPtr->children(nodeName);
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
@@ -89,7 +109,7 @@ QueryBuilderSPtr QueryBuilder::createChildren(const std::string &nodeName)
 // (public)
 QueryBuilderSPtr QueryBuilder::createParent()
 {
-    QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
+    QueryBuilderSPtr sPtr = std::make_shared<QueryBuilder>();
     sPtr->parent();
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
@@ -99,9 +119,41 @@ QueryBuilderSPtr QueryBuilder::createParent()
 // (public)
 QueryBuilderSPtr QueryBuilder::createSiblings()
 {
-    QueryBuilderSPtr sPtr = QueryBuilderSPtr(new QueryBuilder());
+    QueryBuilderSPtr sPtr = std::make_shared<QueryBuilder>();
     sPtr->siblings();
     sPtr->m_thisWPtr = sPtr;
+    return sPtr;
+}
+
+// =============================================================================
+// (public)
+QueryBuilderSPtr QueryBuilder::createInverse(const ItemQuery &query, const NodeDef *sourceNodeDef)
+{
+    ASSERT(sourceNodeDef);
+    QueryBuilderSPtr sPtr = std::make_shared<QueryBuilder>();
+    sPtr->m_thisWPtr = sPtr;
+
+    const ItemQuery * q = &query;
+    const NodeDef *nodeDef = sourceNodeDef;
+
+    while (q != nullptr) {
+        const ItemQueryChildren * itemQueryChildren = dynamic_cast<const ItemQueryChildren *>(q);
+        if (itemQueryChildren) {
+            sPtr->parent(true);
+        }
+        const ItemQueryParent * itemQueryParent = dynamic_cast<const ItemQueryParent *>(q);
+        if (itemQueryParent) {
+            sPtr->children(nodeDef->name(), true);
+        }
+        const ItemQuerySiblings * itemQuerySiblings = dynamic_cast<const ItemQuerySiblings *>(q);
+        if (itemQuerySiblings) {
+            sPtr->siblings(true);
+        }
+
+        nodeDef = q->_nodeDef(nodeDef);
+        q = q->childQuery();
+    }
+
     return sPtr;
 }
 
@@ -117,21 +169,21 @@ EntryQuerySPtr QueryBuilder::createEntry(const std::string &entryName)
 ItemQueryUPtr QueryBuilder::duplicate(const ItemQueryUPtr &c)
 {
     {
-        ItemQueryChildren * itemQuery = dynamic_cast<ItemQueryChildren * >(c.get());
+        const ItemQueryChildren * itemQuery = dynamic_cast<const ItemQueryChildren * >(c.get());
         if (itemQuery) {
             return ItemQueryUPtr(new ItemQueryChildren(*itemQuery));
         }
     }
 
     {
-        ItemQueryParent * itemQuery = dynamic_cast<ItemQueryParent * >(c.get());
+        const ItemQueryParent * itemQuery = dynamic_cast<const ItemQueryParent * >(c.get());
         if (itemQuery) {
             return ItemQueryUPtr(new ItemQueryParent(*itemQuery));
         }
     }
 
     {
-        ItemQuerySiblings * itemQuery = dynamic_cast<ItemQuerySiblings * >(c.get());
+        const ItemQuerySiblings * itemQuery = dynamic_cast<const ItemQuerySiblings * >(c.get());
         if (itemQuery) {
             return ItemQueryUPtr(new ItemQuerySiblings(*itemQuery));
         }

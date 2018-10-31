@@ -31,6 +31,8 @@ protected:
     virtual Item next(const Item &refItem, const Item &cItem) const override;
     virtual Item previous(const Item &refItem, const Item &cItem) const override;
 
+    virtual const NodeDef * _nodeDef(const NodeDef *nDef) const;
+
 protected:
     mutable Item m_parent;
 };

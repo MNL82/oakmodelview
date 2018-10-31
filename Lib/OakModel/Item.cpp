@@ -723,7 +723,7 @@ void Item::updateUniqueValues(Item item)
             vIt->settings().value(UNIQUE) > 0 &&
             vIt->hasDefaultValue()) {
 
-            std::vector<std::string> valueList = QB::createParent()->children(item.def()->name())->ValueUPtr(vIt->name())->toValueList<std::string>(item);
+            std::vector<std::string> valueList = QB::createParent()->children(item.def()->name())->EntryUPtr(vIt->name())->toValueList<std::string>(item);
             std::string value = vIt->value<std::string>();
             if (count(valueList, value) == 1) {
                 return;

@@ -34,7 +34,7 @@ public:
     std::vector<Item> itemList(const Item &refItem);
 
     bool hasChildQuery() const;
-    ItemQuery *childQuery();
+    const ItemQuery *childQuery() const;
 
     const NodeDef * nodeDef(const NodeDef *nDef) const;
 

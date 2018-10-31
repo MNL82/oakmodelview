@@ -83,7 +83,7 @@ Item ItemQuery::previous(const Item &refItem, const Item &cItem) const
 
 // =============================================================================
 // (public)
-ItemQuery *ItemQuery::childQuery()
+const ItemQuery *ItemQuery::childQuery() const
 {
     return m_childQueryUPtr.get();
 }

@@ -24,20 +24,20 @@ typedef std::weak_ptr<QueryBuilder> QueryBuilderWPtr;
 // =============================================================================
 class QueryBuilder
 {
-protected:
-    QueryBuilder();
-
 public:
+    QueryBuilder();
     ItemQueryUPtr UPtr();
-    EntryQuerySPtr ValueUPtr(const std::string &entryName);
+    EntryQuerySPtr EntryUPtr(const std::string &entryName);
 
-    QueryBuilderSPtr children(const std::string &nodeName);
-    QueryBuilderSPtr parent();
-    QueryBuilderSPtr siblings();
+    QueryBuilderSPtr children(const std::string &nodeName, bool invertOrder = false);
+    QueryBuilderSPtr parent(bool invertOrder = false);
+    QueryBuilderSPtr siblings(bool invertOrder = false);
 
     static QueryBuilderSPtr createChildren(const std::string &nodeName);
     static QueryBuilderSPtr createParent();
     static QueryBuilderSPtr createSiblings();
+
+    static QueryBuilderSPtr createInverse(const ItemQuery &query, const NodeDef *sourceNodeDef);
 
     static EntryQuerySPtr createEntry(const std::string &entryName);
 

@@ -1,5 +1,7 @@
 #include "ItemQuerySiblings.h"
 
+#include "../ServiceFunctions/Trace.h"
+
 namespace Oak {
 namespace Model {
 
@@ -79,6 +81,18 @@ Item ItemQuerySiblings::previous(const Item &refItem, const Item &cItem) const
     } else {
         return sibling;
     }
+}
+
+// =============================================================================
+// (protected)
+const NodeDef *ItemQuerySiblings::_nodeDef(const NodeDef *nDef) const
+{
+    // TODO: Node can have multiple parents! Fix this...
+    ASSERT(nDef);
+    ASSERT(nDef->parentContainerCount() == 1); // Do not work unleass there are only one parent container
+
+    // Return the container derived base class
+    return nDef->parentContainer(0)->containerDef();
 }
 
 } // namespace Model

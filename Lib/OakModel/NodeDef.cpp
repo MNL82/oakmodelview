@@ -1029,7 +1029,7 @@ void NodeDef::onNodeInserted(Node _node) const
         if (vDef->settings().value(REQUIRED) > 0 &&
             vDef->settings().value(UNIQUE) > 0) {
 
-            std::vector<std::string> valueList = QB::createSiblings()->ValueUPtr(vDef->name())->toValueList<std::string>(item);
+            std::vector<std::string> valueList = QB::createSiblings()->EntryUPtr(vDef->name())->toValueList<std::string>(item);
             if (vDef->options().isUsed() && vDef->settings().value(OPTION_ONLY)) {
                 std::vector<std::string> optionList;
                 if (vDef->options().getOptions(optionList, &item)) {
