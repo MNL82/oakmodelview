@@ -22,6 +22,9 @@ class NodeDef;
 class ValueDef;
 class ItemIndex;
 
+class EntryQuery;
+typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
@@ -34,12 +37,20 @@ public:
     virtual void disconnect() override;
 
 protected:
+    void onItemInserteAfter(const ItemIndex& itemIndex);
+    void onItemMoveAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex);
+    void onItemMoveBefore(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex);
+    void onItemCloneAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex);
+
+    void onItemRemoveBefore(const ItemIndex& itemIndex);
+
     void onEntryChangeBefore(const ItemIndex& itemIndex, const std::string &valueName);
     void onEntryChangeAfter(const ItemIndex& itemIndex, const std::string &valueName);
 
 protected:
     const NodeDef *m_optionsNodeDef;
     const ValueDef *m_optionsValueDef;
+    EntryQuerySPtr m_inverseQuery;
 
     const NodeDef *m_sourceNodeDef;
     std::string m_sourceValueName;

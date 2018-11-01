@@ -35,12 +35,24 @@ OptionsObserver::OptionsObserver(OakModel *model, const NodeDef *optionsNodeDef,
     const EntryQuery *query = m_optionsValueDef->options().query();
     m_sourceNodeDef = query->itemQuery().nodeDef(m_optionsNodeDef);
     m_sourceValueName = query->valueName();
+
+    // Create an inverse query that points from the option values to the entry where there can be chosen
+    m_inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->EntryUPtr(m_optionsValueDef->name());
+
+
 }
 
 // =============================================================================
 // (public)
 void OptionsObserver::connect()
 {
+    m_model->notifier_itemInserteAfter.add(this, &OptionsObserver::onItemInserteAfter);
+    m_model->notifier_itemMoveBefore.add(this, &OptionsObserver::onItemMoveBefore);
+    m_model->notifier_itemMoveAfter.add(this, &OptionsObserver::onItemMoveAfter);
+    m_model->notifier_itemCloneAfter.add(this, &OptionsObserver::onItemCloneAfter);
+
+    m_model->notifier_itemRemoveBefore.add(this, &OptionsObserver::onItemRemoveBefore);
+
     m_model->notifier_entryChangeBefore.add(this, &OptionsObserver::onEntryChangeBefore);
     m_model->notifier_entryChangeAfter.add(this, &OptionsObserver::onEntryChangeAfter);
 }
@@ -49,12 +61,54 @@ void OptionsObserver::connect()
 // (public)
 void OptionsObserver::disconnect()
 {
+    m_model->notifier_itemInserteAfter.remove(this);
+    m_model->notifier_itemMoveBefore.remove(this);
+    m_model->notifier_itemMoveAfter.remove(this);
+    m_model->notifier_itemCloneAfter.remove(this);
+
+    m_model->notifier_itemRemoveBefore.remove(this);
+
     m_model->notifier_entryChangeBefore.remove(this);
     m_model->notifier_entryChangeAfter.remove(this);
 }
 
 // =============================================================================
-// (public)
+// (protected)
+void OptionsObserver::onItemInserteAfter(const ItemIndex &itemIndex)
+{
+
+}
+
+// =============================================================================
+// (protected)
+void OptionsObserver::onItemMoveAfter(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex)
+{
+
+}
+
+// =============================================================================
+// (protected)
+void OptionsObserver::onItemMoveBefore(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex)
+{
+
+}
+
+// =============================================================================
+// (protected)
+void OptionsObserver::onItemCloneAfter(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex)
+{
+
+}
+
+// =============================================================================
+// (protected)
+void OptionsObserver::onItemRemoveBefore(const ItemIndex &itemIndex)
+{
+
+}
+
+// =============================================================================
+// (protected)
 void OptionsObserver::onEntryChangeBefore(const ItemIndex &itemIndex, const std::string &valueName)
 {
     // If not valid return as fast as possible
@@ -67,7 +121,7 @@ void OptionsObserver::onEntryChangeBefore(const ItemIndex &itemIndex, const std:
 }
 
 // =============================================================================
-// (public)
+// (protected)
 void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::string &valueName)
 {
     // If not valid return as fast as possible
@@ -76,19 +130,12 @@ void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::
     if (m_sourceNodeDef->name() != itemIndex.lastItemIndex().name()) { return; }
 
     Item sourceItem = itemIndex.item(m_model->rootItem());
-
     UnionValue newValue = sourceItem.entry(valueName).value();
 
     if (m_valueBeforeChange == newValue) { return; }
 
-    // Get the query used to find the option list
-    const EntryQuery *query = m_optionsValueDef->options().query();
-
-    // Create an inverse query that points from the option values to the entry where there can be chosen
-    EntryQuerySPtr inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->EntryUPtr(m_optionsValueDef->name());
-
     // Loop though all the entries where the option have been used
-    auto it = inverseQuery->iterator(sourceItem);
+    auto it = m_inverseQuery->iterator(sourceItem);
     while (it->next()) {
         UnionValue value = it->entry().value();
         if (value == m_valueBeforeChange) {
