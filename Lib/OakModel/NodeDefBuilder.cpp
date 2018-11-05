@@ -42,7 +42,7 @@ NodeDefBuilder::NodeDefBuilder(NodeDefSPtr derivedBaseNode, const UnionRef &deri
     ASSERT(!derivedBaseNode->derivedId().isNull());
 
     // The derivedId's have to be unique
-    ASSERT(!derivedBaseNode->validateForAny(derivedId));
+    ASSERT(!derivedBaseNode->validateAny(derivedId));
 
     // DerivedId's of derived definitions have to be of the same derivedId type
     ASSERT(derivedBaseNode->derivedId().type() == UnionValue::GetType(derivedId));
@@ -175,8 +175,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr val
     ASSERT(!m_nodeDef->hasDerivedBase());
 
     //
-    std::vector<UnionRef> optionList;
-    m_nodeDef->derivedIdListAll(optionList);
+    std::vector<UnionRef> optionList = m_nodeDef->derivedIdListAll();
     valueDefDerivedId->setOptionsStatic(optionList);
     valueDefDerivedId->setSetting("OptionsOnly", true);
     if (!valueDefDerivedId->valueDef().hasDefaultValue()) {

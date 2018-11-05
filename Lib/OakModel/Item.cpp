@@ -40,7 +40,7 @@ Item::Item(const NodeDef* nodeDef, Node node, const OakModel* model)
     if (nodeDef == nullptr || node.isNull()) {
         m_def = nodeDef;
     } else {
-        m_def = nodeDef->getDerivedOrThis(node);
+        m_def = nodeDef->validDerived(node);
     }
 }
 

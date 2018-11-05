@@ -243,7 +243,7 @@ const NodeDef* OakModel::findNodeDef(Node node) const
     if (m_rootItem.isDefNull() || node.isNull()) { return nullptr; }
 
     // Check if the root definition match
-    const NodeDef* def = m_rootItem.def()->getDerivedAny(node);
+    const NodeDef* def = m_rootItem.def()->validDerivedAny(node);
     if (def) { return def; }
 
     std::list<const NodeDef*> defList;

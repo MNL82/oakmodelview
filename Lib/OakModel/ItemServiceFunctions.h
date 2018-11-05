@@ -23,8 +23,5 @@ typedef std::pair<const NodeDef *, const ValueDef *> NodeValueDefPair;
 // =============================================================================
 void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryList, std::vector<NodeValueDefPair> &queryExcludedList, bool recursive = false);
 
-void getValueDefList(std::vector<const ValueDef*>& vList, const NodeDef *def);
-void getChildNodeDefList(std::vector<const NodeDef*>& cList, const NodeDef *def);
-
 } // namespace Model
 } // namespace Oak

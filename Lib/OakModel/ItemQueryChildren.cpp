@@ -254,7 +254,7 @@ Item ItemQueryChildren::previous(const Item &refItem, const Item &cItem) const
 const NodeDef *ItemQueryChildren::_nodeDef(const NodeDef *nDef) const
 {
     if (nDef == nullptr) { return nullptr; }
-    return nDef->childDef(m_nodeName, true);
+    return nDef->childDef(m_nodeName, true, true);
 }
 
 } // namespace Model

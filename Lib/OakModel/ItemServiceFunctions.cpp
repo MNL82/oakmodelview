@@ -19,8 +19,7 @@ namespace Model {
 // (public)
 void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryList, std::vector<NodeValueDefPair> &queryExcludedList, bool recursive)
 {
-    std::vector<const ValueDef *> valueDefList;
-    getValueDefList(valueDefList, def);
+    std::vector<const ValueDef *> valueDefList = def->valueList(true, true);
 
     for (const ValueDef *vDef: valueDefList) {
         //TRACE(L"Searching %S:%S", def->displayName().c_str(), vDef->displayName().c_str());
@@ -33,44 +32,12 @@ void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryL
     }
 
     if (recursive) {
-        std::vector<const NodeDef *> childNodeDefList;
-        getChildNodeDefList(childNodeDefList, def);
+        std::vector<const NodeDef *> childNodeDefList = def->childDefList(true, true);
+
         for (const NodeDef *cDef: childNodeDefList)
         {
             findOptionQueries(cDef, queryList, queryExcludedList, recursive);
         }
-    }
-}
-
-// =============================================================================
-// (public)
-void getValueDefList(std::vector<const ValueDef *> &vList, const NodeDef *def)
-{
-    //TRACE(L"Values from: %S", def->displayName().c_str());
-    def->getValueList(vList, true);
-
-    std::vector<const NodeDef*> dList;
-    def->getDerivedList(dList, true);
-    for (const NodeDef *dDef: dList)
-    {
-        //TRACE(L"Values from derived: %S", dDef->displayName().c_str());
-        dDef->getValueList(vList, false);
-    }
-}
-
-// =============================================================================
-// (public)
-void getChildNodeDefList(std::vector<const NodeDef *> &cList, const NodeDef *def)
-{
-    //TRACE(L"Children from: %S", def->displayName().c_str());
-    def->getChildDefList(cList, true);
-
-    std::vector<const NodeDef*> dList;
-    def->getDerivedList(dList, true);
-    for (const NodeDef *dDef: dList)
-    {
-        //TRACE(L"Children from derived: %S", dDef->displayName().c_str());
-        dDef->getChildDefList(cList, false);
     }
 }
 

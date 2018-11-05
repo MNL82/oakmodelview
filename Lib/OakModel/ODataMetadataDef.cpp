@@ -30,7 +30,7 @@ ODataMetadataDef::ODataMetadataDef()
 // (protected)
 void ODataMetadataDef::createModelDesign()
 {
-    auto edmx = NDB::use(this->sPtr())
+    auto edmx = NDB::use(m_thisWPtr.lock())
         ->setDisplayName("Edmx")
         ->addValueDef(VDB::create(UnionType::String, "Version")
             ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Version")))
@@ -136,7 +136,7 @@ NodeDefSPtr ODataMetadataDef::MakeSPtr()
 {
 
     ODataMetadataDefSPtr sPtr(new ODataMetadataDef());
-    sPtr->setWPtr(sPtr);
+    sPtr->m_thisWPtr = sPtr;
     sPtr->createModelDesign();
     return sPtr;
 }

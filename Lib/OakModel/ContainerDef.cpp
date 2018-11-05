@@ -116,20 +116,24 @@ const NodeDef* ContainerDef::containerDef() const
 // (public)
 const NodeDef* ContainerDef::containerDef(const UnionRef &derivedId) const
 {
+    if (!m_containerDef) { return nullptr; }
+
     if (derivedId.isNull() || derivedId.isEqual(m_containerDef->derivedId())) {
         return m_containerDef.get();
     }
-    return m_containerDef->getDerived(derivedId);
+    return m_containerDef->validDerived(derivedId);
 }
 
 // =============================================================================
 // (public)
 const NodeDef* ContainerDef::containerDef(Node _node) const
 {
-    if (m_containerDef->validateForThis(_node)) {
+    if (!m_containerDef) { return nullptr; }
+
+    if (m_containerDef->validate(_node)) {
         return m_containerDef.get();
     }
-    return m_containerDef->getDerived(_node);
+    return m_containerDef->validDerived(_node);
 }
 
 // =============================================================================
@@ -143,7 +147,7 @@ bool ContainerDef::validate(Node _node) const
     case Node::Type::XML: {
         if (!m_containerDef) { return false; }
         if (_node.xmlNode().compareTagName(containerDef()->tagName()) != 0) { return false; }
-        return m_containerDef->validateForThisOrDerived(_node);
+        return m_containerDef->validate(_node, false, true);
     }
 #endif // XML_BACKEND
     default:
@@ -411,7 +415,7 @@ bool ContainerDef::canCloneNode(Node _node, int &index, Node cloneNode) const
     if (isNull()) { return false; }
 
     // Check that clone node is valid
-    if (!m_containerDef->validateForAny(cloneNode)) { return false; }
+    if (!m_containerDef->validateAny(cloneNode)) { return false; }
 
     // Check if 'cloneNode' is parent(recursive) of 'node'
     // Can not clone it selv into it selv

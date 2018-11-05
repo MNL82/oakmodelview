@@ -64,7 +64,7 @@ QWidget* NodeEditorHandler::getEditor()
 // (public)
 bool NodeEditorHandler::setNode(Model::Node node)
 {
-    if (!m_item.def()->validateForThis(node)) { return false; }
+    if (!m_item.def()->validate(node)) { return false; }
 
     m_item = Model::Item(m_item.def(), node, m_item.model());
 

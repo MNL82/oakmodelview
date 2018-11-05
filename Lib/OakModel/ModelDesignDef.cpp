@@ -106,7 +106,7 @@ void ModelDesignDef::createModelDesign()
     NodeDef->addContainerDef(CDB::create(ContainerDef));
 
     // Add the node definition to the Model design definition
-    NDB::use(sPtr())->addContainerDef(CDB::create(NodeDef));
+    NDB::use(m_thisWPtr.lock())->addContainerDef(CDB::create(NodeDef));
 }
 
 // =============================================================================
@@ -114,7 +114,8 @@ void ModelDesignDef::createModelDesign()
 NodeDefSPtr ModelDesignDef::MakeSPtr()
 {
     ModelDesignDefSPtr sPtr(new ModelDesignDef());
-    sPtr->setWPtr(sPtr);
+    sPtr->m_thisWPtr = sPtr;
+    //sPtr->setWPtr(sPtr);
     sPtr->createModelDesign();
     return sPtr;
 }
