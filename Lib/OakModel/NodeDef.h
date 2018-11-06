@@ -115,9 +115,6 @@ public:
     std::vector<UnionRef> derivedIdList(bool includeBase = false, bool includeDerived = false) const;
     void getDerivedIdList(std::vector<UnionRef> &idList, bool includeBase = false, bool includeDerived = false) const;
 
-    std::vector<UnionRef> derivedIdListAll() const;
-    void getDerivedIdListAll(std::vector<UnionRef> &idList) const;
-
     inline bool hasDerivedBase() const          { return !m_derivedBase.expired(); }
     inline bool hasDerivedDiviations() const    { return !m_derivedDirectList.empty(); }
     inline bool hasDiviations() const           { return hasDerivedBase() || hasDerivedDiviations(); }
@@ -129,15 +126,8 @@ public:
     virtual const NodeDef* validDerived(const UnionRef& derivedId, bool includeBase = false, bool includeDerived = true) const;
     virtual const NodeDef* validDerived(Node node, bool includeBase = false, bool includeDerived = true) const;
 
-    // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns nullptr.
-    virtual const NodeDef* validDerivedAny(const UnionRef &derivedId) const;
-    virtual const NodeDef* validDerivedAny(Node node) const;
-
     std::vector<const NodeDef *> derivedList(bool includeBase = false, bool includeDerived = false) const;
     void getDerivedList(std::vector<const NodeDef *> &dList, bool includeBase = false, bool includeDerived = false) const;
-
-    std::vector<const NodeDef *> derivedListAll() const;
-    void getDerivedListAll(std::vector<const NodeDef *> &idList) const;
 
 protected:
     UnionValue m_derivedId;
@@ -152,8 +142,6 @@ protected:
 public:
     virtual bool validate(const UnionRef& derivedId, bool includeBase = false, bool includeDerived = false) const;
     virtual bool validate(Node _node, bool includeBase = false, bool includeDerived = false) const;
-    virtual bool validateAny(const UnionRef& derivedId) const;
-    virtual bool validateAny(Node _node) const;
 
     virtual ValidationState validationState(const UnionRef& _derivedId) const;
     virtual ValidationState validationState(Node node) const;

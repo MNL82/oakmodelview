@@ -284,22 +284,6 @@ void NodeDef::getDerivedIdList(std::vector<UnionRef> &idList, bool includeBase, 
 
 // =============================================================================
 // (public)
-std::vector<UnionRef> NodeDef::derivedIdListAll() const
-{
-    std::vector<UnionRef> idList;
-    getDerivedIdListAll(idList);
-    return idList;
-}
-
-// =============================================================================
-// (public)
-void NodeDef::getDerivedIdListAll(std::vector<UnionRef> &idList) const
-{
-    derivedRoot()->getDerivedIdList(idList, false, true);
-}
-
-// =============================================================================
-// (public)
 const NodeDef* NodeDef::derivedRoot() const
 {
     if (hasDerivedBase()) {
@@ -372,20 +356,6 @@ const NodeDef *NodeDef::validDerived(Node node, bool includeBase, bool includeDe
 
 // =============================================================================
 // (public)
-const NodeDef *NodeDef::validDerivedAny(const UnionRef &derivedId) const
-{
-    return derivedRoot()->validDerived(derivedId, false, true);
-}
-
-// =============================================================================
-// (public)
-const NodeDef *NodeDef::validDerivedAny(Node node) const
-{
-    return derivedRoot()->validDerived(node, false, true);
-}
-
-// =============================================================================
-// (public)
 std::vector<const NodeDef *> NodeDef::derivedList(bool includeBase, bool includeDerived) const
 {
     std::vector<const NodeDef *> dList;
@@ -409,22 +379,6 @@ void NodeDef::getDerivedList(std::vector<const NodeDef *> &dList, bool includeBa
             dNodeDef->getDerivedList(dList, false, true);
         }
     }
-}
-
-// =============================================================================
-// (public)
-std::vector<const NodeDef *> NodeDef::derivedListAll() const
-{
-    std::vector<const NodeDef *> dList;
-    getDerivedListAll(dList);
-    return dList;
-}
-
-// =============================================================================
-// (public)
-void NodeDef::getDerivedListAll(std::vector<const NodeDef *> &dList) const
-{
-    derivedRoot()->getDerivedList(dList, false, true);
 }
 
 // =============================================================================
@@ -494,20 +448,6 @@ bool NodeDef::validate(Node _node, bool includeBase, bool includeDerived) const
 
 // =============================================================================
 // (public)
-bool NodeDef::validateAny(const UnionRef &derivedId) const
-{
-    return derivedRoot()->validate(derivedId, false, true);
-}
-
-// =============================================================================
-// (public)
-bool NodeDef::validateAny(Node _node) const
-{
-    return derivedRoot()->validate(_node, false, true);
-}
-
-// =============================================================================
-// (public)
 ValidationState NodeDef::validationState(const UnionRef &_derivedId) const
 {
     if (validate(_derivedId, false, false)) {
@@ -522,7 +462,7 @@ ValidationState NodeDef::validationState(const UnionRef &_derivedId) const
         return VALIDATION_STATE_VALID_SIBLING_DERIVED;
     }
 
-    if (hasDerivedBase() && validateAny(_derivedId)) {
+    if (hasDerivedBase() && derivedRoot()->validate(_derivedId, false, true)) {
         return VALIDATION_STATE_VALID_SIBLING_OTHER;
     }
     return VALIDATION_STATE_INVALID;
@@ -532,7 +472,7 @@ ValidationState NodeDef::validationState(const UnionRef &_derivedId) const
 // (public)
 ValidationState NodeDef::validationState(Node node) const
 {
-    if (!validateAny(node)) {
+    if (!derivedRoot()->validate(node, false, true)) {
         return VALIDATION_STATE_INVALID;
     }
 

@@ -415,7 +415,7 @@ bool ContainerDef::canCloneNode(Node _node, int &index, Node cloneNode) const
     if (isNull()) { return false; }
 
     // Check that clone node is valid
-    if (!m_containerDef->validateAny(cloneNode)) { return false; }
+    if (!m_containerDef->validate(cloneNode, false, true)) { return false; }
 
     // Check if 'cloneNode' is parent(recursive) of 'node'
     // Can not clone it selv into it selv
