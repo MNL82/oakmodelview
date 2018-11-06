@@ -114,14 +114,14 @@ const NodeDef* ContainerDef::containerDef() const
 
 // =============================================================================
 // (public)
-const NodeDef* ContainerDef::containerDef(const UnionRef &derivedId) const
+const NodeDef* ContainerDef::containerDef(const UnionRef &variantId) const
 {
     if (!m_containerDef) { return nullptr; }
 
-    if (derivedId.isNull() || derivedId.isEqual(m_containerDef->derivedId())) {
+    if (variantId.isNull() || variantId.isEqual(m_containerDef->variantId())) {
         return m_containerDef.get();
     }
-    return m_containerDef->validDerived(derivedId);
+    return m_containerDef->validVariant(variantId);
 }
 
 // =============================================================================
@@ -133,7 +133,7 @@ const NodeDef* ContainerDef::containerDef(Node _node) const
     if (m_containerDef->validate(_node)) {
         return m_containerDef.get();
     }
-    return m_containerDef->validDerived(_node);
+    return m_containerDef->validVariant(_node);
 }
 
 // =============================================================================

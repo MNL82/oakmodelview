@@ -30,21 +30,21 @@ class NodeDefBuilder
 {
 protected:
     NodeDefBuilder(const std::string &name);
-    NodeDefBuilder(const std::string &name, const UnionRef &derivedId);
-    NodeDefBuilder(NodeDefSPtr derivedBaseNode, const UnionRef &derivedId);
+    NodeDefBuilder(const std::string &name, const UnionRef &variantId);
+    NodeDefBuilder(NodeDefSPtr variantRoot, const UnionRef &variantId);
     NodeDefBuilder(NodeDefSPtr nodeDef);
 
 public:
     static NodeDefBuilderSPtr create(const std::string &name);
-    static NodeDefBuilderSPtr createInheritanceRoot(const std::string &name, const UnionRef &derivedId);
-    static NodeDefBuilderSPtr createInheritancDerived(NodeDefBuilderSPtr derivedBaseNode, const UnionRef &derivedId);
+    static NodeDefBuilderSPtr createVariantRoot(const std::string &name, const UnionRef &variantId);
+    static NodeDefBuilderSPtr createVariant(NodeDefBuilderSPtr variantRoot, const UnionRef &variantId);
     static NodeDefBuilderSPtr use(NodeDefSPtr nodeDef);
 
     NodeDefSPtr get();
 
     NodeDefBuilderSPtr addValueDef(ValueDefBuilderSPtr valueDef);
     NodeDefBuilderSPtr addValueKey(ValueDefBuilderSPtr valueDefKey);
-    NodeDefBuilderSPtr addValueInheritanceId(ValueDefBuilderSPtr valueDefDerivedId);
+    NodeDefBuilderSPtr addValueInheritanceId(ValueDefBuilderSPtr variantValueDef);
 
     NodeDefBuilderSPtr addContainerDef(ContainerDefBuilderSPtr cDef);
 
@@ -62,20 +62,12 @@ public:
 
 protected:
     // ************* SERVICE FUNCTIONS *************
-    // Check if the ValueDef will conflict with any other ValueDef
-    static bool hasValueI(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr &valueDef);
-    static bool hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr &valueDef);
-
-    // Set the keyValue or derivedIdValue on the whole existing inheritance heiracky
-    static void setKeyValueThisAndDerived(NodeDefSPtr nodeDef, int index);
-    static void setDerivedIdValueThisAndDerived(NodeDefSPtr nodeDef, int index);
-
-    // Check if the ValueDef will conflict with any other ValueDef
-    static bool hasContainerI(NodeDefSPtr nodeDef, const ContainerDef &cDef);
-    static bool hasContainerIThisAndDerived(NodeDefSPtr nodeDef, const ContainerDef& cDef);
+    // Set the keyValueDef or variantValueDef on all variants in the inheritance heiracky
+    static void setKeyValueDefForAllVariants(NodeDefSPtr nodeDef, int index);
+    static void setVariantValueDefForAllVariants(NodeDefSPtr nodeDef, int index);
 
 #ifdef XML_BACKEND
-    static void setTagNameThisAndDerived(NodeDefSPtr nodeDef, const std::string& tagName);
+    static void setTagNameForAllVariants(NodeDefSPtr nodeDef, const std::string& tagName);
 #endif // XML_BACKEND
 
 private:

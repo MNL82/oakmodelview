@@ -46,9 +46,9 @@ typedef std::weak_ptr<NodeDef> NodeDefWPtr;
 enum ValidationState {
     VALIDATION_STATE_INVALID = -1,
     VALIDATION_STATE_VALID = 0,
-    VALIDATION_STATE_VALID_SIBLING_BASE = 1,
-    VALIDATION_STATE_VALID_SIBLING_DERIVED = 2,
-    VALIDATION_STATE_VALID_SIBLING_OTHER = 3
+    VALIDATION_STATE_VALID_BASE = 1,
+    VALIDATION_STATE_VALID_DERIVED = 2,
+    VALIDATION_STATE_VALID_OTHER = 3
 };
 
 // =============================================================================
@@ -58,7 +58,7 @@ class NodeDef
 {
 protected:
     NodeDef(const std::string& _name);
-    NodeDef(const std::string& _name, const UnionRef& _derivedId);
+    NodeDef(const std::string& _name, const UnionRef& _variantId);
 
 public:
     virtual ~NodeDef();
@@ -105,34 +105,34 @@ protected:
 // Node definition inheritance functionality
 // *****************************************************************************
 public:
-    /// 'NodeDefs' can be part of an inheritance hieraki with derived and base nodes in a tree like structure.
-    /// All 'NodeDef's in the same hieraki will have the same 'name' but different 'derivedId'.
+    /// 'NodeDefs' can a variant of an inheritance hieraki with derived and base nodes in a tree like structure.
+    /// All 'NodeDef' variants in the same hieraki will have the same 'name' but different 'variantId'.
     /// Derived 'NodeDef's will inherate all 'ValueDef's and "ContainerDef's of its base 'NodeDef'.
-    /// The 'derivedId' of a node is stored as a 'ValueDef' belonging to the derivedRoot so all 'NodeDef's
-    /// of the inheritance hieraki will have the value.
-    const UnionRef derivedId() const;
+    /// The 'variantId' of a node is accessed with a 'ValueDef' belonging to the baseRoot so all 'NodeDef' variants
+    /// of the inheritance hieraki will read the same value.
+    const UnionRef variantId() const;
 
-    std::vector<UnionRef> derivedIdList(bool includeBase = false, bool includeDerived = false) const;
-    void getDerivedIdList(std::vector<UnionRef> &idList, bool includeBase = false, bool includeDerived = false) const;
+    std::vector<UnionRef> variantIdList(bool includeBase = false, bool includeDerived = false) const;
+    void getVariantIdList(std::vector<UnionRef> &idList, bool includeBase = false, bool includeDerived = false) const;
 
-    inline bool hasDerivedBase() const          { return !m_derivedBase.expired(); }
-    inline bool hasDerivedDiviations() const    { return !m_derivedDirectList.empty(); }
-    inline bool hasDiviations() const           { return hasDerivedBase() || hasDerivedDiviations(); }
+    inline bool hasBase() const          { return !m_base.expired(); }
+    inline bool hasDerived() const    { return !m_derivedList.empty(); }
+    inline bool hasVariants() const           { return hasBase() || hasDerived(); }
 
-    inline const NodeDef* derivedBase() const { return m_derivedBase.lock().get(); }
-    const NodeDef* derivedRoot() const;
+    inline const NodeDef* base() const { return m_base.lock().get(); }
+    const NodeDef* baseRoot() const;
 
     // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns nullptr.
-    virtual const NodeDef* validDerived(const UnionRef& derivedId, bool includeBase = false, bool includeDerived = true) const;
-    virtual const NodeDef* validDerived(Node node, bool includeBase = false, bool includeDerived = true) const;
+    virtual const NodeDef* validVariant(const UnionRef& variantId, bool includeBase = false, bool includeDerived = true) const;
+    virtual const NodeDef* validVariant(Node node, bool includeBase = false, bool includeDerived = true) const;
 
-    std::vector<const NodeDef *> derivedList(bool includeBase = false, bool includeDerived = false) const;
-    void getDerivedList(std::vector<const NodeDef *> &dList, bool includeBase = false, bool includeDerived = false) const;
+    std::vector<const NodeDef *> variantList(bool includeBase = false, bool includeDerived = false) const;
+    void getVariantList(std::vector<const NodeDef *> &vList, bool includeBase = false, bool includeDerived = false) const;
 
 protected:
-    UnionValue m_derivedId;
-    NodeDefWPtr m_derivedBase = NodeDefWPtr();
-    std::vector<NodeDefSPtr> m_derivedDirectList;
+    UnionValue m_variantId;
+    NodeDefWPtr m_base = NodeDefWPtr();
+    std::vector<NodeDefSPtr> m_derivedList;
 // *****************************************************************************
 
 
@@ -140,10 +140,10 @@ protected:
 // Validation of data nodes
 // *****************************************************************************
 public:
-    virtual bool validate(const UnionRef& derivedId, bool includeBase = false, bool includeDerived = false) const;
+    virtual bool validate(const UnionRef& variantId, bool includeBase = false, bool includeDerived = false) const;
     virtual bool validate(Node _node, bool includeBase = false, bool includeDerived = false) const;
 
-    virtual ValidationState validationState(const UnionRef& _derivedId) const;
+    virtual ValidationState validationState(const UnionRef& _variantId) const;
     virtual ValidationState validationState(Node node) const;
 // *****************************************************************************
 
@@ -166,17 +166,16 @@ public:
     bool hasKey() const;
     const ValueDef& keyValueDef() const;
     ValueDef& keyValueDef();
-    int keyValueDefIndex() const { return m_keyValueDefIndex; }
+    int indexOfKeyValueDef() const { return m_indexOfKeyValueDef; }
 
-    bool hasDerivedId() const;
-    const ValueDef &derivedIdValueDef() const;
-    ValueDef &derivedIdValueDef();
-    int derivedIdValueDefIndex() const { return m_derivedIdValueDefIndex; }
+    const ValueDef &variantValueDef() const;
+    ValueDef &variantValueDef();
+    int indexOfVariantValueDef() const { return m_indexOfVariantValueDef; }
 
 protected:
     std::vector<ValueDefUPtr> m_valueList;
-    int m_keyValueDefIndex = -1;
-    int m_derivedIdValueDefIndex = -1;
+    int m_indexOfKeyValueDef = -1;
+    int m_indexOfVariantValueDef = -1;
 // *****************************************************************************
 
 
@@ -185,6 +184,7 @@ protected:
 // *****************************************************************************
 public:
     virtual int containerCount(bool includeBase = true, bool includeDerived = false) const;
+    virtual bool hasContainer(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
     virtual const ContainerDef& container(int index, bool includeBase = true, bool includeDerived = false) const;
     const ContainerDef &container(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
 

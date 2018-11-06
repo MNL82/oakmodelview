@@ -225,9 +225,9 @@ void Entry::onEntryChangeAfter() const
     int index = m_item->entryIndex(*this);
     ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
 
-    if (m_item->def()->derivedIdValueDefIndex() == index) {
+    if (m_item->def()->indexOfVariantValueDef() == index) {
         m_item->model()->onEntryTypeChangeAfter(*iIndex.get());
-    } else if (m_item->def()->keyValueDefIndex() == index) {
+    } else if (m_item->def()->indexOfKeyValueDef() == index) {
         m_item->model()->onEntryKeyChangeAfter(*iIndex.get());
     }
 

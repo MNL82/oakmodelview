@@ -461,7 +461,7 @@ void OakView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 // (protected)
 void OakView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
 {
-    // Child items can change when the derived definition change
+    // Child items can change when the variant definition change
     QTreeWidgetItem* qItem = widgetFromIndex(itemIndex);
     QTreeWidgetItem* qParentItem = qItem->parent();
     int index = qParentItem->indexOfChild(qItem);

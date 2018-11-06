@@ -71,9 +71,9 @@ ContainerGroupDefUPtr ContainerGroupDef::copy() const
 
 // =============================================================================
 // (public)
-const NodeDef* ContainerGroupDef::containerDef(const std::string &name, const UnionRef& derivedId) const
+const NodeDef* ContainerGroupDef::containerDef(const std::string &name, const UnionRef& variantId) const
 {
-    return m_hostDef->container(name).containerDef(derivedId);
+    return m_hostDef->container(name).containerDef(variantId);
 }
 
 // =============================================================================

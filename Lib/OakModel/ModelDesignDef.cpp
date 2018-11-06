@@ -34,7 +34,7 @@ ModelDesignDef::ModelDesignDef()
 void ModelDesignDef::createModelDesign()
 {
     /************************** Node(Standard) **************************/
-    auto NodeDef = NDB::createInheritanceRoot("Node", "Standard")
+    auto NodeDef = NDB::createVariantRoot("Node", "Standard")
         ->setDisplayName("Node")
         ->addValueKey(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Noname"))
@@ -50,7 +50,7 @@ void ModelDesignDef::createModelDesign()
             ->setDisplayName("Node Type"));
 
     /************************** Node(InheritanceRoot) **************************/
-    auto NodeRootDef = NDB::createInheritancDerived(NodeDef, "InheritanceRoot")
+    auto NodeRootDef = NDB::createVariant(NodeDef, "InheritanceRoot")
         ->addValueDef(VDB::create(UnionType::String, "NodeInheritanceId")
             ->setDisplayName("Root Inheritance ID"))
         ->addValueDef(VDB::create(UnionType::String, "InheritanceIDValue")
@@ -60,14 +60,14 @@ void ModelDesignDef::createModelDesign()
             ->setSetting("OptionsOnly", true));
 
     /************************** Node(Rerived) **************************/
-    auto NodeDerivedDef = NDB::createInheritancDerived(NodeDef, "Derived")
-        ->addValueDef(VDB::create(UnionType::String, "NodeInheritanceId")
-            ->setDisplayName("Derived Inheritance ID"))
-        ->addValueDef(VDB::create(UnionType::String, "BaseNode")
+    auto NodeVariantDef = NDB::createVariant(NodeDef, "Variant")
+        ->addValueDef(VDB::create(UnionType::String, "VariantId")
+            ->setDisplayName("Variant ID"))
+        ->addValueDef(VDB::create(UnionType::String, "Base")
             ->setDisplayName("Base Node"));
 
     /************************** Value(String) **************************/
-    auto ValueDef = NDB::createInheritanceRoot("Value", "String")
+    auto ValueDef = NDB::createVariantRoot("Value", "String")
         ->addValueKey(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Value"))
         ->addValueDef(VDB::create(UnionType::String, "DisplayName")
@@ -78,14 +78,14 @@ void ModelDesignDef::createModelDesign()
     NodeDef->addContainerDef(CDB::create(ValueDef));
 
     /************************** Value(Integer) **************************/
-    auto ValueDefInt = NDB::createInheritancDerived(ValueDef, "Integer")
+    auto ValueDefInt = NDB::createVariant(ValueDef, "Integer")
         ->addValueDef(VDB::create(UnionType::Integer, "Min")
             ->setDefaultValue(-std::numeric_limits<int>::max()))
         ->addValueDef(VDB::create(UnionType::Integer, "Max")
             ->setDefaultValue(std::numeric_limits<int>::max()));
 
     /************************** Value(Double) **************************/
-    auto ValueDefReal = NDB::createInheritancDerived(ValueDef, "Real")
+    auto ValueDefReal = NDB::createVariant(ValueDef, "Real")
         ->addValueDef(VDB::create(UnionType::Double, "Min")
             ->setDefaultValue(-std::numeric_limits<double>::max()))
         ->addValueDef(VDB::create(UnionType::Double, "Max")
@@ -94,9 +94,8 @@ void ModelDesignDef::createModelDesign()
     /************************** Container **************************/
     auto ContainerDef = NDB::create("Container")
         ->addValueKey(VDB::create(UnionType::String, "Name")
-            ->setDisplayName("Derived ID Value")
-            ->setOptionsQuery(QB::createParent()->parent()->children("Node")->EntryUPtr("Name"))
-            ->setOptionsExcludedQuery(QB::createSiblings()->EntryUPtr("Name"))
+            ->setDisplayName("Container Node Name")
+            ->setOptionsQuery(QB::createParent()->createSiblings()->EntryUPtr("Name"))
             ->setSetting("OptionsOnly", true))
         ->addValueDef(VDB::create(UnionType::Integer, "Min")
             ->setDefaultValue(0))

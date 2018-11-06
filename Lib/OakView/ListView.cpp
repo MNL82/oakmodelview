@@ -291,7 +291,7 @@ void ListView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 // (protected)
 void ListView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
 {
-    // Child items can change when the derived definition change
+    // Child items can change when the variant definition change
     onItemRemoveBefore(itemIndex);
     onItemInserteAfter(itemIndex);
 
@@ -302,7 +302,7 @@ void ListView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
 // (protected)
 void ListView::onEntryKeyChangeAfter(const Model::ItemIndex &itemIndex)
 {
-    // Child items can change when the derived definition change
+    // Child items can change when the variant definition change
     ListViewItem * viewItem = getViewItem(itemIndex);
     if (viewItem != nullptr) {
         viewItem->updateLabel();

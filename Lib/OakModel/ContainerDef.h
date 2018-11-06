@@ -53,7 +53,7 @@ public:
     bool isNull() const;
 
     virtual const NodeDef* containerDef() const;
-    virtual const NodeDef* containerDef(const UnionRef& derivedId) const;
+    virtual const NodeDef* containerDef(const UnionRef& variantId) const;
     virtual const NodeDef* containerDef(Node _node) const;
 
     virtual bool validate(Node _node) const;

@@ -25,9 +25,9 @@ namespace Model {
 // =============================================================================
 // (public)
 // This constructor is used when the NodeDef has no base definition
-// The derivedId is used to identify the correct NodeDef in a inheritance hierarchy
-// The NodeDef can not be part of a inheritance hierarchy if the derivedId is null.
-// The NodeDef has a derivedId but no base definition, so it is the root NodeDef of a inheritance hierarchy
+// The variantId is used to identify the correct NodeDef in a inheritance hierarchy
+// The NodeDef can not be part of a inheritance hierarchy if the variantId is null.
+// The NodeDef has a variantId but no base definition, so it is the root NodeDef of a inheritance hierarchy
 NodeDef::NodeDef(const std::string &_name)
 {
     ASSERT(!_name.empty());
@@ -43,13 +43,13 @@ NodeDef::NodeDef(const std::string &_name)
 
 // =============================================================================
 // (public)
-NodeDef::NodeDef(const std::string &_name, const UnionRef &_derivedId)
+NodeDef::NodeDef(const std::string &_name, const UnionRef &_variantId)
 {
     ASSERT(!_name.empty());
-    ASSERT(!_derivedId.isNull());
+    ASSERT(!_variantId.isNull());
 
     m_name = _name;
-    m_derivedId = _derivedId;
+    m_variantId = _variantId;
 
 #ifdef XML_BACKEND
     if (XML::Element::validateTagName(_name)) {
@@ -88,15 +88,15 @@ NodeDef &NodeDef::operator=(const NodeDef &copy)
 
     m_name = copy.m_name;
     m_tagName = copy.m_tagName;
-    m_derivedId = copy.m_derivedId;
+    m_variantId = copy.m_variantId;
     m_displayName = copy.m_displayName;
     m_color = copy.m_color;
 
-    m_derivedBase = copy.m_derivedBase;
-    m_derivedDirectList.clear();
-    for (auto dDef: copy.m_derivedDirectList)
+    m_base = copy.m_base;
+    m_derivedList.clear();
+    for (auto dDef: copy.m_derivedList)
     {
-        m_derivedDirectList.push_back(dDef);
+        m_derivedList.push_back(dDef);
     }
 
     m_valueList.clear();
@@ -104,8 +104,8 @@ NodeDef &NodeDef::operator=(const NodeDef &copy)
     {
         m_valueList.push_back(value->copy());
     }
-    m_keyValueDefIndex = copy.m_keyValueDefIndex;
-    m_derivedIdValueDefIndex = copy.m_derivedIdValueDefIndex;
+    m_indexOfKeyValueDef = copy.m_indexOfKeyValueDef;
+    m_indexOfVariantValueDef = copy.m_indexOfVariantValueDef;
 
     m_containerList.clear();
     for (const auto& container: copy.m_containerList) {
@@ -128,14 +128,14 @@ NodeDef &NodeDef::operator=(NodeDef &&move)
     m_displayName = std::move(move.m_displayName);
     m_color = std::move(move.m_color);
     m_tagName = std::move(move.m_tagName);
-    m_derivedId = std::move(move.m_derivedId);
+    m_variantId = std::move(move.m_variantId);
 
-    m_derivedBase = move.m_derivedBase;
-    m_derivedDirectList = std::move(move.m_derivedDirectList);
+    m_base = move.m_base;
+    m_derivedList = std::move(move.m_derivedList);
 
     m_valueList = std::move(move.m_valueList);
-    m_keyValueDefIndex = move.m_keyValueDefIndex;
-    m_derivedIdValueDefIndex = move.m_derivedIdValueDefIndex;
+    m_indexOfKeyValueDef = move.m_indexOfKeyValueDef;
+    m_indexOfVariantValueDef = move.m_indexOfVariantValueDef;
 
     m_containerList = std::move(move.m_containerList);
     m_containerGroup = std::move(move.m_containerGroup);
@@ -166,13 +166,13 @@ std::string NodeDef::displayName(bool basic) const
 
     if (m_name.empty()) { return std::string(); }
 
-    if (basic || m_derivedId.isNull()) { return m_name; }
+    if (basic || m_variantId.isNull()) { return m_name; }
 
     std::string inheritanceStr;
-    if (!m_derivedId.get(inheritanceStr)) { return m_name; }
+    if (!m_variantId.get(inheritanceStr)) { return m_name; }
 
-    if (hasDerivedBase()) {
-        return derivedRoot()->displayName(true) + "(" + inheritanceStr + ")";
+    if (hasBase()) {
+        return baseRoot()->displayName(true) + "(" + inheritanceStr + ")";
     } else {
         return m_name + "(" + inheritanceStr + ")";
     }
@@ -194,8 +194,8 @@ bool NodeDef::hasColor() const
     if (m_color.isValid()) {
         return true;
     }
-    if (hasDerivedBase()) {
-        return derivedBase()->hasColor();
+    if (hasBase()) {
+        return base()->hasColor();
     }
     return false;
 }
@@ -207,8 +207,8 @@ const Color &NodeDef::color() const
     if (m_color.isValid()) {
         return m_color;
     }
-    if (hasDerivedBase()) {
-        return derivedBase()->color();
+    if (hasBase()) {
+        return base()->color();
     }
     ASSERT(false);
     return m_color;
@@ -221,8 +221,8 @@ bool NodeDef::hasImagePath() const
     if (!m_imagePath.empty()) {
         return true;
     }
-    if (hasDerivedBase()) {
-        return derivedBase()->hasImagePath();
+    if (hasBase()) {
+        return base()->hasImagePath();
     }
     return false;
 }
@@ -234,8 +234,8 @@ const std::string &NodeDef::imagePath() const
     if (!m_imagePath.empty()) {
         return m_imagePath;
     }
-    if (hasDerivedBase()) {
-        return derivedBase()->imagePath();
+    if (hasBase()) {
+        return base()->imagePath();
     }
     ASSERT(false);
     return m_imagePath;
@@ -250,65 +250,65 @@ const NodeSettings &NodeDef::settings() const
 
 // =============================================================================
 // (public)
-const UnionRef NodeDef::derivedId() const
+const UnionRef NodeDef::variantId() const
 {
-    return m_derivedId;
+    return m_variantId;
 }
 
 // =============================================================================
 // (public)
-std::vector<UnionRef> NodeDef::derivedIdList(bool includeBase, bool includeDerived) const
+std::vector<UnionRef> NodeDef::variantIdList(bool includeBase, bool includeDerived) const
 {
     std::vector<UnionRef> idList;
-    getDerivedIdList(idList, includeBase, includeDerived);
+    getVariantIdList(idList, includeBase, includeDerived);
     return idList;
 }
 
 // =============================================================================
 // (public)
-void NodeDef::getDerivedIdList(std::vector<UnionRef> &idList, bool includeBase, bool includeDerived) const
+void NodeDef::getVariantIdList(std::vector<UnionRef> &idList, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        m_derivedBase.lock()->getDerivedIdList(idList, true, false);
+    if (includeBase && hasBase()) {
+        m_base.lock()->getVariantIdList(idList, true, false);
     }
 
-    idList.push_back(m_derivedId);
+    idList.push_back(m_variantId);
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
-            dNodeDef->getDerivedIdList(idList, false, true);
+            dNodeDef->getVariantIdList(idList, false, true);
         }
     }
 }
 
 // =============================================================================
 // (public)
-const NodeDef* NodeDef::derivedRoot() const
+const NodeDef* NodeDef::baseRoot() const
 {
-    if (hasDerivedBase()) {
-        return derivedBase()->derivedRoot();
+    if (hasBase()) {
+        return base()->baseRoot();
     }
     return this;
 }
 
 // =============================================================================
 // (public)
-const NodeDef *NodeDef::validDerived(const UnionRef &derivedId, bool includeBase, bool includeDerived) const
+const NodeDef *NodeDef::validVariant(const UnionRef &variantId, bool includeBase, bool includeDerived) const
 {
-    if (m_derivedId.isEqual(derivedId)) { return this; }
+    if (m_variantId.isEqual(variantId)) { return this; }
 
-    if (includeBase && hasDerivedBase()) {
-        const NodeDef *variant = m_derivedBase.lock()->validDerived(derivedId, true, false);
+    if (includeBase && hasBase()) {
+        const NodeDef *variant = m_base.lock()->validVariant(variantId, true, false);
         if (variant) {
             return variant;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
-            const NodeDef *variant = dNodeDef->validDerived(derivedId, true, false);
+            const NodeDef *variant = dNodeDef->validVariant(variantId, true, false);
             if (variant) {
                 return variant;
             }
@@ -320,7 +320,7 @@ const NodeDef *NodeDef::validDerived(const UnionRef &derivedId, bool includeBase
 
 // =============================================================================
 // (public)
-const NodeDef *NodeDef::validDerived(Node node, bool includeBase, bool includeDerived) const
+const NodeDef *NodeDef::validVariant(Node node, bool includeBase, bool includeDerived) const
 {
     if (node.isNull()) { return nullptr; }
 
@@ -344,59 +344,59 @@ const NodeDef *NodeDef::validDerived(Node node, bool includeBase, bool includeDe
         }
     }
 
-    if (!hasDiviations()) {
+    if (!hasVariants()) {
         return this;
     }
 
-    // Check if the part id of the derived type matches
-    UnionValue derivedId = derivedIdValueDef().value(node);
+    // Check if the part id of the variant type matches
+    UnionValue variantId = variantValueDef().value(node);
 
-    return validDerived(derivedId, includeBase, includeDerived);
+    return validVariant(variantId, includeBase, includeDerived);
 }
 
 // =============================================================================
 // (public)
-std::vector<const NodeDef *> NodeDef::derivedList(bool includeBase, bool includeDerived) const
+std::vector<const NodeDef *> NodeDef::variantList(bool includeBase, bool includeDerived) const
 {
     std::vector<const NodeDef *> dList;
-    getDerivedList(dList, includeBase, includeDerived);
+    getVariantList(dList, includeBase, includeDerived);
     return dList;
 }
 
 // =============================================================================
 // (public)
-void NodeDef::getDerivedList(std::vector<const NodeDef *> &dList, bool includeBase, bool includeDerived) const
+void NodeDef::getVariantList(std::vector<const NodeDef *> &vList, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        m_derivedBase.lock()->getDerivedList(dList, true, false);
+    if (includeBase && hasBase()) {
+        m_base.lock()->getVariantList(vList, true, false);
     }
 
-    dList.push_back(this);
+    vList.push_back(this);
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
-            dNodeDef->getDerivedList(dList, false, true);
+            dNodeDef->getVariantList(vList, false, true);
         }
     }
 }
 
 // =============================================================================
 // (public)
-bool NodeDef::validate(const UnionRef &derivedId, bool includeBase, bool includeDerived) const
+bool NodeDef::validate(const UnionRef &variantId, bool includeBase, bool includeDerived) const
 {
-    if (m_derivedId.isEqual(derivedId)) { return true; }
+    if (m_variantId.isEqual(variantId)) { return true; }
 
-    if (includeBase && hasDerivedBase()) {
-        if (m_derivedBase.lock()->validate(derivedId, true, false)) {
+    if (includeBase && hasBase()) {
+        if (m_base.lock()->validate(variantId, true, false)) {
             return true;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
-            if (dNodeDef->validate(derivedId, false, true)) {
+            if (dNodeDef->validate(variantId, false, true)) {
                 return true;
             }
         }
@@ -411,7 +411,7 @@ bool NodeDef::validate(const UnionRef &derivedId, bool includeBase, bool include
 // 1. The element is valid
 // 2. The tag name match
 // 3. One of the parent tag names match
-// 4. The part id of the derived type match
+// 4. The part id of the variant type match
 bool NodeDef::validate(Node _node, bool includeBase, bool includeDerived) const
 {
     if (_node.isNull()) { return false; }
@@ -436,34 +436,34 @@ bool NodeDef::validate(Node _node, bool includeBase, bool includeDerived) const
         }
     }
 
-    if (!hasDiviations()) {
+    if (!hasVariants()) {
         return true;
     }
 
-    // Check if the part id of the derived type matches
-    UnionValue derivedId = derivedIdValueDef().value(_node);
+    // Check if the part id of the variant type matches
+    UnionValue variantId = variantValueDef().value(_node);
 
-    return validate(derivedId, includeBase, includeDerived);
+    return validate(variantId, includeBase, includeDerived);
 }
 
 // =============================================================================
 // (public)
-ValidationState NodeDef::validationState(const UnionRef &_derivedId) const
+ValidationState NodeDef::validationState(const UnionRef &_variantId) const
 {
-    if (validate(_derivedId, false, false)) {
+    if (validate(_variantId, false, false)) {
         return VALIDATION_STATE_VALID;
     }
 
-    if (hasDerivedBase() && validate(_derivedId, true, false)) {
-        return VALIDATION_STATE_VALID_SIBLING_BASE;
+    if (hasBase() && validate(_variantId, true, false)) {
+        return VALIDATION_STATE_VALID_BASE;
     }
 
-    if (hasDerivedDiviations() && validate(_derivedId, false, true)) {
-        return VALIDATION_STATE_VALID_SIBLING_DERIVED;
+    if (hasDerived() && validate(_variantId, false, true)) {
+        return VALIDATION_STATE_VALID_DERIVED;
     }
 
-    if (hasDerivedBase() && derivedRoot()->validate(_derivedId, false, true)) {
-        return VALIDATION_STATE_VALID_SIBLING_OTHER;
+    if (hasBase() && baseRoot()->validate(_variantId, false, true)) {
+        return VALIDATION_STATE_VALID_OTHER;
     }
     return VALIDATION_STATE_INVALID;
 }
@@ -472,25 +472,25 @@ ValidationState NodeDef::validationState(const UnionRef &_derivedId) const
 // (public)
 ValidationState NodeDef::validationState(Node node) const
 {
-    if (!derivedRoot()->validate(node, false, true)) {
+    if (!baseRoot()->validate(node, false, true)) {
         return VALIDATION_STATE_INVALID;
     }
 
-    UnionValue _derivedId = derivedIdValueDef().value(node);
+    UnionValue _variantId = variantValueDef().value(node);
 
-    if (!hasDerivedDiviations() || validate(_derivedId, false, false)) {
+    if (!hasDerived() || validate(_variantId, false, false)) {
         return VALIDATION_STATE_VALID;
     }
 
-    if (hasDerivedBase() && validate(_derivedId, true, false)) {
-        return VALIDATION_STATE_VALID_SIBLING_BASE;
+    if (hasBase() && validate(_variantId, true, false)) {
+        return VALIDATION_STATE_VALID_BASE;
     }
 
-    if (hasDerivedDiviations() && validate(_derivedId, false, true)) {
-        return VALIDATION_STATE_VALID_SIBLING_DERIVED;
+    if (hasDerived() && validate(_variantId, false, true)) {
+        return VALIDATION_STATE_VALID_DERIVED;
     }
 
-    return VALIDATION_STATE_VALID_SIBLING_OTHER;
+    return VALIDATION_STATE_VALID_OTHER;
 }
 
 // =============================================================================
@@ -499,12 +499,12 @@ int NodeDef::valueCount(bool includeBase, bool includeDerived) const
 {
     int count = static_cast<int>(m_valueList.size());
 
-    if (includeBase && hasDerivedBase()) {
-        count += m_derivedBase.lock()->valueCount(true, false);
+    if (includeBase && hasBase()) {
+        count += m_base.lock()->valueCount(true, false);
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             count += dNodeDef->valueCount(false, true);
         }
@@ -523,14 +523,14 @@ bool NodeDef::hasValue(const std::string &valueName, bool includeBase, bool incl
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        if (m_derivedBase.lock()->hasValue(valueName, true, false)) {
+    if (includeBase && hasBase()) {
+        if (m_base.lock()->hasValue(valueName, true, false)) {
             return true;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             if (dNodeDef->hasValue(valueName, false, true)) {
                 return true;
@@ -549,24 +549,24 @@ int NodeDef::valueIndex(const ValueDef *valueDef, bool includeBase, bool include
     for (const ValueDefUPtr &value: m_valueList)
     {
         if (value.get() == valueDef) {
-            if (includeBase && hasDerivedBase()) {
-                i += m_derivedBase.lock()->valueCount(true, false);
+            if (includeBase && hasBase()) {
+                i += m_base.lock()->valueCount(true, false);
             }
             return i;
         }
         i++;
     }
 
-    if (includeBase && hasDerivedBase()) {
-        i = m_derivedBase.lock()->valueIndex(valueDef, true, false);
+    if (includeBase && hasBase()) {
+        i = m_base.lock()->valueIndex(valueDef, true, false);
         if (i != -1) {
             return i;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
+    if (includeDerived && hasDerived()) {
         i = valueCount(includeBase, false);
-        for (const auto &dNodeDef: m_derivedDirectList)
+        for (const auto &dNodeDef: m_derivedList)
         {
             int i2 = dNodeDef->valueIndex(valueDef, false, true);
             if (i2 != -1) {
@@ -584,10 +584,10 @@ int NodeDef::valueIndex(const ValueDef *valueDef, bool includeBase, bool include
 // (public)
 const ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        int baseDefCount = m_derivedBase.lock()->valueCount(true, false);
+    if (includeBase && hasBase()) {
+        int baseDefCount = m_base.lock()->valueCount(true, false);
         if (index < baseDefCount) {
-            return m_derivedBase.lock()->value(index, true, false);
+            return m_base.lock()->value(index, true, false);
         }
         index -= baseDefCount;
     }
@@ -598,8 +598,8 @@ const ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
     }
     index -= vCount;
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             vCount = dNodeDef->valueCount(false, true);
             if (index < vCount) {
@@ -622,15 +622,15 @@ const ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, b
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        const ValueDef & result = m_derivedBase.lock()->value(valueName, true, false);
+    if (includeBase && hasBase()) {
+        const ValueDef & result = m_base.lock()->value(valueName, true, false);
         if (!result.isNull()) {
             return result;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             const ValueDef & result = dNodeDef->value(valueName, false, true);
             if (!result.isNull()) {
@@ -646,10 +646,10 @@ const ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, b
 // (public)
 ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
 {
-    if (includeBase && hasDerivedBase()) {
-        int baseDefCount = m_derivedBase.lock()->valueCount(true, false);
+    if (includeBase && hasBase()) {
+        int baseDefCount = m_base.lock()->valueCount(true, false);
         if (index < baseDefCount) {
-            return m_derivedBase.lock()->value(index, true, false);
+            return m_base.lock()->value(index, true, false);
         }
         index -= baseDefCount;
     }
@@ -660,8 +660,8 @@ ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
     }
     index -= vCount;
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             vCount = dNodeDef->valueCount(false, true);
             if (index < vCount) {
@@ -684,15 +684,15 @@ ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, bool in
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        ValueDef & result = m_derivedBase.lock()->value(valueName, true, false);
+    if (includeBase && hasBase()) {
+        ValueDef & result = m_base.lock()->value(valueName, true, false);
         if (!result.isNull()) {
             return result;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             ValueDef & result = dNodeDef->value(valueName, false, true);
             if (!result.isNull()) {
@@ -717,8 +717,8 @@ std::vector<const ValueDef *> NodeDef::valueList(bool includeBase, bool includeD
 // (public)
 void NodeDef::getValueList(std::vector<const ValueDef*>& vList, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        m_derivedBase.lock()->getValueList(vList, true, false);
+    if (includeBase && hasBase()) {
+        m_base.lock()->getValueList(vList, true, false);
     }
 
     for (const auto& v: m_valueList)
@@ -726,8 +726,8 @@ void NodeDef::getValueList(std::vector<const ValueDef*>& vList, bool includeBase
         vList.push_back(v.get());
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             dNodeDef->getValueList(vList, false, true);
         }
@@ -738,42 +738,37 @@ void NodeDef::getValueList(std::vector<const ValueDef*>& vList, bool includeBase
 // (public)
 bool NodeDef::hasKey() const
 {
-    return m_keyValueDefIndex >= 0;
+    return m_indexOfKeyValueDef >= 0;
 }
 
 // =============================================================================
 // (public)
 const ValueDef& NodeDef::keyValueDef() const
 {
-    return value(m_keyValueDefIndex);
+    return value(m_indexOfKeyValueDef);
 }
 
 // =============================================================================
 // (public)
 ValueDef& NodeDef::keyValueDef()
 {
-    return value(m_keyValueDefIndex);
+    return value(m_indexOfKeyValueDef);
 }
 
 // =============================================================================
 // (public)
-bool NodeDef::hasDerivedId() const
+const ValueDef& NodeDef::variantValueDef() const
 {
-    return m_derivedIdValueDefIndex >= 0;
+    if (m_indexOfVariantValueDef < 0) { return ValueDef::emptyDef(); }
+    else { return value(m_indexOfVariantValueDef); }
 }
 
 // =============================================================================
 // (public)
-const ValueDef& NodeDef::derivedIdValueDef() const
+ValueDef& NodeDef::variantValueDef()
 {
-    return value(m_derivedIdValueDefIndex);
-}
-
-// =============================================================================
-// (public)
-ValueDef& NodeDef::derivedIdValueDef()
-{
-    return value(m_derivedIdValueDefIndex);
+    if (m_indexOfVariantValueDef < 0) { return ValueDef::emptyDef(); }
+    else { return value(m_indexOfVariantValueDef); }
 }
 
 // =============================================================================
@@ -782,11 +777,11 @@ int NodeDef::containerCount(bool includeBase, bool includeDerived) const
 {
     int count = static_cast<int>(m_containerList.size());
 
-    if (includeBase && hasDerivedBase()) {
-        count += m_derivedBase.lock()->containerCount();
+    if (includeBase && hasBase()) {
+        count += m_base.lock()->containerCount();
     }
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             count += dNodeDef->containerCount(false, true);
         }
@@ -797,12 +792,40 @@ int NodeDef::containerCount(bool includeBase, bool includeDerived) const
 
 // =============================================================================
 // (public)
+bool NodeDef::hasContainer(const std::string &_name, bool includeBase, bool includeDerived) const
+{
+    for (const auto &container: m_containerList) {
+        if (container->containerDef()->name() == _name) {
+            return true;
+        }
+    }
+
+    if (includeBase && hasBase()) {
+        if (m_base.lock()->hasContainer(_name, true, false)) {
+            return true;
+        }
+    }
+
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
+        {
+            if (dNodeDef->hasContainer(_name, false, true)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+// =============================================================================
+// (public)
 const ContainerDef &NodeDef::container(int index, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        int baseDefCount = m_derivedBase.lock()->containerCount(true, false);
+    if (includeBase && hasBase()) {
+        int baseDefCount = m_base.lock()->containerCount(true, false);
         if (index < baseDefCount) {
-            return m_derivedBase.lock()->container(index, true, false);
+            return m_base.lock()->container(index, true, false);
         }
         index -= baseDefCount;
     }
@@ -813,8 +836,8 @@ const ContainerDef &NodeDef::container(int index, bool includeBase, bool include
     }
     index -= pCount;
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             pCount = dNodeDef->containerCount(false, true);
             if (index < pCount) {
@@ -838,14 +861,14 @@ const ContainerDef &NodeDef::container(const std::string& _name, bool includeBas
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        const ContainerDef & childContainer = m_derivedBase.lock()->container(_name);
+    if (includeBase && hasBase()) {
+        const ContainerDef & childContainer = m_base.lock()->container(_name);
         if (!childContainer.isNull()) { return childContainer; }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
+    if (includeDerived && hasDerived()) {
         // Check if a derived NodeDefs has the container
-        for (const auto &dNodeDef: m_derivedDirectList)
+        for (const auto &dNodeDef: m_derivedList)
         {
             const ContainerDef & result = dNodeDef->container(_name, false, true);
             if (!result.isNull()) { return result; }
@@ -868,13 +891,13 @@ const ContainerDef &NodeDef::container(Node childNode, bool includeBase, bool in
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        return m_derivedBase.lock()->container(childNode);
+    if (includeBase && hasBase()) {
+        return m_base.lock()->container(childNode);
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
+    if (includeDerived && hasDerived()) {
         // Check if a derived NodeDefs has the container
-        for (const auto &dNodeDef: m_derivedDirectList)
+        for (const auto &dNodeDef: m_derivedList)
         {
             const ContainerDef & result = dNodeDef->container(childNode, false, true);
             if (!result.isNull()) { return result; }
@@ -897,16 +920,16 @@ std::vector<const ContainerDef *> NodeDef::containerList(bool includeBase, bool 
 // (public)
 void NodeDef::getContainerList(std::vector<const ContainerDef *> &list, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        m_derivedBase.lock()->getContainerList(list);
+    if (includeBase && hasBase()) {
+        m_base.lock()->getContainerList(list);
     }
     for (const auto& _child: m_containerList) {
         list.push_back(_child.get());
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
+    if (includeDerived && hasDerived()) {
         // get contains on derived NodeDefs
-        for (const auto &dNodeDef: m_derivedDirectList)
+        for (const auto &dNodeDef: m_derivedList)
         {
             dNodeDef->getContainerList(list, false, true);
         }
@@ -947,16 +970,16 @@ std::vector<const NodeDef *> NodeDef::childDefList(bool includeBase, bool includ
 // (public)
 void NodeDef::getChildDefList(std::vector<const NodeDef *> &cList, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        m_derivedBase.lock()->getChildDefList(cList, true);
+    if (includeBase && hasBase()) {
+        m_base.lock()->getChildDefList(cList, true);
     }
     for (const auto& _child: m_containerList) {
         cList.push_back(_child.get()->containerDef());
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
+    if (includeDerived && hasDerived()) {
         // get child NodeDefs on derived NodeDefs
-        for (const auto &dNodeDef: m_derivedDirectList)
+        for (const auto &dNodeDef: m_derivedList)
         {
             dNodeDef->getChildDefList(cList, false, true);
         }
@@ -990,15 +1013,15 @@ Node NodeDef::parentNode(Node node, const NodeDef** parentNodeDef, bool includeB
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        Node result = m_derivedBase.lock()->parentNode(node, parentNodeDef, true, false);
+    if (includeBase && hasBase()) {
+        Node result = m_base.lock()->parentNode(node, parentNodeDef, true, false);
         if (!result.isNull()) {
             return result;
         }
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             Node result = dNodeDef->parentNode(node, parentNodeDef, false, true);
             if (!result.isNull()) {
@@ -1018,10 +1041,10 @@ int NodeDef::parentContainerCount(bool includeBase, bool includeDerived) const
 {
     int count = static_cast<int>(m_parentContainerDefs.size());
 
-    if (includeBase && hasDerivedBase()) { count += m_derivedBase.lock()->parentContainerCount(true, false); }
+    if (includeBase && hasBase()) { count += m_base.lock()->parentContainerCount(true, false); }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             count += dNodeDef->parentContainerCount(false, true);
         }
@@ -1034,10 +1057,10 @@ int NodeDef::parentContainerCount(bool includeBase, bool includeDerived) const
 // (public)
 const ContainerDef *NodeDef::parentContainer(int index, bool includeBase, bool includeDerived) const
 {
-    if (includeBase && hasDerivedBase()) {
-        int baseDefCount = m_derivedBase.lock()->parentContainerCount(true, false);
+    if (includeBase && hasBase()) {
+        int baseDefCount = m_base.lock()->parentContainerCount(true, false);
         if (index < baseDefCount) {
-            return m_derivedBase.lock()->parentContainer(index, true, false);
+            return m_base.lock()->parentContainer(index, true, false);
         }
         index -= baseDefCount;
     }
@@ -1048,8 +1071,8 @@ const ContainerDef *NodeDef::parentContainer(int index, bool includeBase, bool i
     }
     index -= pCount;
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             pCount = dNodeDef->parentContainerCount(false, true);
             if (index < pCount) {
@@ -1073,12 +1096,12 @@ const ContainerDef *NodeDef::parentContainer(const std::string &_name, bool incl
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        return derivedBase()->parentContainer(_name, true, false);
+    if (includeBase && hasBase()) {
+        return base()->parentContainer(_name, true, false);
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             const ContainerDef * result = dNodeDef->parentContainer(_name, false, true);
             if (result) { return result; }
@@ -1100,12 +1123,12 @@ const ContainerDef *NodeDef::parentContainer(Node parentNode, bool includeBase, 
         }
     }
 
-    if (includeBase && hasDerivedBase()) {
-        return derivedBase()->parentContainer(parentNode);
+    if (includeBase && hasBase()) {
+        return base()->parentContainer(parentNode);
     }
 
-    if (includeDerived && hasDerivedDiviations()) {
-        for (const auto &dNodeDef: m_derivedDirectList)
+    if (includeDerived && hasDerived()) {
+        for (const auto &dNodeDef: m_derivedList)
         {
             const ContainerDef * result = dNodeDef->parentContainer(parentNode, false, true);
             if (result) { return result; }

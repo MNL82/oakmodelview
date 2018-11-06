@@ -43,7 +43,7 @@ public:
 
     virtual ContainerGroupDefUPtr copy() const;
 
-    virtual const NodeDef* containerDef(const std::string &name, const UnionRef& derivedId = UnionRef()) const;
+    virtual const NodeDef* containerDef(const std::string &name, const UnionRef& variantId = UnionRef()) const;
     virtual const NodeDef* containerDef(Node _node) const;
 
     virtual bool validate(Node _node) const;

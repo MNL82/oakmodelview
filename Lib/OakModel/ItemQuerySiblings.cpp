@@ -91,7 +91,7 @@ const NodeDef *ItemQuerySiblings::_nodeDef(const NodeDef *nDef) const
     ASSERT(nDef);
     ASSERT(nDef->parentContainerCount() == 1); // Do not work unleass there are only one parent container
 
-    // Return the container derived base class
+    // Return the container variant base class
     return nDef->parentContainer(0)->containerDef();
 }
 

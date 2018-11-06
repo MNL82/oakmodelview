@@ -40,7 +40,7 @@ Item::Item(const NodeDef* nodeDef, Node node, const OakModel* model)
     if (nodeDef == nullptr || node.isNull()) {
         m_def = nodeDef;
     } else {
-        m_def = nodeDef->validDerived(node);
+        m_def = nodeDef->validVariant(node);
     }
 }
 
@@ -282,24 +282,24 @@ bool Item::hasKey() const
 const Entry& Item::entryKey() const
 {
     initEntryList();
-    if (hasKey()) { return m_entryList[static_cast<vSize>(m_def->keyValueDefIndex())]; }
+    if (hasKey()) { return m_entryList[static_cast<vSize>(m_def->indexOfKeyValueDef())]; }
     return Entry::emptyEntry();
 }
 
 // =============================================================================
 // (public)
-bool Item::hasDerivedId() const
+bool Item::hasVariants() const
 {
     ASSERT(m_def);
-    return m_def->hasDerivedId();
+    return m_def->hasVariants();
 }
 
 // =============================================================================
 // (public)
-const Entry& Item::entryDerivedId() const
+const Entry& Item::variantEntry() const
 {
     initEntryList();
-    if (hasDerivedId()) { return m_entryList[static_cast<vSize>(m_def->derivedIdValueDefIndex())]; }
+    if (hasVariants()) { return m_entryList[static_cast<vSize>(m_def->indexOfVariantValueDef())]; }
     return Entry::emptyEntry();
 }
 

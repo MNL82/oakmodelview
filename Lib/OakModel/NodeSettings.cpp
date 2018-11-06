@@ -24,22 +24,22 @@ NodeSettings::NodeSettings()
 // (public)
 NodeSettings& NodeSettings::operator=(const NodeSettings& copy)
 {
-    m_hideDerivedInstance = copy.m_hideDerivedInstance;
+    m_hideVariantInstance = copy.m_hideVariantInstance;
     return *this;
 }
 
 // =============================================================================
 // (public)
-bool NodeSettings::hideDerivedInstance() const
+bool NodeSettings::hideVariantInstance() const
 {
-    return m_hideDerivedInstance;
+    return m_hideVariantInstance;
 }
 
 // =============================================================================
 // (public)
-void NodeSettings::setHideDerivedInstance(bool value)
+void NodeSettings::sethideVariantInstance(bool value)
 {
-    m_hideDerivedInstance = value;
+    m_hideVariantInstance = value;
 }
 
 } // namespace Model

@@ -70,8 +70,8 @@ public:
     bool hasKey() const;
     const Entry& entryKey() const;
 
-    bool hasDerivedId() const;
-    const Entry& entryDerivedId() const;
+    bool hasVariants() const;
+    const Entry& variantEntry() const;
 
     // ************* Child Item access *************
     int childCount() const;

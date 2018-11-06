@@ -23,11 +23,11 @@ public:
 
     NodeSettings& operator=(const NodeSettings& copy);
 
-    bool hideDerivedInstance() const;
-    void setHideDerivedInstance(bool value);
+    bool hideVariantInstance() const;
+    void sethideVariantInstance(bool value);
 
 private:
-    bool m_hideDerivedInstance = false;
+    bool m_hideVariantInstance = false;
 };
 
 } // namespace Model

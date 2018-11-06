@@ -26,46 +26,46 @@ NodeDefBuilder::NodeDefBuilder(const std::string &name)
 
 // =============================================================================
 // (protected)
-NodeDefBuilder::NodeDefBuilder(const std::string &name, const UnionRef &derivedId)
+NodeDefBuilder::NodeDefBuilder(const std::string &name, const UnionRef &variantId)
 {
-    m_nodeDef = NodeDef::MakeSPtr(name, derivedId);
+    m_nodeDef = NodeDef::MakeSPtr(name, variantId);
 }
 
 // =============================================================================
 // (protected)
-NodeDefBuilder::NodeDefBuilder(NodeDefSPtr derivedBaseNode, const UnionRef &derivedId)
+NodeDefBuilder::NodeDefBuilder(NodeDefSPtr variantRoot, const UnionRef &variantId)
 {
-    // derivedBase has to be a valid pointer
-    ASSERT(derivedBaseNode);
+    // base has to be a valid pointer
+    ASSERT(variantRoot);
 
-    // derivedBase has to have an valid derivedId
-    ASSERT(!derivedBaseNode->derivedId().isNull());
+    // base has to have an valid variantId
+    ASSERT(!variantRoot->variantId().isNull());
 
-    // The derivedId's have to be unique
-    ASSERT(!derivedBaseNode->derivedRoot()->validate(derivedId, false, true));
+    // The variantId's have to be unique
+    ASSERT(!variantRoot->baseRoot()->validate(variantId, false, true));
 
-    // DerivedId's of derived definitions have to be of the same derivedId type
-    ASSERT(derivedBaseNode->derivedId().type() == UnionValue::GetType(derivedId));
+    // VariantId's of variant definitions have to be of the same variantId type
+    ASSERT(variantRoot->variantId().type() == UnionValue::GetType(variantId));
 
-    m_nodeDef = NodeDef::MakeSPtr(derivedBaseNode->name(), derivedId);
+    m_nodeDef = NodeDef::MakeSPtr(variantRoot->name(), variantId);
 
-    // Adds the derived definition to the inheritance heiraki
-    m_nodeDef->m_derivedBase = derivedBaseNode;
-    derivedBaseNode->m_derivedDirectList.push_back(m_nodeDef);
+    // Adds the variant definition to the inheritance heiraki
+    m_nodeDef->m_base = variantRoot;
+    variantRoot->m_derivedList.push_back(m_nodeDef);
 
     // The name is the same for all definitions in the inheritance heiraki
-    m_nodeDef->m_name = derivedBaseNode->m_name;
+    m_nodeDef->m_name = variantRoot->m_name;
 
-    // The keyValue and derivedIdValue are the same for all definitions in the inheritance heiraki
-    m_nodeDef->m_keyValueDefIndex = derivedBaseNode->m_keyValueDefIndex;
-    m_nodeDef->m_derivedIdValueDefIndex = derivedBaseNode->m_derivedIdValueDefIndex;
+    // The keyValueDef and variantValueDef are the same for all definitions in the inheritance heiraki
+    m_nodeDef->m_indexOfKeyValueDef = variantRoot->m_indexOfKeyValueDef;
+    m_nodeDef->m_indexOfVariantValueDef = variantRoot->m_indexOfVariantValueDef;
 
-    if (derivedBaseNode->hasDerivedId()) {
-        VDB::use(&derivedBaseNode->derivedIdValueDef())->addOptionStatic(derivedId);
+    if (!variantRoot->variantValueDef().isNull()) {
+        VDB::use(&variantRoot->variantValueDef())->addOptionStatic(variantId);
     }
 
 #ifdef XML_BACKEND
-    m_nodeDef->m_tagName = derivedBaseNode->m_tagName;
+    m_nodeDef->m_tagName = variantRoot->m_tagName;
 #endif // XML_BACKEND
 }
 
@@ -87,18 +87,18 @@ NodeDefBuilderSPtr NodeDefBuilder::create(const std::string &name)
 
 // =============================================================================
 // (public static)
-NodeDefBuilderSPtr NodeDefBuilder::createInheritanceRoot(const std::string &name, const UnionRef &derivedId)
+NodeDefBuilderSPtr NodeDefBuilder::createVariantRoot(const std::string &name, const UnionRef &variantId)
 {
-    NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(name, derivedId));
+    NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(name, variantId));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
 
 // =============================================================================
 // (public static)
-NodeDefBuilderSPtr NodeDefBuilder::createInheritancDerived(NodeDefBuilderSPtr derivedBaseNode, const UnionRef &derivedId)
+NodeDefBuilderSPtr NodeDefBuilder::createVariant(NodeDefBuilderSPtr variantRoot, const UnionRef &variantId)
 {
-    NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(derivedBaseNode->get(), derivedId));
+    NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(variantRoot->get(), variantId));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
@@ -127,7 +127,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueDef(ValueDefBuilderSPtr valueDef)
     ASSERT(m_nodeDef);
     ASSERT(valueDef);
     // A NodeDef can only have
-    ASSERT(!hasValueI(m_nodeDef, valueDef));
+    ASSERT(!m_nodeDef->hasValue(valueDef->valueDef().name()));
 
     m_nodeDef->m_valueList.push_back(valueDef->get());
 
@@ -141,8 +141,8 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
     ASSERT(m_nodeDef);
     ASSERT(valueDefKey);
 
-    // Derived node definitions inherate its node id value from its base and can not have it's own
-    ASSERT(!m_nodeDef->hasDerivedBase());
+    // Variant node definitions inherate its node id value from its base and can not have it's own
+    ASSERT(!m_nodeDef->hasBase());
 
     if (valueDefKey->valueDef().settings().value(UNIQUE) != 0) {
         valueDefKey->setSetting(UNIQUE, 1);
@@ -154,37 +154,37 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
     addValueDef(valueDefKey);
 
     int index = m_nodeDef->valueCount()-1;
-    setKeyValueThisAndDerived(m_nodeDef, index);
+    setKeyValueDefForAllVariants(m_nodeDef, index);
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr valueDefDerivedId)
+NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr variantValueDef)
 {
     ASSERT(m_nodeDef);
-    ASSERT(valueDefDerivedId);
+    ASSERT(variantValueDef);
 
-    // The node must have an derived id
-    ASSERT(!m_nodeDef->derivedId().isNull());
+    // The node must have an variant id
+    ASSERT(!m_nodeDef->variantId().isNull());
 
-    // The value type of the derivedId and the derivedIdValue must match
-    ASSERT(m_nodeDef->derivedId().type() == valueDefDerivedId->valueDef().valueType());
+    // The value type of the variantId and the variantValueDef must match
+    ASSERT(m_nodeDef->variantId().type() == variantValueDef->valueDef().valueType());
 
-    // Derived node definitions inherate its derived id value from its base and can not have it's own
-    ASSERT(!m_nodeDef->hasDerivedBase());
+    // Derived node definitions inherate its variantValueDef value from its base and can not have it's own
+    ASSERT(!m_nodeDef->hasBase());
 
     //
-    std::vector<UnionRef> optionList = m_nodeDef->derivedRoot()->derivedIdList(false, true);
-    valueDefDerivedId->setOptionsStatic(optionList);
-    valueDefDerivedId->setSetting("OptionsOnly", true);
-    if (!valueDefDerivedId->valueDef().hasDefaultValue()) {
-        valueDefDerivedId->setDefaultValue(m_nodeDef->derivedId());
+    std::vector<UnionRef> optionList = m_nodeDef->baseRoot()->variantIdList(false, true);
+    variantValueDef->setOptionsStatic(optionList);
+    variantValueDef->setSetting("OptionsOnly", true);
+    if (!variantValueDef->valueDef().hasDefaultValue()) {
+        variantValueDef->setDefaultValue(m_nodeDef->variantId());
     }
 
-    addValueDef(valueDefDerivedId);
+    addValueDef(variantValueDef);
     int index = m_nodeDef->valueCount()-1;
-    setDerivedIdValueThisAndDerived(m_nodeDef, index);
+    setVariantValueDefForAllVariants(m_nodeDef, index);
     return m_thisWPtr.lock();
 }
 
@@ -196,7 +196,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addContainerDef(ContainerDefBuilderSPtr cDef)
     ASSERT(cDef);
 
     // Check if the NodeDef will be referenced twice (Not sure this is needed)
-    ASSERT(!hasContainerI(m_nodeDef, cDef->containerDef()));
+    ASSERT(!m_nodeDef->hasContainer(cDef->containerDef().containerDef()->name()));
 
     auto containerDef = cDef->get();
 
@@ -247,12 +247,12 @@ NodeDefBuilderSPtr NodeDefBuilder::setTagName(const std::string &tagName)
     ASSERT(XML::Element::validateTagName(tagName));
     if (m_nodeDef->m_tagName == tagName) { return m_thisWPtr.lock(); }
 
-    NodeDefSPtr derivedRoot = m_nodeDef;
-    while (derivedRoot->hasDerivedBase()) {
-        derivedRoot = derivedRoot->m_derivedBase.lock();
+    NodeDefSPtr baseRoot = m_nodeDef;
+    while (baseRoot->hasBase()) {
+        baseRoot = baseRoot->m_base.lock();
     }
 
-    setTagNameThisAndDerived(derivedRoot, tagName);
+    setTagNameForAllVariants(baseRoot, tagName);
 
     return m_thisWPtr.lock();
 }
@@ -302,124 +302,40 @@ ContainerDefUPtr NodeDefBuilder::takeContainerDef(NodeDefSPtr nodeDef, const std
 
 // =============================================================================
 // (protected)
-bool NodeDefBuilder::hasValueI(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr& valueDef)
+void NodeDefBuilder::setKeyValueDefForAllVariants(NodeDefSPtr nodeDef, int index)
 {
-    if (!nodeDef) { return false; }
-
-    // Check ValueDefs on it's base NodeDefs
-    const NodeDef* ni = nodeDef.get();
-    while (ni->hasDerivedBase()) {
-        ni = ni->derivedBase();
-        for (const auto& vi: nodeDef->m_valueList)
+    nodeDef->m_indexOfKeyValueDef = index;
+    if (nodeDef->hasDerived()) {
+        for (NodeDefSPtr ni: nodeDef->m_derivedList)
         {
-            if (vi->name() == valueDef->valueDef().name()) {
-                return true;
-            }
-        }
-    }
-    // Check ValueDefs on this NodeDef
-    // Check ValueDefs on it's derived NodeDefs
-    return hasValueIThisAndDerived(nodeDef, valueDef);
-}
-
-// =============================================================================
-// (protected)
-bool NodeDefBuilder::hasValueIThisAndDerived(NodeDefSPtr nodeDef, const ValueDefBuilderSPtr &valueDef)
-{
-    for (const auto& vi: nodeDef->m_valueList)
-    {
-        if (vi->name() == valueDef->valueDef().name()) {
-            return true;
-        }
-    }
-    if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
-        {
-            if (hasValueIThisAndDerived(ni, valueDef)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// =============================================================================
-// (protected)
-void NodeDefBuilder::setKeyValueThisAndDerived(NodeDefSPtr nodeDef, int index)
-{
-    nodeDef->m_keyValueDefIndex = index;
-    if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
-        {
-            setKeyValueThisAndDerived(ni, index);
+            setKeyValueDefForAllVariants(ni, index);
         }
     }
 }
 
 // =============================================================================
 // (protected)
-void NodeDefBuilder::setDerivedIdValueThisAndDerived(NodeDefSPtr nodeDef, int index)
+void NodeDefBuilder::setVariantValueDefForAllVariants(NodeDefSPtr nodeDef, int index)
 {
-    nodeDef->m_derivedIdValueDefIndex = index;
-    if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
+    nodeDef->m_indexOfVariantValueDef = index;
+    if (nodeDef->hasDerived()) {
+        for (NodeDefSPtr ni: nodeDef->m_derivedList)
         {
-            setDerivedIdValueThisAndDerived(ni, index);
+            setVariantValueDefForAllVariants(ni, index);
         }
     }
-}
-
-// =============================================================================
-// (protected)
-bool NodeDefBuilder::hasContainerI(NodeDefSPtr nodeDef, const ContainerDef &cDef)
-{
-    // Check ValueDefs on it's base NodeDefs
-    const NodeDef* ni = nodeDef.get();
-    while (ni->hasDerivedBase()) {
-        ni = ni->derivedBase();
-        for (const auto& ci: nodeDef->m_containerList)
-        {
-            if (ci->m_containerDef->name() == cDef.m_containerDef->name()) {
-                return true;
-            }
-        }
-    }
-    // Check ValueDefs on this NodeDef
-    // Check ValueDefs on it's derived NodeDefs
-    return hasContainerIThisAndDerived(nodeDef, cDef);
-}
-
-// =============================================================================
-// (protected)
-bool NodeDefBuilder::hasContainerIThisAndDerived(NodeDefSPtr nodeDef, const ContainerDef &cDef)
-{
-    for (const auto& ci: nodeDef->m_containerList)
-    {
-        if (ci->m_containerDef->name() == cDef.m_containerDef->name()) {
-            return true;
-        }
-    }
-    if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
-        {
-            if (hasContainerIThisAndDerived(ni, cDef)) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 #ifdef XML_BACKEND
 // =============================================================================
 // (protected)
-void NodeDefBuilder::setTagNameThisAndDerived(NodeDefSPtr nodeDef, const std::string &tagName)
+void NodeDefBuilder::setTagNameForAllVariants(NodeDefSPtr nodeDef, const std::string &tagName)
 {
     nodeDef->m_tagName = tagName;
-    if (nodeDef->hasDerivedDiviations()) {
-        for (NodeDefSPtr ni: nodeDef->m_derivedDirectList)
+    if (nodeDef->hasDerived()) {
+        for (NodeDefSPtr ni: nodeDef->m_derivedList)
         {
-            setTagNameThisAndDerived(ni, tagName);
+            setTagNameForAllVariants(ni, tagName);
         }
     }
 }
