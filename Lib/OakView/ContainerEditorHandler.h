@@ -27,7 +27,7 @@ class ContainerEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    ContainerEditorHandler(Model::Item item, const std::string &name, QObject *parent = nullptr);
+    ContainerEditorHandler(const Model::Item &item, const std::string &name, QObject *parent = nullptr);
 
     QString listDisplayName() const;
     int itemCount() const;

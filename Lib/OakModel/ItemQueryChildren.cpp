@@ -201,7 +201,7 @@ bool ItemQueryChildren::canRemoveItem(const Item &refItem, int index) const
 
 // =============================================================================
 // (public)
-bool ItemQueryChildren::removeItem(const Item &refItem, int index) const
+bool ItemQueryChildren::removeItem(Item &refItem, int index)
 {
     if (m_childQueryUPtr) {
         Item item = first(refItem);

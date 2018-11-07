@@ -50,7 +50,7 @@ protected:
     void clearTreeStructure();
     void updateTreeStructure();
 
-    QTreeWidgetItem * getTreeItems(Model::Item item, QTreeWidgetItem *parentItem = nullptr);
+    QTreeWidgetItem * getTreeItems(const Model::Item &item, QTreeWidgetItem *parentItem = nullptr);
 
     void onItemInserteAfter(const Model::ItemIndex& itemIndex);
     void onItemMoveAfter(const Model::ItemIndex& sourceItemIndex, const Model::ItemIndex& targetItemIndex);

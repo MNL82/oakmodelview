@@ -320,7 +320,7 @@ const NodeDef *NodeDef::validVariant(const UnionRef &variantId, bool includeBase
 
 // =============================================================================
 // (public)
-const NodeDef *NodeDef::validVariant(Node node, bool includeBase, bool includeDerived) const
+const NodeDef *NodeDef::validVariant(const Node &node, bool includeBase, bool includeDerived) const
 {
     if (node.isNull()) { return nullptr; }
 
@@ -412,7 +412,7 @@ bool NodeDef::validate(const UnionRef &variantId, bool includeBase, bool include
 // 2. The tag name match
 // 3. One of the parent tag names match
 // 4. The part id of the variant type match
-bool NodeDef::validate(Node _node, bool includeBase, bool includeDerived) const
+bool NodeDef::validate(const Node &_node, bool includeBase, bool includeDerived) const
 {
     if (_node.isNull()) { return false; }
 
@@ -470,7 +470,7 @@ ValidationState NodeDef::validationState(const UnionRef &_variantId) const
 
 // =============================================================================
 // (public)
-ValidationState NodeDef::validationState(Node node) const
+ValidationState NodeDef::validationState(const Node &node) const
 {
     if (!baseRoot()->validate(node, false, true)) {
         return VALIDATION_STATE_INVALID;
@@ -880,7 +880,7 @@ const ContainerDef &NodeDef::container(const std::string& _name, bool includeBas
 
 // =============================================================================
 // (public)
-const ContainerDef &NodeDef::container(Node childNode, bool includeBase, bool includeDerived) const
+const ContainerDef &NodeDef::container(const Node &childNode, bool includeBase, bool includeDerived) const
 {
     if (childNode.isNull()) { return ContainerDef::emptyChildNodeDef(); }
 
@@ -952,7 +952,7 @@ const NodeDef* NodeDef::childDef(const std::string &_name, bool includeBase, boo
 
 // =============================================================================
 // (public)
-const NodeDef* NodeDef::childDef(Node childNode, bool includeBase, bool includeDerived) const
+const NodeDef* NodeDef::childDef(const Node &childNode, bool includeBase, bool includeDerived) const
 {
     return container(childNode, includeBase, includeDerived).containerDef(childNode);
 }
@@ -998,7 +998,7 @@ const ContainerGroupDef& NodeDef::containerGroup() const
 
 // =============================================================================
 // (public)
-Node NodeDef::parentNode(Node node, const NodeDef** parentNodeDef, bool includeBase, bool includeDerived) const
+Node NodeDef::parentNode(const Node &node, const NodeDef** parentNodeDef, bool includeBase, bool includeDerived) const
 {
     if (node.isNull()) { return Node(); }
 
@@ -1113,7 +1113,7 @@ const ContainerDef *NodeDef::parentContainer(const std::string &_name, bool incl
 
 // =============================================================================
 // (public)
-const ContainerDef *NodeDef::parentContainer(Node parentNode, bool includeBase, bool includeDerived) const
+const ContainerDef *NodeDef::parentContainer(const Node &parentNode, bool includeBase, bool includeDerived) const
 {
     if (parentNode.isNull()) { return nullptr; }
     for (const ContainerDef* parentContainer: m_parentContainerDefs)
@@ -1140,7 +1140,7 @@ const ContainerDef *NodeDef::parentContainer(Node parentNode, bool includeBase, 
 
 // =============================================================================
 // (public)
-bool NodeDef::isParent(Node node, Node refNode, bool recursive) const
+bool NodeDef::isParent(const Node &node, const Node &refNode, bool recursive) const
 {
     // Find the parent data node
     Node _parentNode = parentNode(node);
@@ -1163,7 +1163,7 @@ bool NodeDef::isParent(Node node, Node refNode, bool recursive) const
 
 // =============================================================================
 // (public)
-void NodeDef::onNodeInserted(Node _node) const
+void NodeDef::onNodeInserted(const Node &_node) const
 {
     // Get all containers also from derived nodes
     auto cList = containerList();
@@ -1215,14 +1215,14 @@ void NodeDef::onNodeInserted(Node _node) const
 
 // =============================================================================
 // (public)
-void NodeDef::onNodeMoved(Node _node) const
+void NodeDef::onNodeMoved(const Node &_node) const
 {
     UNUSED(_node);
 }
 
 // =============================================================================
 // (public)
-void NodeDef::onNodeCloned(Node _node) const
+void NodeDef::onNodeCloned(const Node &_node) const
 {
     UNUSED(_node);
 }

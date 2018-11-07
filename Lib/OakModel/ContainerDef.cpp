@@ -126,7 +126,7 @@ const NodeDef* ContainerDef::containerDef(const UnionRef &variantId) const
 
 // =============================================================================
 // (public)
-const NodeDef* ContainerDef::containerDef(Node _node) const
+const NodeDef* ContainerDef::containerDef(const Node &_node) const
 {
     if (!m_containerDef) { return nullptr; }
 
@@ -138,7 +138,7 @@ const NodeDef* ContainerDef::containerDef(Node _node) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::validate(Node _node) const
+bool ContainerDef::validate(const Node &_node) const
 {
     if (_node.isNull()) { return false; }
 
@@ -175,7 +175,7 @@ int ContainerDef::maxCount() const
 
 // =============================================================================
 // (public)
-int ContainerDef::nodeCount(Node _node) const
+int ContainerDef::nodeCount(const Node &_node) const
 {
     if (_node.isNull()) { return -1; }
 
@@ -193,7 +193,7 @@ int ContainerDef::nodeCount(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerDef::nodeIndex(Node _node, Node refNode) const
+int ContainerDef::nodeIndex(const Node &_node, const Node &refNode) const
 {
     if (_node.isNull()) { return -1; }
 
@@ -211,7 +211,7 @@ int ContainerDef::nodeIndex(Node _node, Node refNode) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::node(Node _node, int index, const NodeDef** nodeDef) const
+Node ContainerDef::node(const Node &_node, int index, const NodeDef** nodeDef) const
 {
     if (_node.isNull()) { return Node(); }
 
@@ -235,7 +235,7 @@ Node ContainerDef::node(Node _node, int index, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::firstNode(Node _node, const NodeDef** nodeDef) const
+Node ContainerDef::firstNode(const Node &_node, const NodeDef** nodeDef) const
 {
     if (_node.isNull()) { return Node(); }
 
@@ -259,7 +259,7 @@ Node ContainerDef::firstNode(Node _node, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::lastNode(Node _node, const NodeDef** nodeDef) const
+Node ContainerDef::lastNode(const Node &_node, const NodeDef** nodeDef) const
 {
     if (_node.isNull()) { return Node(); }
 
@@ -283,7 +283,7 @@ Node ContainerDef::lastNode(Node _node, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::nextNode(Node refNode, const NodeDef** nodeDef) const
+Node ContainerDef::nextNode(const Node &refNode, const NodeDef** nodeDef) const
 {
     if (refNode.isNull()) { return Node(); }
 
@@ -307,7 +307,7 @@ Node ContainerDef::nextNode(Node refNode, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::previousNode(Node refNode, const NodeDef** nodeDef) const
+Node ContainerDef::previousNode(const Node &refNode, const NodeDef** nodeDef) const
 {
     if (refNode.isNull()) { return Node(); }
 
@@ -338,7 +338,7 @@ const NodeDef* ContainerDef::hostDef() const
 
 // =============================================================================
 // (public)
-Node ContainerDef::hostNode(Node refdNode) const
+Node ContainerDef::hostNode(const Node &refdNode) const
 {
     if (refdNode.isNull()) { return Node(); }
 
@@ -362,7 +362,7 @@ Node ContainerDef::hostNode(Node refdNode) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::canInsertNode(Node _node, int &index) const
+bool ContainerDef::canInsertNode(const Node &_node, int &index) const
 {
     if (isNull()) { return false; }
 
@@ -388,7 +388,7 @@ bool ContainerDef::canInsertNode(Node _node, int &index) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::insertNode(Node _node, int &index) const
+Node ContainerDef::insertNode(const Node &_node, int &index) const
 {
     Node newNode;
     if (canInsertNode(_node, index)) {
@@ -410,7 +410,7 @@ Node ContainerDef::insertNode(Node _node, int &index) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::canCloneNode(Node _node, int &index, Node cloneNode) const
+bool ContainerDef::canCloneNode(const Node &_node, int &index, const Node &cloneNode) const
 {
     if (isNull()) { return false; }
 
@@ -427,7 +427,7 @@ bool ContainerDef::canCloneNode(Node _node, int &index, Node cloneNode) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::cloneNode(Node _node, int &index, Node cloneNode) const
+Node ContainerDef::cloneNode(const Node &_node, int &index, const Node &cloneNode) const
 {
     Node newNode;
     if (canCloneNode(_node, index, cloneNode)) {
@@ -450,7 +450,7 @@ Node ContainerDef::cloneNode(Node _node, int &index, Node cloneNode) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::canMoveNode(Node _node, int &index, Node moveNode) const
+bool ContainerDef::canMoveNode(const Node &_node, int &index, const Node &moveNode) const
 {
     if (isNull()) { return false; }
     if (index < -1) { return false; }
@@ -500,7 +500,7 @@ bool ContainerDef::canMoveNode(Node _node, int &index, Node moveNode) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::moveNode(Node _node, int &index, Node moveNode) const
+Node ContainerDef::moveNode(const Node &_node, int &index, const Node &moveNode) const
 {
     Node newNode;
     if (canMoveNode(_node, index, moveNode)) {
@@ -523,7 +523,7 @@ Node ContainerDef::moveNode(Node _node, int &index, Node moveNode) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::canRemoveNode(Node _node, int index) const
+bool ContainerDef::canRemoveNode(const Node &_node, int index) const
 {
     if (isNull()) { return false; }
 
@@ -542,7 +542,7 @@ bool ContainerDef::canRemoveNode(Node _node, int index) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::removeNode(Node _node, int index) const
+bool ContainerDef::removeNode(const Node &_node, int index) const
 {
     if (canRemoveNode(_node, index)) {
         switch (_node.type()) {
@@ -569,7 +569,7 @@ const ContainerDef &ContainerDef::emptyChildNodeDef()
 
 // =============================================================================
 // (public)
-bool ContainerDef::checkUniqueOptionValues(Node _node) const
+bool ContainerDef::checkUniqueOptionValues(const Node &_node) const
 {
     // Check if a unique options only list do not have any options left
     auto vList = m_containerDef->valueList();

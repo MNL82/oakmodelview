@@ -65,7 +65,7 @@ public:
     Element moveAfter(Element refBase, Element refElement, Element moveElement) const;
 
     bool remove(Element refBase, Element refElement) const;
-    bool remove(Element &refBase, int index) const;
+    bool remove(Element refBase, int index) const;
 
     virtual Element invertedAt(Element refElement) const;
 

@@ -19,7 +19,7 @@ namespace View {
 
 // =============================================================================
 // (public)
-ContainerEditorHandler::ContainerEditorHandler(Model::Item item, const std::string &name, QObject* parent)
+ContainerEditorHandler::ContainerEditorHandler(const Model::Item &item, const std::string &name, QObject* parent)
     : QObject(parent), m_item(item), m_name(name)
 {
 

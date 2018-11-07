@@ -143,7 +143,7 @@ void OakModel::setRootNodeDef(const NodeDef *def)
 
 // =============================================================================
 // (public)
-void OakModel::setRootNode(Node node)
+void OakModel::setRootNode(const Node &node)
 {
     if (m_rootItem.node() != node) {
         setCurrentItem(Item());
@@ -182,7 +182,7 @@ const ItemIndex &OakModel::currentItemIndex() const
 
 // =============================================================================
 // (public)
-void OakModel::setCurrentItem(Item item, bool forceUpdate) const
+void OakModel::setCurrentItem(const Item &item, bool forceUpdate) const
 {
     if (m_currentItem != item || forceUpdate) {
         m_currentItem = item;
@@ -194,7 +194,7 @@ void OakModel::setCurrentItem(Item item, bool forceUpdate) const
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-void OakModel::setXMLRootNode(Node rootNode, bool setAsCurrent)
+void OakModel::setXMLRootNode(const Node &rootNode, bool setAsCurrent)
 {
     m_XMLRootNode = rootNode;
 
@@ -238,7 +238,7 @@ bool OakModel::saveXMLRootNode(const std::string& filePath)
 
 // =============================================================================
 // (public)
-const NodeDef* OakModel::findNodeDef(Node node) const
+const NodeDef* OakModel::findNodeDef(const Node &node) const
 {
     if (m_rootItem.isDefNull() || node.isNull()) { return nullptr; }
 

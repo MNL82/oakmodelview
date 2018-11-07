@@ -30,7 +30,7 @@ class NodeEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    NodeEditorHandler(QObject* parent, Model::Item item);
+    NodeEditorHandler(QObject* parent, const Model::Item &item);
     virtual ~NodeEditorHandler();
 
     bool operator==(const Model::NodeDef* nodeDef);
@@ -40,7 +40,7 @@ public:
 
     QWidget* getEditor();
 
-    bool setNode(Model::Node node);
+    bool setNode(const Model::Node &node);
 
     void updateEditorValue(const std::string &name);
     void updateEditorValues();

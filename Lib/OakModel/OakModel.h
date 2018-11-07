@@ -48,25 +48,25 @@ public:
     void setRootNodeDef(NodeDefSPtr def);
     void setRootNodeDef(const NodeDef* def);
 
-    void setRootNode(Node node);
+    void setRootNode(const Node &node);
 
     void setRootItem(const Item& item);
 
     const Item& currentItem() const;
     const ItemIndex& currentItemIndex() const;
-    void setCurrentItem(Item item, bool forceUpdate = false) const;
+    void setCurrentItem(const Item &item, bool forceUpdate = false) const;
 
 #ifdef XML_BACKEND
     const std::string& xmlDocFilePath() { return m_xmlDocFilePath; }
     void setXMLDocFilePath(const std::string xmlDocFilePath) { m_xmlDocFilePath = xmlDocFilePath; }
-    void setXMLRootNode(Node rootNode, bool setAsCurrent = true);
+    void setXMLRootNode(const Node &rootNode, bool setAsCurrent = true);
     bool loadXMLRootNode(const std::string& filePath, bool setAsCurrent = true);
     bool saveXMLRootNode(const std::string& filePath = "");
 #endif // XML_BACKEND
 
     // Starting with the root NodeDef and look through all NodeDefs recursive
     //  untill a match is found
-    const NodeDef *findNodeDef(Node node) const;
+    const NodeDef *findNodeDef(const Node &node) const;
 
     ItemIndexUPtr convertItemIndexToNamed(const ItemIndex &itemIndex) const;
     ItemIndexUPtr convertItemIndexToUnnamed(const ItemIndex &itemIndex) const;

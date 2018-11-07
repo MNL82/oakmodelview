@@ -124,7 +124,7 @@ public:
 
     // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns nullptr.
     virtual const NodeDef* validVariant(const UnionRef& variantId, bool includeBase = false, bool includeDerived = true) const;
-    virtual const NodeDef* validVariant(Node node, bool includeBase = false, bool includeDerived = true) const;
+    virtual const NodeDef* validVariant(const Node &node, bool includeBase = false, bool includeDerived = true) const;
 
     std::vector<const NodeDef *> variantList(bool includeBase = false, bool includeDerived = false) const;
     void getVariantList(std::vector<const NodeDef *> &vList, bool includeBase = false, bool includeDerived = false) const;
@@ -141,10 +141,10 @@ protected:
 // *****************************************************************************
 public:
     virtual bool validate(const UnionRef& variantId, bool includeBase = false, bool includeDerived = false) const;
-    virtual bool validate(Node _node, bool includeBase = false, bool includeDerived = false) const;
+    virtual bool validate(const Node &_node, bool includeBase = false, bool includeDerived = false) const;
 
     virtual ValidationState validationState(const UnionRef& _variantId) const;
-    virtual ValidationState validationState(Node node) const;
+    virtual ValidationState validationState(const Node &node) const;
 // *****************************************************************************
 
 
@@ -188,7 +188,7 @@ public:
     virtual const ContainerDef& container(int index, bool includeBase = true, bool includeDerived = false) const;
     const ContainerDef &container(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
 
-    virtual const ContainerDef& container(Node childNode, bool includeBase = true, bool includeDerived = false) const;
+    virtual const ContainerDef& container(const Node &childNode, bool includeBase = true, bool includeDerived = false) const;
 
     virtual std::vector<const ContainerDef*> containerList(bool includeBase = true, bool includeDerived = false) const;
     virtual void getContainerList(std::vector<const ContainerDef*> &list, bool includeBase = true, bool includeDerived = false) const;
@@ -196,7 +196,7 @@ public:
 
     virtual const NodeDef* childDef(int index, bool includeBase = true) const;
     virtual const NodeDef* childDef(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
-    virtual const NodeDef* childDef(Node childNode, bool includeBase = true, bool includeDerived = false) const;
+    virtual const NodeDef* childDef(const Node &childNode, bool includeBase = true, bool includeDerived = false) const;
 
     std::vector<const NodeDef *> childDefList(bool includeBase = true, bool includeDerived = false) const;
     void getChildDefList(std::vector<const NodeDef *> &cList, bool includeBase = true, bool includeDerived = false) const;
@@ -212,14 +212,14 @@ protected:
 // Parent functions
 // *****************************************************************************
 public:
-    virtual Node parentNode(Node node, const NodeDef** parentNodeDef = nullptr, bool includeBase = true, bool includeDerived = false) const;
+    virtual Node parentNode(const Node &node, const NodeDef** parentNodeDef = nullptr, bool includeBase = true, bool includeDerived = false) const;
 
     virtual int parentContainerCount(bool includeBase = true, bool includeDerived = false) const;
     virtual const ContainerDef* parentContainer(int index, bool includeBase = true, bool includeDerived = false) const;
     virtual const ContainerDef* parentContainer(const std::string& _name, bool includeBase = true, bool includeDerived = false) const;
-    virtual const ContainerDef* parentContainer(Node parentNode, bool includeBase = true, bool includeDerived = false) const;
+    virtual const ContainerDef* parentContainer(const Node &parentNode, bool includeBase = true, bool includeDerived = false) const;
 
-    virtual bool isParent(Node node, Node refNode, bool recursive = true) const;
+    virtual bool isParent(const Node &node, const Node &refNode, bool recursive = true) const;
 
 protected:
     std::vector<const ContainerDef*> m_parentContainerDefs;
@@ -230,9 +230,9 @@ protected:
 // Service functions
 // *****************************************************************************
 public:
-    virtual void onNodeInserted(Node _node) const;
-    virtual void onNodeMoved(Node _node) const;
-    virtual void onNodeCloned(Node _node) const;
+    virtual void onNodeInserted(const Node &_node) const;
+    virtual void onNodeMoved(const Node &_node) const;
+    virtual void onNodeCloned(const Node &_node) const;
 // *****************************************************************************
 
     template<class... _Types> inline

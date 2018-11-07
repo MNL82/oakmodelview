@@ -48,7 +48,7 @@ public:
     virtual Item moveItem(const Item &refItem, int &index, const Item &moveItem) const;
 
     virtual bool canRemoveItem(const Item &refItem, int index) const;
-    virtual bool removeItem(const Item &refItem, int index) const;
+    virtual bool removeItem(Item &refItem, int index);
 
 protected:
     void addChildQuery(ItemQueryUPtr query);

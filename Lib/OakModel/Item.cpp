@@ -33,7 +33,7 @@ Item::Item()
 
 // =============================================================================
 // (public)
-Item::Item(const NodeDef* nodeDef, Node node, const OakModel* model)
+Item::Item(const NodeDef* nodeDef, const Node &node, const OakModel* model)
     : m_node(node),
       m_model(model)
 {
@@ -57,7 +57,7 @@ Item::Item(const Item& copy)
 
 // =============================================================================
 // (public)
-Item::Item(Item&& move)
+Item::Item(Item &&move)
     : m_def(std::move(move.m_def)),
       m_node(std::move(move.m_node)),
       m_model(move.m_model),
@@ -241,6 +241,14 @@ const Entry& Item::entryAt(int index) const
 
 // =============================================================================
 // (public)
+Entry &Item::entryAt(int index)
+{
+    initEntryList();
+    return m_entryList.at(static_cast<vSize>(index));
+}
+
+// =============================================================================
+// (public)
 const Entry& Item::entry(const std::string &entryName) const
 {
     initEntryList();
@@ -255,7 +263,21 @@ const Entry& Item::entry(const std::string &entryName) const
 
 // =============================================================================
 // (public)
-Item::entryIterator Item::entryBegin() const
+Entry &Item::entry(const std::string &entryName)
+{
+    initEntryList();
+    for (Entry& iv: m_entryList)
+    {
+        if (iv.name() == entryName) {
+            return iv;
+        }
+    }
+    return Entry::emptyEntry();
+}
+
+// =============================================================================
+// (public)
+const Item::entryIterator Item::entryBegin() const
 {
     initEntryList();
     return m_entryList.begin();
@@ -263,7 +285,23 @@ Item::entryIterator Item::entryBegin() const
 
 // =============================================================================
 // (public)
-Item::entryIterator Item::entryEnd() const
+Item::entryIterator Item::entryBegin()
+{
+    initEntryList();
+    return m_entryList.begin();
+}
+
+// =============================================================================
+// (public)
+const Item::entryIterator Item::entryEnd() const
+{
+    initEntryList();
+    return m_entryList.end();
+}
+
+// =============================================================================
+// (public)
+Item::entryIterator Item::entryEnd()
 {
     initEntryList();
     return m_entryList.end();
@@ -551,7 +589,7 @@ bool Item::canMoveChild(const std::string &name, int &index, const Item &moveIte
 
 // =============================================================================
 // (public)
-Item Item::moveChild(int& index, Item moveItem) const
+Item Item::moveChild(int& index, const Item &moveItem) const
 {
     ASSERT(m_def);
     if (m_model) {
@@ -586,7 +624,7 @@ Item Item::moveChild(int& index, Item moveItem) const
 
 // =============================================================================
 // (public)
-Item Item::moveChild(const std::string &name, int &index, Item moveItem) const
+Item Item::moveChild(const std::string &name, int &index, const Item &moveItem) const
 {
     ASSERT(m_def);
     if (m_model) {
@@ -714,7 +752,7 @@ void Item::initEntryList() const
 
 // =============================================================================
 // (protected)
-void Item::updateUniqueValues(Item item)
+void Item::updateUniqueValues(const Item &item)
 {
     Model::Item::entryIterator vIt = item.entryBegin();
     Model::Item::entryIterator vItEnd = item.entryEnd();

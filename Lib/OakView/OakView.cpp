@@ -388,7 +388,7 @@ void OakView::updateTreeStructure()
 
 // =============================================================================
 // (protected)
-QTreeWidgetItem * OakView::getTreeItems(Model::Item item, QTreeWidgetItem *parentItem)
+QTreeWidgetItem * OakView::getTreeItems(const Model::Item &item, QTreeWidgetItem *parentItem)
 {
     if (item.isNull()) { return nullptr; }
 

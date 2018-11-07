@@ -19,7 +19,7 @@ namespace View {
 
 // =============================================================================
 // (public)
-NodeEditorHandler::NodeEditorHandler(QObject *parent, Model::Item item)
+NodeEditorHandler::NodeEditorHandler(QObject *parent, const Model::Item &item)
     : QObject(parent), m_item(item)
 {
 }
@@ -62,7 +62,7 @@ QWidget* NodeEditorHandler::getEditor()
 
 // =============================================================================
 // (public)
-bool NodeEditorHandler::setNode(Model::Node node)
+bool NodeEditorHandler::setNode(const Model::Node &node)
 {
     if (!m_item.def()->validate(node)) { return false; }
 

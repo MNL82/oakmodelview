@@ -26,8 +26,8 @@ class Item
 {
 public:
     Item();
-    Item(const NodeDef* def, Node node, const OakModel* model = nullptr);
-    Item(const Item& copy);
+    Item(const NodeDef* def, const Node &node, const OakModel* model = nullptr);
+    Item(const Item &copy);
     Item(Item&& move);
 
     Item& operator=(const Item& copy);
@@ -46,7 +46,9 @@ public:
 
     void clear();
 
-    Node node() const { return m_node; }
+    const Node &node() const { return m_node; }
+    Node node() { return m_node; }
+
     const NodeDef* def() const { return m_def; }
     const OakModel* model() const;
 
@@ -59,13 +61,20 @@ public:
     int entryCount() const;
     bool hasEntry(const std::string &entryName) const;
     int entryIndex(const Entry& entry) const;
+
     const Entry& entryAt(int index) const;
+    Entry& entryAt(int index);
+
     const Entry& entry(const std::string &entryName) const;
+    Entry& entry(const std::string &entryName);
 
     typedef std::vector<Entry>::const_iterator entryIterator;
 
-    entryIterator entryBegin() const;
-    entryIterator entryEnd() const;
+    const entryIterator entryBegin() const;
+    Item::entryIterator entryBegin();
+
+    const entryIterator entryEnd() const;
+    entryIterator entryEnd();
 
     bool hasKey() const;
     const Entry& entryKey() const;
@@ -112,8 +121,8 @@ public:
     bool canMoveChild(int &index, const Item &moveItem) const;
     bool canMoveChild(const std::string &name, int &index, const Item &moveItem) const;
 
-    Item moveChild(int &index, Item moveItem) const;
-    Item moveChild(const std::string &name, int &index, Item moveItem) const;
+    Item moveChild(int &index, const Item &moveItem) const;
+    Item moveChild(const std::string &name, int &index, const Item &moveItem) const;
 
     bool canRemoveChild(int index) const;
     bool canRemoveChild(const std::string &name, int index) const;
@@ -126,11 +135,10 @@ public:
     int convertChildIndexToUnnamed(const std::string &name, int index) const;
     int convertChildIndexToNamed(std::string &name, int index) const;
 
-
 protected:
     inline void initEntryList() const;
 
-    static void updateUniqueValues(Item item);
+    static void updateUniqueValues(const Item &item);
 
 protected:
     const NodeDef* m_def;

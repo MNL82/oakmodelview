@@ -27,11 +27,11 @@ class Entry
 {
 public:
     Entry();
-    Entry(const ValueDef* valueDef, const Node& node, const Item* item/* = nullptr*/);
+    Entry(const ValueDef* valueDef, const Node &node, const Item* item/* = nullptr*/);
     Entry(const Entry& copy);
     Entry(Entry&& move);
 
-    Entry& operator=(const Entry& copy);
+    Entry& operator=( const Entry& copy);
     Entry& operator=(Entry&& move);
 
     bool operator==(const Entry& _entry) const;
@@ -80,7 +80,7 @@ public:
 
     const ValueSettings& settings() const;
 
-    static const Entry& emptyEntry();
+    static Entry &emptyEntry();
 
     template<typename T>
     bool operator<<(const T& value) const;

@@ -54,9 +54,9 @@ public:
 
     virtual const NodeDef* containerDef() const;
     virtual const NodeDef* containerDef(const UnionRef& variantId) const;
-    virtual const NodeDef* containerDef(Node _node) const;
+    virtual const NodeDef* containerDef(const Node &_node) const;
 
-    virtual bool validate(Node _node) const;
+    virtual bool validate(const Node &_node) const;
 
     int minCount() const;
     int maxCount() const;
@@ -66,16 +66,16 @@ public:
 // *****************************************************************************
 public:
     // Return -1 is dataNode failed to validate
-    virtual int nodeCount(Node _node) const;
-    virtual int nodeIndex(Node _node, Node refNode) const;
+    virtual int nodeCount(const Node &_node) const;
+    virtual int nodeIndex(const Node &_node, const Node &refNode) const;
 
-    virtual Node node(Node _node, int index, const NodeDef** nodeDef = nullptr) const;
+    virtual Node node(const Node &_node, int index, const NodeDef** nodeDef = nullptr) const;
 
-    virtual Node firstNode(Node _node, const NodeDef** nodeDef = nullptr) const;
-    virtual Node lastNode(Node _node, const NodeDef** nodeDef = nullptr) const;
+    virtual Node firstNode(const Node &_node, const NodeDef** nodeDef = nullptr) const;
+    virtual Node lastNode(const Node &_node, const NodeDef** nodeDef = nullptr) const;
 
-    virtual Node nextNode(Node refNode, const NodeDef** nodeDef = nullptr) const;
-    virtual Node previousNode(Node refNode, const NodeDef** nodeDef = nullptr) const;
+    virtual Node nextNode(const Node &refNode, const NodeDef** nodeDef = nullptr) const;
+    virtual Node previousNode(const Node &refNode, const NodeDef** nodeDef = nullptr) const;
 // *****************************************************************************
 
 
@@ -84,7 +84,7 @@ public:
 // *****************************************************************************
 public:
     virtual const NodeDef* hostDef() const;
-    virtual Node hostNode(Node refdNode) const;
+    virtual Node hostNode(const Node &refdNode) const;
 // *****************************************************************************
 
 
@@ -93,41 +93,41 @@ public:
 // *****************************************************************************
 public:
     /// Se the function 'insertChildDataNode' bellow
-    virtual bool canInsertNode(Node _node, int &index) const;
+    virtual bool canInsertNode(const Node &_node, int &index) const;
 
     /// Parameter 'node' must match this definition and will be the parent node of the new data Node.
     /// Parameter 'index' is the index of new new data node. The new node will be appended after the last sibling if
     ///  'index' is -1. 'index' in updated with the actual index.
     /// The return value is the inserted data node, or an empty Node if the operation failed
-    virtual Node insertNode(Node _node, int &index) const;
+    virtual Node insertNode(const Node &_node, int &index) const;
 
     /// Se the function 'cloneChildDataNode' bellow
-    virtual bool canCloneNode(Node _node, int &index, Node cloneNode) const;
+    virtual bool canCloneNode(const Node &_node, int &index, const Node &cloneNode) const;
 
     /// Parameter 'cloneNode' must match one of the child node definitions. A deep copy will be performed.
     /// Parameter 'node' must match this definition and will be the parent node of the cloned data node.
     /// Parameter 'index' is the index of new new data node. The new node will be appended after the last sibling if
     ///  'index' is -1. 'index' in updated with the actual index.
     /// The return value is the inserted data node, or an empty Node if the operation failed
-    virtual Node cloneNode(Node _node, int &index, Node cloneNode) const;
+    virtual Node cloneNode(const Node &_node, int &index, const Node &cloneNode) const;
 
     /// Se the function 'moveChildDataNode' bellow
-    virtual bool canMoveNode(Node _node, int &index, Node moveNode) const;
+    virtual bool canMoveNode(const Node &_node, int &index, const Node &moveNode) const;
 
     /// Parameter 'moveDataNode' must match one of the child node definitions.
     /// Parameter 'node' must match this definition and will be the parent node of the new data Node
     /// Parameter 'index' is the index of new new data node. The new node will be appended after the last sibling if
     ///  'index' is -1. 'index' in updated with the actual index.
     /// The return value is the inserted data node, or an empty Node if the operation failed
-    virtual Node moveNode(Node _node, int &index, Node moveNode) const;
+    virtual Node moveNode(const Node &_node, int &index, const Node &moveNode) const;
 
     /// Se the function 'removeChildDataNode' bellow
-    virtual bool canRemoveNode(Node _node, int index) const;
+    virtual bool canRemoveNode(const Node &_node, int index) const;
 
     /// Parameter 'node' must match this definition and is the parent of the removed node.
     /// Parameter 'index' is the index of the data node that will be removed.
     /// Returns true if the data node has been removed
-    virtual bool removeNode(Node _node, int index) const;
+    virtual bool removeNode(const Node &_node, int index) const;
 
 // ****************************************************************************
 
@@ -140,7 +140,7 @@ public:
     static const ContainerDef &emptyChildNodeDef();
 
 protected:
-    bool checkUniqueOptionValues(Node _node) const;
+    bool checkUniqueOptionValues(const Node &_node) const;
 
 protected:
     NodeDefWPtr m_hostDef;

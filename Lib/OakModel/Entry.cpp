@@ -29,7 +29,7 @@ Entry::Entry()
 
 // =============================================================================
 // (public)
-Entry::Entry(const ValueDef* valueDef, const Node& node, const Item *model)
+Entry::Entry(const ValueDef* valueDef, const Node &node, const Item *model)
     : m_valueDef(valueDef),
       m_node(node),
       m_item(model)
@@ -39,7 +39,7 @@ Entry::Entry(const ValueDef* valueDef, const Node& node, const Item *model)
 
 // =============================================================================
 // (public)
-Entry::Entry(const Entry& copy)
+Entry::Entry(const Entry &copy)
     : m_valueDef(copy.m_valueDef),
       m_node(copy.m_node),
       m_item(copy.m_item)
@@ -201,7 +201,7 @@ const ValueSettings &Entry::settings() const
 
 // =============================================================================
 // (public)
-const Entry& Entry::emptyEntry()
+Entry& Entry::emptyEntry()
 {
     static Entry empty;
     return empty;

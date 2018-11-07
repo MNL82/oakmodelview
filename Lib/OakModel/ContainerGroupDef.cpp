@@ -78,7 +78,7 @@ const NodeDef* ContainerGroupDef::containerDef(const std::string &name, const Un
 
 // =============================================================================
 // (public)
-const NodeDef* ContainerGroupDef::containerDef(Node _node) const
+const NodeDef* ContainerGroupDef::containerDef(const Node &_node) const
 {
     const ContainerDef& ci = m_hostDef->container(_node);
     if (ci.isNull()) { return nullptr; }
@@ -87,7 +87,7 @@ const NodeDef* ContainerGroupDef::containerDef(Node _node) const
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::validate(Node _node) const
+bool ContainerGroupDef::validate(const Node &_node) const
 {
     for (auto container: m_containerList)
     {
@@ -100,7 +100,7 @@ bool ContainerGroupDef::validate(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerGroupDef::nodeCount(Node _node) const
+int ContainerGroupDef::nodeCount(const Node &_node) const
 {
     int count = 0;
     for (auto child: m_containerList) {
@@ -112,7 +112,7 @@ int ContainerGroupDef::nodeCount(Node _node) const
 
 // =============================================================================
 // (public)
-int ContainerGroupDef::nodeIndex(Node _node, Node refNode) const
+int ContainerGroupDef::nodeIndex(const Node &_node, const Node &refNode) const
 {
     int index = 0;
     for (auto container: m_containerList)
@@ -129,7 +129,7 @@ int ContainerGroupDef::nodeIndex(Node _node, Node refNode) const
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::node(Node _node, int index, const NodeDef** nodeDef) const
+Node ContainerGroupDef::node(const Node &_node, int index, const NodeDef** nodeDef) const
 {
     for (auto container: m_containerList)
     {
@@ -146,7 +146,7 @@ Node ContainerGroupDef::node(Node _node, int index, const NodeDef** nodeDef) con
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::firstNode(Node _node, const NodeDef** nodeDef) const
+Node ContainerGroupDef::firstNode(const Node &_node, const NodeDef** nodeDef) const
 {
     for (auto container: m_containerList)
     {
@@ -161,7 +161,7 @@ Node ContainerGroupDef::firstNode(Node _node, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::lastNode(Node _node, const NodeDef** nodeDef) const
+Node ContainerGroupDef::lastNode(const Node &_node, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.end();
     while (it != m_containerList.begin()) {
@@ -177,7 +177,7 @@ Node ContainerGroupDef::lastNode(Node _node, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::nextNode(Node _node, Node refNode, const NodeDef** nodeDef) const
+Node ContainerGroupDef::nextNode(const Node &_node, const Node &refNode, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.begin();
     while (it != m_containerList.end()) {
@@ -211,7 +211,7 @@ Node ContainerGroupDef::nextNode(Node _node, Node refNode, const NodeDef** nodeD
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::previousNode(Node _node, Node refNode, const NodeDef** nodeDef) const
+Node ContainerGroupDef::previousNode(const Node &_node, const Node &refNode, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.end();
     while (it != m_containerList.begin()) {
@@ -244,7 +244,7 @@ Node ContainerGroupDef::previousNode(Node _node, Node refNode, const NodeDef** n
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canInsertNode(Node _node, const UnionRef &name, int &index) const
+bool ContainerGroupDef::canInsertNode(const Node &_node, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
@@ -261,7 +261,7 @@ bool ContainerGroupDef::canInsertNode(Node _node, const UnionRef &name, int &ind
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::insertNode(Node _node, const UnionRef &name, int &index) const
+Node ContainerGroupDef::insertNode(const Node &_node, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
@@ -278,7 +278,7 @@ Node ContainerGroupDef::insertNode(Node _node, const UnionRef &name, int &index)
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canCloneNode(Node _node, int &index, Node cloneNode) const
+bool ContainerGroupDef::canCloneNode(const Node &_node, int &index, const Node &cloneNode) const
 {
     for (auto container: m_containerList)
     {
@@ -294,7 +294,7 @@ bool ContainerGroupDef::canCloneNode(Node _node, int &index, Node cloneNode) con
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::cloneNode(Node _node, int &index, Node cloneNode) const
+Node ContainerGroupDef::cloneNode(const Node &_node, int &index, const Node &cloneNode) const
 {
     for (auto container: m_containerList)
     {
@@ -311,7 +311,7 @@ Node ContainerGroupDef::cloneNode(Node _node, int &index, Node cloneNode) const
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canMoveNode(Node _node, int &index, Node moveNode) const
+bool ContainerGroupDef::canMoveNode(const Node &_node, int &index, const Node &moveNode) const
 {
     for (auto container: m_containerList)
     {
@@ -327,7 +327,7 @@ bool ContainerGroupDef::canMoveNode(Node _node, int &index, Node moveNode) const
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::moveNode(Node _node, int &index, Node moveNode) const
+Node ContainerGroupDef::moveNode(const Node &_node, int &index, const Node &moveNode) const
 {
     for (auto container: m_containerList)
     {
@@ -344,7 +344,7 @@ Node ContainerGroupDef::moveNode(Node _node, int &index, Node moveNode) const
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canRemoveNode(Node _node, int index) const
+bool ContainerGroupDef::canRemoveNode(const Node &_node, int index) const
 {
     int count;
     for (auto container: m_containerList)
@@ -362,7 +362,7 @@ bool ContainerGroupDef::canRemoveNode(Node _node, int index) const
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::removeNode(Node _node, int index) const
+bool ContainerGroupDef::removeNode(const Node &_node, int index) const
 {
     int count;
     for (auto container: m_containerList)

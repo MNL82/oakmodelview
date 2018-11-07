@@ -145,7 +145,7 @@ bool Node::isXML() const
 
 // =============================================================================
 // (public)
-XML::Element &Node::xmlNode()
+XML::Element Node::xmlNode() const
 {
     ASSERT(m_type ==Type::XML);
     return m_xmlNode;

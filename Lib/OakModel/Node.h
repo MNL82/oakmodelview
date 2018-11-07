@@ -46,7 +46,7 @@ public:
 #ifdef XML_BACKEND
     Node(XML::Element _xmlNode);
     bool isXML() const;
-    XML::Element &xmlNode();
+    XML::Element xmlNode() const;
 #endif // XML_BACKEND
 
 private:

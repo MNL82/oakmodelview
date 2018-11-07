@@ -54,10 +54,17 @@ void TableQuery::addValueQuery(EntryQuerySPtr valueQuery)
 
 // =============================================================================
 // (public)
-int TableQuery::count(const Item &item)
+int TableQuery::count(const Item &item) const
 {
     ASSERT(m_itemQuery);
     return m_itemQuery->count(item);
+}
+
+// =============================================================================
+// (public)
+ItemQuery &TableQuery::itemQuery()
+{
+    return *m_itemQuery.get();
 }
 
 // =============================================================================

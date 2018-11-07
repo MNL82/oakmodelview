@@ -410,7 +410,7 @@ bool ListRef::remove(Element refBase, Element refElement) const
 
 // =============================================================================
 // (public)
-bool ListRef::remove(Element &refBase, int index) const
+bool ListRef::remove(Element refBase, int index) const
 {
     if (refBase.isNull()) { return false; }
 

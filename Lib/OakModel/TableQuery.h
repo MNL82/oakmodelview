@@ -33,8 +33,9 @@ public:
     int columnCount() const;
     void addValueQuery(EntryQuerySPtr valueQuery);
 
-    int count(const Item &item);
+    int count(const Item &item) const;
 
+    ItemQuery &itemQuery();
     const ItemQuery &itemQuery() const;
 
 protected:

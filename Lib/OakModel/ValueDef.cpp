@@ -159,7 +159,7 @@ const ValueOptions &ValueDef::options() const
 
 // =============================================================================
 // (public)
-int ValueDef::compareValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+int ValueDef::compareValue(const Node &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return -2; }
 
@@ -206,7 +206,7 @@ int ValueDef::compareValue(Node _node, const UnionRef &value, bool useDefault, b
 
 // =============================================================================
 // (public)
-bool ValueDef::hasValue(Node _node) const
+bool ValueDef::hasValue(const Node &_node) const
 {
     if (_node.isNull()) { return false; }
 
@@ -227,7 +227,7 @@ bool ValueDef::hasValue(Node _node) const
 
 // =============================================================================
 // (public)
-bool ValueDef::canGetValue(Node _node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::canGetValue(const Node &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
 
@@ -250,7 +250,7 @@ bool ValueDef::canGetValue(Node _node, const UnionRef &value, bool useDefault, b
 
 // =============================================================================
 // (public)
-bool ValueDef::getValue(Node _node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::getValue(const Node &_node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -290,7 +290,7 @@ bool ValueDef::getValue(Node _node, UnionRef value, bool useDefault, bool allowC
 
 // =============================================================================
 // (public)
-UnionValue ValueDef::value(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+UnionValue ValueDef::value(const Node &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     UnionValue val(m_valueTemplate);
     UnionRef uRef(val);
@@ -300,7 +300,7 @@ UnionValue ValueDef::value(Node _node, bool useDefault, bool allowConversion, Co
 
 // =============================================================================
 // (public)
-std::string ValueDef::toString(Node _node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+std::string ValueDef::toString(const Node &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     std::string str;
     UnionRef uRef(str);
@@ -310,7 +310,7 @@ std::string ValueDef::toString(Node _node, bool useDefault, bool allowConversion
 
 // =============================================================================
 // (public)
-bool ValueDef::canSetValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::canSetValue(const Node &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -352,7 +352,7 @@ bool ValueDef::canSetValue(Node _node, const UnionRef &value, bool allowConversi
 
 // =============================================================================
 // (public)
-bool ValueDef::setValue(Node _node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::setValue(const Node &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (value.isNull()) { return false; }
     if (_node.isNull()) { return false; }
