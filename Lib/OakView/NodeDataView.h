@@ -16,8 +16,8 @@
 #include <QStackedWidget>
 #include <QMap>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // Class definition
@@ -55,5 +55,5 @@ protected:
     std::vector<NodeEditorHandlerUPtr> m_editorList;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

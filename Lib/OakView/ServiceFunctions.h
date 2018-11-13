@@ -15,8 +15,8 @@
 #include <QStringList>
 #include <QObject>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 QStringList toQStringList(const std::vector<std::string>& stringList);
 
@@ -30,5 +30,5 @@ class SignalBlocker{
         bool m_alreadyBlocked;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

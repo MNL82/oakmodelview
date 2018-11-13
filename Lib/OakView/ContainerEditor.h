@@ -16,8 +16,8 @@
 
 #include "ContainerDef.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 class ContainerEditorHandler;
 
@@ -59,5 +59,5 @@ protected:
     int m_count;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

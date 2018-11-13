@@ -10,8 +10,8 @@
 
 #include "ServiceFunctions.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 QStringList toQStringList(const std::vector<std::string>& stringList)
 {
@@ -37,5 +37,5 @@ SignalBlocker::~SignalBlocker()
     }
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

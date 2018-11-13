@@ -17,8 +17,8 @@
 #include <QWidget>
 #include <QMap>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 class NodeEditorHandler;
 typedef std::unique_ptr<NodeEditorHandler> NodeEditorHandlerUPtr;
@@ -61,5 +61,5 @@ protected:
     QMap<std::string, ContainerEditorHandler*> m_containerEditorMap;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

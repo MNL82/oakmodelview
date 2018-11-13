@@ -28,8 +28,8 @@
 #define CONTENT_MARGIN 1
 #define CONTENT_BORDER 1
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -479,5 +479,5 @@ void ListViewItem::onExspandChanged()
     setExspanded(!isExspanded());
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

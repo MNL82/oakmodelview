@@ -17,8 +17,8 @@
 #include <QMap>
 #include <QTreeWidget>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // Class definition
@@ -77,5 +77,5 @@ protected:
     Model::Item m_dragItem;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

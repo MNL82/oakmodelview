@@ -10,8 +10,8 @@
 
 #include "ParentDataView.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -107,5 +107,5 @@ void ParentDataView::onButtonClicked()
     }
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

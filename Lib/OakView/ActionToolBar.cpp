@@ -15,8 +15,8 @@
 #include <QIcon>
 #include <QImage>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -275,5 +275,5 @@ void ActionToolBar::onActionPaste()
     }
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

@@ -14,8 +14,8 @@
 
 #include <QPushButton>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -174,5 +174,5 @@ void ContainerEditorHandler::onEntryRemove(int index)
     updateEditor();
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

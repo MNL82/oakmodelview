@@ -15,8 +15,8 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // Class definition
@@ -43,5 +43,5 @@ protected:
     QHBoxLayout* m_layout;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

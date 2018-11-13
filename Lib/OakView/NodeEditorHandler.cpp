@@ -14,8 +14,8 @@
 #include <QGridLayout>
 #include <QSpacerItem>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -189,5 +189,5 @@ void NodeEditorHandler::onEditorDestroyed()
     m_editor = nullptr;
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

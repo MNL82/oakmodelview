@@ -24,8 +24,8 @@
 #include "OakModel.h"
 #include "ListViewItem.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -325,5 +325,5 @@ void ListView::onCurrentItemViewDestoyed()
     m_currentViewItem = nullptr;
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

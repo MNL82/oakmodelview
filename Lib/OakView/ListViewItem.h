@@ -21,8 +21,8 @@ class QPushButton;
 class QFrame;
 class QLabel;
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 class ListView;
 
@@ -103,5 +103,5 @@ protected:
     friend class ListView;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

@@ -7,8 +7,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -392,5 +392,5 @@ QList<int> TableView::selectedRows() const
     return list;
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

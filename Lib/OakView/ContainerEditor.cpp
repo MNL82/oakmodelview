@@ -21,8 +21,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -202,5 +202,5 @@ void ContainerEditor::onEntryAdded()
     emit entryInserted(m_eHandler->itemCount());
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

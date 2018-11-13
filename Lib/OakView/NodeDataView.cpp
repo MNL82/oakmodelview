@@ -15,8 +15,8 @@
 #include <QLabel>
 #include <QDebug>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -184,5 +184,5 @@ void NodeDataView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, const s
     }
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

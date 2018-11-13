@@ -16,8 +16,8 @@
 
 class QAction;
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // Class definition
@@ -60,5 +60,5 @@ protected:
     QAction * m_actionPaste;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

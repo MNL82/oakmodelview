@@ -16,8 +16,8 @@
 
 #include <QObject>
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // Class definition
@@ -65,5 +65,5 @@ protected:
     QWidget* m_editor = nullptr;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

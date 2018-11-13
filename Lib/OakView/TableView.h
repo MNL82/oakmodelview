@@ -6,8 +6,8 @@
 #include "OakModel.h"
 #include "TableQuery.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // Class definition
@@ -74,5 +74,5 @@ protected:
     QList<Model::Item> m_copyItems;
 };
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+

@@ -22,8 +22,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace View {
+
+namespace Oak::View {
 
 // =============================================================================
 // (public)
@@ -327,5 +327,5 @@ void ValueEditorHandler::onEditorDestroyed()
     m_editor = nullptr;
 }
 
-} // namespace View
-} // namespace Oak
+} // namespace Oak::View
+
