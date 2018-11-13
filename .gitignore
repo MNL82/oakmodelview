@@ -4,6 +4,9 @@
 *xml.temp
 *.lib
 *.pdb
+*.bak
 doc
 Lib/boost/
+Lib/OakModel/html/
+Lib/OakModel/latex/
 license header.txt
