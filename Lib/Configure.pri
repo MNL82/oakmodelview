@@ -9,4 +9,6 @@
 DEFINES += XML_BACKEND
 DEFINES += NOMINMAX
 
-CONFIG += c++17
+# Enable c++17 features
+CONFIG += c++1z
+
