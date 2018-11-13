@@ -16,8 +16,7 @@
 #include <memory>
 #include <limits>
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // Conversion service functions
@@ -40,5 +39,4 @@ std::unique_ptr<TO> dynamic_unique_pointer_cast(std::unique_ptr<FROM>&& old)
     return std::unique_ptr<TO>(nullptr);
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML

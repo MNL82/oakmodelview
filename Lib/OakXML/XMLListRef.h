@@ -17,8 +17,7 @@
 
 #include "XMLChildRefGroup.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 class ListRef;
 typedef std::unique_ptr<ListRef> ListRefUPtr;
@@ -92,7 +91,6 @@ protected:
     ChildRefGroupUPtr m_subRef;
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

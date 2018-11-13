@@ -12,8 +12,7 @@
 
 #include "XMLRefGroup.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -157,7 +156,6 @@ void RefGroup::clear()
     m_references.clear();
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

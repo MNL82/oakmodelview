@@ -14,8 +14,7 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -124,7 +123,6 @@ Element ChildRef::getSource(Element target) const
     return target.parentElement();
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

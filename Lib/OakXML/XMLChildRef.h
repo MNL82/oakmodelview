@@ -14,8 +14,7 @@
 
 #include "XMLRef.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 class ChildRef;
 typedef std::unique_ptr<ChildRef> ChildRefUPtr;
@@ -63,7 +62,6 @@ protected:
     int m_index;
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace XML::Oak
 
 #endif // XML_BACKEND

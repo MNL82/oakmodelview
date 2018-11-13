@@ -27,8 +27,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -118,7 +117,6 @@ RefUPtr RefFactory::MakeSingle(const std::string &refType, const std::string &re
     }
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

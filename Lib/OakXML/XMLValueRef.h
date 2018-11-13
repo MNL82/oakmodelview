@@ -15,8 +15,7 @@
 #include "XMLRef.h"
 #include <memory>
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 class ValueRef;
 typedef std::unique_ptr<ValueRef> ValueRefUPtr;
@@ -69,7 +68,6 @@ protected:
     std::string m_attributeName;
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

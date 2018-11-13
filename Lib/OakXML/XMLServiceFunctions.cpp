@@ -20,8 +20,7 @@
 
 #define BUFFER_SIZE 1000000
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -70,5 +69,4 @@ int toInteger(const std::string &str, bool *ok)
     }
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML

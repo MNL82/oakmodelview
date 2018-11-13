@@ -17,8 +17,7 @@
 #include <regex>
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 //
@@ -456,7 +455,6 @@ bool Element::validateAttributeText(const std::string &text)
     return true;
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

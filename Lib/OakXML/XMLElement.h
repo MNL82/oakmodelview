@@ -26,8 +26,7 @@ typedef std::basic_ostream<char, std::char_traits<char> > stdTextStream;
 #define UNUSED(x) (void)x;
 #endif
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 typedef std::vector<int>::size_type vSize;
 
@@ -103,7 +102,6 @@ private:
 //    friend class ParserDocument;
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

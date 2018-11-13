@@ -16,8 +16,7 @@
 
 #include <memory>
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 class Ref;
 typedef std::unique_ptr<Ref> RefUPtr;
@@ -61,7 +60,6 @@ protected:
     static std::string emptyStr;
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

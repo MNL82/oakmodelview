@@ -17,8 +17,7 @@
 #include <stdarg.h>
 #include <memory>
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 class ChildRefGroup;
 typedef std::unique_ptr<ChildRefGroup> ChildRefGroupUPtr;
@@ -68,7 +67,6 @@ protected:
 
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

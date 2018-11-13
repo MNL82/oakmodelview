@@ -12,8 +12,7 @@
 
 #include "XMLParentRef.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -97,7 +96,6 @@ Element ParentRef::getSource(Element target) const
     return Element();
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

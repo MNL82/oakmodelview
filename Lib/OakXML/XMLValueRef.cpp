@@ -12,8 +12,7 @@
 
 #include "XMLValueRef.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -165,7 +164,6 @@ void ValueRef::setElementRef(RefUPtr elRef)
     }
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

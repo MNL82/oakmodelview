@@ -16,8 +16,7 @@
 
 #include <memory>
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // Class definition
@@ -53,7 +52,6 @@ private:
     std::shared_ptr<pugi::xml_document> m_document;
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

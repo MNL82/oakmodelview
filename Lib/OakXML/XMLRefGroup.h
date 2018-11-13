@@ -18,8 +18,7 @@
 
 #include "XMLRef.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 class RefGroup;
 typedef std::unique_ptr<RefGroup> RefGroupUPtr;
@@ -71,7 +70,6 @@ protected:
 
 };
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

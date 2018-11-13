@@ -16,8 +16,7 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 //
@@ -128,7 +127,6 @@ Element Document::documentElement()
     return Element(m_document->document_element());
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

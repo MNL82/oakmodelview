@@ -14,8 +14,7 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 // =============================================================================
 // (public)
@@ -466,7 +465,6 @@ void ListRef::setSubRef(ChildRefGroupUPtr value)
     m_subRef = std::move(value);
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND

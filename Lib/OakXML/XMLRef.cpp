@@ -12,8 +12,7 @@
 
 #include "XMLRef.h"
 
-namespace Oak {
-namespace XML {
+namespace Oak::XML {
 
 std::string Ref::emptyStr = "";
 
@@ -54,7 +53,6 @@ Element Ref::getSource(Element target) const
     return target;
 }
 
-} // namespace XML
-} // namespace Oak
+} // namespace Oak::XML
 
 #endif // XML_BACKEND
