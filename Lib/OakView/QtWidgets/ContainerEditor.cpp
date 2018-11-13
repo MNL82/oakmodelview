@@ -22,7 +22,7 @@
 #include "../ServiceFunctions/Assert.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -202,5 +202,5 @@ void ContainerEditor::onEntryAdded()
     emit entryInserted(m_eHandler->itemCount());
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

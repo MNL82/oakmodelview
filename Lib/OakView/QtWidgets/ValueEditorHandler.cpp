@@ -23,7 +23,7 @@
 #include "../ServiceFunctions/Assert.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -327,5 +327,5 @@ void ValueEditorHandler::onEditorDestroyed()
     m_editor = nullptr;
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

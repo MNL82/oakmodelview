@@ -15,7 +15,7 @@
 #include <QSpacerItem>
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -189,5 +189,5 @@ void NodeEditorHandler::onEditorDestroyed()
     m_editor = nullptr;
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

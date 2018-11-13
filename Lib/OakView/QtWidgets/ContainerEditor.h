@@ -17,7 +17,7 @@
 #include "ContainerDef.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 class ContainerEditorHandler;
 
@@ -59,5 +59,5 @@ protected:
     int m_count;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

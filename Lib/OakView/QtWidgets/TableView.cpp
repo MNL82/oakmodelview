@@ -8,7 +8,7 @@
 #include <QDebug>
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -392,5 +392,5 @@ QList<int> TableView::selectedRows() const
     return list;
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

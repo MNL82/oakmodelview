@@ -16,7 +16,7 @@
 #include <QImage>
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -275,5 +275,5 @@ void ActionToolBar::onActionPaste()
     }
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

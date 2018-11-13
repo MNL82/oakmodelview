@@ -20,7 +20,7 @@ class QGridLayout;
 class QVBoxLayout;
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 class ListViewItem;
 
@@ -76,5 +76,5 @@ protected:
     QGridLayout * m_dragLayout;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

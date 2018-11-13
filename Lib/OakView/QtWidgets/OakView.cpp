@@ -22,7 +22,7 @@
 #include "ServiceFunctions.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -529,5 +529,5 @@ void OakView::onCurrentQItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *p
 
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

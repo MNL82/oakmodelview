@@ -29,7 +29,7 @@
 #define CONTENT_BORDER 1
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -479,5 +479,5 @@ void ListViewItem::onExspandChanged()
     setExspanded(!isExspanded());
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

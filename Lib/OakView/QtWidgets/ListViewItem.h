@@ -22,7 +22,7 @@ class QFrame;
 class QLabel;
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 class ListView;
 
@@ -103,5 +103,5 @@ protected:
     friend class ListView;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

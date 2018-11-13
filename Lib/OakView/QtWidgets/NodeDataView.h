@@ -11,37 +11,49 @@
 #pragma once
 
 #include "OakModel.h"
+#include "NodeEditorHandler.h"
 
-#include <QPushButton>
-#include <QHBoxLayout>
+#include <QStackedWidget>
+#include <QMap>
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ParentDataView : public QWidget
+class NodeDataView : public QWidget
 {
     Q_OBJECT
 public:
-    ParentDataView(QWidget* parent = nullptr);
+    NodeDataView(QWidget* parent = nullptr);
+    virtual ~NodeDataView();
 
     void setModel(Model::OakModel* model);
+
+    void clearEditorCash();
 
     void currentItemChanged();
 
     void setCurrentItem(const Model::Item& item);
 
-protected slots:
-    void onButtonClicked();
+    NodeEditorHandler* getEditorHandler(const Model::Item& item);
+
+protected:
+    void modelDestroyed();
+    void setCurrentEditor(QWidget* editor);
+    void setCurrentWidget(int index);
+
+    void onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName);
 
 protected:
     Model::OakModel* m_model = nullptr;
 
-    QList<Model::Item> m_itemList;
-    QHBoxLayout* m_layout;
+    QStackedWidget* m_stackedWidget;
+    int m_initialWidgetCount;
+
+    std::vector<NodeEditorHandlerUPtr> m_editorList;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

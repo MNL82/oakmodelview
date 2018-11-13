@@ -25,7 +25,7 @@
 #include "ListViewItem.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -325,5 +325,5 @@ void ListView::onCurrentItemViewDestoyed()
     m_currentViewItem = nullptr;
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

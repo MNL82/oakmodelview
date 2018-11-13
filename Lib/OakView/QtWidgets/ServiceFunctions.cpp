@@ -11,7 +11,7 @@
 #include "ServiceFunctions.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 QStringList toQStringList(const std::vector<std::string>& stringList)
 {
@@ -37,5 +37,5 @@ SignalBlocker::~SignalBlocker()
     }
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

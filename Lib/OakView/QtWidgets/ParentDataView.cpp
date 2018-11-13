@@ -11,7 +11,7 @@
 #include "ParentDataView.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -107,5 +107,5 @@ void ParentDataView::onButtonClicked()
     }
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

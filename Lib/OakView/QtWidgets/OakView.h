@@ -18,7 +18,7 @@
 #include <QTreeWidget>
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // Class definition
@@ -77,5 +77,5 @@ protected:
     Model::Item m_dragItem;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

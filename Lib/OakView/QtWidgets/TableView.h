@@ -7,7 +7,7 @@
 #include "TableQuery.h"
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // Class definition
@@ -74,5 +74,5 @@ protected:
     QList<Model::Item> m_copyItems;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

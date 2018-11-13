@@ -17,7 +17,7 @@
 class QAction;
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // Class definition
@@ -60,5 +60,5 @@ protected:
     QAction * m_actionPaste;
 };
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 

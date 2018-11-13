@@ -16,7 +16,7 @@
 #include <QDebug>
 
 
-namespace Oak::View {
+namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
@@ -184,5 +184,5 @@ void NodeDataView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, const s
     }
 }
 
-} // namespace Oak::View
+} // namespace Oak::View::QtWidgets
 
