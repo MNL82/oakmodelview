@@ -12,8 +12,8 @@
 
 #include "Item.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class ItemIndex;
 typedef std::unique_ptr<ItemIndex> ItemIndexUPtr;
@@ -75,5 +75,5 @@ protected:
     static ItemIndex s_itemIndex;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

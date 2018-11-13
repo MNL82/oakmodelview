@@ -18,8 +18,8 @@
 
 #include "../ServiceFunctions/Trace.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -150,5 +150,5 @@ void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::
     m_valueBeforeChange = UnionValue();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

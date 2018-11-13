@@ -19,8 +19,8 @@
 
 #define BUFFER_SIZE 1000000
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -557,5 +557,5 @@ std::string trim_copy(std::string s) {
     return s;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

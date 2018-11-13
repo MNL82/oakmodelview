@@ -12,8 +12,8 @@
 
 #include "EntryQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class TableQuery;
 typedef std::shared_ptr<TableQuery> TableQuerySPtr;
@@ -80,6 +80,6 @@ T TableQuery::Iterator::value(int index)
     return e.value<T>();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+
 

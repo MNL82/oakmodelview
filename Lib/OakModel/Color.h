@@ -10,8 +10,8 @@
 
 #pragma once
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -46,5 +46,5 @@ protected:
     int m_alpha;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

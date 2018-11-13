@@ -12,8 +12,8 @@
 
 #include "ItemQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class EntryQuery;
 typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
@@ -157,5 +157,5 @@ T EntryQuery::Iterator::value() const
     return entry().value<T>();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

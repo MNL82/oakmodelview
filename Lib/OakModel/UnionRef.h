@@ -15,8 +15,8 @@
 #include "Union.h"
 #include "ConvertFunctions.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class UnionValue;
 
@@ -172,5 +172,5 @@ T UnionRef::value(bool allowConversion, Conversion *properties) const
     return std::move(v);
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

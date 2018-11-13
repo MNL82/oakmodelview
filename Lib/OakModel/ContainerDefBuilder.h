@@ -13,8 +13,7 @@
 
 #include "ContainerDef.h"
 
-namespace Oak {
-namespace Model {
+namespace Oak::Model {
 
 class NodeDefBuilder;
 typedef std::shared_ptr<NodeDefBuilder> NodeDefBuilderSPtr;
@@ -58,5 +57,5 @@ private:
 
 typedef ContainerDefBuilder CDB;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

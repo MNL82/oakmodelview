@@ -17,8 +17,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 ValueDef ValueDef::s_emptyDef = ValueDef(UnionRef());
 
@@ -419,5 +419,5 @@ ValueDef &ValueDef::emptyDef()
     return s_emptyDef;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

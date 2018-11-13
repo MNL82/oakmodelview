@@ -15,8 +15,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -385,5 +385,5 @@ void ContainerGroupDef::updateContainerList() const
     m_containerList = m_hostDef->containerList();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

@@ -16,8 +16,8 @@
 #include "EntryQuery.h"
 #include <memory>
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (protected)
@@ -141,5 +141,5 @@ NodeDefSPtr ODataMetadataDef::MakeSPtr()
     return sPtr;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

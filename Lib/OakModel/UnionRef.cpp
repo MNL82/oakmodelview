@@ -14,8 +14,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -345,5 +345,5 @@ bool UnionRef::get(UnionValue &target, bool allowConversion, Conversion *propert
     return get(uRef, allowConversion, properties);
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

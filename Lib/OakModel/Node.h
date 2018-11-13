@@ -14,8 +14,8 @@
 #include "XMLElement.h"
 #endif // XML_BACKEND
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -59,5 +59,5 @@ private:
     //};
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

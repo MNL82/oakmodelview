@@ -12,8 +12,8 @@
 
 #include "NodeDef.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class ModelDesignDef;
 typedef std::shared_ptr<ModelDesignDef> ModelDesignDefSPtr;
@@ -34,5 +34,5 @@ public:
     static NodeDefSPtr MakeSPtr();
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

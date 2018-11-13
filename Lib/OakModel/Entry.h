@@ -15,8 +15,8 @@
 #include "ValueDef.h"
 #include "ValueOptions.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class Item;
 
@@ -196,5 +196,5 @@ bool operator<<(T & value, const Entry &item)
 }
 
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

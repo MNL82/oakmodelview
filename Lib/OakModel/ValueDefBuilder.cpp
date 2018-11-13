@@ -14,8 +14,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (protected)
@@ -274,5 +274,5 @@ ValueDefUPtr ValueDefBuilder::get()
 //    }
 //}
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

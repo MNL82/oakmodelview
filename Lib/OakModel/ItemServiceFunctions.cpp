@@ -12,8 +12,8 @@
 
 #include "../ServiceFunctions/Trace.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -41,5 +41,5 @@ void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryL
     }
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

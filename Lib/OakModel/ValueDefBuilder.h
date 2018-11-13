@@ -15,8 +15,8 @@
 #include "XMLValueRef.h"
 #include "ValueOptions.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class ValueDefBuilder;
 typedef std::shared_ptr<ValueDefBuilder> ValueDefBuilderSPtr;
@@ -106,5 +106,5 @@ ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedStatic(const std::vector<
 
 typedef ValueDefBuilder VDB;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

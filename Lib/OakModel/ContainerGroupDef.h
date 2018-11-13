@@ -15,8 +15,8 @@
 #include "UnionRef.h"
 #include "Node.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class NodeDef;
 
@@ -125,5 +125,5 @@ protected:
     friend class NodeDefBuilder;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

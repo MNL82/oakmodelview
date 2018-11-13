@@ -18,8 +18,8 @@
 
 #include "QueryBuilder.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (protected)
@@ -119,5 +119,5 @@ NodeDefSPtr ModelDesignDef::MakeSPtr()
     return sPtr;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

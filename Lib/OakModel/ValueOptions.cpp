@@ -13,8 +13,8 @@
 #include "UnionRef.h"
 #include "EntryQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -141,5 +141,5 @@ const ValueOptions &ValueOptions::empty()
 //    return true;
 //}
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

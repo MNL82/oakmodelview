@@ -17,8 +17,8 @@
 #include "ItemServiceFunctions.h"
 #include "OptionsObserver.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -526,5 +526,5 @@ void OakModel::clearObservers()
     m_observerList.clear();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

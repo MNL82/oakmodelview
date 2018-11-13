@@ -10,8 +10,8 @@
 
 #include "Conversion.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -58,5 +58,5 @@ Conversion*Conversion::globalDefault2()
     return s_default;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

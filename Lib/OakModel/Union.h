@@ -15,8 +15,8 @@
 
 #include "DateTime.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 enum class UnionType { Undefined = -1, Char = 0, Bool = 1, Integer = 2, Double = 3, String = 4, DateTime = 5 };
 typedef union UValue { bool b; int i; double d; std::string *s; DateTime *dt; } UValue;
@@ -56,5 +56,5 @@ UnionType Union::GetValueType(const T &v)
 
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

@@ -12,8 +12,8 @@
 
 #include "ItemQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class QueryBuilder;
 typedef std::shared_ptr<QueryBuilder> QueryBuilderSPtr;
@@ -50,5 +50,5 @@ protected:
 
 typedef QueryBuilder QB;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

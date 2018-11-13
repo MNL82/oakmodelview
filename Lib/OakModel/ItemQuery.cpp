@@ -13,8 +13,8 @@
 
 #include <utility>
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -475,5 +475,5 @@ bool ItemQuery::Iterator::last(const Item &refItem)
     return false;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

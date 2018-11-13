@@ -12,8 +12,8 @@
 
 #include "ItemQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -49,5 +49,5 @@ protected:
     std::string m_nodeName;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

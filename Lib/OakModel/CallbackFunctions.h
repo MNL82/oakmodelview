@@ -16,8 +16,8 @@
 #include "Item.h"
 #include "ItemIndex.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -227,5 +227,5 @@ protected:
     std::map<void*, std::function<void(const ItemIndex&, const std::string &)>> m_functionMap;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

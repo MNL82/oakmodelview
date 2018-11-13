@@ -14,8 +14,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (protected)
@@ -342,5 +342,5 @@ void NodeDefBuilder::setTagNameForAllVariants(NodeDefSPtr nodeDef, const std::st
 
 #endif // XML_BACKEND
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

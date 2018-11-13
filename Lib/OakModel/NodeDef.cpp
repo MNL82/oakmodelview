@@ -19,8 +19,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -1227,5 +1227,5 @@ void NodeDef::onNodeCloned(const Node &_node) const
     UNUSED(_node);
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

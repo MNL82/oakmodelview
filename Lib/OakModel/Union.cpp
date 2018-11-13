@@ -13,8 +13,8 @@
 #include "UnionRef.h"
 #include "UnionValue.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -104,5 +104,5 @@ UnionType Union::GetType(const UnionValue &uv)
     return uv.type();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

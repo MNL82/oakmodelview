@@ -17,8 +17,8 @@
 #include "Conversion.h"
 #include "DateTime.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // convert()
@@ -151,5 +151,5 @@ bool isTypeIdBaseEqual(const T1&, const T2&)
     return false;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

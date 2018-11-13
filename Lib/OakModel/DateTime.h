@@ -13,8 +13,8 @@
 #include <string>
 #include <chrono>
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Struct definition
@@ -114,5 +114,5 @@ void swap(Oak::Model::DateTime &left, Oak::Model::DateTime &right) noexcept;
 
 typedef std::chrono::duration<int, std::ratio_multiply<std::chrono::hours::period, std::ratio<24> >::type> chrono_days;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

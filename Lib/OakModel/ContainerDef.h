@@ -20,8 +20,8 @@
 #include "XMLListRef.h"
 #endif // XML_BACKEND
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class NodeDef;
 
@@ -158,5 +158,5 @@ protected:
 
 typedef ContainerDef ContainerDef;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

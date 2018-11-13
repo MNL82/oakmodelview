@@ -13,8 +13,8 @@
 #include "ValueSettings.h"
 #include "UnionRef.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -53,5 +53,5 @@ void ValueSettings::setValue(const std::string &settingName, const UnionRef &val
     m_settingsMap[settingName] = value;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

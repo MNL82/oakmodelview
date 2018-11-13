@@ -12,8 +12,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 ItemIndex ItemIndex::s_itemIndex = ItemIndex();
 
@@ -326,5 +326,5 @@ int ItemIndex::convertIndexToNamed(const Item &_item, std::string &name) const
     }
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

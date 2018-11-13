@@ -12,8 +12,8 @@
 
 #include "Item.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class ItemQuery;
 typedef std::unique_ptr<ItemQuery> ItemQueryUPtr;
@@ -101,5 +101,5 @@ public:
     friend class QueryBuilder;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

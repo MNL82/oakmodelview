@@ -33,8 +33,8 @@
 #include "XMLElement.h"
 #endif // XML_BACKEND
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class NodeDef;
 typedef std::shared_ptr<NodeDef> NodeDefSPtr;
@@ -247,5 +247,5 @@ public:
     friend class ContainerDefBuilder;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

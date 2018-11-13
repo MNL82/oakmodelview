@@ -10,8 +10,8 @@
 
 #pragma once
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -30,5 +30,5 @@ private:
     bool m_hideVariantInstance = false;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

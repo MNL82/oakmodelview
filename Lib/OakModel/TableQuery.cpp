@@ -12,8 +12,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -158,5 +158,5 @@ void TableQuery::Iterator::getValue(int index, UnionValue value) const
     e.getValue(value);
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

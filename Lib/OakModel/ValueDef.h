@@ -21,8 +21,8 @@
 #include "XMLValueRef.h"
 #endif // XML_BACKEND
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class ValueOptions;
 
@@ -130,5 +130,5 @@ ValueDefUPtr ValueDef::MakeUPtr(_Types&&... _Args)
 
 typedef ValueDef ValueDef;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

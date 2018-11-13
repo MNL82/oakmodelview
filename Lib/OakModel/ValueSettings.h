@@ -17,8 +17,8 @@
 
 #include "UnionValue.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 #define OPTION_ONLY     "OptionsOnly"
 #define UNIT            "Unit"
@@ -46,5 +46,5 @@ private:
     std::map<std::string, UnionValue> m_settingsMap;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

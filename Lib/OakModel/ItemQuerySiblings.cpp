@@ -2,8 +2,8 @@
 
 #include "../ServiceFunctions/Trace.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -95,5 +95,5 @@ const NodeDef *ItemQuerySiblings::_nodeDef(const NodeDef *nDef) const
     return nDef->parentContainer(0)->containerDef();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

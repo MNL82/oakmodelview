@@ -16,8 +16,8 @@
 #include "Item.h"
 #include "ValueOptions.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -594,5 +594,5 @@ bool ContainerDef::checkUniqueOptionValues(const Node &_node) const
     return true;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

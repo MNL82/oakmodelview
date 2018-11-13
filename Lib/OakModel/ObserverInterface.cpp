@@ -15,8 +15,8 @@
 
 #include "OakModel.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -31,5 +31,5 @@ ObserverInterface::~ObserverInterface()
 {
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

@@ -15,8 +15,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -234,5 +234,5 @@ void Entry::onEntryChangeAfter() const
     m_item->model()->onEntryChangeAfter(*iIndex.get(), m_valueDef->name());
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

@@ -12,8 +12,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -152,5 +152,5 @@ XML::Element Node::xmlNode() const
 }
 #endif // XML_BACKEND
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

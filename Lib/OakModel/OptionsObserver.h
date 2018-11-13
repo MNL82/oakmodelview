@@ -15,8 +15,8 @@
 #include "ObserverInterface.h"
 #include "UnionValue.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class NodeDef;
 class ValueDef;
@@ -61,5 +61,5 @@ protected:
 
 typedef std::unique_ptr<OptionsObserver> OptionsObserverUPtr;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

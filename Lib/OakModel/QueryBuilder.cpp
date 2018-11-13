@@ -17,8 +17,8 @@
 
 #include "../ServiceFunctions/Trace.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -192,5 +192,5 @@ ItemQueryUPtr QueryBuilder::duplicate(const ItemQueryUPtr &c)
     return ItemQueryUPtr(new ItemQuery(*c.get()));
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

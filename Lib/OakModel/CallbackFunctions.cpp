@@ -12,8 +12,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -279,5 +279,5 @@ void Callback_ItemIndexString::trigger(const ItemIndex &itemIndex, const std::st
     }
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

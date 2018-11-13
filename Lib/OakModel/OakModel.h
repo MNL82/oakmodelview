@@ -18,8 +18,8 @@
 #include "XMLDocument.h"
 #endif // XML_BACKEND
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class ObserverInterface;
 typedef std::unique_ptr<ObserverInterface> ObserverInterfaceUPtr;
@@ -128,5 +128,5 @@ protected:
     friend class Entry;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

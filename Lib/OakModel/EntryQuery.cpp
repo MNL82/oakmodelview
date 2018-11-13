@@ -15,8 +15,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (protected)
@@ -237,5 +237,5 @@ const Entry &EntryQuery::Iterator::entry() const
     return this->item().entry(m_entryQuery->m_entryName);
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

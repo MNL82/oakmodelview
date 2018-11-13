@@ -13,8 +13,8 @@
 #include "Item.h"
 #include "EntryQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 typedef std::pair<const NodeDef *, const ValueDef *> NodeValueDefPair;
 
@@ -23,5 +23,5 @@ typedef std::pair<const NodeDef *, const ValueDef *> NodeValueDefPair;
 // =============================================================================
 void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryList, std::vector<NodeValueDefPair> &queryExcludedList, bool recursive = false);
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

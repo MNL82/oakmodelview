@@ -12,8 +12,8 @@
 
 #include <memory>
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class OakModel;
 
@@ -36,5 +36,5 @@ protected:
 
 typedef std::unique_ptr<ObserverInterface> ObserverInterfaceUPtr;
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

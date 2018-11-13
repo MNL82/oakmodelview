@@ -12,8 +12,8 @@
 
 #include "ItemQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -32,5 +32,5 @@ protected:
     virtual const NodeDef *_nodeDef(const NodeDef *nDef) const override;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

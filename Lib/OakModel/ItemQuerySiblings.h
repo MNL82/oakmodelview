@@ -12,8 +12,8 @@
 
 #include "ItemQuery.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -37,5 +37,5 @@ protected:
     mutable Item m_parent;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

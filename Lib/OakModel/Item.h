@@ -14,8 +14,8 @@
 #include "NodeDef.h"
 #include "Entry.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class OakModel;
 
@@ -148,5 +148,5 @@ protected:
     mutable std::vector<Entry> m_entryList;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

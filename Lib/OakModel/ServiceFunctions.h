@@ -18,8 +18,8 @@
 
 #include <Node.h>
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Definitions
@@ -176,5 +176,5 @@ void removeDuplicates(std::vector<T> &vector)
 
 int indexOf(const std::string &str, const char &value, int firstIndex = 0);
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

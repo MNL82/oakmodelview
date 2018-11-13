@@ -15,8 +15,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (protected)
@@ -131,5 +131,5 @@ ContainerDefBuilderSPtr ContainerDefBuilder::setElementListRef(XML::ListRef list
 }
 #endif // XML_BACKEND
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

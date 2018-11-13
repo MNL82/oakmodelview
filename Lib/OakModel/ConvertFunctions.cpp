@@ -15,8 +15,8 @@
 #include <sstream>
 #include "../ServiceFunctions/Assert.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // convert()
@@ -280,5 +280,5 @@ bool canConvert(DateTime &, const std::string &src, Conversion *)
     return !DateTime(src, DateTime::TimeZone::UTC).isNull();
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

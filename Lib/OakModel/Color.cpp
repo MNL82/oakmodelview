@@ -10,8 +10,8 @@
 
 #include "Color.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -133,5 +133,5 @@ bool Color::set(int red, int green, int blue, int alpha)
            setAlpha(alpha);
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

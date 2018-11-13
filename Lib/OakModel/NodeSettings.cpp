@@ -10,8 +10,8 @@
 
 #include "NodeSettings.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // (public)
@@ -42,5 +42,5 @@ void NodeSettings::sethideVariantInstance(bool value)
     m_hideVariantInstance = value;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

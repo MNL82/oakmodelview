@@ -18,8 +18,8 @@
 #define UNUSED(x) (void)x;
 #endif
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 typedef std::vector<int>::size_type vSize;
 
@@ -78,5 +78,5 @@ private:
     double m_equalTolerance;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

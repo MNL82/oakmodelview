@@ -12,8 +12,8 @@
 
 #include "Node.h"
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
@@ -25,5 +25,5 @@ public:
     virtual Node getNode(const Node& baseNode, bool* ok = nullptr) const = 0;
 };
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+

@@ -15,8 +15,8 @@
 
 #include <algorithm>
 
-namespace Oak {
-namespace Model {
+
+namespace Oak::Model {
 
 class Item;
 class EntryQuery;
@@ -73,5 +73,5 @@ bool ValueOptions::getOptions(std::vector<T>& options, const Item *item, bool al
     return true;
 }
 
-} // namespace Model
-} // namespace Oak
+} // namespace Oak::Model
+
