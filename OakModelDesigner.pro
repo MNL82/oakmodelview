@@ -11,7 +11,7 @@ sub_OakXML.file      = Lib/OakXML/OakXML.pro
 sub_OakModel.file    = Lib/OakModel/OakModel.pro
 sub_OakModel.depends = sub_OakXML
 
-sub_OakView.file     = Lib/OakView/OakView.pro
+sub_OakView.file     = Lib/QtWidgets/OakView/OakView.pro
 sub_OakView.depends  = sub_OakXML sub_OakModel
 
 sub_OakModelDesigner.file    = Designer/OakModelDesigner.pro
