@@ -24,10 +24,46 @@ private: \
 private: \
     Q_PROPERTY(TYPE NAME READ NAME MEMBER a_ ## NAME WRITE set_ ## NAME ) \
 public: \
-    TYPE NAME() const { return a_ ## NAME ; } \
+    const TYPE &NAME() const { return a_ ## NAME ; } \
 private: \
-    void set_ ## NAME(TYPE value) { a_ ## NAME = value; } \
+    void set_ ## NAME(const TYPE &value) { a_ ## NAME = value; } \
     TYPE a_ ## NAME;
+
+
+// Creates a read/write property and all the needed functions
+#define AUTO_PROPERTY_OBJECT(TYPE, NAME) \
+private: \
+    Q_PROPERTY(TYPE* NAME READ NAME WRITE set_ ## NAME NOTIFY NAME ## _changed ) \
+public: \
+    const TYPE* NAME() const { return a_ ## NAME ; } \
+    TYPE* NAME() { return a_ ## NAME ; } \
+    void set_ ## NAME(TYPE *value) { \
+        if (a_ ## NAME == value) { return; } \
+        if (a_ ## NAME != nullptr) { a_ ## NAME->setParent(nullptr); } \
+        a_ ## NAME = value; \
+        a_ ## NAME->setParent(this); \
+        emit NAME ## _changed(a_ ## NAME); \
+    } \
+    Q_SIGNAL void NAME ## _changed(const TYPE* value); \
+private: \
+   TYPE* a_ ## NAME = nullptr;
+
+
+// Creates a readonly property and all the needed functions
+#define AUTO_PROPERTY_OBJECT_READONLY(TYPE, NAME) \
+private: \
+    Q_PROPERTY(TYPE* NAME READ NAME MEMBER a_ ## NAME WRITE set_ ## NAME ) \
+public: \
+    const TYPE* NAME() const { return a_ ## NAME ; } \
+    TYPE* NAME() { return a_ ## NAME ; } \
+private: \
+    void set_ ## NAME(TYPE* value) { \
+        if (a_ ## NAME == value) { return; } \
+        if (a_ ## NAME != nullptr) { a_ ## NAME->setParent(nullptr); } \
+        a_ ## NAME = value; \
+        a_ ## NAME->setParent(this); \
+    } \
+    TYPE* a_ ## NAME = nullptr;
 
 
 // Creates a list property and all the needed functions
@@ -42,41 +78,7 @@ private: \
             owner->a_ ## NAMES.append(NAME); \
         } \
     } \
-    static int NAME ##_count(QQmlListProperty<TYPE>* list) { \
-        OWNERTYPE *owner = qobject_cast<OWNERTYPE*>(list->object); \
-        return owner->a_ ## NAMES.count(); \
-    } \
-    static TYPE* NAME(QQmlListProperty<TYPE>* list, int index) { \
-        OWNERTYPE *owner = qobject_cast<OWNERTYPE*>(list->object); \
-        return owner->a_ ## NAMES[index]; \
-    } \
-    static void clear_ ## NAME(QQmlListProperty<TYPE>* list) { \
-        OWNERTYPE *owner = qobject_cast<OWNERTYPE*>(list->object); \
-        return owner->a_ ## NAMES.clear(); \
-    } \
-public: \
-    QQmlListProperty<TYPE> NAMES() { \
-        return QQmlListProperty<TYPE>(this, this, \
-                &OWNERTYPE::append_ ## NAME, \
-                &OWNERTYPE::NAME ## _count, \
-                &OWNERTYPE::NAME, \
-                &OWNERTYPE::clear_ ## NAME); \
-    } \
-private: \
-
-
-// Creates a list property and all the needed functions
-#define AUTO_PROPERTY_LIST(OWNERTYPE, TYPE, NAMES, NAME) \
-private: \
-    Q_PROPERTY(QQmlListProperty<TYPE> NAMES READ NAMES) \
-    QList<TYPE*> a_ ## NAMES; \
-    static void append_ ## NAME(QQmlListProperty<TYPE>* list, TYPE *NAME) { \
-        OWNERTYPE *owner = qobject_cast<OWNERTYPE*>(list->object); \
-        if (owner) { \
-            owner->a_ ## NAMES.append(NAME); \
-        } \
-    } \
-    static int NAME ##_count(QQmlListProperty<TYPE>* list) { \
+    static int NAME ## _count(QQmlListProperty<TYPE>* list) { \
         OWNERTYPE *owner = qobject_cast<OWNERTYPE*>(list->object); \
         return owner->a_ ## NAMES.count(); \
     } \

@@ -31,7 +31,14 @@ HEADERS += \
     QuickNodeDef.h \
     QuickContainerDef.h \
     ../../ServiceFunctions/PropertyHelper.h \
-    QuickOakModelBuilder.h
+    QuickOakModelBuilder.h \
+    QuickValueDef.h \
+    QuickValueOptions.h \
+    QuickValueQuery.h \
+    QuickItemQuery.h \
+    QuickParentQuery.h \
+    QuickChildrenQuery.h \
+    QuickSiblingsQuery.h
 
 
 SOURCES += \
@@ -39,7 +46,14 @@ SOURCES += \
     QuickOakModel.cpp \
     QuickNodeDef.cpp \
     QuickContainerDef.cpp \
-    QuickOakModelBuilder.cpp
+    QuickOakModelBuilder.cpp \
+    QuickValueDef.cpp \
+    QuickValueOptions.cpp \
+    QuickValueQuery.cpp \
+    QuickItemQuery.cpp \
+    QuickParentQuery.cpp \
+    QuickChildrenQuery.cpp \
+    QuickSiblingsQuery.cpp
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir

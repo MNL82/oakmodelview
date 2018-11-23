@@ -11,30 +11,36 @@
 #pragma once
 
 #include <QObject>
-#include <QtQuick/QQuickItem>
-#include <QColor>
+#include <QVariant>
 
-#include "QuickContainerDef.h"
-#include "QuickValueDef.h"
+#include "QuickValueOptions.h"
 
+#include "Union.h"
 #include "../ServiceFunctions/PropertyHelper.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickNodeDef :public QObject
+class QuickValueDef : public QObject
 {
     Q_OBJECT
+public:
+    enum dataTypeEnum {
+        Boolean = 0,
+        Integer = 1,
+        Double = 2,
+        String = 3,
+        DateTime = 4
+    };
+    Q_ENUM(dataTypeEnum)
+
+private:
     AUTO_PROPERTY_READONLY(QString, name)
     AUTO_PROPERTY_READONLY(QString, displayName)
-    AUTO_PROPERTY_READONLY(QColor, color)
-    AUTO_PROPERTY_READONLY(QString, imagePath)
-    AUTO_PROPERTY_READONLY(QString, variantId)
-    AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickValueDef, values, value)
-    AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickContainerDef, containers, container)
-    AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickNodeDef, derivedNodeDefs, derivedNodeDef)
+    AUTO_PROPERTY_READONLY(QVariant, defaultValue)
+    AUTO_PROPERTY_READONLY(dataTypeEnum, dataType)
+    AUTO_PROPERTY_OBJECT_READONLY(QuickValueOptions, options)
 
 public:
-    QuickNodeDef(QObject *parent = nullptr);
-
+    QuickValueDef(QObject* parent = nullptr);
 };

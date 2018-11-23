@@ -11,41 +11,27 @@
 #pragma once
 
 #include <QObject>
-#include <QString>
-#include <memory>
+#include <QQmlListProperty>
+#include <QVariant>
+#include <QVariantList>
 
-#include "QuickNodeDef.h"
+#include "QuickValueQuery.h"
 
 #include "../ServiceFunctions/PropertyHelper.h"
-
-namespace Oak::Model {
-    class NodeDef;
-    typedef std::shared_ptr<NodeDef> NodeDefSPtr;
-}
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickOakModelBuilder : public QObject
+class QuickValueOptions : public QObject
 {
     Q_OBJECT
 
-public:
-    enum StatusEnum {
-        INITIAL = 0,
-        SUCCESS = 1,
-        FAILED = 2
-    };
-    Q_ENUM(StatusEnum)
-
-private:
-    AUTO_PROPERTY_OBJECT_LIST(QuickOakModelBuilder, QuickNodeDef, nodeDefs, nodeDef)
-
-    AUTO_PROPERTY(StatusEnum, status)
-    AUTO_PROPERTY_READONLY(QStringList, errorMessages)
+    AUTO_PROPERTY_READONLY(QVariantList, values)
+    AUTO_PROPERTY_READONLY(QVariantList, excludedValue)
+    AUTO_PROPERTY_OBJECT_READONLY(QuickValueQuery, valueQuery)
+    AUTO_PROPERTY_OBJECT_READONLY(QuickValueQuery, excludedValueQuery)
 
 public:
-    QuickOakModelBuilder(QObject *parent = nullptr);
+    QuickValueOptions(QObject *parent = nullptr);
 
-    Oak::Model::NodeDefSPtr createModel();
 };
