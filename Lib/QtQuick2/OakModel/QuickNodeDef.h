@@ -30,6 +30,8 @@ class QuickNodeDef :public QObject
     AUTO_PROPERTY_READONLY(QColor, color)
     AUTO_PROPERTY_READONLY(QString, imagePath)
     AUTO_PROPERTY_READONLY(QString, variantId)
+    AUTO_PROPERTY_OBJECT(QuickValueDef, keyValue)
+    AUTO_PROPERTY_OBJECT(QuickValueDef, variantValue)
     AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickValueDef, values, value)
     AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickContainerDef, containers, container)
     AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickNodeDef, derivedNodeDefs, derivedNodeDef)

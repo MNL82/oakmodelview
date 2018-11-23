@@ -46,7 +46,7 @@ void ModelDesignDef::createModelDesign()
             ->setOptionsQuery(QB::createChildren("Value")->EntryUPtr("Name"))
             ->setOptionsExcludedQuery(EntryQuery::create()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
-        ->addValueInheritanceId(VDB::create(UnionType::String, "Type")
+        ->addValueVariant(VDB::create(UnionType::String, "Type")
             ->setDisplayName("Node Type"));
 
     /************************** Node(InheritanceRoot) **************************/
@@ -72,7 +72,7 @@ void ModelDesignDef::createModelDesign()
             ->setDefaultValue("Value"))
         ->addValueDef(VDB::create(UnionType::String, "DisplayName")
             ->setDisplayName("Display Name"))
-        ->addValueInheritanceId(VDB::create(UnionType::String, "Type"))
+        ->addValueVariant(VDB::create(UnionType::String, "Type"))
         ->addValueDef(VDB::create(UnionType::String, "Tooltip"));
 
     NodeDef->addContainerDef(CDB::create(ValueDef));

@@ -8,24 +8,12 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#pragma once
-
-#include <QObject>
-#include <QQmlListProperty>
-#include <QString>
-
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "QuickValueSettings.h"
 
 // =============================================================================
-// Class definition
-// =============================================================================
-class QuickItemQuery : public QObject
+// (public)
+QuickValueSettings::QuickValueSettings(QObject *parent)
+    : QObject(parent), a_unique { QuickTriState::Undefined }, a_required { QuickTriState::Undefined }
 {
-    Q_OBJECT
-    AUTO_PROPERTY_OBJECT(QuickItemQuery, next)
 
-public:
-    QuickItemQuery(QObject *parent = nullptr);
-    virtual ~QuickItemQuery() {}
-};
-
+}

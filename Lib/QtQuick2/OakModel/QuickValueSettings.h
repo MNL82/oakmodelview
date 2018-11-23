@@ -9,23 +9,25 @@
  */
 
 #pragma once
-
 #include <QObject>
-#include <QQmlListProperty>
 #include <QString>
+
+#include "QuickOakBaseTypes.h"
 
 #include "../ServiceFunctions/PropertyHelper.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickItemQuery : public QObject
+class QuickValueSettings : public QObject
 {
     Q_OBJECT
-    AUTO_PROPERTY_OBJECT(QuickItemQuery, next)
+    AUTO_PROPERTY_READONLY(bool, readOnly)
+    AUTO_PROPERTY_READONLY(QString, unit)
+    AUTO_PROPERTY_READONLY(QuickTriState::TriStateEnum, unique)
+    AUTO_PROPERTY_READONLY(QuickTriState::TriStateEnum, required)
 
 public:
-    QuickItemQuery(QObject *parent = nullptr);
-    virtual ~QuickItemQuery() {}
-};
+    QuickValueSettings(QObject *parent = nullptr);
 
+};

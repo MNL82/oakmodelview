@@ -160,7 +160,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueInheritanceId(ValueDefBuilderSPtr variantValueDef)
+NodeDefBuilderSPtr NodeDefBuilder::addValueVariant(ValueDefBuilderSPtr variantValueDef)
 {
     ASSERT(m_nodeDef);
     ASSERT(variantValueDef);

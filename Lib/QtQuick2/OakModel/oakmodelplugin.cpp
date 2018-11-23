@@ -10,6 +10,8 @@
 
 #include "oakmodelplugin.h"
 
+#include "QuickOakBaseTypes.h"
+
 #include "QuickContainerDef.h"
 #include "QuickNodeDef.h"
 #include "QuickOakModel.h"
@@ -28,6 +30,8 @@
 void OakModePlugin::registerTypes(const char *uri)
 {
     Q_UNUSED(uri)
+    qmlRegisterType<QuickTriState>("Oak.Model", 1, 0, "TriState");
+
     qmlRegisterType<QuickContainerDef>("Oak.Model", 1, 0, "ContainerDef");
     qmlRegisterType<QuickNodeDef>("Oak.Model", 1, 0, "NodeDef");
     qmlRegisterType<QuickOakModel>("Oak.Model", 1, 0, "OakModel");
@@ -39,4 +43,5 @@ void OakModePlugin::registerTypes(const char *uri)
     qmlRegisterType<QuickChildrenQuery>("Oak.Model", 1, 0, "ChildrenQuery");
     qmlRegisterType<QuickParentQuery>("Oak.Model", 1, 0, "ParentQuery");
     qmlRegisterType<QuickSiblingsQuery>("Oak.Model", 1, 0, "SiblingsQuery");
+    qmlRegisterType<QuickValueSettings>("Oak.Model", 1, 0, "ValueSettings");
 }

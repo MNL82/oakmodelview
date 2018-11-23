@@ -38,7 +38,9 @@ HEADERS += \
     QuickItemQuery.h \
     QuickParentQuery.h \
     QuickChildrenQuery.h \
-    QuickSiblingsQuery.h
+    QuickSiblingsQuery.h \
+    QuickValueSettings.h \
+    QuickOakBaseTypes.h
 
 
 SOURCES += \
@@ -53,7 +55,8 @@ SOURCES += \
     QuickItemQuery.cpp \
     QuickParentQuery.cpp \
     QuickChildrenQuery.cpp \
-    QuickSiblingsQuery.cpp
+    QuickSiblingsQuery.cpp \
+    QuickValueSettings.cpp
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir

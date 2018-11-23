@@ -44,7 +44,7 @@ public:
 
     NodeDefBuilderSPtr addValueDef(ValueDefBuilderSPtr valueDef);
     NodeDefBuilderSPtr addValueKey(ValueDefBuilderSPtr valueDefKey);
-    NodeDefBuilderSPtr addValueInheritanceId(ValueDefBuilderSPtr variantValueDef);
+    NodeDefBuilderSPtr addValueVariant(ValueDefBuilderSPtr variantValueDef);
 
     NodeDefBuilderSPtr addContainerDef(ContainerDefBuilderSPtr cDef);
 

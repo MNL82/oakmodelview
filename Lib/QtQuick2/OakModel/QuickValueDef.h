@@ -14,6 +14,7 @@
 #include <QVariant>
 
 #include "QuickValueOptions.h"
+#include "QuickValueSettings.h"
 
 #include "Union.h"
 #include "../ServiceFunctions/PropertyHelper.h"
@@ -39,6 +40,7 @@ private:
     AUTO_PROPERTY_READONLY(QString, displayName)
     AUTO_PROPERTY_READONLY(QVariant, defaultValue)
     AUTO_PROPERTY_READONLY(dataTypeEnum, dataType)
+    AUTO_PROPERTY_OBJECT_READONLY(QuickValueSettings, settings)
     AUTO_PROPERTY_OBJECT_READONLY(QuickValueOptions, options)
 
 public:
