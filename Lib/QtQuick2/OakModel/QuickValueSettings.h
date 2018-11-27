@@ -13,8 +13,10 @@
 #include <QString>
 
 #include "QuickOakBaseTypes.h"
+#include "ValueSettingsBuilderData.h"
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "QuickPropertyHelpers.h"
+
 
 // =============================================================================
 // Class definition
@@ -22,12 +24,16 @@
 class QuickValueSettings : public QObject
 {
     Q_OBJECT
-    AUTO_PROPERTY_READONLY(bool, readOnly)
-    AUTO_PROPERTY_READONLY(QString, unit)
-    AUTO_PROPERTY_READONLY(QuickTriState::TriStateEnum, unique)
-    AUTO_PROPERTY_READONLY(QuickTriState::TriStateEnum, required)
+    BUILDER_PROPERTY_BASE(bool, readOnly)
+    BUILDER_PROPERTY_STRING(unit)
+    BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, unique)
+    BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, required)
 
 public:
     QuickValueSettings(QObject *parent = nullptr);
+    Oak::Model::ValueSettingsBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
+private:
+    Oak::Model::ValueSettingsBuilderData * m_builder;
+    Oak::Model::ValueSettingsBuilderDataUPtr m_builderOwner;
 };

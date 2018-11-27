@@ -148,5 +148,7 @@ T UnionValue::value(bool allowConversion, Conversion *properties) const
     return std::move(v);
 }
 
+typedef std::vector<UnionValue> UnionValueList;
+
 } // namespace Oak::Model
 

@@ -13,7 +13,8 @@
 // =============================================================================
 // (public)
 QuickValueSettings::QuickValueSettings(QObject *parent)
-    : QObject(parent), a_unique { QuickTriState::Undefined }, a_required { QuickTriState::Undefined }
+    : QObject(parent)
 {
-
+    m_builderOwner = std::make_unique<Oak::Model::ValueSettingsBuilderData>();
+    m_builder = m_builderOwner.get();
 }

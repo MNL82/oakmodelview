@@ -25,18 +25,19 @@ class QuickOakModelBuilder;
 class QuickOakModel : public QObject
 {
     Q_OBJECT
-    AUTO_PROPERTY_READONLY(QString, name)
+    Q_PROPERTY(QString name READ name WRITE setName)
 
     Q_PROPERTY(QuickOakModelBuilder* builder READ builder WRITE setBuilder NOTIFY builderChanged)
 
 public:
     QuickOakModel(QObject *parent = nullptr);
 
-
     QuickOakModelBuilder* builder() const;
+    QString name() const;
 
 public slots:
     bool loadData(const QString &filePath);
+    void setName(QString name);
 
 private:
     void setBuilder(QuickOakModelBuilder* rootNodeDef);
@@ -48,4 +49,5 @@ signals:
 private:
     Oak::Model::OakModel m_model;
     QuickOakModelBuilder* m_builder;
+    QString m_name;
 };

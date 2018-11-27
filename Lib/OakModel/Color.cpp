@@ -54,6 +54,16 @@ Color &Color::operator=(const Color &copy)
 
 // =============================================================================
 // (public)
+bool Color::operator==(const Color& c) const
+{
+    return m_red == c.m_red &&
+           m_green == c.m_green &&
+           m_blue == c.m_blue &&
+           m_alpha == c.m_alpha;
+}
+
+// =============================================================================
+// (public)
 bool Color::isValid() const
 {
     return m_alpha >= 0;

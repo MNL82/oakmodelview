@@ -14,9 +14,11 @@
 #include <QString>
 #include <memory>
 
+#include "QuickServiceFunctions.h"
 #include "QuickNodeDef.h"
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "ModelBuilderData.h"
+#include "QuickPropertyHelpers.h"
 
 namespace Oak::Model {
     class NodeDef;
@@ -39,13 +41,17 @@ public:
     Q_ENUM(StatusEnum)
 
 private:
-    AUTO_PROPERTY_OBJECT_LIST(QuickOakModelBuilder, QuickNodeDef, nodeDefs, nodeDef)
-
-    AUTO_PROPERTY(StatusEnum, status)
-    AUTO_PROPERTY_READONLY(QStringList, errorMessages)
+    BUILDER_PROPERTY_OBJECT_LIST(QuickOakModelBuilder, QuickNodeDef, nodeDefs, nodeDef)
+    BUILDER_PROPERTY_STRING_LIST(errorMessages)
 
 public:
     QuickOakModelBuilder(QObject *parent = nullptr);
+    Oak::Model::ModelBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
-    Oak::Model::NodeDefSPtr createModel();
+    bool validate();
+    Oak::Model::NodeDefSPtr create();
+
+private:
+    Oak::Model::ModelBuilderData * m_builder;
+    Oak::Model::ModelBuilderDataUPtr m_builderOwner;
 };

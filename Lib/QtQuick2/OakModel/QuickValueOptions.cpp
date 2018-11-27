@@ -15,5 +15,6 @@
 QuickValueOptions::QuickValueOptions(QObject *parent)
     : QObject(parent)
 {
-
+    m_builderOwner = std::make_unique<Oak::Model::ValueOptionsBuilderData>();
+    m_builder = m_builderOwner.get();
 }

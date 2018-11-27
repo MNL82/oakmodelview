@@ -12,10 +12,14 @@
 
 #include "../ServiceFunctions/Trace.h"
 
+#include "NodeDefBuilder.h"
+
 // =============================================================================
 // (public)
 QuickNodeDef::QuickNodeDef(QObject *parent)
     : QObject(parent)
 {
     TRACE("Constructor: QuickNodeDef");
+    m_builderOwner = std::make_unique<Oak::Model::NodeDefBuilderData>();
+    m_builder = m_builderOwner.get();
 }

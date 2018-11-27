@@ -15,9 +15,9 @@
 #include <QVariant>
 #include <QVariantList>
 
-#include "QuickValueQuery.h"
+#include "ValueOptionsBuilderData.h"
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "QuickPropertyHelpers.h"
 
 // =============================================================================
 // Class definition
@@ -26,12 +26,16 @@ class QuickValueOptions : public QObject
 {
     Q_OBJECT
 
-    AUTO_PROPERTY_READONLY(QVariantList, values)
-    AUTO_PROPERTY_READONLY(QVariantList, excludedValue)
-    AUTO_PROPERTY_OBJECT_READONLY(QuickValueQuery, valueQuery)
-    AUTO_PROPERTY_OBJECT_READONLY(QuickValueQuery, excludedValueQuery)
+    BUILDER_PROPERTY_VARIANT_LIST(values)
+    BUILDER_PROPERTY_VARIANT_LIST(excludedValues)
+    BUILDER_PROPERTY_STRING(valueQuery)
+    BUILDER_PROPERTY_STRING(excludedValueQuery)
 
 public:
     QuickValueOptions(QObject *parent = nullptr);
+    Oak::Model::ValueOptionsBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
+private:
+    Oak::Model::ValueOptionsBuilderData * m_builder;
+    Oak::Model::ValueOptionsBuilderDataUPtr m_builderOwner;
 };

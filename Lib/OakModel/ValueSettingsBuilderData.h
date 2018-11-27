@@ -10,22 +10,32 @@
 
 #pragma once
 
-#include <QObject>
-#include <QQmlListProperty>
-#include <QString>
+#include <string>
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "OakModelServiceFunctions.h"
+
+namespace Oak::Model {
+
+class ValueDef;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickItemQuery : public QObject
+class ValueSettingsBuilderData
 {
-    Q_OBJECT
-    AUTO_PROPERTY_OBJECT(QuickItemQuery, next)
-
 public:
-    QuickItemQuery(QObject *parent = nullptr);
-    virtual ~QuickItemQuery() {}
+    ValueSettingsBuilderData();
+    virtual ~ValueSettingsBuilderData() {}
+
+    void validate(std::vector<std::string> &errorMessages) const;
+    bool createDerived(ValueDef* valueDef) const;
+
+    bool readOnly = false;
+    std::string unit;
+    BoolState unique = BoolState_Undefined;
+    BoolState required = BoolState_Undefined;
 };
 
+typedef std::unique_ptr<ValueSettingsBuilderData> ValueSettingsBuilderDataUPtr;
+
+} // namespace Oak::Model

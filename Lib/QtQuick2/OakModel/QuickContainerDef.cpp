@@ -12,10 +12,14 @@
 
 #include "../ServiceFunctions/Trace.h"
 
+#include "NodeDef.h"
+
 // =============================================================================
 // (public)
 QuickContainerDef::QuickContainerDef(QObject *parent)
     : QObject(parent)
 {
     TRACE("Constructor: QuickContainerDef");
+    m_builderOwner = std::make_unique<Oak::Model::ContainerDefBuilderData>();
+    m_builder = m_builderOwner.get();
 }

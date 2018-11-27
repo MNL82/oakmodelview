@@ -14,7 +14,7 @@
 
 #include "OakModel.h"
 #include "EntryQuery.h"
-#include "ServiceFunctions.h"
+#include "OakModelServiceFunctions.h"
 #include "QueryBuilder.h"
 
 #include "../ServiceFunctions/Assert.h"

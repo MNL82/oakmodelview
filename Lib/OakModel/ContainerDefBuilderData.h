@@ -10,17 +10,32 @@
 
 #pragma once
 
-#include <QuickItemQuery.h>
+#include <memory>
+#include <string>
+#include <vector>
+
+namespace Oak::Model {
+
+class NodeDef;
+typedef std::shared_ptr<NodeDef> NodeDefSPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickParentQuery : public QuickItemQuery
+class ContainerDefBuilderData
 {
-    Q_OBJECT
 public:
-    QuickParentQuery(QObject *parent = nullptr);
-    virtual ~QuickParentQuery() {}
+    ContainerDefBuilderData();
+    virtual ~ContainerDefBuilderData() {}
 
+    void validate(std::vector<std::string> &errorMessages) const;
+    bool create(NodeDefSPtr nodeDef) const;
+
+    int minCount = 0;
+    int maxCount = std::numeric_limits<int>::max();
+    std::string nodeDefName;
 };
 
+typedef std::unique_ptr<ContainerDefBuilderData> ContainerDefBuilderDataUPtr;
+
+} // namespace Oak::Model

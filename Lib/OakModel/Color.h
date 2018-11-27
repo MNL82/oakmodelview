@@ -25,6 +25,8 @@ public:
 
     Color& operator=(const Color &copy);
 
+    bool operator==(const Color &c) const;
+
     bool isValid() const;
 
     int red() const;

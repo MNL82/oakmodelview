@@ -36,10 +36,10 @@ SOURCES += \
 
 HEADERS += \
     Conversion.h \
-    ServiceFunctions.h \
     Node.h \
     CallbackFunctions.h \
-    Color.h
+    Color.h \
+    OakModelServiceFunctions.h
 
 CONFIG(debug, debug|release) {
     TARGET = ../../OakModeld

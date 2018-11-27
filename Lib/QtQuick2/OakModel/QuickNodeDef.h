@@ -17,26 +17,32 @@
 #include "QuickContainerDef.h"
 #include "QuickValueDef.h"
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "NodeDefBuilderData.h"
+
+#include "QuickPropertyHelpers.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickNodeDef :public QObject
+class QuickNodeDef : public QObject
 {
     Q_OBJECT
-    AUTO_PROPERTY_READONLY(QString, name)
-    AUTO_PROPERTY_READONLY(QString, displayName)
-    AUTO_PROPERTY_READONLY(QColor, color)
-    AUTO_PROPERTY_READONLY(QString, imagePath)
-    AUTO_PROPERTY_READONLY(QString, variantId)
-    AUTO_PROPERTY_OBJECT(QuickValueDef, keyValue)
-    AUTO_PROPERTY_OBJECT(QuickValueDef, variantValue)
-    AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickValueDef, values, value)
-    AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickContainerDef, containers, container)
-    AUTO_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickNodeDef, derivedNodeDefs, derivedNodeDef)
+    BUILDER_PROPERTY_STRING(name)
+    BUILDER_PROPERTY_STRING(displayName)
+    BUILDER_PROPERTY_COLOR(color)
+    BUILDER_PROPERTY_STRING(imagePath)
+    BUILDER_PROPERTY_STRING(variantId)
+    BUILDER_PROPERTY_OBJECT(QuickValueDef, keyValue)
+    BUILDER_PROPERTY_OBJECT(QuickValueDef, variantValue)
+    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickValueDef, values, value)
+    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickContainerDef, containers, container)
+    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickNodeDef, derivedNodeDefs, derivedNodeDef)
 
 public:
     QuickNodeDef(QObject *parent = nullptr);
+    Oak::Model::NodeDefBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
+private:
+    Oak::Model::NodeDefBuilderData * m_builder;
+    Oak::Model::NodeDefBuilderDataUPtr m_builderOwner;
 };

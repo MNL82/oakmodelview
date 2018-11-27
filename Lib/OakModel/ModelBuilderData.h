@@ -10,21 +10,28 @@
 
 #pragma once
 
-#include "QuickItemQuery.h"
+#include "NodeDefBuilderData.h"
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "NodeDef.h"
+
+namespace Oak::Model {
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickValueQuery : public QObject
+class ModelBuilderData
 {
-    Q_OBJECT
-    AUTO_PROPERTY_READONLY(QString, valueName)
-    AUTO_PROPERTY_OBJECT_READONLY(QuickItemQuery, itemQuery)
-
 public:
-    QuickValueQuery(QObject *parent = nullptr);
+    ModelBuilderData();
+    virtual ~ModelBuilderData() {}
 
+    bool validateModel();
+    NodeDefSPtr createModel();
+
+    std::vector<NodeDefBuilderDataUPtr> nodeDefs;
+    std::vector<std::string> errorMessages;
 };
 
+typedef std::unique_ptr<ModelBuilderData> ModelBuilderDataUPtr;
+
+} // namespace Oak::Model

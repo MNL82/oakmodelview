@@ -14,7 +14,9 @@
 
 class QuickNodeDef;
 
-#include "../ServiceFunctions/PropertyHelper.h"
+#include "ContainerDefBuilderData.h"
+
+#include "QuickPropertyHelpers.h"
 
 // =============================================================================
 // Class definition
@@ -22,10 +24,17 @@ class QuickNodeDef;
 class QuickContainerDef : public QObject
 {
     Q_OBJECT
-    AUTO_PROPERTY(QString, nodeDefName)
-    AUTO_PROPERTY(int, minCount)
-    AUTO_PROPERTY(int, maxCount)
+    BUILDER_PROPERTY_STRING(nodeDefName)
+    BUILDER_PROPERTY_BASE(int, minCount)
+    BUILDER_PROPERTY_BASE(int, maxCount)
 
 public:
     QuickContainerDef(QObject *parent = nullptr);
+    Oak::Model::ContainerDefBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
+
+private:
+    Oak::Model::ContainerDefBuilderData * m_builder;
+    Oak::Model::ContainerDefBuilderDataUPtr m_builderOwner;
 };
+
+

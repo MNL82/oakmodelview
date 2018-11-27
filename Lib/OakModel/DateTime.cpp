@@ -242,6 +242,20 @@ int DateTime::secound() const
 
 // =============================================================================
 // (public)
+long long DateTime::mSecsSinceEpoch() const
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(m_time.time_since_epoch()).count();
+}
+
+// =============================================================================
+// (public)
+void DateTime::setMSecsSinceEpoch(long long ms)
+{
+    m_time = std::chrono::system_clock::time_point(std::chrono::milliseconds(ms));
+}
+
+// =============================================================================
+// (public)
 ProcessedDateTime DateTime::toStruct(DateTime::TimeZone timeZone) const
 {
     std::time_t tt = std::chrono::system_clock::to_time_t(m_time);

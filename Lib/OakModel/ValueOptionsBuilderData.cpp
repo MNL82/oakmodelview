@@ -8,33 +8,32 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QuickOakModelBuilder.h"
-
-#include <string>
-
-#include "NodeDef.h"
+#include "ValueOptionsBuilderData.h"
 
 #include "../ServiceFunctions/Trace.h"
 
+namespace Oak::Model {
+
 // =============================================================================
 // (public)
-QuickOakModelBuilder::QuickOakModelBuilder(QObject* parent)
-    : QObject(parent)
+ValueOptionsBuilderData::ValueOptionsBuilderData()
 {
-    m_builderOwner = std::make_unique<Oak::Model::ModelBuilderData>();
-    m_builder = m_builderOwner.get();
+    TRACE("ValueOptionsBuilderData");
 }
 
 // =============================================================================
 // (public)
-bool QuickOakModelBuilder::validate()
+void ValueOptionsBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
-    return m_builder->validateModel();
+    errorMessages.push_back("ValueOptions validation not implemented");
 }
 
 // =============================================================================
 // (public)
-Oak::Model::NodeDefSPtr QuickOakModelBuilder::create()
+bool ValueOptionsBuilderData::createDerived(ValueDef* valueDef) const
 {
-    return m_builder->createModel();
+    UNUSED(valueDef)
+    return false;
 }
+
+} // namespace Oak::Model

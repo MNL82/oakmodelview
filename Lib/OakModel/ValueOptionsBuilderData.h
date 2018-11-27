@@ -10,17 +10,30 @@
 
 #pragma once
 
-#include <QuickItemQuery.h>
+#include <UnionValue.h>
+
+namespace Oak::Model {
+
+class ValueDef;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickSiblingsQuery : public QuickItemQuery
+class ValueOptionsBuilderData
 {
-    Q_OBJECT
 public:
-    QuickSiblingsQuery(QObject *parent = nullptr);
-    ~QuickSiblingsQuery() {}
+    ValueOptionsBuilderData();
+    virtual ~ValueOptionsBuilderData() {}
 
+    void validate(std::vector<std::string> &errorMessages) const;
+    bool createDerived(ValueDef* valueDef) const;
+
+    std::vector<UnionValue> values;
+    std::vector<UnionValue> excludedValues;
+    std::string valueQuery;
+    std::string excludedValueQuery;
 };
 
+typedef std::unique_ptr<ValueOptionsBuilderData> ValueOptionsBuilderDataUPtr;
+
+} // namespace Oak::Model

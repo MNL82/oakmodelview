@@ -30,6 +30,13 @@ QuickOakModelBuilder* QuickOakModel::builder() const
 }
 
 // =============================================================================
+// (public)
+QString QuickOakModel::name() const
+{
+    return m_name;
+}
+
+// =============================================================================
 // (public slots)
 bool QuickOakModel::loadData(const QString &filePath)
 {
@@ -41,13 +48,20 @@ bool QuickOakModel::loadData(const QString &filePath)
 }
 
 // =============================================================================
+// (public slots)
+void QuickOakModel::setName(QString name)
+{
+    m_name = name;
+}
+
+// =============================================================================
 // (private)
 void QuickOakModel::setBuilder(QuickOakModelBuilder* rootNodeDef)
 {
     TRACE("setRootNodeDef()");
     m_builder = rootNodeDef;
 
-    m_model.setRootNodeDef(m_builder->createModel());
+    m_model.setRootNodeDef(m_builder->create());
 
     emit builderChanged();
 }

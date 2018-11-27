@@ -92,6 +92,9 @@ public:
     int minute() const;
     int secound() const;
 
+    long long mSecsSinceEpoch() const;
+    void setMSecsSinceEpoch(long long ms);
+
     ProcessedDateTime toStruct(TimeZone timeZone = TimeZone::Local) const;
 
     std::string toString(TimeZone timeZone = TimeZone::Local, const char *format = "%Y-%m-%d %H:%M:%S") const;
