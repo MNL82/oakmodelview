@@ -15,8 +15,8 @@
 
 namespace Oak::Model {
 
-class NodeDef;
-typedef std::shared_ptr<NodeDef> NodeDefSPtr;
+class ValueDefBuilder;
+typedef std::shared_ptr<ValueDefBuilder> ValueDefBuilderSPtr;
 
 // =============================================================================
 // Class definition
@@ -28,10 +28,11 @@ public:
     virtual ~ValueDefBuilderData() {}
 
     void validate(std::vector<std::string> &errorMessages) const;
-    bool createDerived(NodeDefSPtr nodeDef) const;
+    ValueDefBuilderSPtr create() const;
 
     std::string name;
     std::string displayName;
+    std::string tooltip;
     UnionValue defaultValue;
     UnionType dataType = UnionType::Undefined;
     ValueSettingsBuilderDataUPtr settings;

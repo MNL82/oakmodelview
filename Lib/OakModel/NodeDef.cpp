@@ -177,6 +177,12 @@ std::string NodeDef::displayName(bool basic) const
         return m_name + "(" + inheritanceStr + ")";
     }
 }
+// =============================================================================
+// (public)
+const std::string&NodeDef::tooltip() const
+{
+    return m_tooltip;
+}
 
 #ifdef XML_BACKEND
 // =============================================================================
@@ -296,7 +302,7 @@ const NodeDef* NodeDef::baseRoot() const
 // (public)
 const NodeDef *NodeDef::validVariant(const UnionRef &variantId, bool includeBase, bool includeDerived) const
 {
-    if (m_variantId.isEqual(variantId)) { return this; }
+    if (!hasVariants() || m_variantId.isEqual(variantId)) { return this; }
 
     if (includeBase && hasBase()) {
         const NodeDef *variant = m_base.lock()->validVariant(variantId, true, false);
@@ -1183,7 +1189,7 @@ void NodeDef::onNodeInserted(const Node &_node) const
         if (vDef->settings().value(REQUIRED) > 0 &&
             vDef->settings().value(UNIQUE) > 0) {
 
-            std::vector<std::string> valueList = QB::createSiblings()->EntryUPtr(vDef->name())->toValueList<std::string>(item);
+            std::vector<std::string> valueList = QB::createSiblings()->EntrySPtr(vDef->name())->toValueList<std::string>(item);
             if (vDef->options().isUsed() && vDef->settings().value(OPTION_ONLY)) {
                 std::vector<std::string> optionList;
                 if (vDef->options().getOptions(optionList, &item)) {

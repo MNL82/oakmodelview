@@ -37,7 +37,7 @@ protected:
 public:
     static NodeDefBuilderSPtr create(const std::string &name);
     static NodeDefBuilderSPtr createVariantRoot(const std::string &name, const UnionRef &variantId);
-    static NodeDefBuilderSPtr createVariant(NodeDefBuilderSPtr variantRoot, const UnionRef &variantId);
+    static NodeDefBuilderSPtr createVariant(NodeDefBuilderSPtr variantBase, const UnionRef &variantId);
     static NodeDefBuilderSPtr use(NodeDefSPtr nodeDef);
 
     NodeDefSPtr get();
@@ -50,7 +50,10 @@ public:
 
     NodeDefBuilderSPtr setDisplayName(const std::string& displayName);
 
+    NodeDefBuilderSPtr setTooltip(const std::string& tooltip);
+
     NodeDefBuilderSPtr setColor(int red, int green, int blue, int alpha = 255);
+    NodeDefBuilderSPtr setColor(const Color& color);
     NodeDefBuilderSPtr setImagePath(const std::string &imagePath);
 
 #ifdef XML_BACKEND

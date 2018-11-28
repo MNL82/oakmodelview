@@ -12,7 +12,7 @@
 #include "QueryBuilder.h"
 
 #include <utility>
-
+#include <iterator>
 
 namespace Oak::Model {
 

@@ -10,7 +10,7 @@
 
 #include "ValueDefBuilderData.h"
 
-#include "NodeDef.h"
+#include "ValueDefBuilder.h"
 
 #include "../ServiceFunctions/Trace.h"
 
@@ -20,14 +20,14 @@ namespace Oak::Model {
 // (public)
 ValueDefBuilderData::ValueDefBuilderData()
 {
-    TRACE("ValueDefBuilderData");
+    //TRACE("ValueDefBuilderData");
 }
 
 // =============================================================================
 // (public)
 void ValueDefBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
-    errorMessages.push_back("ValueDef validation not implemented");
+    //errorMessages.push_back("ValueDef validation not implemented");
 
     if (name.empty()) {
         errorMessages.push_back("ValueDef have to have a name");
@@ -50,10 +50,29 @@ void ValueDefBuilderData::validate(std::vector<std::string>& errorMessages) cons
 
 // =============================================================================
 // (public)
-bool ValueDefBuilderData::createDerived(NodeDefSPtr nodeDef) const
+ValueDefBuilderSPtr ValueDefBuilderData::create() const
 {
-    UNUSED(nodeDef)
-    return false;
+    UnionType type = (dataType == UnionType::Undefined) ? UnionType::String : dataType;
+    ValueDefBuilderSPtr builder = ValueDefBuilder::create(type, name);
+    if (!displayName.empty()) {
+        builder->setDisplayName(displayName);
+    }
+    if (!defaultValue.isNull()) {
+        builder->setDefaultValue(defaultValue);
+    }
+    if (!tooltip.empty()) {
+        builder->setTooltip(tooltip);
+    }
+
+
+    if (settings) {
+        settings->set(builder);
+    }
+    if (options) {
+        options->set(builder);
+    }
+    return builder;
 }
+
 
 } // namespace Oak::Model

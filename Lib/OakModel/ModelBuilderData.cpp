@@ -52,10 +52,19 @@ NodeDefSPtr ModelBuilderData::createModel()
 
     std::vector<Oak::Model::NodeDefSPtr> nodeDefList;
 
-    for (const NodeDefBuilderDataUPtr &ndb: nodeDefs)
-    {
+    for (const NodeDefBuilderDataUPtr &ndb: nodeDefs) {
         nodeDefList.push_back(ndb->create());
     }
+
+    // All node definitions have to be created before the containers can be
+    for (const NodeDefBuilderDataUPtr &ndb: nodeDefs) {
+        ndb->createContainers(nodeDefList);
+    }
+
+    for (auto nodeDef: nodeDefList) {
+        TRACE("Shared Count(%i): %s", nodeDef.use_count(), nodeDef->name());
+    }
+
     return nodeDefList[0];
 }
 

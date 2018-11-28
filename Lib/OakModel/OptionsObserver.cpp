@@ -37,7 +37,7 @@ OptionsObserver::OptionsObserver(OakModel *model, const NodeDef *optionsNodeDef,
     m_sourceValueName = query->valueName();
 
     // Create an inverse query that points from the option values to the entry where there can be chosen
-    m_inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->EntryUPtr(m_optionsValueDef->name());
+    m_inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->EntrySPtr(m_optionsValueDef->name());
 
 
 }

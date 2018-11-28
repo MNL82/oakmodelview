@@ -11,6 +11,8 @@
 #include "ContainerDefBuilderData.h"
 
 #include "NodeDefBuilderData.h"
+#include "NodeDefBuilder.h"
+#include "ContainerDefBuilder.h"
 
 #include "../ServiceFunctions/Trace.h"
 
@@ -27,9 +29,9 @@ ContainerDefBuilderData::ContainerDefBuilderData()
 // (public)
 void ContainerDefBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
-    errorMessages.push_back("ContainerDef validation not implemented");
+    //errorMessages.push_back("ContainerDef validation not implemented");
 
-    if (nodeDefName.empty()) {
+    if (name.empty()) {
         errorMessages.push_back("ContainerDef's have to have a NodeDef reference");
     }
 
@@ -46,10 +48,20 @@ void ContainerDefBuilderData::validate(std::vector<std::string>& errorMessages) 
 
 // =============================================================================
 // (public)
-bool ContainerDefBuilderData::create(NodeDefSPtr nodeDef) const
+bool ContainerDefBuilderData::set(NodeDefBuilderSPtr builder, std::vector<NodeDefSPtr> nodeDefList) const
 {
-    UNUSED(nodeDef)
-    return false;
+    NodeDef* containerNodeDef = nullptr;
+    for (auto nDef: nodeDefList) {
+        if (nDef->name() == name) {
+            containerNodeDef = const_cast<NodeDef*>(nDef->validVariant(variantId)); // Const cast is allowed here
+        }
+    }
+    if (containerNodeDef == nullptr) { return false; }
+
+    auto containerNodeBuilder = NodeDefBuilder::use(containerNodeDef->sPtr());
+    auto containerBuilder = ContainerDefBuilder::create(containerNodeBuilder, minCount, maxCount);
+    builder->addContainerDef(containerBuilder);
+    return true;
 }
 
 } // namespace Oak::Model

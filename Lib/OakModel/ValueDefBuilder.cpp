@@ -119,6 +119,54 @@ ValueDefBuilderSPtr ValueDefBuilder::addOptionStatic(const UnionRef &value)
 
 // =============================================================================
 // (public)
+ValueDefBuilderSPtr ValueDefBuilder::setOptionsStatic(const std::vector<UnionValue>& options)
+{
+    assert(m_valueDef);
+    if (!options.empty() && m_valueDef->m_valueTemplate.type() == UnionValue::GetType(options.front())) {
+        m_valueDef->m_options->m_options.resize(options.size());
+        auto it = m_valueDef->m_options->m_options.begin();
+        for (const auto& option: options)
+        {
+            if (option.type() == m_valueDef->m_valueTemplate.type()) { // No conversion needed
+                *it = option;
+            } else { // Converting the value to that on the ValueDef
+                *it = UnionValue(m_valueDef->m_valueTemplate.type());
+                it->get(option);
+            }
+            it++;
+        }
+    } else {
+        assert(false);
+    }
+    return m_thisWPtr.lock();
+}
+
+// =============================================================================
+// (public)
+ValueDefBuilderSPtr ValueDefBuilder::setOptionsExcludedStatic(const std::vector<UnionValue>& options)
+{
+    assert(m_valueDef);
+    if (!options.empty() && m_valueDef->m_valueTemplate.type() == UnionValue::GetType(options.front())) {
+        m_valueDef->m_options->m_excluded.resize(options.size());
+        auto it = m_valueDef->m_options->m_excluded.begin();
+        for (const auto& option: options)
+        {
+            if (option.type() == m_valueDef->m_valueTemplate.type()) { // No conversion needed
+                *it = option;
+            } else { // Converting the value to that on the ValueDef
+                *it = UnionValue(m_valueDef->m_valueTemplate.type());
+                it->get(option);
+            }
+            it++;
+        }
+    } else {
+        assert(false);
+    }
+    return m_thisWPtr.lock();
+}
+
+// =============================================================================
+// (public)
 ValueDefBuilderSPtr ValueDefBuilder::setOptionsQuery(EntryQuerySPtr value)
 {
     ASSERT(m_valueDef);

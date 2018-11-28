@@ -45,8 +45,12 @@ public:
     ValueDefBuilderSPtr setDefaultConversion(ConversionSPtr value);
 
     ValueDefBuilderSPtr addOptionStatic(const UnionRef & value);
+
+    ValueDefBuilderSPtr setOptionsStatic(const std::vector<UnionValue> &options);
     template<typename T>
     ValueDefBuilderSPtr setOptionsStatic(const std::vector<T> &options);
+
+    ValueDefBuilderSPtr setOptionsExcludedStatic(const std::vector<UnionValue> &options);
     template<typename T>
     ValueDefBuilderSPtr setOptionsExcludedStatic(const std::vector<T> &options);
 

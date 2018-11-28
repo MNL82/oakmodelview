@@ -42,6 +42,7 @@ public:
 private:
     BUILDER_PROPERTY_STRING(name)
     BUILDER_PROPERTY_STRING(displayName)
+    BUILDER_PROPERTY_STRING(tooltip)
     BUILDER_PROPERTY_VARIANT(defaultValue)
     BUILDER_PROPERTY_ENUM(dataTypeEnum, Oak::Model::UnionType, dataType)
     BUILDER_PROPERTY_OBJECT(QuickValueSettings, settings)

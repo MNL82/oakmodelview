@@ -24,7 +24,7 @@
 class QuickValueSettings : public QObject
 {
     Q_OBJECT
-    BUILDER_PROPERTY_BASE(bool, readOnly)
+    BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, readOnly)
     BUILDER_PROPERTY_STRING(unit)
     BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, unique)
     BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, required)

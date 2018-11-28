@@ -74,6 +74,8 @@ public:
     const std::string &name() const;
     virtual std::string displayName(bool basic = false) const;
 
+    const std::string& tooltip() const;
+
 #ifdef XML_BACKEND
     const std::string &tagName() const;
 #endif // XML_BACKEND
@@ -92,6 +94,7 @@ protected:
     /// The 'm_name' is a unike identifier for the node definition
     std::string m_name;
     std::string m_displayName;
+    std::string m_tooltip;
     Color m_color;
     std::string m_imagePath;
     NodeSettings m_settings;
@@ -242,6 +245,8 @@ public:
         sPtr->m_thisWPtr = sPtr;
         return sPtr;
     }
+
+    NodeDefSPtr sPtr() { return m_thisWPtr.lock(); }
 
     friend class NodeDefBuilder;
     friend class ContainerDefBuilder;

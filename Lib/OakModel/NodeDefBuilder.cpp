@@ -96,9 +96,9 @@ NodeDefBuilderSPtr NodeDefBuilder::createVariantRoot(const std::string &name, co
 
 // =============================================================================
 // (public static)
-NodeDefBuilderSPtr NodeDefBuilder::createVariant(NodeDefBuilderSPtr variantRoot, const UnionRef &variantId)
+NodeDefBuilderSPtr NodeDefBuilder::createVariant(NodeDefBuilderSPtr variantBase, const UnionRef &variantId)
 {
-    NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(variantRoot->get(), variantId));
+    NodeDefBuilderSPtr sPtr = NodeDefBuilderSPtr(new NodeDefBuilder(variantBase->get(), variantId));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
@@ -223,12 +223,31 @@ NodeDefBuilderSPtr NodeDefBuilder::setDisplayName(const std::string& displayName
 
 // =============================================================================
 // (public)
+NodeDefBuilderSPtr NodeDefBuilder::setTooltip(const std::string& tooltip)
+{
+    ASSERT(m_nodeDef);
+    m_nodeDef->m_tooltip = tooltip;
+    return m_thisWPtr.lock();
+}
+
+// =============================================================================
+// (public)
 NodeDefBuilderSPtr NodeDefBuilder::setColor(int red, int green, int blue, int alpha)
 {
     ASSERT(m_nodeDef);
     m_nodeDef->m_color.set(red, green, blue, alpha);
     return m_thisWPtr.lock();
 }
+
+// =============================================================================
+// (public)
+NodeDefBuilderSPtr NodeDefBuilder::setColor(const Color& color)
+{
+    ASSERT(m_nodeDef);
+    m_nodeDef->m_color = color;
+    return m_thisWPtr.lock();
+}
+
 // =============================================================================
 // (public)
 NodeDefBuilderSPtr NodeDefBuilder::setImagePath(const std::string &imagePath)

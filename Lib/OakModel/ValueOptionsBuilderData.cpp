@@ -10,6 +10,9 @@
 
 #include "ValueOptionsBuilderData.h"
 
+#include "ValueDefBuilder.h"
+#include "QueryBuilder.h"
+
 #include "../ServiceFunctions/Trace.h"
 
 namespace Oak::Model {
@@ -18,22 +21,33 @@ namespace Oak::Model {
 // (public)
 ValueOptionsBuilderData::ValueOptionsBuilderData()
 {
-    TRACE("ValueOptionsBuilderData");
+    //TRACE("ValueOptionsBuilderData");
 }
 
 // =============================================================================
 // (public)
 void ValueOptionsBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
-    errorMessages.push_back("ValueOptions validation not implemented");
+    UNUSED(errorMessages)
+    //errorMessages.push_back("ValueOptions validation not implemented");
 }
 
 // =============================================================================
 // (public)
-bool ValueOptionsBuilderData::createDerived(ValueDef* valueDef) const
+void ValueOptionsBuilderData::set(ValueDefBuilderSPtr builder) const
 {
-    UNUSED(valueDef)
-    return false;
+    if(!values.empty()) {
+        builder->setOptionsStatic(values);
+    }
+    if(!excludedValues.empty()) {
+        builder->setOptionsExcludedStatic(excludedValues);
+    }
+    if (!valueQuery.empty()) {
+        builder->setOptionsQuery(QueryBuilder::createEntryQuery(valueQuery));
+    }
+    if (!excludedValueQuery.empty()) {
+        builder->setOptionsExcludedQuery(QueryBuilder::createEntryQuery(excludedValueQuery));
+    }
 }
 
 } // namespace Oak::Model

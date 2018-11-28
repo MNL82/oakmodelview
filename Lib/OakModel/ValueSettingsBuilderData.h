@@ -16,7 +16,8 @@
 
 namespace Oak::Model {
 
-class ValueDef;
+class ValueDefBuilder;
+typedef std::shared_ptr<ValueDefBuilder> ValueDefBuilderSPtr;
 
 // =============================================================================
 // Class definition
@@ -28,9 +29,9 @@ public:
     virtual ~ValueSettingsBuilderData() {}
 
     void validate(std::vector<std::string> &errorMessages) const;
-    bool createDerived(ValueDef* valueDef) const;
+    void set(ValueDefBuilderSPtr builder) const;
 
-    bool readOnly = false;
+    BoolState readOnly = BoolState_Undefined;
     std::string unit;
     BoolState unique = BoolState_Undefined;
     BoolState required = BoolState_Undefined;

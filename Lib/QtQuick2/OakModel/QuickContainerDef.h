@@ -24,7 +24,8 @@ class QuickNodeDef;
 class QuickContainerDef : public QObject
 {
     Q_OBJECT
-    BUILDER_PROPERTY_STRING(nodeDefName)
+    BUILDER_PROPERTY_STRING(name)
+    BUILDER_PROPERTY_STRING(variantId)
     BUILDER_PROPERTY_BASE(int, minCount)
     BUILDER_PROPERTY_BASE(int, maxCount)
 
@@ -36,5 +37,3 @@ private:
     Oak::Model::ContainerDefBuilderData * m_builder;
     Oak::Model::ContainerDefBuilderDataUPtr m_builderOwner;
 };
-
-

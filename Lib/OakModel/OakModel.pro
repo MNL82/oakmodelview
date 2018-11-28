@@ -29,10 +29,10 @@ include(Observers.pri)
 
 SOURCES += \
     Conversion.cpp \
-    ServiceFunctions.cpp \
     Node.cpp \
     CallbackFunctions.cpp \
-    Color.cpp
+    Color.cpp \
+    OakModelServiceFunctions.cpp
 
 HEADERS += \
     Conversion.h \

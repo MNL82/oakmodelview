@@ -26,6 +26,9 @@ namespace Oak::Model {
 class NodeDefBuilderData;
 typedef std::unique_ptr<NodeDefBuilderData> NodeDefBuilderDataUPtr;
 
+class NodeDefBuilder;
+typedef std::shared_ptr<NodeDefBuilder> NodeDefBuilderSPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
@@ -40,11 +43,22 @@ public:
     NodeDefSPtr create();
     bool createDerived(NodeDefSPtr baseNodeDef) const;
 
+    bool createContainers(std::vector<Oak::Model::NodeDefSPtr> nodeDefList, std::string rootName = "") const;
+
+private:
+    void createShared(NodeDefBuilderSPtr builder) const;
+
+public:
     std::string name;
     std::string displayName;
+    std::string tooltip;
     Color color;
     std::string imagePath;
     std::string variantId;
+
+#ifdef XML_BACKEND
+    std::string tagName;
+#endif // XML_BACKEND
 
     ValueDefBuilderDataUPtr keyValue;
     ValueDefBuilderDataUPtr variantValue;

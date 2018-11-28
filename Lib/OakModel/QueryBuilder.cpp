@@ -16,7 +16,7 @@
 #include "EntryQuery.h"
 
 #include "../ServiceFunctions/Trace.h"
-
+#include "OakModelServiceFunctions.h"
 
 namespace Oak::Model {
 
@@ -36,7 +36,7 @@ ItemQueryUPtr QueryBuilder::UPtr()
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::EntryUPtr(const std::string &entryName)
+EntryQuerySPtr QueryBuilder::EntrySPtr(const std::string &entryName)
 {
     return EntryQuery::create(std::move(m_itemQuery), entryName);
 }
@@ -190,6 +190,55 @@ ItemQueryUPtr QueryBuilder::duplicate(const ItemQueryUPtr &c)
     }
 
     return ItemQueryUPtr(new ItemQuery(*c.get()));
+}
+
+// =============================================================================
+// (public)
+ItemQueryUPtr QueryBuilder::createItemQuery(const std::string& queryString)
+{
+    std::vector<std::string> strList = split(queryString, ';', true);
+
+    QueryBuilderSPtr builder = std::make_shared<QueryBuilder>();
+
+    for (const std::string& str: strList) {
+
+        auto it1 = std::find(str.begin(), str.end(), '{');
+        auto it2 = std::find(str.begin(), str.end(), '}');
+
+        std::string type(str.begin(), it1);
+
+        if (type == "C" || type == "Children") {
+            ASSERT(it1 != it2);
+            std::string name(it1+1, it2);
+            builder->children(name);
+        } else if (type == "P" || type == "Parent") {
+            builder->parent();
+        } else if (type == "S" || type == "Siblings") {
+            builder->siblings();
+        }
+    }
+    return builder->UPtr();
+}
+
+// =============================================================================
+// (public)
+EntryQuerySPtr QueryBuilder::createEntryQuery(const std::string& queryString)
+{
+    if (queryString.empty()) { return EntryQuerySPtr(); }
+
+    auto it = std::find(queryString.rbegin(), queryString.rend(), ';');
+
+    if (it == queryString.rend()) {
+        // No ItemQuery part
+        return createEntry(queryString);
+    }
+
+    size_t index = static_cast<size_t>(queryString.rend() - it);
+    std::string itemQueryString = queryString.substr(0, index-1);
+    std::string entryName = queryString.substr(index);
+
+
+    return EntryQuery::create(createItemQuery(itemQueryString), entryName);
 }
 
 } // namespace Oak::Model

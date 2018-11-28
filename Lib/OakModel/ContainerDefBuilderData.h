@@ -19,6 +19,9 @@ namespace Oak::Model {
 class NodeDef;
 typedef std::shared_ptr<NodeDef> NodeDefSPtr;
 
+class NodeDefBuilder;
+typedef std::shared_ptr<NodeDefBuilder> NodeDefBuilderSPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
@@ -29,11 +32,13 @@ public:
     virtual ~ContainerDefBuilderData() {}
 
     void validate(std::vector<std::string> &errorMessages) const;
-    bool create(NodeDefSPtr nodeDef) const;
+
+    bool set(NodeDefBuilderSPtr builder, std::vector<NodeDefSPtr> nodeDefList) const;
 
     int minCount = 0;
     int maxCount = std::numeric_limits<int>::max();
-    std::string nodeDefName;
+    std::string name;
+    std::string variantId;
 };
 
 typedef std::unique_ptr<ContainerDefBuilderData> ContainerDefBuilderDataUPtr;

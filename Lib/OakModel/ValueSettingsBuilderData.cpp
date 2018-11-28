@@ -10,6 +10,8 @@
 
 #include "ValueSettingsBuilderData.h"
 
+#include "ValueDefBuilder.h"
+
 #include "../ServiceFunctions/Trace.h"
 
 namespace Oak::Model {
@@ -18,22 +20,37 @@ namespace Oak::Model {
 // (public)
 ValueSettingsBuilderData::ValueSettingsBuilderData()
 {
-    TRACE("ValueSettingsBuilderData");
+    //TRACE("ValueSettingsBuilderData");
 }
 
 // =============================================================================
 // (public)
 void ValueSettingsBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
-    errorMessages.push_back("ValueSettings validation not implemented");
+    UNUSED(errorMessages)
+    //errorMessages.push_back("ValueSettings validation not implemented");
 }
 
 // =============================================================================
 // (public)
-bool ValueSettingsBuilderData::createDerived(ValueDef* valueDef) const
+void ValueSettingsBuilderData::set(ValueDefBuilderSPtr builder) const
 {
-    UNUSED(valueDef)
-    return false;
+    if (readOnly != BoolState_Undefined) {
+        builder->setSetting(OPTION_ONLY, readOnly == BoolState_True);
+    }
+
+    if (!unit.empty()) {
+        builder->setSetting(UNIT, unit);
+    }
+
+    if (unique != BoolState_Undefined) {
+        builder->setSetting(UNIQUE, unique);
+    }
+
+    if (required != BoolState_Undefined) {
+        builder->setSetting(REQUIRED, required);
+    }
 }
+
 
 } // namespace Oak::Model

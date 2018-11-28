@@ -29,9 +29,11 @@ class QuickNodeDef : public QObject
     Q_OBJECT
     BUILDER_PROPERTY_STRING(name)
     BUILDER_PROPERTY_STRING(displayName)
+    BUILDER_PROPERTY_STRING(tooltip)
     BUILDER_PROPERTY_COLOR(color)
     BUILDER_PROPERTY_STRING(imagePath)
     BUILDER_PROPERTY_STRING(variantId)
+    BUILDER_PROPERTY_STRING(tagName)
     BUILDER_PROPERTY_OBJECT(QuickValueDef, keyValue)
     BUILDER_PROPERTY_OBJECT(QuickValueDef, variantValue)
     BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickValueDef, values, value)

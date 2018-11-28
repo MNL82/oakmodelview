@@ -16,6 +16,9 @@ namespace Oak::Model {
 
 class ValueDef;
 
+class ValueDefBuilder;
+typedef std::shared_ptr<ValueDefBuilder> ValueDefBuilderSPtr;
+
 // =============================================================================
 // Class definition
 // =============================================================================
@@ -26,7 +29,7 @@ public:
     virtual ~ValueOptionsBuilderData() {}
 
     void validate(std::vector<std::string> &errorMessages) const;
-    bool createDerived(ValueDef* valueDef) const;
+    void set(ValueDefBuilderSPtr builder) const;
 
     std::vector<UnionValue> values;
     std::vector<UnionValue> excludedValues;
