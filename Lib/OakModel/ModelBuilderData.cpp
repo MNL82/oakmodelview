@@ -20,7 +20,7 @@ namespace Oak::Model {
 // (public)
 ModelBuilderData::ModelBuilderData()
 {
-    TRACE("ModelBuilderData");
+    //TRACE("ModelBuilderData");
 }
 
 // =============================================================================
@@ -61,9 +61,9 @@ NodeDefSPtr ModelBuilderData::createModel()
         ndb->createContainers(nodeDefList);
     }
 
-    for (auto nodeDef: nodeDefList) {
-        TRACE("Shared Count(%i): %s", nodeDef.use_count(), nodeDef->name());
-    }
+//    for (const auto& nodeDef: nodeDefList) {
+//        TRACE("Shared Count(%i): %s", nodeDef.use_count(), nodeDef->name().c_str());
+//    }
 
     return nodeDefList[0];
 }

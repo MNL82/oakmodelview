@@ -20,7 +20,6 @@
 #include "QuickValueDef.h"
 #include "QuickValueOptions.h"
 
-
 #include <qqml.h>
 
 void OakModePlugin::registerTypes(const char *uri)

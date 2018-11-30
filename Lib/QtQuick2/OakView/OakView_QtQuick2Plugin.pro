@@ -11,44 +11,29 @@ CONFIG += plugin
 CONFIG += c++1z
 QT += qml quick
 
-TARGET = oakmodelplugin
+TARGET = oakviewplugin
 
 DEFINES += XML_BACKEND
 DEFINES += NOMINMAX
 
-DESTDIR += ../../Plugins/Oak/Model
+DESTDIR += ../../Plugins/Oak/View
 
 INCLUDEPATH += \
     . \
     .. \
+    ../OakModel \
     ../../OakXML \
     ../../OakModel
 
 	
 HEADERS += \
-    oakmodelplugin.h \
-    QuickOakModel.h \
-    QuickNodeDef.h \
-    QuickContainerDef.h \
-    QuickOakModelBuilder.h \
-    QuickValueDef.h \
-    QuickValueOptions.h \
-    QuickValueSettings.h \
-    QuickOakBaseTypes.h \
-    QuickServiceFunctions.h \
-    QuickPropertyHelpers.h
-
+    oakmodelplugin.h
 
 SOURCES += \
-    oakmodelplugin.cpp \
-    QuickOakModel.cpp \
-    QuickNodeDef.cpp \
-    QuickContainerDef.cpp \
-    QuickOakModelBuilder.cpp \
-    QuickValueDef.cpp \
-    QuickValueOptions.cpp \
-    QuickValueSettings.cpp \
-    QuickServiceFunctions.cpp
+    oakmodelplugin.cpp
+
+DISTFILES += \
+    OakToolButton.qml
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir
@@ -56,26 +41,35 @@ OTHER_FILES += qmldir
 # Copy the qmldir file to the same folder as the plugin binary
 cpqmldir.files = qmldir
 cpqmldir.path = $$DESTDIR
-COPIES += cpqmldir
 
+cpqml.files = $$DISTFILES
+cpqml.path = $$DESTDIR
+
+COPIES += \
+    cpqmldir \
+    cpqml
 
 TARGET = $$qtLibraryTarget($$TARGET)
 
 CONFIG(debug, debug|release) {
     win32:POST_TARGETDEPS = \
         ../../OakXMLd.lib \
-        ../../OakModeld.lib
+        ../../OakModeld.lib \
+        ../../Plugins\Oak\Model\oakmodelplugind.lib
     win32:LIBS = \
         ../../OakXMLd.lib \
-        ../../OakModeld.lib
+        ../../OakModeld.lib \
+        ../../Plugins\Oak\Model\oakmodelplugind.lib
     OBJECTS_DIR = ./debug
 } else {
     win32:POST_TARGETDEPS = \
         ../../OakXML.lib \
-        ../../OakModel.lib
+        ../../OakModel.lib \
+        ../../Plugins\Oak\Model\oakmodelplugin.lib
     win32:LIBS = \
         ../../OakXML.lib \
-        ../../OakModel.lib
+        ../../OakModel.lib \
+        ../../Plugins\Oak\Model\oakmodelplugin.lib
     OBJECTS_DIR = ./release
 }
 
@@ -92,4 +86,5 @@ CONFIG(debug, debug|release) {
 #INSTALLS += target qmldir
 
 #CONFIG += install_ok  # Do not cargo-cult this!
+
 

@@ -19,7 +19,8 @@
 QuickOakModel::QuickOakModel(QObject *parent)
     : QObject(parent)
 {
-    TRACE("Constructor: QuickOakModel");
+    //TRACE("Constructor: QuickOakModel");
+    updateEnabledActions();
 }
 
 // =============================================================================
@@ -30,7 +31,7 @@ QuickOakModelBuilder* QuickOakModel::builder() const
 }
 
 // =============================================================================
-// (public)
+// (public slots)
 QString QuickOakModel::name() const
 {
     return m_name;
@@ -38,10 +39,33 @@ QString QuickOakModel::name() const
 
 // =============================================================================
 // (public slots)
-bool QuickOakModel::loadData(const QString &filePath)
+void QuickOakModel::setName(QString name)
 {
-    if (m_model.loadXMLRootNode(filePath.toStdString())) {
+    m_name = name;
+}
+
+// =============================================================================
+// (public slots)
+void QuickOakModel::newModel()
+{
+    if (m_model.isDefNull()) { return; }
+    m_model.createNewRootDocument(Oak::Model::Node::Type::XML);
+    updateEnabledActions();
+}
+
+// =============================================================================
+// (public slots)
+bool QuickOakModel::loadModel(const QString &filePath)
+{
+    QString path;
+    if (filePath.startsWith("file:///")) {
+        path = filePath.mid(8);
+    } else {
+        path = filePath;
+    }
+    if (m_model.loadXMLRootNode(path.toStdString())) {
         emit dataLoaded();
+        updateEnabledActions();
         return true;
     }
     return false;
@@ -49,9 +73,27 @@ bool QuickOakModel::loadData(const QString &filePath)
 
 // =============================================================================
 // (public slots)
-void QuickOakModel::setName(QString name)
+bool QuickOakModel::saveModel()
 {
-    m_name = name;
+    if (m_model.xmlDocFilePath().empty()) { return false; }
+    bool result = m_model.saveXMLRootNode();
+    updateEnabledActions();
+    return result;
+}
+
+// =============================================================================
+// (public slots)
+bool QuickOakModel::saveModelAs(const QString& filePath)
+{
+    QString path;
+    if (filePath.startsWith("file:///")) {
+        path = filePath.mid(8);
+    } else {
+        path = filePath;
+    }
+    bool result = m_model.saveXMLRootNode(path.toStdString());
+    updateEnabledActions();
+    return result;
 }
 
 // =============================================================================
@@ -63,5 +105,16 @@ void QuickOakModel::setBuilder(QuickOakModelBuilder* rootNodeDef)
 
     m_model.setRootNodeDef(m_builder->create());
 
+    updateEnabledActions();
     emit builderChanged();
+}
+
+// =============================================================================
+// (private)
+void QuickOakModel::updateEnabledActions()
+{
+    set_newActionEnabled(!m_model.isDefNull());
+    set_loadActionEnabled(!m_model.isDefNull());
+    set_saveActionEnabled(!m_model.isNull() && !m_model.xmlDocFilePath().empty());
+    set_saveAsActionEnabled(!m_model.isNull());
 }

@@ -20,7 +20,7 @@ namespace Oak::Model {
 // (public)
 NodeDefBuilderData::NodeDefBuilderData()
 {
-    TRACE("NodeDefBuilderData");
+    //TRACE("NodeDefBuilderData");
 }
 
 // =============================================================================

@@ -25,8 +25,13 @@ class QuickOakModelBuilder;
 class QuickOakModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName)
 
+    AUTO_PROPERTY(bool, newActionEnabled)
+    AUTO_PROPERTY(bool, loadActionEnabled)
+    AUTO_PROPERTY(bool, saveActionEnabled)
+    AUTO_PROPERTY(bool, saveAsActionEnabled)
+
+    Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QuickOakModelBuilder* builder READ builder WRITE setBuilder NOTIFY builderChanged)
 
 public:
@@ -36,11 +41,17 @@ public:
     QString name() const;
 
 public slots:
-    bool loadData(const QString &filePath);
     void setName(QString name);
+
+    void newModel();
+    bool loadModel(const QString &filePath);
+    bool saveModel();
+    bool saveModelAs(const QString &filePath);
+
 
 private:
     void setBuilder(QuickOakModelBuilder* rootNodeDef);
+    void updateEnabledActions();
 
 signals:
     void dataLoaded();

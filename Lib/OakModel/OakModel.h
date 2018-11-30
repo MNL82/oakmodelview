@@ -39,7 +39,6 @@ public:
 
     bool createNewRootDocument(Node::Type backendType, bool setAsCurrent = true);
     void clearRoot();
-
     const Item& rootItem() const;
 
     const std::string &rootDefName() const;

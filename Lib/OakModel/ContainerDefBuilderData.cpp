@@ -22,7 +22,7 @@ namespace Oak::Model {
 // (public)
 ContainerDefBuilderData::ContainerDefBuilderData()
 {
-    TRACE("ContainerDefBuilderData");
+    //TRACE("ContainerDefBuilderData");
 }
 
 // =============================================================================
