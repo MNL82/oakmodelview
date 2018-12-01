@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <QObject>
+#include <QAbstractItemModel>
 #include <QString>
 
 #include "OakModel.h"
@@ -22,7 +22,7 @@ class QuickOakModelBuilder;
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickOakModel : public QObject
+class QuickOakModel : public QAbstractItemModel
 {
     Q_OBJECT
 
@@ -61,4 +61,43 @@ private:
     Oak::Model::OakModel m_model;
     QuickOakModelBuilder* m_builder;
     QString m_name;
+
+    // QAbstractItemModel interface
+public:
+//    virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+//    virtual QModelIndex parent(const QModelIndex& child) const override;
+//    virtual QModelIndex sibling(int row, int column, const QModelIndex& idx) const override;
+//    virtual int rowCount(const QModelIndex& parent) const override;
+//    virtual int columnCount(const QModelIndex& parent) const override;
+//    virtual bool hasChildren(const QModelIndex& parent) const override;
+//    virtual QVariant data(const QModelIndex& index, int role) const override;
+//    virtual bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+//    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+//    virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant& value, int role) override;
+//    virtual QMap<int, QVariant> itemData(const QModelIndex& index) const override;
+//    virtual bool setItemData(const QModelIndex& index, const QMap<int, QVariant>& roles) override;
+//    virtual QStringList mimeTypes() const override;
+//    virtual QMimeData*mimeData(const QModelIndexList& indexes) const override;
+//    virtual bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) const override;
+//    virtual bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
+//    virtual Qt::DropActions supportedDropActions() const override;
+//    virtual Qt::DropActions supportedDragActions() const override;
+//    virtual bool insertRows(int row, int count, const QModelIndex& parent) override;
+//    virtual bool insertColumns(int column, int count, const QModelIndex& parent) override;
+//    virtual bool removeRows(int row, int count, const QModelIndex& parent) override;
+//    virtual bool removeColumns(int column, int count, const QModelIndex& parent) override;
+//    virtual bool moveRows(const QModelIndex& sourceParent, int sourceRow, int count, const QModelIndex& destinationParent, int destinationChild) override;
+//    virtual bool moveColumns(const QModelIndex& sourceParent, int sourceColumn, int count, const QModelIndex& destinationParent, int destinationChild) override;
+//    virtual void fetchMore(const QModelIndex& parent) override;
+//    virtual bool canFetchMore(const QModelIndex& parent) const override;
+//    virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
+//    virtual void sort(int column, Qt::SortOrder order) override;
+//    virtual QModelIndex buddy(const QModelIndex& index) const override;
+//    virtual QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits, Qt::MatchFlags flags) const override;
+//    virtual QSize span(const QModelIndex& index) const override;
+//    virtual QHash<int, QByteArray> roleNames() const override;
+
+public slots:
+    virtual bool submit() override;
+    virtual void revert() override;
 };
