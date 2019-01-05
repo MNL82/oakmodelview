@@ -102,34 +102,35 @@ NodeDefSPtr NodeDefBuilderData::create()
 
     createShared(builder);
 
+    for (const auto & derivedBuilder: derivedNodeDefs)
+    {
+        derivedBuilder->createDerived(builder);
+    }
+
     return builder->get();
 }
 
 // =============================================================================
 // (public)
-bool NodeDefBuilderData::createDerived(NodeDefSPtr baseNodeDef) const
+bool NodeDefBuilderData::createDerived(NodeDefBuilderSPtr baseNodeDefBuilder) const
 {
-    NodeDefBuilderSPtr builder = NodeDefBuilder::createVariant(NodeDefBuilder::use(baseNodeDef), variantId);
+    NodeDefBuilderSPtr builder = NodeDefBuilder::createVariant(baseNodeDefBuilder, variantId);
 
     createShared(builder);
+
+    for (const auto & derivedBuilder: derivedNodeDefs)
+    {
+        derivedBuilder->createDerived(builder);
+    }
 
     return builder.get();
 }
 
 // =============================================================================
 // (public)
-bool NodeDefBuilderData::createContainers(std::vector<NodeDefSPtr> nodeDefList, std::string rootName) const
+bool NodeDefBuilderData::createContainers(NodeDefSPtr nodeDef, std::vector<NodeDefSPtr> nodeDefList) const
 {
-    NodeDef* nodeDef;
-
-    if (rootName.empty()) { rootName = name; }
-    for (auto nDef: nodeDefList) {
-        if (nDef->name() == rootName) {
-            nodeDef = const_cast<NodeDef*>(nDef->validVariant(variantId)); // Const cast is allowed here
-        }
-    }
-
-    NodeDefBuilderSPtr builder = NodeDefBuilder::use(nodeDef->sPtr());
+    NodeDefBuilderSPtr builder = NodeDefBuilder::use(nodeDef);
 
     bool success = true;
     for (const auto& container: containers) {
@@ -138,8 +139,11 @@ bool NodeDefBuilderData::createContainers(std::vector<NodeDefSPtr> nodeDefList, 
         }
     }
 
-    for (const auto& derivedNodeDef: derivedNodeDefs) {
-        if (!derivedNodeDef->createContainers(nodeDefList)) {
+    for (const auto& variantNodeDef: derivedNodeDefs) {
+        NodeDefSPtr vnd = builder->getDerivedNodeDef(variantNodeDef->variantId);
+        if (!vnd || vnd->isNull()) {
+            success = false;
+        } else if (!variantNodeDef->createContainers(vnd, nodeDefList)) {
             success = false;
         }
     }

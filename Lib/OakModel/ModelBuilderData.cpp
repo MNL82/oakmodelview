@@ -57,13 +57,10 @@ NodeDefSPtr ModelBuilderData::createModel()
     }
 
     // All node definitions have to be created before the containers can be
-    for (const NodeDefBuilderDataUPtr &ndb: nodeDefs) {
-        ndb->createContainers(nodeDefList);
+    for (size_t i = 0; i < nodeDefs.size(); i++)
+    {
+        nodeDefs[i]->createContainers(nodeDefList[i], nodeDefList);
     }
-
-//    for (const auto& nodeDef: nodeDefList) {
-//        TRACE("Shared Count(%i): %s", nodeDef.use_count(), nodeDef->name().c_str());
-//    }
 
     return nodeDefList[0];
 }

@@ -66,6 +66,7 @@ public:
     // Starting with the root NodeDef and look through all NodeDefs recursive
     //  untill a match is found
     const NodeDef *findNodeDef(const Node &node) const;
+    Item itemFromDataPtr(void * dPtr) const;
 
     ItemIndexUPtr convertItemIndexToNamed(const ItemIndex &itemIndex) const;
     ItemIndexUPtr convertItemIndexToUnnamed(const ItemIndex &itemIndex) const;

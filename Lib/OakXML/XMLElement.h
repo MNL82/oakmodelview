@@ -48,6 +48,8 @@ public:
     bool isNull() const;
     bool empty() const;
 
+    pugi::xml_node internalObject() const;
+
     // Create
     bool cloneElement(const Element &element);
     Element prependChild(const std::string &tagName);

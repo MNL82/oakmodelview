@@ -26,6 +26,7 @@ public:
     enum class Type { UNDEFINED, XML };
 
     Node();
+    Node(void * internalPtr, Type type);
     Node(const Node& copy);
     Node(Node&& move);
 
@@ -42,6 +43,8 @@ public:
     bool isNull() const;
 
     Type type() const;
+
+    void * internalPtr() const;
 
 #ifdef XML_BACKEND
     Node(XML::Element _xmlNode);

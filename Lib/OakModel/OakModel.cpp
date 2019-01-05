@@ -277,6 +277,17 @@ const NodeDef* OakModel::findNodeDef(const Node &node) const
 
 // =============================================================================
 // (public)
+Item OakModel::itemFromDataPtr(void *dPtr) const
+{
+    if (dPtr == nullptr) { return Item(); }
+
+    Oak::Model::Node node(dPtr, m_rootItem.node().type());
+    const Oak::Model::NodeDef *nDef = findNodeDef(node);
+    return Oak::Model::Item(nDef, node, this);
+}
+
+// =============================================================================
+// (public)
 ItemIndexUPtr OakModel::convertItemIndexToNamed(const ItemIndex &itemIndex) const
 {
     ASSERT(!m_rootItem.isNull());

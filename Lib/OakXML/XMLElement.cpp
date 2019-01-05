@@ -68,6 +68,14 @@ bool Element::empty() const
     return m_element.empty() || (m_element.internal_object()->first_child == nullptr && m_element.internal_object()->first_attribute == nullptr);
 }
 
+
+// =============================================================================
+//
+pugi::xml_node Element::internalObject() const
+{
+    return m_element;
+}
+
 // =============================================================================
 // Replaces this element with a copy of the argument element
 bool Element::cloneElement(const Element &element)

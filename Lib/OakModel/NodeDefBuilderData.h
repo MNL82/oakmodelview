@@ -41,9 +41,9 @@ public:
     void validate(std::vector<std::string> &errorMessages) const;
     void validateDerived(std::vector<std::string> &errorMessages) const;
     NodeDefSPtr create();
-    bool createDerived(NodeDefSPtr baseNodeDef) const;
+    bool createDerived(NodeDefBuilderSPtr baseNodeDefBuilder) const;
 
-    bool createContainers(std::vector<Oak::Model::NodeDefSPtr> nodeDefList, std::string rootName = "") const;
+    bool createContainers(NodeDefSPtr nodeDef, std::vector<NodeDefSPtr> nodeDefList) const;
 
 private:
     void createShared(NodeDefBuilderSPtr builder) const;

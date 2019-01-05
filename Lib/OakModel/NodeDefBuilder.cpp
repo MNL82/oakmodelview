@@ -14,6 +14,8 @@
 
 #include "../ServiceFunctions/Assert.h"
 
+#include <functional>
+
 
 namespace Oak::Model {
 
@@ -276,6 +278,24 @@ NodeDefBuilderSPtr NodeDefBuilder::setTagName(const std::string &tagName)
     return m_thisWPtr.lock();
 }
 #endif // XML_BACKEND
+
+// =============================================================================
+// (public)
+NodeDefSPtr NodeDefBuilder::getDerivedNodeDef(const std::string &variantId)
+{
+    std::function<NodeDefSPtr(NodeDefSPtr)> dNodeDefFunc;
+
+    dNodeDefFunc = [variantId, &dNodeDefFunc](NodeDefSPtr nodeDef) {
+        if (nodeDef->variantId() == variantId) { return nodeDef; }
+        for (NodeDefSPtr derived: nodeDef->m_derivedList) {
+            NodeDefSPtr rNodeDef = dNodeDefFunc(derived);
+            if (rNodeDef && !rNodeDef->isNull()) { return rNodeDef; }
+        }
+        return NodeDefSPtr();
+    };
+
+    return dNodeDefFunc(m_nodeDef);
+}
 
 // =============================================================================
 // (public)

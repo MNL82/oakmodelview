@@ -60,6 +60,8 @@ public:
     NodeDefBuilderSPtr setTagName(const std::string& tagName);
 #endif // XML_BACKEND
 
+    NodeDefSPtr getDerivedNodeDef(const std::string &variantId);
+
     static ValueDefUPtr takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName);
     static ContainerDefUPtr takeContainerDef(NodeDefSPtr nodeDef, const std::string &name);
 

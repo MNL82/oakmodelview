@@ -17,7 +17,7 @@
 // =============================================================================
 // (public)
 QuickOakModel::QuickOakModel(QObject *parent)
-    : QObject(parent)
+    : QAbstractItemModel(parent)
 {
     //TRACE("Constructor: QuickOakModel");
     updateEnabledActions();
@@ -117,4 +117,103 @@ void QuickOakModel::updateEnabledActions()
     set_loadActionEnabled(!m_model.isDefNull());
     set_saveActionEnabled(!m_model.isNull() && !m_model.xmlDocFilePath().empty());
     set_saveAsActionEnabled(!m_model.isNull());
+}
+
+// =============================================================================
+// (public)
+QModelIndex QuickOakModel::index(int row, int column, const QModelIndex &parent) const
+{
+    Oak::Model::Item parentItem = itemFromIndex(parent);
+    Oak::Model::Item item = parentItem.childAt(row);
+    ASSERT(!item.isNull());
+    return createModelIndex(row, column, item);
+}
+
+// =============================================================================
+// (public)
+QModelIndex QuickOakModel::parent(const QModelIndex &child) const
+{
+    Oak::Model::Item childItem = itemFromIndex(child);
+    Oak::Model::Item parentItem = childItem.parent();
+    ASSERT(!parentItem.isNull());
+    if (parentItem == m_model.rootItem()) {
+        return QModelIndex();
+    }
+    return createModelIndex(child.row(), child.column(), parentItem);
+}
+
+// =============================================================================
+// (public)
+QModelIndex QuickOakModel::sibling(int row, int column, const QModelIndex &idx) const
+{
+    Oak::Model::Item item= itemFromIndex(idx);
+    if (row != idx.row()) {
+        Oak::Model::Item parentItem = item.parent();
+        item = parentItem.childAt(row);
+    }
+    return createModelIndex(row, column, item);
+}
+
+// =============================================================================
+// (public)
+int QuickOakModel::rowCount(const QModelIndex &parent) const
+{
+    Oak::Model::Item item= itemFromIndex(parent);
+    return item.childCount();
+}
+
+// =============================================================================
+// (public)
+int QuickOakModel::columnCount(const QModelIndex &parent) const
+{
+    if (parent.isValid()) {
+        return 2;
+    }
+    return 0;
+}
+
+// =============================================================================
+// (public)
+bool QuickOakModel::hasChildren(const QModelIndex &parent) const
+{
+    Oak::Model::Item item= itemFromIndex(parent);
+    return item.childCount() > 0;
+}
+
+// =============================================================================
+// (public)
+QVariant QuickOakModel::data(const QModelIndex &index, int role) const
+{
+    Oak::Model::Item item= itemFromIndex(index);
+    ASSERT(!item.isNull());
+    if (role == Qt::DisplayRole) {
+        if (index.column() == 0) {
+            return QString::fromStdString(item.def()->displayName());
+        } else {
+            if (item.hasKey()) {
+                return QString::fromStdString(item.entryKey().value<std::string>());
+            } else {
+                return QString();
+            }
+        }
+    }
+
+    return QVariant();
+}
+
+// =============================================================================
+// (public)
+QModelIndex QuickOakModel::createModelIndex(int row, int column, const Oak::Model::Item &item) const
+{
+    return createIndex(row, column, item.node().internalPtr());
+}
+
+// =============================================================================
+// (public)
+Oak::Model::Item QuickOakModel::itemFromIndex(const QModelIndex &index) const
+{
+    if (!index.isValid()) {
+        return m_model.rootItem();
+    }
+    return m_model.itemFromDataPtr(index.internalPointer());
 }

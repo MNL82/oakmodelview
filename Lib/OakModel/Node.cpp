@@ -24,6 +24,24 @@ Node::Node()
 
 // =============================================================================
 // (public)
+Node::Node(void *dataPointer, Node::Type type)
+{
+    m_type = type;
+    switch (m_type) {
+    case Type::UNDEFINED:
+        return;
+#ifdef XML_BACKEND
+    case Type::XML:
+        m_xmlNode = XML::Element(pugi::xml_node(static_cast<pugi::xml_node_struct*>(dataPointer)));
+#endif // XML_BACKEND
+    default:
+        // m_type contains an unhandled type that needs to be implemented
+        ASSERT(false);
+    }
+}
+
+// =============================================================================
+// (public)
 Node::Node(const Node &copy)
 {
     memcpy(this, &copy, sizeof(Node));
@@ -125,6 +143,20 @@ bool Node::isNull() const
 Node::Type Node::type() const
 {
     return m_type;
+}
+
+// =============================================================================
+// (public)
+void *Node::internalPtr() const
+{
+    switch (m_type) {
+    case Type::UNDEFINED:
+        return nullptr;
+#ifdef XML_BACKEND
+    case Type::XML:
+        return m_xmlNode.internalObject().internal_object();
+#endif // XML_BACKEND
+    }
 }
 
 #ifdef XML_BACKEND
