@@ -159,7 +159,7 @@ const ValueOptions &ValueDef::options() const
 
 // =============================================================================
 // (public)
-int ValueDef::compareValue(const Node &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+int ValueDef::compareValue(const NodeData &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return -2; }
 
@@ -167,7 +167,7 @@ int ValueDef::compareValue(const Node &_node, const UnionRef &value, bool useDef
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         if (m_valueTemplate.type() == UnionType::String) {
             if (value.type() == UnionType::String) {
                 int result = m_valueRef->compareValue(_node.xmlNode(), value.getCString());
@@ -206,17 +206,17 @@ int ValueDef::compareValue(const Node &_node, const UnionRef &value, bool useDef
 
 // =============================================================================
 // (public)
-bool ValueDef::hasValue(const Node &_node) const
+bool ValueDef::hasValue(const NodeData &_node) const
 {
     if (_node.isNull()) { return false; }
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         return m_valueRef->hasValue(_node.xmlNode());
     }
 #endif // XML_BACKEND
-    case Node::Type::UNDEFINED:
+    case NodeData::Type::UNDEFINED:
         break;
     }
 
@@ -227,19 +227,19 @@ bool ValueDef::hasValue(const Node &_node) const
 
 // =============================================================================
 // (public)
-bool ValueDef::canGetValue(const Node &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::canGetValue(const NodeData &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         UnionValue tempValue(value);
         UnionRef tempRef(tempValue);
         return getValue(_node.xmlNode(), tempRef, useDefault, allowConversion, (conversion) ? conversion : m_defaultConversion);
     }
 #endif // XML_BACKEND
-    case Node::Type::UNDEFINED:
+    case NodeData::Type::UNDEFINED:
         break;
     }
 
@@ -250,7 +250,7 @@ bool ValueDef::canGetValue(const Node &_node, const UnionRef &value, bool useDef
 
 // =============================================================================
 // (public)
-bool ValueDef::getValue(const Node &_node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::getValue(const NodeData &_node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -259,7 +259,7 @@ bool ValueDef::getValue(const Node &_node, UnionRef value, bool useDefault, bool
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         if (m_valueRef->hasValue(_node.xmlNode())) {
             // Check if the returned value type is string or string list
             // Strings can always be returned
@@ -290,7 +290,7 @@ bool ValueDef::getValue(const Node &_node, UnionRef value, bool useDefault, bool
 
 // =============================================================================
 // (public)
-UnionValue ValueDef::value(const Node &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+UnionValue ValueDef::value(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     UnionValue val(m_valueTemplate);
     UnionRef uRef(val);
@@ -300,7 +300,7 @@ UnionValue ValueDef::value(const Node &_node, bool useDefault, bool allowConvers
 
 // =============================================================================
 // (public)
-std::string ValueDef::toString(const Node &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+std::string ValueDef::toString(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     std::string str;
     UnionRef uRef(str);
@@ -310,7 +310,7 @@ std::string ValueDef::toString(const Node &_node, bool useDefault, bool allowCon
 
 // =============================================================================
 // (public)
-bool ValueDef::canSetValue(const Node &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::canSetValue(const NodeData &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -319,7 +319,7 @@ bool ValueDef::canSetValue(const Node &_node, const UnionRef &value, bool allowC
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         if (value.type() == m_valueTemplate.type()) {
             if (m_valueTemplate.type() == UnionType::String) {
                 return true;
@@ -341,7 +341,7 @@ bool ValueDef::canSetValue(const Node &_node, const UnionRef &value, bool allowC
         return false;
     }
 #endif // XML_BACKEND
-    case Node::Type::UNDEFINED:
+    case NodeData::Type::UNDEFINED:
         break;
     }
     // _node.type() returns an unhandled type that needs to be implemented
@@ -352,7 +352,7 @@ bool ValueDef::canSetValue(const Node &_node, const UnionRef &value, bool allowC
 
 // =============================================================================
 // (public)
-bool ValueDef::setValue(const Node &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool ValueDef::setValue(const NodeData &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (value.isNull()) { return false; }
     if (_node.isNull()) { return false; }
@@ -361,7 +361,7 @@ bool ValueDef::setValue(const Node &_node, const UnionRef &value, bool allowConv
 
     switch (_node.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         if (value.type() == m_valueTemplate.type()) {
             if (m_valueTemplate.type() == UnionType::String) {
                 return m_valueRef->setValue(_node.xmlNode(), value.getCString());
@@ -383,7 +383,7 @@ bool ValueDef::setValue(const Node &_node, const UnionRef &value, bool allowConv
         return false;
     }
 #endif // XML_BACKEND
-    case Node::Type::UNDEFINED:
+    case NodeData::Type::UNDEFINED:
         break;
     }
     // _node.type() returns an unhandled type that needs to be implemented

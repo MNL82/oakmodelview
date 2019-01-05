@@ -29,17 +29,17 @@ include(Observers.pri)
 
 SOURCES += \
     Conversion.cpp \
-    Node.cpp \
     CallbackFunctions.cpp \
     Color.cpp \
-    OakModelServiceFunctions.cpp
+    OakModelServiceFunctions.cpp \
+    NodeData.cpp
 
 HEADERS += \
     Conversion.h \
-    Node.h \
     CallbackFunctions.h \
     Color.h \
-    OakModelServiceFunctions.h
+    OakModelServiceFunctions.h \
+    NodeData.h
 
 CONFIG(debug, debug|release) {
     TARGET = ../../OakModeld

@@ -12,7 +12,7 @@
 
 #include "ValueSettings.h"
 
-#include "Node.h"
+#include "NodeData.h"
 
 #include "UnionRef.h"
 #include "UnionValue.h"
@@ -59,20 +59,20 @@ public:
 
     const ValueOptions &options() const;
 
-    virtual int compareValue(const Node &_node, const UnionRef& value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual int compareValue(const NodeData &_node, const UnionRef& value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
-    virtual bool hasValue(const Node &_node) const;
-    virtual bool canGetValue(const Node &_node, const UnionRef& value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual bool getValue(const Node &_node, UnionRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual UnionValue value(const Node &_node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual std::string toString(const Node &_node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool hasValue(const NodeData &_node) const;
+    virtual bool canGetValue(const NodeData &_node, const UnionRef& value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool getValue(const NodeData &_node, UnionRef value, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual UnionValue value(const NodeData &_node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual std::string toString(const NodeData &_node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     template<typename T>
-    T value(const Node & _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    T value(const NodeData & _node, bool useDefault = true, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     // TODO: Different error states
-    virtual bool canSetValue(const Node &_node, const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
-    virtual bool setValue(const Node &_node, const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool canSetValue(const NodeData &_node, const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    virtual bool setValue(const NodeData &_node, const UnionRef& value, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     virtual bool hasDefaultValue() const;
     virtual const UnionRef defaultValue() const;
@@ -113,7 +113,7 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-T ValueDef::value(const Node &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+T ValueDef::value(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     T val;
     getValue(_node, val, useDefault, allowConversion, conversion);

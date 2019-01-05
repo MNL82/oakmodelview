@@ -29,9 +29,9 @@ Entry::Entry()
 
 // =============================================================================
 // (public)
-Entry::Entry(const ValueDef* valueDef, const Node &node, const Item *model)
+Entry::Entry(const ValueDef* valueDef, const NodeData &nodeData, const Item *model)
     : m_valueDef(valueDef),
-      m_node(node),
+      m_nodeData(nodeData),
       m_item(model)
 {
 
@@ -41,7 +41,7 @@ Entry::Entry(const ValueDef* valueDef, const Node &node, const Item *model)
 // (public)
 Entry::Entry(const Entry &copy)
     : m_valueDef(copy.m_valueDef),
-      m_node(copy.m_node),
+      m_nodeData(copy.m_nodeData),
       m_item(copy.m_item)
 {
 
@@ -51,7 +51,7 @@ Entry::Entry(const Entry &copy)
 // (public)
 Entry::Entry(Entry&& move)
     : m_valueDef(move.m_valueDef),
-      m_node(std::move(move.m_node)),
+      m_nodeData(std::move(move.m_nodeData)),
       m_item(move.m_item)
 {
 
@@ -62,7 +62,7 @@ Entry::Entry(Entry&& move)
 Entry& Entry::operator=(const Entry& copy)
 {
     m_valueDef = copy.m_valueDef;
-    m_node = copy.m_node;
+    m_nodeData = copy.m_nodeData;
     m_item = copy.m_item;
     return *this;
 }
@@ -72,7 +72,7 @@ Entry& Entry::operator=(const Entry& copy)
 Entry& Entry::operator=(Entry&& move)
 {
     m_valueDef = move.m_valueDef;
-    m_node = std::move(move.m_node);
+    m_nodeData = std::move(move.m_nodeData);
     m_item = move.m_item;
     return *this;
 }
@@ -81,14 +81,14 @@ Entry& Entry::operator=(Entry&& move)
 // (public)
 bool Entry::operator==(const Entry &_entry) const
 {
-    return m_valueDef == _entry.m_valueDef && m_node == _entry.m_node;
+    return m_valueDef == _entry.m_valueDef && m_nodeData == _entry.m_nodeData;
 }
 
 // =============================================================================
 // (public)
 bool Entry::operator!=(const Entry &_entry) const
 {
-    return m_valueDef != _entry.m_valueDef || m_node != _entry.m_node;
+    return m_valueDef != _entry.m_valueDef || m_nodeData != _entry.m_nodeData;
 }
 
 // =============================================================================
@@ -109,7 +109,7 @@ bool Entry::isDefNull() const
 // (public)
 bool Entry::isNodeNull() const
 {
-    return m_node.isNull();
+    return m_nodeData.isNull();
 }
 
 // =============================================================================
@@ -138,10 +138,10 @@ const std::string &Entry::tooltip() const
 
 // =============================================================================
 // (public)
-const Node& Entry::node() const
+const NodeData& Entry::nodeData() const
 {
     ASSERT(m_valueDef != nullptr);
-    return m_node;
+    return m_nodeData;
 }
 
 // =============================================================================
@@ -164,7 +164,7 @@ const Item* Entry::item() const
 UnionValue Entry::value(bool useDefault) const
 {
     ASSERT(m_valueDef != nullptr);
-    return m_valueDef->value(m_node, useDefault);
+    return m_valueDef->value(m_nodeData, useDefault);
 }
 
 // =============================================================================
@@ -172,7 +172,7 @@ UnionValue Entry::value(bool useDefault) const
 std::string Entry::toString(bool useDefault) const
 {
     ASSERT(m_valueDef != nullptr);
-    return m_valueDef->toString(m_node, useDefault);
+    return m_valueDef->toString(m_nodeData, useDefault);
 }
 
 // =============================================================================

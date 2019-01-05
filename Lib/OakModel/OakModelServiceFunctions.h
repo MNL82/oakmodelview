@@ -16,7 +16,7 @@
 #include <memory>
 #include <limits>
 
-#include <Node.h>
+#include <NodeData.h>
 
 
 namespace Oak::Model {

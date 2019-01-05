@@ -11,15 +11,15 @@
 #pragma once
 
 // =============================================================================
-// Description: Node definition classes can access data from its underlieing data
-// node in the tree data structure all the data nodes creates.
+// Description: Node definition classes can access data from its underlieing
+// node data in the tree data structure all the data nodes creates.
 // =============================================================================
 
 
 #include <string>
 #include <vector>
 
-#include "Node.h"
+#include "NodeData.h"
 #include "NodeSettings.h"
 
 #include "ValueDef.h"
@@ -127,7 +127,7 @@ public:
 
     // Returns the valid NodeDef in the inheritance hierarki if any otherwise it returns nullptr.
     virtual const NodeDef* validVariant(const UnionRef& variantId, bool includeBase = false, bool includeDerived = true) const;
-    virtual const NodeDef* validVariant(const Node &node, bool includeBase = false, bool includeDerived = true) const;
+    virtual const NodeDef* validVariant(const NodeData &nodeData, bool includeBase = false, bool includeDerived = true) const;
 
     std::vector<const NodeDef *> variantList(bool includeBase = false, bool includeDerived = false) const;
     void getVariantList(std::vector<const NodeDef *> &vList, bool includeBase = false, bool includeDerived = false) const;
@@ -144,10 +144,10 @@ protected:
 // *****************************************************************************
 public:
     virtual bool validate(const UnionRef& variantId, bool includeBase = false, bool includeDerived = false) const;
-    virtual bool validate(const Node &_node, bool includeBase = false, bool includeDerived = false) const;
+    virtual bool validate(const NodeData &_nodeData, bool includeBase = false, bool includeDerived = false) const;
 
     virtual ValidationState validationState(const UnionRef& _variantId) const;
-    virtual ValidationState validationState(const Node &node) const;
+    virtual ValidationState validationState(const NodeData &nodeData) const;
 // *****************************************************************************
 
 
@@ -191,7 +191,7 @@ public:
     virtual const ContainerDef& container(int index, bool includeBase = true, bool includeDerived = false) const;
     const ContainerDef &container(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
 
-    virtual const ContainerDef& container(const Node &childNode, bool includeBase = true, bool includeDerived = false) const;
+    virtual const ContainerDef& container(const NodeData &childNodeData, bool includeBase = true, bool includeDerived = false) const;
 
     virtual std::vector<const ContainerDef*> containerList(bool includeBase = true, bool includeDerived = false) const;
     virtual void getContainerList(std::vector<const ContainerDef*> &list, bool includeBase = true, bool includeDerived = false) const;
@@ -199,7 +199,7 @@ public:
 
     virtual const NodeDef* childDef(int index, bool includeBase = true) const;
     virtual const NodeDef* childDef(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
-    virtual const NodeDef* childDef(const Node &childNode, bool includeBase = true, bool includeDerived = false) const;
+    virtual const NodeDef* childDef(const NodeData &childNodeData, bool includeBase = true, bool includeDerived = false) const;
 
     std::vector<const NodeDef *> childDefList(bool includeBase = true, bool includeDerived = false) const;
     void getChildDefList(std::vector<const NodeDef *> &cList, bool includeBase = true, bool includeDerived = false) const;
@@ -215,14 +215,14 @@ protected:
 // Parent functions
 // *****************************************************************************
 public:
-    virtual Node parentNode(const Node &node, const NodeDef** parentNodeDef = nullptr, bool includeBase = true, bool includeDerived = false) const;
+    virtual NodeData parentNode(const NodeData &nodeData, const NodeDef** parentNodeDef = nullptr, bool includeBase = true, bool includeDerived = false) const;
 
     virtual int parentContainerCount(bool includeBase = true, bool includeDerived = false) const;
     virtual const ContainerDef* parentContainer(int index, bool includeBase = true, bool includeDerived = false) const;
     virtual const ContainerDef* parentContainer(const std::string& _name, bool includeBase = true, bool includeDerived = false) const;
-    virtual const ContainerDef* parentContainer(const Node &parentNode, bool includeBase = true, bool includeDerived = false) const;
+    virtual const ContainerDef* parentContainer(const NodeData &parentNodeData, bool includeBase = true, bool includeDerived = false) const;
 
-    virtual bool isParent(const Node &node, const Node &refNode, bool recursive = true) const;
+    virtual bool isParent(const NodeData &nodeData, const NodeData &refNodeData, bool recursive = true) const;
 
 protected:
     std::vector<const ContainerDef*> m_parentContainerDefs;
@@ -233,9 +233,9 @@ protected:
 // Service functions
 // *****************************************************************************
 public:
-    virtual void onNodeInserted(const Node &_node) const;
-    virtual void onNodeMoved(const Node &_node) const;
-    virtual void onNodeCloned(const Node &_node) const;
+    virtual void onNodeInserted(const NodeData &_nodeData) const;
+    virtual void onNodeMoved(const NodeData &_nodeData) const;
+    virtual void onNodeCloned(const NodeData &_nodeData) const;
 // *****************************************************************************
 
     template<class... _Types> inline

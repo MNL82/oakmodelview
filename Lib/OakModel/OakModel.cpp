@@ -58,17 +58,17 @@ bool OakModel::isNodeNull() const
 
 // =============================================================================
 // (public)
-bool OakModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
+bool OakModel::createNewRootDocument(NodeData::Type backendType, bool setAsCurrent)
 {
     if (m_rootItem.isDefNull()) {
         return false;
     }
 
-    if (backendType == Node::Type::XML) {
+    if (backendType == NodeData::Type::XML) {
         m_xmlDoc.clear();
-        Node documentNode(m_xmlDoc.appendChild(m_rootItem.def()->tagName()));
+        NodeData documentNode(m_xmlDoc.appendChild(m_rootItem.def()->tagName()));
         m_rootItem.def()->onNodeInserted(documentNode);
-        setXMLRootNode(documentNode, setAsCurrent);
+        setRootNodeXML(documentNode, setAsCurrent);
         return true;
     }
 
@@ -80,7 +80,7 @@ bool OakModel::createNewRootDocument(Node::Type backendType, bool setAsCurrent)
 // (public)
 void OakModel::clearRoot()
 {
-    setRootNode(Node());
+    setRootNode(NodeData());
 }
 
 // =============================================================================
@@ -117,14 +117,14 @@ void OakModel::setRootNodeDef(NodeDefSPtr def)
 void OakModel::setRootNodeDef(const NodeDef *def)
 {
     if (m_rootItem.def() != def) {
-        Node currentNode = m_currentItem.node();
+        NodeData currentNode = m_currentItem.nodeData();
         // Clear the current item before it becomes invalid
         setCurrentItem(Item());
 
         clearObservers();
 
         // Update the root definition and trigger event
-        m_rootItem = Item(def, m_rootItem.node(), this);
+        m_rootItem = Item(def, m_rootItem.nodeData(), this);
 
         createObservers();
 
@@ -143,13 +143,13 @@ void OakModel::setRootNodeDef(const NodeDef *def)
 
 // =============================================================================
 // (public)
-void OakModel::setRootNode(const Node &node)
+void OakModel::setRootNode(const NodeData &nodeData)
 {
-    if (m_rootItem.node() != node) {
+    if (m_rootItem.nodeData() != nodeData) {
         setCurrentItem(Item());
-        m_rootItem = Item(m_rootItem.def(), node, this);
+        m_rootItem = Item(m_rootItem.def(), nodeData, this);
 
-        notifier_rootNodeChanged.trigger();
+        notifier_rootNodeDataChanged.trigger();
         setCurrentItem(rootItem());
     }
 }
@@ -159,7 +159,7 @@ void OakModel::setRootNode(const Node &node)
 void OakModel::setRootItem(const Item& item)
 {
     setRootNodeDef(item.def());
-    setRootNode(item.node());
+    setRootNode(item.nodeData());
 }
 
 // =============================================================================
@@ -194,29 +194,29 @@ void OakModel::setCurrentItem(const Item &item, bool forceUpdate) const
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-void OakModel::setXMLRootNode(const Node &rootNode, bool setAsCurrent)
+void OakModel::setRootNodeXML(const NodeData &rootNodeData, bool setAsCurrent)
 {
-    m_XMLRootNode = rootNode;
+    m_rootNodeXML = rootNodeData;
 
-    if (setAsCurrent) { setRootNode(m_XMLRootNode); }
+    if (setAsCurrent) { setRootNode(m_rootNodeXML); }
 }
 
 // =============================================================================
 // (public)
-bool OakModel::loadXMLRootNode(const std::string& filePath, bool setAsCurrent)
+bool OakModel::loadRootNodeXML(const std::string& filePath, bool setAsCurrent)
 {
     if (!m_xmlDoc.load(filePath)) { return false; }
 
     m_xmlDocFilePath = filePath;
 
-    setXMLRootNode(m_xmlDoc.documentElement(), setAsCurrent);
+    setRootNodeXML(m_xmlDoc.documentElement(), setAsCurrent);
 
     return true;
 }
 
 // =============================================================================
 // (public)
-bool OakModel::saveXMLRootNode(const std::string& filePath)
+bool OakModel::saveRootNodeXML(const std::string& filePath)
 {
     if (m_xmlDoc.isNull()) {
         // Implement this
@@ -238,12 +238,12 @@ bool OakModel::saveXMLRootNode(const std::string& filePath)
 
 // =============================================================================
 // (public)
-const NodeDef* OakModel::findNodeDef(const Node &node) const
+const NodeDef* OakModel::findNodeDef(const NodeData &nodeData) const
 {
-    if (m_rootItem.isDefNull() || node.isNull()) { return nullptr; }
+    if (m_rootItem.isDefNull() || nodeData.isNull()) { return nullptr; }
 
     // Check if the root definition match
-    const NodeDef* def = m_rootItem.def()->baseRoot()->validVariant(node, false, true);
+    const NodeDef* def = m_rootItem.def()->baseRoot()->validVariant(nodeData, false, true);
     if (def) { return def; }
 
     std::list<const NodeDef*> defList;
@@ -257,7 +257,7 @@ const NodeDef* OakModel::findNodeDef(const Node &node) const
         defList.remove(currentDef);
 
         // Check if on of the child definitions match
-        def = currentDef->containerGroup().containerDef(node);
+        def = currentDef->containerGroup().containerDef(nodeData);
         if (def) { return def; }
         ignoreList.push_back(currentDef);
 
@@ -281,7 +281,7 @@ Item OakModel::itemFromDataPtr(void *dPtr) const
 {
     if (dPtr == nullptr) { return Item(); }
 
-    Oak::Model::Node node(dPtr, m_rootItem.node().type());
+    Oak::Model::NodeData node(dPtr, m_rootItem.nodeData().type());
     const Oak::Model::NodeDef *nDef = findNodeDef(node);
     return Oak::Model::Item(nDef, node, this);
 }
@@ -486,9 +486,9 @@ void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, const std::string 
 void OakModel::onEntryTypeChangeAfter(const ItemIndex &itemIndex) const
 {
     Item item = itemIndex.item(m_rootItem);
-    const NodeDef* def = findNodeDef(item.node());
+    const NodeDef* def = findNodeDef(item.nodeData());
     ASSERT(def);
-    Item newItem(def, item.node(), this);
+    Item newItem(def, item.nodeData(), this);
 
     notifier_entryTypeChangeAfter.trigger(itemIndex);
     if (item == m_currentItem) {

@@ -326,18 +326,18 @@ const NodeDef *NodeDef::validVariant(const UnionRef &variantId, bool includeBase
 
 // =============================================================================
 // (public)
-const NodeDef *NodeDef::validVariant(const Node &node, bool includeBase, bool includeDerived) const
+const NodeDef *NodeDef::validVariant(const NodeData &nodeData, bool includeBase, bool includeDerived) const
 {
-    if (node.isNull()) { return nullptr; }
+    if (nodeData.isNull()) { return nullptr; }
 
-    switch (node.type()) {
+    switch (nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        if (node.xmlNode().compareTagName(tagName()) != 0) { return nullptr; }
+    case NodeData::Type::XML:
+        if (nodeData.xmlNode().compareTagName(tagName()) != 0) { return nullptr; }
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
         return nullptr;
     }
@@ -345,7 +345,7 @@ const NodeDef *NodeDef::validVariant(const Node &node, bool includeBase, bool in
     // Check the list of parent node names are empty,
     // otherwise any parent element goes
     if (!m_parentContainerDefs.empty()) {
-        if (parentNode(node, nullptr, includeBase, includeDerived).isNull()) {
+        if (parentNode(nodeData, nullptr, includeBase, includeDerived).isNull()) {
             return nullptr;
         }
     }
@@ -355,7 +355,7 @@ const NodeDef *NodeDef::validVariant(const Node &node, bool includeBase, bool in
     }
 
     // Check if the part id of the variant type matches
-    UnionValue variantId = variantValueDef().value(node);
+    UnionValue variantId = variantValueDef().value(nodeData);
 
     return validVariant(variantId, includeBase, includeDerived);
 }
@@ -418,18 +418,18 @@ bool NodeDef::validate(const UnionRef &variantId, bool includeBase, bool include
 // 2. The tag name match
 // 3. One of the parent tag names match
 // 4. The part id of the variant type match
-bool NodeDef::validate(const Node &_node, bool includeBase, bool includeDerived) const
+bool NodeDef::validate(const NodeData &_nodeData, bool includeBase, bool includeDerived) const
 {
-    if (_node.isNull()) { return false; }
+    if (_nodeData.isNull()) { return false; }
 
-    switch (_node.type()) {
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        if (_node.xmlNode().compareTagName(tagName()) != 0) { return false; }
+    case NodeData::Type::XML:
+        if (_nodeData.xmlNode().compareTagName(tagName()) != 0) { return false; }
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
         return false;
     }
@@ -437,7 +437,7 @@ bool NodeDef::validate(const Node &_node, bool includeBase, bool includeDerived)
     // Check the list of parent node names are empty,
     // otherwise any parent element goes
     if (!m_parentContainerDefs.empty()) {
-        if (parentNode(_node, nullptr, includeBase, includeDerived).isNull()) {
+        if (parentNode(_nodeData, nullptr, includeBase, includeDerived).isNull()) {
             return false;
         }
     }
@@ -447,7 +447,7 @@ bool NodeDef::validate(const Node &_node, bool includeBase, bool includeDerived)
     }
 
     // Check if the part id of the variant type matches
-    UnionValue variantId = variantValueDef().value(_node);
+    UnionValue variantId = variantValueDef().value(_nodeData);
 
     return validate(variantId, includeBase, includeDerived);
 }
@@ -476,13 +476,13 @@ ValidationState NodeDef::validationState(const UnionRef &_variantId) const
 
 // =============================================================================
 // (public)
-ValidationState NodeDef::validationState(const Node &node) const
+ValidationState NodeDef::validationState(const NodeData &nodeData) const
 {
-    if (!baseRoot()->validate(node, false, true)) {
+    if (!baseRoot()->validate(nodeData, false, true)) {
         return VALIDATION_STATE_INVALID;
     }
 
-    UnionValue _variantId = variantValueDef().value(node);
+    UnionValue _variantId = variantValueDef().value(nodeData);
 
     if (!hasDerived() || validate(_variantId, false, false)) {
         return VALIDATION_STATE_VALID;
@@ -886,26 +886,26 @@ const ContainerDef &NodeDef::container(const std::string& _name, bool includeBas
 
 // =============================================================================
 // (public)
-const ContainerDef &NodeDef::container(const Node &childNode, bool includeBase, bool includeDerived) const
+const ContainerDef &NodeDef::container(const NodeData &childNodeData, bool includeBase, bool includeDerived) const
 {
-    if (childNode.isNull()) { return ContainerDef::emptyChildNodeDef(); }
+    if (childNodeData.isNull()) { return ContainerDef::emptyChildNodeDef(); }
 
     for (const auto& _child: m_containerList)
     {
-        if (_child->validate(childNode)) {
+        if (_child->validate(childNodeData)) {
             return *_child.get();
         }
     }
 
     if (includeBase && hasBase()) {
-        return m_base.lock()->container(childNode);
+        return m_base.lock()->container(childNodeData);
     }
 
     if (includeDerived && hasDerived()) {
         // Check if a derived NodeDefs has the container
         for (const auto &dNodeDef: m_derivedList)
         {
-            const ContainerDef & result = dNodeDef->container(childNode, false, true);
+            const ContainerDef & result = dNodeDef->container(childNodeData, false, true);
             if (!result.isNull()) { return result; }
         }
     }
@@ -958,9 +958,9 @@ const NodeDef* NodeDef::childDef(const std::string &_name, bool includeBase, boo
 
 // =============================================================================
 // (public)
-const NodeDef* NodeDef::childDef(const Node &childNode, bool includeBase, bool includeDerived) const
+const NodeDef* NodeDef::childDef(const NodeData &childNodeData, bool includeBase, bool includeDerived) const
 {
-    return container(childNode, includeBase, includeDerived).containerDef(childNode);
+    return container(childNodeData, includeBase, includeDerived).containerDef(childNodeData);
 }
 
 // =============================================================================
@@ -1004,13 +1004,13 @@ const ContainerGroupDef& NodeDef::containerGroup() const
 
 // =============================================================================
 // (public)
-Node NodeDef::parentNode(const Node &node, const NodeDef** parentNodeDef, bool includeBase, bool includeDerived) const
+NodeData NodeDef::parentNode(const NodeData &nodeData, const NodeDef** parentNodeDef, bool includeBase, bool includeDerived) const
 {
-    if (node.isNull()) { return Node(); }
+    if (nodeData.isNull()) { return NodeData(); }
 
     for (auto parentContainer: m_parentContainerDefs)
     {
-        Node parentNode = parentContainer->hostNode(node);
+        NodeData parentNode = parentContainer->hostNode(nodeData);
         if (!parentNode.isNull()) {
             if (parentNodeDef) {
                 *parentNodeDef = parentContainer->hostDef();
@@ -1020,7 +1020,7 @@ Node NodeDef::parentNode(const Node &node, const NodeDef** parentNodeDef, bool i
     }
 
     if (includeBase && hasBase()) {
-        Node result = m_base.lock()->parentNode(node, parentNodeDef, true, false);
+        NodeData result = m_base.lock()->parentNode(nodeData, parentNodeDef, true, false);
         if (!result.isNull()) {
             return result;
         }
@@ -1029,7 +1029,7 @@ Node NodeDef::parentNode(const Node &node, const NodeDef** parentNodeDef, bool i
     if (includeDerived && hasDerived()) {
         for (const auto &dNodeDef: m_derivedList)
         {
-            Node result = dNodeDef->parentNode(node, parentNodeDef, false, true);
+            NodeData result = dNodeDef->parentNode(nodeData, parentNodeDef, false, true);
             if (!result.isNull()) {
                 return result;
             }
@@ -1038,7 +1038,7 @@ Node NodeDef::parentNode(const Node &node, const NodeDef** parentNodeDef, bool i
 
     // None of the parent child definitions could locate a valid parent
     if (parentNodeDef) { *parentNodeDef = nullptr; }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
@@ -1119,24 +1119,24 @@ const ContainerDef *NodeDef::parentContainer(const std::string &_name, bool incl
 
 // =============================================================================
 // (public)
-const ContainerDef *NodeDef::parentContainer(const Node &parentNode, bool includeBase, bool includeDerived) const
+const ContainerDef *NodeDef::parentContainer(const NodeData &parentNodeData, bool includeBase, bool includeDerived) const
 {
-    if (parentNode.isNull()) { return nullptr; }
+    if (parentNodeData.isNull()) { return nullptr; }
     for (const ContainerDef* parentContainer: m_parentContainerDefs)
     {
-        if (parentContainer->hostDef()->validate(parentNode, false, true)) {
+        if (parentContainer->hostDef()->validate(parentNodeData, false, true)) {
             return parentContainer;
         }
     }
 
     if (includeBase && hasBase()) {
-        return base()->parentContainer(parentNode);
+        return base()->parentContainer(parentNodeData);
     }
 
     if (includeDerived && hasDerived()) {
         for (const auto &dNodeDef: m_derivedList)
         {
-            const ContainerDef * result = dNodeDef->parentContainer(parentNode, false, true);
+            const ContainerDef * result = dNodeDef->parentContainer(parentNodeData, false, true);
             if (result) { return result; }
         }
     }
@@ -1146,43 +1146,43 @@ const ContainerDef *NodeDef::parentContainer(const Node &parentNode, bool includ
 
 // =============================================================================
 // (public)
-bool NodeDef::isParent(const Node &node, const Node &refNode, bool recursive) const
+bool NodeDef::isParent(const NodeData &nodeData, const NodeData &refNodeData, bool recursive) const
 {
     // Find the parent data node
-    Node _parentNode = parentNode(node);
+    NodeData _parentNode = parentNode(nodeData);
     if (_parentNode.isNull()) { return false; }
 
     // Find the definition of the parent data node
     const ContainerDef* _parentContainer = parentContainer(_parentNode);
     if (_parentContainer == nullptr) { return false; }
 
-    if (_parentNode == refNode) {
+    if (_parentNode == refNodeData) {
         return true;
     }
 
     // Test the parent of the parent if recursive is true
     if (recursive) {
-        _parentContainer->hostDef()->isParent(node, refNode, recursive);
+        _parentContainer->hostDef()->isParent(nodeData, refNodeData, recursive);
     }
     return false;
 }
 
 // =============================================================================
 // (public)
-void NodeDef::onNodeInserted(const Node &_node) const
+void NodeDef::onNodeInserted(const NodeData &_nodeData) const
 {
     // Get all containers also from derived nodes
     auto cList = containerList();
     for (const ContainerDef* cDef: cList)
     {
-        int count = cDef->nodeCount(_node);
+        int count = cDef->nodeCount(_nodeData);
         while (count < cDef->minCount()) {
-            cDef->insertNode(_node, count);
+            cDef->insertNode(_nodeData, count);
             count++;
         }
     }
 
-    Item item(this, _node);
+    Item item(this, _nodeData);
     auto vList = valueList();
     for (const ValueDef* vDef: vList)
     {
@@ -1195,7 +1195,7 @@ void NodeDef::onNodeInserted(const Node &_node) const
                 if (vDef->options().getOptions(optionList, &item)) {
                     for (const std::string &option: optionList) {
                         if (std::find(valueList.begin(), valueList.end(), option) == valueList.end()) {
-                            vDef->setValue(_node, option);
+                            vDef->setValue(_nodeData, option);
                         }
                     }
 
@@ -1203,7 +1203,7 @@ void NodeDef::onNodeInserted(const Node &_node) const
             } else if (vDef->hasDefaultValue()) {
                 std::string defaultValue = vDef->defaultValue().value<std::string>();
                 if (std::find(valueList.begin(), valueList.end(), defaultValue) == valueList.end()) {
-                    vDef->setValue(_node, vDef->defaultValue());
+                    vDef->setValue(_nodeData, vDef->defaultValue());
                     return;
                 }
 
@@ -1213,7 +1213,7 @@ void NodeDef::onNodeInserted(const Node &_node) const
                     value = defaultValue + "_" + std::to_string(count++);
                 } while (contains(valueList, value));
 
-                vDef->setValue(_node, value);
+                vDef->setValue(_nodeData, value);
             }
         }
     }
@@ -1221,16 +1221,16 @@ void NodeDef::onNodeInserted(const Node &_node) const
 
 // =============================================================================
 // (public)
-void NodeDef::onNodeMoved(const Node &_node) const
+void NodeDef::onNodeMoved(const NodeData &_nodeData) const
 {
-    UNUSED(_node);
+    UNUSED(_nodeData);
 }
 
 // =============================================================================
 // (public)
-void NodeDef::onNodeCloned(const Node &_node) const
+void NodeDef::onNodeCloned(const NodeData &_nodeData) const
 {
-    UNUSED(_node);
+    UNUSED(_nodeData);
 }
 
 } // namespace Oak::Model

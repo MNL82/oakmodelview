@@ -49,7 +49,7 @@ void QuickOakModel::setName(QString name)
 void QuickOakModel::newModel()
 {
     if (m_model.isDefNull()) { return; }
-    m_model.createNewRootDocument(Oak::Model::Node::Type::XML);
+    m_model.createNewRootDocument(Oak::Model::NodeData::Type::XML);
     updateEnabledActions();
 }
 
@@ -63,7 +63,7 @@ bool QuickOakModel::loadModel(const QString &filePath)
     } else {
         path = filePath;
     }
-    if (m_model.loadXMLRootNode(path.toStdString())) {
+    if (m_model.loadRootNodeXML(path.toStdString())) {
         emit dataLoaded();
         updateEnabledActions();
         return true;
@@ -75,8 +75,8 @@ bool QuickOakModel::loadModel(const QString &filePath)
 // (public slots)
 bool QuickOakModel::saveModel()
 {
-    if (m_model.xmlDocFilePath().empty()) { return false; }
-    bool result = m_model.saveXMLRootNode();
+    if (m_model.docFilePathXML().empty()) { return false; }
+    bool result = m_model.saveRootNodeXML();
     updateEnabledActions();
     return result;
 }
@@ -91,7 +91,7 @@ bool QuickOakModel::saveModelAs(const QString& filePath)
     } else {
         path = filePath;
     }
-    bool result = m_model.saveXMLRootNode(path.toStdString());
+    bool result = m_model.saveRootNodeXML(path.toStdString());
     updateEnabledActions();
     return result;
 }
@@ -115,7 +115,7 @@ void QuickOakModel::updateEnabledActions()
 {
     set_newActionEnabled(!m_model.isDefNull());
     set_loadActionEnabled(!m_model.isDefNull());
-    set_saveActionEnabled(!m_model.isNull() && !m_model.xmlDocFilePath().empty());
+    set_saveActionEnabled(!m_model.isNull() && !m_model.docFilePathXML().empty());
     set_saveAsActionEnabled(!m_model.isNull());
 }
 
@@ -205,7 +205,7 @@ QVariant QuickOakModel::data(const QModelIndex &index, int role) const
 // (public)
 QModelIndex QuickOakModel::createModelIndex(int row, int column, const Oak::Model::Item &item) const
 {
-    return createIndex(row, column, item.node().internalPtr());
+    return createIndex(row, column, item.nodeData().internalPtr());
 }
 
 // =============================================================================

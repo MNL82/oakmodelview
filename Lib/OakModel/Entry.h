@@ -27,7 +27,7 @@ class Entry
 {
 public:
     Entry();
-    Entry(const ValueDef* valueDef, const Node &node, const Item* item/* = nullptr*/);
+    Entry(const ValueDef* valueDef, const NodeData &nodeData, const Item* item/* = nullptr*/);
     Entry(const Entry& copy);
     Entry(Entry&& move);
 
@@ -46,7 +46,7 @@ public:
 
     const std::string &tooltip() const;
 
-    const Node& node() const;
+    const NodeData& nodeData() const;
     const ValueDef* valueDef() const;
     const Item* item() const;
 
@@ -91,7 +91,7 @@ protected:
 
 protected:
     const ValueDef* m_valueDef;
-    Node m_node;
+    NodeData m_nodeData;
     const Item* m_item;
 
     friend class Item;
@@ -103,7 +103,7 @@ template<typename T>
 bool Entry::canGetValue(T &value, bool useDefault) const
 {
     assert(m_valueDef != nullptr);
-    return m_valueDef->canGetValue(m_node, value, useDefault, true);
+    return m_valueDef->canGetValue(m_nodeData, value, useDefault, true);
 }
 
 // =============================================================================
@@ -112,7 +112,7 @@ template<typename T>
 bool Entry::getValue(T &value, bool useDefault) const
 {
     assert(m_valueDef != nullptr);
-    return m_valueDef->getValue(m_node, value, useDefault, true);
+    return m_valueDef->getValue(m_nodeData, value, useDefault, true);
 }
 
 // =============================================================================
@@ -121,7 +121,7 @@ template<typename T>
 T Entry::value(bool useDefault) const
 {
     assert(m_valueDef != nullptr);
-    return m_valueDef->value<T>(m_node, useDefault, true);
+    return m_valueDef->value<T>(m_nodeData, useDefault, true);
 }
 
 // =============================================================================
@@ -130,7 +130,7 @@ template<typename T>
 bool Entry::canSetValue(const T &value) const
 {
     assert(m_valueDef != nullptr);
-    return m_valueDef->canSetValue(m_node, value, true);
+    return m_valueDef->canSetValue(m_nodeData, value, true);
 }
 
 // =============================================================================
@@ -142,7 +142,7 @@ bool Entry::setValue(const T &value) const
     if (m_item) {
         onEntryChangeBefore();
     }
-    bool result = m_valueDef->setValue(m_node, value, true);
+    bool result = m_valueDef->setValue(m_nodeData, value, true);
     if (m_item) {
         onEntryChangeAfter();
     }

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Node.h"
+#include "NodeData.h"
 #include "NodeDef.h"
 #include "Entry.h"
 
@@ -26,7 +26,7 @@ class Item
 {
 public:
     Item();
-    Item(const NodeDef* def, const Node &node, const OakModel* model = nullptr);
+    Item(const NodeDef* def, const NodeData &nodeData, const OakModel* model = nullptr);
     Item(const Item &copy);
     Item(Item&& move);
 
@@ -46,8 +46,8 @@ public:
 
     void clear();
 
-    const Node &node() const { return m_node; }
-    Node node() { return m_node; }
+    const NodeData &nodeData() const { return m_nodeData; }
+    NodeData nodeData() { return m_nodeData; }
 
     const NodeDef* def() const { return m_def; }
     const OakModel* model() const;
@@ -142,7 +142,7 @@ protected:
 
 protected:
     const NodeDef* m_def;
-    Node m_node;
+    NodeData m_nodeData;
     const OakModel* m_model;
 
     mutable std::vector<Entry> m_entryList;

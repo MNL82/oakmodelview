@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Node.h"
+#include "NodeData.h"
 
 
 namespace Oak::Model {
@@ -22,7 +22,7 @@ class NodeRef
 {
 public:
     virtual ~NodeRef() {}
-    virtual Node getNode(const Node& baseNode, bool* ok = nullptr) const = 0;
+    virtual NodeData getNode(const NodeData& baseNode, bool* ok = nullptr) const = 0;
 };
 
 } // namespace Oak::Model

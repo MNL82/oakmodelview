@@ -126,32 +126,32 @@ const NodeDef* ContainerDef::containerDef(const UnionRef &variantId) const
 
 // =============================================================================
 // (public)
-const NodeDef* ContainerDef::containerDef(const Node &_node) const
+const NodeDef* ContainerDef::containerDef(const NodeData &_nodeData) const
 {
     if (!m_containerDef) { return nullptr; }
 
-    if (m_containerDef->validate(_node)) {
+    if (m_containerDef->validate(_nodeData)) {
         return m_containerDef.get();
     }
-    return m_containerDef->validVariant(_node);
+    return m_containerDef->validVariant(_nodeData);
 }
 
 // =============================================================================
 // (public)
-bool ContainerDef::validate(const Node &_node) const
+bool ContainerDef::validate(const NodeData &_nodeData) const
 {
-    if (_node.isNull()) { return false; }
+    if (_nodeData.isNull()) { return false; }
 
-    switch (_node.type()) {
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
+    case NodeData::Type::XML: {
         if (!m_containerDef) { return false; }
-        if (_node.xmlNode().compareTagName(containerDef()->tagName()) != 0) { return false; }
-        return m_containerDef->validate(_node, false, true);
+        if (_nodeData.xmlNode().compareTagName(containerDef()->tagName()) != 0) { return false; }
+        return m_containerDef->validate(_nodeData, false, true);
     }
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
     return false;
@@ -175,17 +175,17 @@ int ContainerDef::maxCount() const
 
 // =============================================================================
 // (public)
-int ContainerDef::nodeCount(const Node &_node) const
+int ContainerDef::nodeCount(const NodeData &_nodeData) const
 {
-    if (_node.isNull()) { return -1; }
+    if (_nodeData.isNull()) { return -1; }
 
-    switch (_node.type()) {
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        return m_elementListRef.count(_node.xmlNode());
+    case NodeData::Type::XML:
+        return m_elementListRef.count(_nodeData.xmlNode());
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
     return -1;
@@ -193,17 +193,17 @@ int ContainerDef::nodeCount(const Node &_node) const
 
 // =============================================================================
 // (public)
-int ContainerDef::nodeIndex(const Node &_node, const Node &refNode) const
+int ContainerDef::nodeIndex(const NodeData &_nodeData, const NodeData &refNode) const
 {
-    if (_node.isNull()) { return -1; }
+    if (_nodeData.isNull()) { return -1; }
 
-    switch (_node.type()) {
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        return m_elementListRef.indexOf(_node.xmlNode(), refNode.xmlNode());
+    case NodeData::Type::XML:
+        return m_elementListRef.indexOf(_nodeData.xmlNode(), refNode.xmlNode());
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
     return -1;
@@ -211,19 +211,19 @@ int ContainerDef::nodeIndex(const Node &_node, const Node &refNode) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::node(const Node &_node, int index, const NodeDef** nodeDef) const
+NodeData ContainerDef::node(const NodeData &_nodeData, int index, const NodeDef** nodeDef) const
 {
-    if (_node.isNull()) { return Node(); }
+    if (_nodeData.isNull()) { return NodeData(); }
 
-    Node childNode;
-    switch (_node.type()) {
+    NodeData childNode;
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        childNode =  m_elementListRef.at(_node.xmlNode(), index);
+    case NodeData::Type::XML:
+        childNode =  m_elementListRef.at(_nodeData.xmlNode(), index);
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
 
@@ -235,19 +235,19 @@ Node ContainerDef::node(const Node &_node, int index, const NodeDef** nodeDef) c
 
 // =============================================================================
 // (public)
-Node ContainerDef::firstNode(const Node &_node, const NodeDef** nodeDef) const
+NodeData ContainerDef::firstNode(const NodeData &_nodeData, const NodeDef** nodeDef) const
 {
-    if (_node.isNull()) { return Node(); }
+    if (_nodeData.isNull()) { return NodeData(); }
 
-    Node childNode;
-    switch (_node.type()) {
+    NodeData childNode;
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        childNode = m_elementListRef.first(_node.xmlNode());
+    case NodeData::Type::XML:
+        childNode = m_elementListRef.first(_nodeData.xmlNode());
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
 
@@ -259,19 +259,19 @@ Node ContainerDef::firstNode(const Node &_node, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::lastNode(const Node &_node, const NodeDef** nodeDef) const
+NodeData ContainerDef::lastNode(const NodeData &_nodeData, const NodeDef** nodeDef) const
 {
-    if (_node.isNull()) { return Node(); }
+    if (_nodeData.isNull()) { return NodeData(); }
 
-    Node childNode;
-    switch (_node.type()) {
+    NodeData childNode;
+    switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        childNode = m_elementListRef.last(_node.xmlNode());
+    case NodeData::Type::XML:
+        childNode = m_elementListRef.last(_nodeData.xmlNode());
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
 
@@ -283,19 +283,19 @@ Node ContainerDef::lastNode(const Node &_node, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::nextNode(const Node &refNode, const NodeDef** nodeDef) const
+NodeData ContainerDef::nextNode(const NodeData &refNodeData, const NodeDef** nodeDef) const
 {
-    if (refNode.isNull()) { return Node(); }
+    if (refNodeData.isNull()) { return NodeData(); }
 
-    Node childNode;
-    switch (refNode.type()) {
+    NodeData childNode;
+    switch (refNodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        childNode =  m_elementListRef.next(refNode.xmlNode());
+    case NodeData::Type::XML:
+        childNode =  m_elementListRef.next(refNodeData.xmlNode());
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
 
@@ -307,19 +307,19 @@ Node ContainerDef::nextNode(const Node &refNode, const NodeDef** nodeDef) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::previousNode(const Node &refNode, const NodeDef** nodeDef) const
+NodeData ContainerDef::previousNode(const NodeData &refNodeData, const NodeDef** nodeDef) const
 {
-    if (refNode.isNull()) { return Node(); }
+    if (refNodeData.isNull()) { return NodeData(); }
 
-    Node childNode;
-    switch (refNode.type()) {
+    NodeData childNode;
+    switch (refNodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML:
-        childNode =  m_elementListRef.previous(refNode.xmlNode());
+    case NodeData::Type::XML:
+        childNode =  m_elementListRef.previous(refNodeData.xmlNode());
         break;
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
 
@@ -338,43 +338,43 @@ const NodeDef* ContainerDef::hostDef() const
 
 // =============================================================================
 // (public)
-Node ContainerDef::hostNode(const Node &refdNode) const
+NodeData ContainerDef::hostNode(const NodeData &refNodeData) const
 {
-    if (refdNode.isNull()) { return Node(); }
+    if (refNodeData.isNull()) { return NodeData(); }
 
-    switch (refdNode.type()) {
+    switch (refNodeData.type()) {
 #ifdef XML_BACKEND
-    case Node::Type::XML: {
-        XML::Element hostElement = m_elementListRef.invertedAt(refdNode.xmlNode());
+    case NodeData::Type::XML: {
+        XML::Element hostElement = m_elementListRef.invertedAt(refNodeData.xmlNode());
 
-        if (hostElement.empty()) { return Node(); }
+        if (hostElement.empty()) { return NodeData(); }
 
-        if (hostDef()->tagName().compare(hostElement.tagName()) != 0) { return Node(); }
+        if (hostDef()->tagName().compare(hostElement.tagName()) != 0) { return NodeData(); }
         return hostElement;
     }
 #endif // XML_BACKEND
     default:
-        // _node.type() returns an unhandled type that needs to be implemented
+        // _nodeData.type() returns an unhandled type that needs to be implemented
         ASSERT(false);
     }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-bool ContainerDef::canInsertNode(const Node &_node, int &index) const
+bool ContainerDef::canInsertNode(const NodeData &_nodeData, int &index) const
 {
     if (isNull()) { return false; }
 
     // The data node and the child definition is validated in the function
-    int count = nodeCount(_node);
+    int count = nodeCount(_nodeData);
     if (count < 0) { return false; }
 
     // Check if there are room for one more child node
     if (count >= maxCount()) { return false; }
 
     // Check if a unique options only list do not have any options left
-    if (!checkUniqueOptionValues(_node)) { return false; }
+    if (!checkUniqueOptionValues(_nodeData)) { return false; }
 
     // if index is -1 then the child node is added to the end
     if (index == -1) {
@@ -388,18 +388,18 @@ bool ContainerDef::canInsertNode(const Node &_node, int &index) const
 
 // =============================================================================
 // (public)
-Node ContainerDef::insertNode(const Node &_node, int &index) const
+NodeData ContainerDef::insertNode(const NodeData &_nodeData, int &index) const
 {
-    Node newNode;
-    if (canInsertNode(_node, index)) {
-        switch (_node.type()) {
+    NodeData newNode;
+    if (canInsertNode(_nodeData, index)) {
+        switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML:
-            newNode = m_elementListRef.insert(_node.xmlNode(), index);
+        case NodeData::Type::XML:
+            newNode = m_elementListRef.insert(_nodeData.xmlNode(), index);
             break;
 #endif // XML_BACKEND
         default:
-            // _node.type() returns an unhandled type that needs to be implemented
+            // _nodeData.type() returns an unhandled type that needs to be implemented
             ASSERT(false);
             return newNode;
         }
@@ -410,7 +410,7 @@ Node ContainerDef::insertNode(const Node &_node, int &index) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::canCloneNode(const Node &_node, int &index, const Node &cloneNode) const
+bool ContainerDef::canCloneNode(const NodeData &_nodeData, int &index, const NodeData &cloneNode) const
 {
     if (isNull()) { return false; }
 
@@ -420,25 +420,25 @@ bool ContainerDef::canCloneNode(const Node &_node, int &index, const Node &clone
     // Check if 'cloneNode' is parent(recursive) of 'node'
     // Can not clone it selv into it selv
 
-    if (!m_hostDef.expired() && m_hostDef.lock()->isParent(_node, cloneNode)) { return false; }
+    if (!m_hostDef.expired() && m_hostDef.lock()->isParent(_nodeData, cloneNode)) { return false; }
 
-    return canInsertNode(_node, index);
+    return canInsertNode(_nodeData, index);
 }
 
 // =============================================================================
 // (public)
-Node ContainerDef::cloneNode(const Node &_node, int &index, const Node &cloneNode) const
+NodeData ContainerDef::cloneNode(const NodeData &_nodeData, int &index, const NodeData &cloneNode) const
 {
-    Node newNode;
-    if (canCloneNode(_node, index, cloneNode)) {
-        switch (_node.type()) {
+    NodeData newNode;
+    if (canCloneNode(_nodeData, index, cloneNode)) {
+        switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML:
-            newNode = m_elementListRef.clone(_node.xmlNode(), index, cloneNode.xmlNode());
+        case NodeData::Type::XML:
+            newNode = m_elementListRef.clone(_nodeData.xmlNode(), index, cloneNode.xmlNode());
             break;
 #endif // XML_BACKEND
         default:
-            // _node.type() returns an unhandled type that needs to be implemented
+            // _nodeData.type() returns an unhandled type that needs to be implemented
             ASSERT(false);
             return newNode;
         }
@@ -450,13 +450,13 @@ Node ContainerDef::cloneNode(const Node &_node, int &index, const Node &cloneNod
 
 // =============================================================================
 // (public)
-bool ContainerDef::canMoveNode(const Node &_node, int &index, const Node &moveNode) const
+bool ContainerDef::canMoveNode(const NodeData &_nodeData, int &index, const NodeData &moveNode) const
 {
     if (isNull()) { return false; }
     if (index < -1) { return false; }
 
     // The data node and the child node definition is validated in the function
-    int count = nodeCount(_node);
+    int count = nodeCount(_nodeData);
     if (count < 0) { return false; }
 
     if (index > count) { return false; }
@@ -466,7 +466,7 @@ bool ContainerDef::canMoveNode(const Node &_node, int &index, const Node &moveNo
     if (!moveDef) { return false; }
 
     // Find the parent node of the 'moveNode'
-    Node moveNodeParent = moveDef->parentNode(moveNode);
+    NodeData moveNodeParent = moveDef->parentNode(moveNode);
     if (moveNodeParent.isNull()) { return false; }
 
     // Find the node definition of 'moveNode' parent
@@ -478,7 +478,7 @@ bool ContainerDef::canMoveNode(const Node &_node, int &index, const Node &moveNo
     if (moveIndex == -1) { return false; }
 
     // Handle special case where the 'moveNode' is already a child of 'node'
-    if (_node == moveNodeParent) {
+    if (_nodeData == moveNodeParent) {
         if (index == count) { return false; }
 
         if (index == -1) {
@@ -495,23 +495,23 @@ bool ContainerDef::canMoveNode(const Node &_node, int &index, const Node &moveNo
     if (!moveParentContainer->canRemoveNode(moveNodeParent, moveIndex)) { return false; }
 
     // Check if the 'moveNode' can be cloned
-    return canCloneNode(_node, index, moveNode);
+    return canCloneNode(_nodeData, index, moveNode);
 }
 
 // =============================================================================
 // (public)
-Node ContainerDef::moveNode(const Node &_node, int &index, const Node &moveNode) const
+NodeData ContainerDef::moveNode(const NodeData &_nodeData, int &index, const NodeData &moveNode) const
 {
-    Node newNode;
-    if (canMoveNode(_node, index, moveNode)) {
-        switch (_node.type()) {
+    NodeData newNode;
+    if (canMoveNode(_nodeData, index, moveNode)) {
+        switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML:
-            newNode = m_elementListRef.move(_node.xmlNode(), index, moveNode.xmlNode());
+        case NodeData::Type::XML:
+            newNode = m_elementListRef.move(_nodeData.xmlNode(), index, moveNode.xmlNode());
             break;
 #endif // XML_BACKEND
         default:
-            // _node.type() returns an unhandled type that needs to be implemented
+            // _nodeData.type() returns an unhandled type that needs to be implemented
             ASSERT(false);
             return newNode;
         }
@@ -523,16 +523,16 @@ Node ContainerDef::moveNode(const Node &_node, int &index, const Node &moveNode)
 
 // =============================================================================
 // (public)
-bool ContainerDef::canRemoveNode(const Node &_node, int index) const
+bool ContainerDef::canRemoveNode(const NodeData &_nodeData, int index) const
 {
     if (isNull()) { return false; }
 
     // Find the data node that is to be removed
-    Node dataNodeRemove = node(_node, index);
+    NodeData dataNodeRemove = node(_nodeData, index);
     if (dataNodeRemove.isNull()) { return false; }
 
     // Find the number of existing number of child data nodes of the same type
-    int count = nodeCount(_node);
+    int count = nodeCount(_nodeData);
 
     // Test if the removal of the data node will bring the number below the minimum allowed
     if (count-1 < m_minCount) { return false; }
@@ -542,17 +542,17 @@ bool ContainerDef::canRemoveNode(const Node &_node, int index) const
 
 // =============================================================================
 // (public)
-bool ContainerDef::removeNode(const Node &_node, int index) const
+bool ContainerDef::removeNode(const NodeData &_nodeData, int index) const
 {
-    if (canRemoveNode(_node, index)) {
-        switch (_node.type()) {
+    if (canRemoveNode(_nodeData, index)) {
+        switch (_nodeData.type()) {
 #ifdef XML_BACKEND
-        case Node::Type::XML: {
-            return m_elementListRef.remove(_node.xmlNode(), index);
+        case NodeData::Type::XML: {
+            return m_elementListRef.remove(_nodeData.xmlNode(), index);
         }
 #endif // XML_BACKEND
         default:
-            // _node.type() returns an unhandled type that needs to be implemented
+            // _nodeData.type() returns an unhandled type that needs to be implemented
             ASSERT(false);
         }
     }
@@ -569,7 +569,7 @@ const ContainerDef &ContainerDef::emptyChildNodeDef()
 
 // =============================================================================
 // (public)
-bool ContainerDef::checkUniqueOptionValues(const Node &_node) const
+bool ContainerDef::checkUniqueOptionValues(const NodeData &_nodeData) const
 {
     // Check if a unique options only list do not have any options left
     auto vList = m_containerDef->valueList();
@@ -578,7 +578,7 @@ bool ContainerDef::checkUniqueOptionValues(const Node &_node) const
         if (vDef->settings().value(UNIQUE) > 0 &&
             vDef->options().isUsed() &&
             vDef->settings().value(OPTION_ONLY)) {
-            Node firstSibling = firstNode(_node);
+            NodeData firstSibling = firstNode(_nodeData);
             if (firstSibling.isNull()) {
                 break;
             }

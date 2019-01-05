@@ -20,23 +20,23 @@ namespace Oak::Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class Node
+class NodeData
 {
 public:
     enum class Type { UNDEFINED, XML };
 
-    Node();
-    Node(void * internalPtr, Type type);
-    Node(const Node& copy);
-    Node(Node&& move);
+    NodeData();
+    NodeData(void * internalPtr, Type type);
+    NodeData(const NodeData& copy);
+    NodeData(NodeData&& move);
 
-    ~Node() {}
+    ~NodeData() {}
 
-    Node& operator=(const Node& copy);
-    Node& operator=(Node&& move);
+    NodeData& operator=(const NodeData& copy);
+    NodeData& operator=(NodeData&& move);
 
-    bool operator==(const Node& _node) const;
-    bool operator!=(const Node& _node) const;
+    bool operator==(const NodeData& _node) const;
+    bool operator!=(const NodeData& _node) const;
 
     void clear();
 
@@ -47,7 +47,7 @@ public:
     void * internalPtr() const;
 
 #ifdef XML_BACKEND
-    Node(XML::Element _xmlNode);
+    NodeData(XML::Element _xmlNode);
     bool isXML() const;
     XML::Element xmlNode() const;
 #endif // XML_BACKEND

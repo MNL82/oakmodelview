@@ -78,20 +78,20 @@ const NodeDef* ContainerGroupDef::containerDef(const std::string &name, const Un
 
 // =============================================================================
 // (public)
-const NodeDef* ContainerGroupDef::containerDef(const Node &_node) const
+const NodeDef* ContainerGroupDef::containerDef(const NodeData &_nodeData) const
 {
-    const ContainerDef& ci = m_hostDef->container(_node);
+    const ContainerDef& ci = m_hostDef->container(_nodeData);
     if (ci.isNull()) { return nullptr; }
-    return ci.containerDef(_node);
+    return ci.containerDef(_nodeData);
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::validate(const Node &_node) const
+bool ContainerGroupDef::validate(const NodeData &_nodeData) const
 {
     for (auto container: m_containerList)
     {
-        if (container->validate(_node)) {
+        if (container->validate(_nodeData)) {
             return true;
         }
     }
@@ -100,11 +100,11 @@ bool ContainerGroupDef::validate(const Node &_node) const
 
 // =============================================================================
 // (public)
-int ContainerGroupDef::nodeCount(const Node &_node) const
+int ContainerGroupDef::nodeCount(const NodeData &_nodeData) const
 {
     int count = 0;
     for (auto child: m_containerList) {
-        count += child->nodeCount(_node);
+        count += child->nodeCount(_nodeData);
     }
 
     return count;
@@ -112,16 +112,16 @@ int ContainerGroupDef::nodeCount(const Node &_node) const
 
 // =============================================================================
 // (public)
-int ContainerGroupDef::nodeIndex(const Node &_node, const Node &refNode) const
+int ContainerGroupDef::nodeIndex(const NodeData &_nodeData, const NodeData &refNode) const
 {
     int index = 0;
     for (auto container: m_containerList)
     {
         if (container->validate(refNode)) {
-            return index + container->nodeIndex(_node, refNode);
+            return index + container->nodeIndex(_nodeData, refNode);
         } else {
             // Adds all nodes to the index that belongs to an earlier Container
-            index += container->nodeCount(_node);
+            index += container->nodeCount(_nodeData);
         }
     }
     return -1;
@@ -129,76 +129,76 @@ int ContainerGroupDef::nodeIndex(const Node &_node, const Node &refNode) const
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::node(const Node &_node, int index, const NodeDef** nodeDef) const
+NodeData ContainerGroupDef::node(const NodeData &_nodeData, int index, const NodeDef** nodeDef) const
 {
     for (auto container: m_containerList)
     {
-        Node childNode = container->node(_node, index, nodeDef);
-        if (childNode.isNull()) {
-            index -= container->nodeCount(_node);
+        NodeData childNodeData = container->node(_nodeData, index, nodeDef);
+        if (childNodeData.isNull()) {
+            index -= container->nodeCount(_nodeData);
         } else {
-            return childNode;
+            return childNodeData;
         }
     }
     if (nodeDef) { *nodeDef = nullptr; }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::firstNode(const Node &_node, const NodeDef** nodeDef) const
+NodeData ContainerGroupDef::firstNode(const NodeData &_nodeData, const NodeDef** nodeDef) const
 {
     for (auto container: m_containerList)
     {
-        Node childNode = container->firstNode(_node, nodeDef);
-        if (!childNode.isNull()) {
-            return childNode;
+        NodeData childNodeData = container->firstNode(_nodeData, nodeDef);
+        if (!childNodeData.isNull()) {
+            return childNodeData;
         }
     }
     if (nodeDef) { *nodeDef = nullptr; }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::lastNode(const Node &_node, const NodeDef** nodeDef) const
+NodeData ContainerGroupDef::lastNode(const NodeData &_nodeData, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.end();
     while (it != m_containerList.begin()) {
         it--;
-        Node childNode = (*it)->lastNode(_node, nodeDef);
-        if (!childNode.isNull()) {
-            return childNode;
+        NodeData childNodeData = (*it)->lastNode(_nodeData, nodeDef);
+        if (!childNodeData.isNull()) {
+            return childNodeData;
         }
     }
     if (nodeDef) { *nodeDef = nullptr; }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::nextNode(const Node &_node, const Node &refNode, const NodeDef** nodeDef) const
+NodeData ContainerGroupDef::nextNode(const NodeData &_nodeData, const NodeData &refNode, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.begin();
     while (it != m_containerList.end()) {
-        if ((*it)->nodeIndex(_node, refNode) != -1) {
-            Node childNode = (*it)->nextNode(refNode, nodeDef);
-            if (childNode.isNull()) {
+        if ((*it)->nodeIndex(_nodeData, refNode) != -1) {
+            NodeData childNodeData = (*it)->nextNode(refNode, nodeDef);
+            if (childNodeData.isNull()) {
                 // Faild to find next node in the same Container
                 // Looking in the next one ...
                 it++;
                 while (it != m_containerList.end()) {
-                    childNode = (*it)->firstNode(_node, nodeDef);
-                    if (!childNode.isNull()) {
+                    childNodeData = (*it)->firstNode(_nodeData, nodeDef);
+                    if (!childNodeData.isNull()) {
                         // Found the next node as the fist node in an other Container
-                        return childNode;
+                        return childNodeData;
                     }
                     it++;
                 }
                 // Found the refNode but there is no next node
-                return Node();
+                return NodeData();
             } else {
-                return childNode;
+                return childNodeData;
             }
         }
         it++;
@@ -206,52 +206,52 @@ Node ContainerGroupDef::nextNode(const Node &_node, const Node &refNode, const N
     // Never found the refNode
     ASSERT(false);
     if (nodeDef) { *nodeDef = nullptr; }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::previousNode(const Node &_node, const Node &refNode, const NodeDef** nodeDef) const
+NodeData ContainerGroupDef::previousNode(const NodeData &_nodeData, const NodeData &refNode, const NodeDef** nodeDef) const
 {
     auto it = m_containerList.end();
     while (it != m_containerList.begin()) {
         it--;
-        if ((*it)->nodeIndex(_node, refNode) != -1) {
-            Node childNode = (*it)->nextNode(refNode, nodeDef);
-            if (childNode.isNull()) {
+        if ((*it)->nodeIndex(_nodeData, refNode) != -1) {
+            NodeData childNodeData = (*it)->nextNode(refNode, nodeDef);
+            if (childNodeData.isNull()) {
                 // Faild to find previous node in the same Container
                 // Looking in the previous one ...
                 while (it != m_containerList.begin()) {
                     it--;
-                    childNode = (*it)->lastNode(_node, nodeDef);
-                    if (!childNode.isNull()) {
+                    childNodeData = (*it)->lastNode(_nodeData, nodeDef);
+                    if (!childNodeData.isNull()) {
                         // Found the previous node as the last node in an other Container
-                        return childNode;
+                        return childNodeData;
                     }
                 }
                 // Found the refNode but there is no previous node
-                return Node();
+                return NodeData();
             } else {
-                return childNode;
+                return childNodeData;
             }
         }
     }
     // Never found the refNode
     ASSERT(false);
     if (nodeDef) { *nodeDef = nullptr; }
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canInsertNode(const Node &_node, const UnionRef &name, int &index) const
+bool ContainerGroupDef::canInsertNode(const NodeData &_nodeData, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
         if (name == container->containerDef()->name()) {
-            return container->canInsertNode(_node, index);
+            return container->canInsertNode(_nodeData, index);
         } else {
-            index -= container->nodeCount(_node);
+            index -= container->nodeCount(_nodeData);
         }
     }
     // Failed to find a Container with the given name
@@ -261,31 +261,31 @@ bool ContainerGroupDef::canInsertNode(const Node &_node, const UnionRef &name, i
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::insertNode(const Node &_node, const UnionRef &name, int &index) const
+NodeData ContainerGroupDef::insertNode(const NodeData &_nodeData, const UnionRef &name, int &index) const
 {
     for (auto container: m_containerList)
     {
         if (name == container->containerDef()->name()) {
-            return container->insertNode(_node, index);
+            return container->insertNode(_nodeData, index);
         } else {
-            index -= container->nodeCount(_node);
+            index -= container->nodeCount(_nodeData);
         }
     }
     // Failed to find a Container with the given name
     ASSERT(false);
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canCloneNode(const Node &_node, int &index, const Node &cloneNode) const
+bool ContainerGroupDef::canCloneNode(const NodeData &_nodeData, int &index, const NodeData &cloneNode) const
 {
     for (auto container: m_containerList)
     {
         if (container->validate(cloneNode)) {
-            return container->canCloneNode(_node, index, cloneNode);
+            return container->canCloneNode(_nodeData, index, cloneNode);
         } else {
-            index -= container->nodeCount(_node);
+            index -= container->nodeCount(_nodeData);
         }
     }
     // Failed to find a Container with the given name
@@ -294,31 +294,31 @@ bool ContainerGroupDef::canCloneNode(const Node &_node, int &index, const Node &
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::cloneNode(const Node &_node, int &index, const Node &cloneNode) const
+NodeData ContainerGroupDef::cloneNode(const NodeData &_nodeData, int &index, const NodeData &cloneNode) const
 {
     for (auto container: m_containerList)
     {
         if (container->validate(cloneNode)) {
-            return container->cloneNode(_node, index, cloneNode);
+            return container->cloneNode(_nodeData, index, cloneNode);
         } else {
-            index -= container->nodeCount(_node);
+            index -= container->nodeCount(_nodeData);
         }
     }
     // Failed to find a Container with the given name
     ASSERT(false);
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canMoveNode(const Node &_node, int &index, const Node &moveNode) const
+bool ContainerGroupDef::canMoveNode(const NodeData &_nodeData, int &index, const NodeData &moveNode) const
 {
     for (auto container: m_containerList)
     {
         if (container->validate(moveNode)) {
-            return container->canMoveNode(_node, index, moveNode);
+            return container->canMoveNode(_nodeData, index, moveNode);
         } else {
-            index -= container->nodeCount(_node);
+            index -= container->nodeCount(_nodeData);
         }
     }
     // Failed to find a Container with the given name
@@ -327,31 +327,31 @@ bool ContainerGroupDef::canMoveNode(const Node &_node, int &index, const Node &m
 
 // =============================================================================
 // (public)
-Node ContainerGroupDef::moveNode(const Node &_node, int &index, const Node &moveNode) const
+NodeData ContainerGroupDef::moveNode(const NodeData &_nodeData, int &index, const NodeData &moveNode) const
 {
     for (auto container: m_containerList)
     {
         if (container->validate(moveNode)) {
-            return container->moveNode(_node, index, moveNode);
+            return container->moveNode(_nodeData, index, moveNode);
         } else {
-            index -= container->nodeCount(_node);
+            index -= container->nodeCount(_nodeData);
         }
     }
     // Failed to find a Container with the given name
     ASSERT(false);
-    return Node();
+    return NodeData();
 }
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::canRemoveNode(const Node &_node, int index) const
+bool ContainerGroupDef::canRemoveNode(const NodeData &_nodeData, int index) const
 {
     int count;
     for (auto container: m_containerList)
     {
-        count = container->nodeCount(_node);
+        count = container->nodeCount(_nodeData);
         if (index < count) {
-            return container->canRemoveNode(_node, index);
+            return container->canRemoveNode(_nodeData, index);
         } else {
             index -= count;
         }
@@ -362,14 +362,14 @@ bool ContainerGroupDef::canRemoveNode(const Node &_node, int index) const
 
 // =============================================================================
 // (public)
-bool ContainerGroupDef::removeNode(const Node &_node, int index) const
+bool ContainerGroupDef::removeNode(const NodeData &_nodeData, int index) const
 {
     int count;
     for (auto container: m_containerList)
     {
-        count = container->nodeCount(_node);
+        count = container->nodeCount(_nodeData);
         if (index < count) {
-            return container->removeNode(_node, index);
+            return container->removeNode(_nodeData, index);
         } else {
             index -= count;
         }

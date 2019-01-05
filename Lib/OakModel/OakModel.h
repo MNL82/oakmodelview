@@ -37,7 +37,7 @@ public:
     bool isDefNull() const;
     bool isNodeNull() const;
 
-    bool createNewRootDocument(Node::Type backendType, bool setAsCurrent = true);
+    bool createNewRootDocument(NodeData::Type backendType, bool setAsCurrent = true);
     void clearRoot();
     const Item& rootItem() const;
 
@@ -47,7 +47,7 @@ public:
     void setRootNodeDef(NodeDefSPtr def);
     void setRootNodeDef(const NodeDef* def);
 
-    void setRootNode(const Node &node);
+    void setRootNode(const NodeData &nodeData);
 
     void setRootItem(const Item& item);
 
@@ -56,16 +56,16 @@ public:
     void setCurrentItem(const Item &item, bool forceUpdate = false) const;
 
 #ifdef XML_BACKEND
-    const std::string& xmlDocFilePath() { return m_xmlDocFilePath; }
-    void setXMLDocFilePath(const std::string xmlDocFilePath) { m_xmlDocFilePath = xmlDocFilePath; }
-    void setXMLRootNode(const Node &rootNode, bool setAsCurrent = true);
-    bool loadXMLRootNode(const std::string& filePath, bool setAsCurrent = true);
-    bool saveXMLRootNode(const std::string& filePath = "");
+    const std::string& docFilePathXML() { return m_xmlDocFilePath; }
+    void setDocFilePathXML(const std::string xmlDocFilePath) { m_xmlDocFilePath = xmlDocFilePath; }
+    void setRootNodeXML(const NodeData &rootNodeData, bool setAsCurrent = true);
+    bool loadRootNodeXML(const std::string& filePath, bool setAsCurrent = true);
+    bool saveRootNodeXML(const std::string& filePath = "");
 #endif // XML_BACKEND
 
     // Starting with the root NodeDef and look through all NodeDefs recursive
     //  untill a match is found
-    const NodeDef *findNodeDef(const Node &node) const;
+    const NodeDef *findNodeDef(const NodeData &nodeData) const;
     Item itemFromDataPtr(void * dPtr) const;
 
     ItemIndexUPtr convertItemIndexToNamed(const ItemIndex &itemIndex) const;
@@ -90,7 +90,7 @@ protected:
 
 public:
     Callback notifier_currentItemChanged;
-    Callback notifier_rootNodeChanged;
+    Callback notifier_rootNodeDataChanged;
     Callback notifier_rootNodeDefChanged;
 
     Callback notifier_destroyed;
@@ -119,7 +119,7 @@ protected:
     NodeDefSPtr m_def;
 
 #ifdef XML_BACKEND
-    Node m_XMLRootNode;
+    NodeData m_rootNodeXML;
     std::string m_xmlDocFilePath;
     XML::Document m_xmlDoc;
 #endif // XML_BACKEND

@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "Node.h"
+#include "NodeData.h"
 
 #include "../ServiceFunctions/Assert.h"
 
@@ -17,14 +17,14 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-Node::Node()
+NodeData::NodeData()
 {
     m_type = Type::UNDEFINED;
 }
 
 // =============================================================================
 // (public)
-Node::Node(void *dataPointer, Node::Type type)
+NodeData::NodeData(void *dataPointer, NodeData::Type type)
 {
     m_type = type;
     switch (m_type) {
@@ -42,39 +42,39 @@ Node::Node(void *dataPointer, Node::Type type)
 
 // =============================================================================
 // (public)
-Node::Node(const Node &copy)
+NodeData::NodeData(const NodeData &copy)
 {
-    memcpy(this, &copy, sizeof(Node));
+    memcpy(this, &copy, sizeof(NodeData));
 }
 
 // =============================================================================
 // (public)
-Node::Node(Node &&move)
+NodeData::NodeData(NodeData &&move)
 {
-    memcpy(this, &move, sizeof(Node));
+    memcpy(this, &move, sizeof(NodeData));
     move.m_type = Type::UNDEFINED;
 }
 
 // =============================================================================
 // (public)
-Node &Node::operator=(const Node &copy)
+NodeData &NodeData::operator=(const NodeData &copy)
 {
-    memcpy(this, &copy, sizeof(Node));
+    memcpy(this, &copy, sizeof(NodeData));
     return *this;
 }
 
 // =============================================================================
 // (public)
-Node &Node::operator=(Node &&move)
+NodeData &NodeData::operator=(NodeData &&move)
 {
-    memcpy(this, &move, sizeof(Node));
+    memcpy(this, &move, sizeof(NodeData));
     move.m_type = Type::UNDEFINED;
     return *this;
 }
 
 // =============================================================================
 // (public)
-bool Node::operator==(const Node &_node) const
+bool NodeData::operator==(const NodeData &_node) const
 {
     if (m_type != _node.m_type) { return false; }
 
@@ -95,14 +95,14 @@ bool Node::operator==(const Node &_node) const
 
 // =============================================================================
 // (public)
-bool Node::operator!=(const Node& _node) const
+bool NodeData::operator!=(const NodeData& _node) const
 {
     return !(operator==(_node));
 }
 
 // =============================================================================
 // (public)
-void Node::clear()
+void NodeData::clear()
 {
     switch (m_type) {
     case Type::UNDEFINED:
@@ -121,7 +121,7 @@ void Node::clear()
 
 // =============================================================================
 // (public)
-bool Node::isNull() const
+bool NodeData::isNull() const
 {
     if (m_type == Type::UNDEFINED) { return true; }
     switch (m_type) {
@@ -140,14 +140,14 @@ bool Node::isNull() const
 
 // =============================================================================
 // (public)
-Node::Type Node::type() const
+NodeData::Type NodeData::type() const
 {
     return m_type;
 }
 
 // =============================================================================
 // (public)
-void *Node::internalPtr() const
+void *NodeData::internalPtr() const
 {
     switch (m_type) {
     case Type::UNDEFINED:
@@ -162,7 +162,7 @@ void *Node::internalPtr() const
 #ifdef XML_BACKEND
 // =============================================================================
 // (public)
-Node::Node(XML::Element _xmlNode)
+NodeData::NodeData(XML::Element _xmlNode)
     : m_xmlNode(_xmlNode)
 {
     m_type = Type::XML;
@@ -170,14 +170,14 @@ Node::Node(XML::Element _xmlNode)
 
 // =============================================================================
 // (public)
-bool Node::isXML() const
+bool NodeData::isXML() const
 {
     return m_type == Type::XML;
 }
 
 // =============================================================================
 // (public)
-XML::Element Node::xmlNode() const
+XML::Element NodeData::xmlNode() const
 {
     ASSERT(m_type ==Type::XML);
     return m_xmlNode;
