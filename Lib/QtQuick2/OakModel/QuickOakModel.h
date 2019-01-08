@@ -35,6 +35,14 @@ class QuickOakModel : public QAbstractItemModel
     Q_PROPERTY(QuickOakModelBuilder* builder READ builder WRITE setBuilder NOTIFY builderChanged)
 
 public:
+    enum Roles  {
+        DisplayName = Qt::UserRole + 1,
+        Name = Qt::UserRole + 2,
+        KeyValue = Qt::UserRole + 3,
+        VariantValue = Qt::UserRole + 4
+    };
+    Q_ENUM(Roles)
+
     QuickOakModel(QObject *parent = nullptr);
 
     QuickOakModelBuilder* builder() const;
@@ -95,7 +103,7 @@ public:
 //    virtual QModelIndex buddy(const QModelIndex& index) const override;
 //    virtual QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits, Qt::MatchFlags flags) const override;
 //    virtual QSize span(const QModelIndex& index) const override;
-//    virtual QHash<int, QByteArray> roleNames() const override;
+    virtual QHash<int, QByteArray> roleNames() const override;
 
 
 //public slots:

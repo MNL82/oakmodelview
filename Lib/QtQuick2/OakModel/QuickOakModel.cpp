@@ -51,6 +51,7 @@ void QuickOakModel::newModel()
     if (m_model.isDefNull()) { return; }
     m_model.createNewRootDocument(Oak::Model::NodeData::Type::XML);
     updateEnabledActions();
+    if (!m_model.isNull()) { this->resetInternalData(); }
 }
 
 // =============================================================================
@@ -63,11 +64,20 @@ bool QuickOakModel::loadModel(const QString &filePath)
     } else {
         path = filePath;
     }
+    beginResetModel();
     if (m_model.loadRootNodeXML(path.toStdString())) {
         emit dataLoaded();
         updateEnabledActions();
+        if (!m_model.isNull()) {
+            this->resetInternalData();
+        }
+        endResetModel();
+
+//        TRACE("Column Count: %i", columnCount(QModelIndex()));
+//        TRACE("Row Count: %i", rowCount(QModelIndex()));
         return true;
     }
+    endResetModel();
     return false;
 }
 
@@ -107,6 +117,8 @@ void QuickOakModel::setBuilder(QuickOakModelBuilder* rootNodeDef)
 
     updateEnabledActions();
     emit builderChanged();
+
+    if (!m_model.isNull()) { this->resetInternalData(); }
 }
 
 // =============================================================================
@@ -123,6 +135,8 @@ void QuickOakModel::updateEnabledActions()
 // (public)
 QModelIndex QuickOakModel::index(int row, int column, const QModelIndex &parent) const
 {
+    if (m_model.isNull()) { return QModelIndex(); }
+
     Oak::Model::Item parentItem = itemFromIndex(parent);
     Oak::Model::Item item = parentItem.childAt(row);
     ASSERT(!item.isNull());
@@ -133,6 +147,8 @@ QModelIndex QuickOakModel::index(int row, int column, const QModelIndex &parent)
 // (public)
 QModelIndex QuickOakModel::parent(const QModelIndex &child) const
 {
+    if (m_model.isNull()) { return QModelIndex(); }
+
     Oak::Model::Item childItem = itemFromIndex(child);
     Oak::Model::Item parentItem = childItem.parent();
     ASSERT(!parentItem.isNull());
@@ -146,6 +162,8 @@ QModelIndex QuickOakModel::parent(const QModelIndex &child) const
 // (public)
 QModelIndex QuickOakModel::sibling(int row, int column, const QModelIndex &idx) const
 {
+    if (m_model.isNull()) { return QModelIndex(); }
+
     Oak::Model::Item item= itemFromIndex(idx);
     if (row != idx.row()) {
         Oak::Model::Item parentItem = item.parent();
@@ -158,6 +176,8 @@ QModelIndex QuickOakModel::sibling(int row, int column, const QModelIndex &idx) 
 // (public)
 int QuickOakModel::rowCount(const QModelIndex &parent) const
 {
+    if (m_model.isNull()) { return 0; }
+
     Oak::Model::Item item= itemFromIndex(parent);
     return item.childCount();
 }
@@ -166,16 +186,17 @@ int QuickOakModel::rowCount(const QModelIndex &parent) const
 // (public)
 int QuickOakModel::columnCount(const QModelIndex &parent) const
 {
-    if (parent.isValid()) {
-        return 2;
-    }
-    return 0;
+    Q_UNUSED(parent)
+    if (m_model.isNull()) { return 0; }
+    return 2;
 }
 
 // =============================================================================
 // (public)
 bool QuickOakModel::hasChildren(const QModelIndex &parent) const
 {
+    if (m_model.isNull()) { return false; }
+
     Oak::Model::Item item= itemFromIndex(parent);
     return item.childCount() > 0;
 }
@@ -184,21 +205,47 @@ bool QuickOakModel::hasChildren(const QModelIndex &parent) const
 // (public)
 QVariant QuickOakModel::data(const QModelIndex &index, int role) const
 {
+    if (m_model.isNull()) { return QVariant(); }
+
+    if (!index.isValid()) { return QVariant(); }
+
     Oak::Model::Item item= itemFromIndex(index);
     ASSERT(!item.isNull());
-    if (role == Qt::DisplayRole) {
-        if (index.column() == 0) {
-            return QString::fromStdString(item.def()->displayName());
-        } else {
-            if (item.hasKey()) {
-                return QString::fromStdString(item.entryKey().value<std::string>());
-            } else {
-                return QString();
-            }
+
+    switch (role) {
+    case DisplayName:
+        return QString::fromStdString(item.def()->displayName());
+    case Name:
+        return QString::fromStdString(item.def()->name());
+    case KeyValue: {
+        if (item.hasKey()) {
+            return QString::fromStdString(item.entryKey().value<std::string>());
         }
+        return QString();
+    }
+    case VariantValue:
+        if (item.hasVariants()) {
+            return QString::fromStdString(item.variantEntry().value<std::string>());
+        }
+        return QString();
+    default:
+        break;
     }
 
+
     return QVariant();
+}
+
+// =============================================================================
+// (public)
+QHash<int, QByteArray> QuickOakModel::roleNames() const
+{
+    QHash<int, QByteArray> result = QAbstractItemModel::roleNames();
+    result.insert(DisplayName, QByteArrayLiteral("displayName"));
+    result.insert(Name, QByteArrayLiteral("name"));
+    result.insert(KeyValue, QByteArrayLiteral("keyValue"));
+    result.insert(VariantValue, QByteArrayLiteral("variantValue"));
+    return result;
 }
 
 // =============================================================================

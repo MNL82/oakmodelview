@@ -29,10 +29,11 @@ NodeData::NodeData(void *dataPointer, NodeData::Type type)
     m_type = type;
     switch (m_type) {
     case Type::UNDEFINED:
-        return;
+        break;
 #ifdef XML_BACKEND
     case Type::XML:
         m_xmlNode = XML::Element(pugi::xml_node(static_cast<pugi::xml_node_struct*>(dataPointer)));
+        break;
 #endif // XML_BACKEND
     default:
         // m_type contains an unhandled type that needs to be implemented
