@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ItemQuery.h"
+#include "NodeQuery.h"
 
 
 namespace Oak::Model {
@@ -18,18 +18,23 @@ namespace Oak::Model {
 // =============================================================================
 // Class definition
 // =============================================================================
-class ItemQueryParent : public ItemQuery
+class NodeQuerySiblings : public NodeQuery
 {
 public:
-    ItemQueryParent();
-    ItemQueryParent(const ItemQueryParent& copy);
-    ItemQueryParent(ItemQueryParent&& move);
+    NodeQuerySiblings();
+    NodeQuerySiblings(const NodeQuerySiblings& copy);
+    NodeQuerySiblings(NodeQuerySiblings&& move);
 
 protected:
-    virtual Item first(const Item &refItem) const override;
-    virtual Item last(const Item &refItem) const override;
+    virtual Node first(const Node &refNode) const override;
+    virtual Node last(const Node &refNode) const override;
+    virtual Node next(const Node &refNode, const Node &cNode) const override;
+    virtual Node previous(const Node &refNode, const Node &cNode) const override;
 
-    virtual const NodeDef *_nodeDef(const NodeDef *nDef) const override;
+    virtual const NodeDef * _nodeDef(const NodeDef *nDef) const override;
+
+protected:
+    mutable Node m_parent;
 };
 
 } // namespace Oak::Model

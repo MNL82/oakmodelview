@@ -9,9 +9,9 @@
  */
 
 #include "Leaf.h"
-#include "Item.h"
+#include "Node.h"
 #include "OakModel.h"
-#include "ItemIndex.h"
+#include "NodeIndex.h"
 
 #include "../ServiceFunctions/Assert.h"
 
@@ -22,17 +22,17 @@ namespace Oak::Model {
 // (public)
 Leaf::Leaf()
     : m_def(nullptr),
-      m_item(nullptr)
+      m_node(nullptr)
 {
 
 }
 
 // =============================================================================
 // (public)
-Leaf::Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Item *model)
+Leaf::Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Node *model)
     : m_def(leafDef),
       m_nodeData(nodeData),
-      m_item(model)
+      m_node(model)
 {
 
 }
@@ -42,7 +42,7 @@ Leaf::Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Item *model)
 Leaf::Leaf(const Leaf &copy)
     : m_def(copy.m_def),
       m_nodeData(copy.m_nodeData),
-      m_item(copy.m_item)
+      m_node(copy.m_node)
 {
 
 }
@@ -52,7 +52,7 @@ Leaf::Leaf(const Leaf &copy)
 Leaf::Leaf(Leaf&& move)
     : m_def(move.m_def),
       m_nodeData(std::move(move.m_nodeData)),
-      m_item(move.m_item)
+      m_node(move.m_node)
 {
 
 }
@@ -63,7 +63,7 @@ Leaf& Leaf::operator=(const Leaf& copy)
 {
     m_def = copy.m_def;
     m_nodeData = copy.m_nodeData;
-    m_item = copy.m_item;
+    m_node = copy.m_node;
     return *this;
 }
 
@@ -73,7 +73,7 @@ Leaf& Leaf::operator=(Leaf&& move)
 {
     m_def = move.m_def;
     m_nodeData = std::move(move.m_nodeData);
-    m_item = move.m_item;
+    m_node = move.m_node;
     return *this;
 }
 
@@ -154,9 +154,9 @@ const LeafDef* Leaf::def() const
 
 // =============================================================================
 // (public)
-const Item* Leaf::item() const
+const Node* Leaf::node() const
 {
-    return m_item;
+    return m_node;
 }
 
 // =============================================================================
@@ -203,27 +203,27 @@ Leaf& Leaf::emptyLeaf()
 // (protected)
 void Leaf::onLeafChangeBefore() const
 {
-    if (m_item->model() == nullptr) { return; }
-    ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
-    m_item->model()->onLeafChangeBefore(*iIndex.get(), m_def->name());
+    if (m_node->model() == nullptr) { return; }
+    NodeIndexUPtr iIndex = NodeIndex::create(*m_node);
+    m_node->model()->onLeafChangeBefore(*iIndex.get(), m_def->name());
 }
 
 // =============================================================================
 // (protected)
 void Leaf::onLeafChangeAfter() const
 {
-    if (m_item->model() == nullptr) { return; }
+    if (m_node->model() == nullptr) { return; }
 
-    int index = m_item->leafIndex(*this);
-    ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
+    int index = m_node->leafIndex(*this);
+    NodeIndexUPtr iIndex = NodeIndex::create(*m_node);
 
-    if (m_item->def()->indexOfVariantLeafDef() == index) {
-        m_item->model()->onVariantLeafChangeAfter(*iIndex.get());
-    } else if (m_item->def()->indexOfKeyLeafDef() == index) {
-        m_item->model()->onKeyLeafChangeAfter(*iIndex.get());
+    if (m_node->def()->indexOfVariantLeafDef() == index) {
+        m_node->model()->onVariantLeafChangeAfter(*iIndex.get());
+    } else if (m_node->def()->indexOfKeyLeafDef() == index) {
+        m_node->model()->onKeyLeafChangeAfter(*iIndex.get());
     }
 
-    m_item->model()->onLeafChangeAfter(*iIndex.get(), m_def->name());
+    m_node->model()->onLeafChangeAfter(*iIndex.get(), m_def->name());
 }
 
 } // namespace Oak::Model

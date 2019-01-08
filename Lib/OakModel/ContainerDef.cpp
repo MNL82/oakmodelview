@@ -13,7 +13,7 @@
 #include "../ServiceFunctions/Assert.h"
 
 #include "NodeDef.h"
-#include "Item.h"
+#include "Node.h"
 #include "ValueOptions.h"
 
 
@@ -582,9 +582,9 @@ bool ContainerDef::checkUniqueOptionValues(const NodeData &_nodeData) const
             if (firstSibling.isNull()) {
                 break;
             }
-            Item item(m_containerDef.get(), firstSibling);
+            Node node(m_containerDef.get(), firstSibling);
             std::vector<std::string> optionList;
-            if (vDef->options().getOptions(optionList, &item)) {
+            if (vDef->options().getOptions(optionList, &node)) {
                 if (optionList.size() <= 1) {
                     return false;
                 }

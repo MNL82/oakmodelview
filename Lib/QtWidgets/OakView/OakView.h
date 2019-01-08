@@ -32,9 +32,9 @@ public:
 
     void setOakModel(Model::OakModel* model);
 
-    void currentItemChanged();
+    void currentNodeChanged();
 
-    void setCurrentItem(const Model::ItemIndex &itemIndex);
+    void setCurrentNode(const Model::NodeIndex &nodeIndex);
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
@@ -50,22 +50,22 @@ protected:
     void clearTreeStructure();
     void updateTreeStructure();
 
-    QTreeWidgetItem * getTreeItems(const Model::Item &item, QTreeWidgetItem *parentItem = nullptr);
+    QTreeWidgetItem * getTreeNodes(const Model::Node &node, QTreeWidgetItem *parentNode = nullptr);
 
-    void onItemInserteAfter(const Model::ItemIndex& itemIndex);
-    void onItemMoveAfter(const Model::ItemIndex& sourceItemIndex, const Model::ItemIndex& targetItemIndex);
-    void onItemCloneAfter(const Model::ItemIndex& sourceItemIndex, const Model::ItemIndex& targetItemIndex);
-    void onItemRemoveBefore(const Model::ItemIndex& itemIndex);
+    void onNodeInserteAfter(const Model::NodeIndex& nodeIndex);
+    void onNodeMoveAfter(const Model::NodeIndex& sourceNodeIndex, const Model::NodeIndex& targetNodeIndex);
+    void onNodeCloneAfter(const Model::NodeIndex& sourceNodeIndex, const Model::NodeIndex& targetNodeIndex);
+    void onNodeRemoveBefore(const Model::NodeIndex& nodeIndex);
 
-    void onVariantLeafChangeAfter(const Model::ItemIndex& itemIndex);
-    void onKeyLeafChangeAfter(const Model::ItemIndex& itemIndex);
+    void onVariantLeafChangeAfter(const Model::NodeIndex& nodeIndex);
+    void onKeyLeafChangeAfter(const Model::NodeIndex& nodeIndex);
 
-    QTreeWidgetItem * widgetFromIndex(const Model::ItemIndex &itemIndex, bool parentWidget = false);
-    Model::ItemIndexUPtr indexFromWidget(QTreeWidgetItem *itemWidget);
+    QTreeWidgetItem * widgetFromIndex(const Model::NodeIndex &nodeIndex, bool parentWidget = false);
+    Model::NodeIndexUPtr indexFromWidget(QTreeWidgetItem *nodeWidget);
 
 protected slots:
     void createTreeStructure();
-    void onCurrentQItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+    void onCurrentQNodeChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 
 protected:
     Model::OakModel* m_model = nullptr;
@@ -74,7 +74,7 @@ protected:
     QStringList m_acceptedDropNames;
     //XMLElementAbstractPtr m_dragSource;
     QPoint m_mousePressedPosition;
-    Model::Item m_dragItem;
+    Model::Node m_dragNode;
 };
 
 } // namespace Oak::View::QtWidgets

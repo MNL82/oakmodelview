@@ -7,13 +7,13 @@
 # See accompanying file LICENSE in the root folder.
 
 HEADERS += \
-    $$PWD/Item.h \
-    $$PWD/ItemIndex.h \
-    $$PWD/ItemServiceFunctions.h \
-    $$PWD/Leaf.h
+    $$PWD/Leaf.h \
+    $$PWD/Node.h \
+    $$PWD/NodeIndex.h \
+    $$PWD/NodeServiceFunctions.h
 
 SOURCES += \
-    $$PWD/Item.cpp \
-    $$PWD/ItemIndex.cpp \
-    $$PWD/ItemServiceFunctions.cpp \
-    $$PWD/Leaf.cpp
+    $$PWD/Leaf.cpp \
+    $$PWD/Node.cpp \
+    $$PWD/NodeIndex.cpp \
+    $$PWD/NodeServiceFunctions.cpp

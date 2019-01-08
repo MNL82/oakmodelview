@@ -111,6 +111,6 @@ public:
 //    virtual void revert() override;
 
 public:
-    QModelIndex createModelIndex(int row, int column, const Oak::Model::Item &item) const;
-    Oak::Model::Item itemFromIndex(const QModelIndex &index) const;
+    QModelIndex createModelIndex(int row, int column, const Oak::Model::Node &node) const;
+    Oak::Model::Node nodeFromIndex(const QModelIndex &index) const;
 };

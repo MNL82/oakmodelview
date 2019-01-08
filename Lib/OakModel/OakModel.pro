@@ -23,7 +23,7 @@ include(Builders.pri)
 include(Reference.pri)
 include(Models.pri)
 include(Query.pri)
-include(Items.pri)
+include(Nodes.pri)
 include(Union.pri)
 include(Observers.pri)
 

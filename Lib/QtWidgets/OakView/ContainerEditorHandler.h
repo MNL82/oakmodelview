@@ -11,7 +11,7 @@
 #pragma once
 
 #include "ContainerEditor.h"
-#include "Item.h"
+#include "Node.h"
 
 #include <QObject>
 
@@ -27,11 +27,11 @@ class ContainerEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    ContainerEditorHandler(const Model::Item &item, const std::string &name, QObject *parent = nullptr);
+    ContainerEditorHandler(const Model::Node &node, const std::string &name, QObject *parent = nullptr);
 
     QString listDisplayName() const;
-    int itemCount() const;
-    QStringList itemIdList() const;
+    int nodeCount() const;
+    QStringList nodeIdList() const;
 
     bool canInsert(int index) const;
     bool canRemove(int index) const;
@@ -52,7 +52,7 @@ protected slots:
 
 protected:
 
-    Model::Item m_item;
+    Model::Node m_node;
     std::string m_name;
     QWidget* m_editor = nullptr;
 };

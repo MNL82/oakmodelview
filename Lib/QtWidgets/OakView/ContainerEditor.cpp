@@ -70,7 +70,7 @@ void ContainerEditor::updateEditor()
     QString labelTitle = QString("%1 List:").arg(displayName);
     m_groupBox->setTitle(labelTitle);
 
-    QStringList entryList = m_eHandler->itemIdList();
+    QStringList entryList = m_eHandler->nodeIdList();
     int eCount = entryList.count();
 
     m_addButton->setHidden(!m_eHandler->canInsert(eCount));
@@ -146,10 +146,10 @@ void ContainerEditor::addEntry(const QString& text)
 // (protected)
 void ContainerEditor::removeLastEntry()
 {
-    QLayoutItem* layoutItem = m_listLayout->itemAtPosition(--m_count, 0);
-    m_listLayout->removeItem(layoutItem);
-    QWidget * widget = layoutItem->widget();
-    delete layoutItem;
+    QLayoutItem* layoutNode = m_listLayout->itemAtPosition(--m_count, 0);
+    m_listLayout->removeItem(layoutNode);
+    QWidget * widget = layoutNode->widget();
+    delete layoutNode;
     delete widget;
 }
 
@@ -199,7 +199,7 @@ void ContainerEditor::createContextMenu(const QPoint& globalPos, int index)
 // (protected slots)
 void ContainerEditor::onEntryAdded()
 {
-    emit entryInserted(m_eHandler->itemCount());
+    emit entryInserted(m_eHandler->nodeCount());
 }
 
 } // namespace Oak::View::QtWidgets

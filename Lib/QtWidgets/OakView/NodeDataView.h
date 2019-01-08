@@ -33,18 +33,18 @@ public:
 
     void clearEditorCash();
 
-    void currentItemChanged();
+    void currentNodeChanged();
 
-    void setCurrentItem(const Model::Item& item);
+    void setCurrentNode(const Model::Node& node);
 
-    NodeEditorHandler* getEditorHandler(const Model::Item& item);
+    NodeEditorHandler* getEditorHandler(const Model::Node& node);
 
 protected:
     void modelDestroyed();
     void setCurrentEditor(QWidget* editor);
     void setCurrentWidget(int index);
 
-    void onLeafChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName);
+    void onLeafChangeAfter(const Model::NodeIndex &nodeIndex, const std::string &valueName);
 
 protected:
     Model::OakModel* m_model = nullptr;

@@ -1182,17 +1182,17 @@ void NodeDef::onNodeInserted(const NodeData &_nodeData) const
         }
     }
 
-    Item item(this, _nodeData);
+    Node node(this, _nodeData);
     auto vList = valueList();
     for (const LeafDef* vDef: vList)
     {
         if (vDef->settings().value(REQUIRED) > 0 &&
             vDef->settings().value(UNIQUE) > 0) {
 
-            std::vector<std::string> valueList = QB::createSiblings()->leafSPtr(vDef->name())->toValueList<std::string>(item);
+            std::vector<std::string> valueList = QB::createSiblings()->leafSPtr(vDef->name())->toValueList<std::string>(node);
             if (vDef->options().isUsed() && vDef->settings().value(OPTION_ONLY)) {
                 std::vector<std::string> optionList;
-                if (vDef->options().getOptions(optionList, &item)) {
+                if (vDef->options().getOptions(optionList, &node)) {
                     for (const std::string &option: optionList) {
                         if (std::find(valueList.begin(), valueList.end(), option) == valueList.end()) {
                             vDef->setValue(_nodeData, option);

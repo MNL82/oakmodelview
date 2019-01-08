@@ -22,7 +22,7 @@
 #include <QDebug>
 
 #include "OakModel.h"
-#include "ListViewItem.h"
+#include "ListViewNode.h"
 
 
 namespace Oak::View::QtWidgets {
@@ -54,18 +54,18 @@ ListView::ListView(QWidget *parent)
 
     m_scrollArea->setStyleSheet(styleSheet);
 
-    // Horizontal line between scrollable existing items and draggable new items
+    // Horizontal line between scrollable existing nodes and draggable new nodes
     auto lineA = new QFrame;
     lineA->setFrameShape(QFrame::HLine);
     lineA->setFrameShadow(QFrame::Sunken);
     lineA->setHidden(true);
 
-    // Available new items that can be dragged into place
-    auto dragItems = new QWidget();
-    dragItems->setHidden(true);
+    // Available new nodes that can be dragged into place
+    auto dragNodes = new QWidget();
+    dragNodes->setHidden(true);
     m_dragLayout = new QGridLayout();
     m_dragLayout->setMargin(0);
-    dragItems->setLayout(m_dragLayout);
+    dragNodes->setLayout(m_dragLayout);
 
     // TEST Buttons - Begin
     auto dragButton1 = new QPushButton("Drag 1");
@@ -85,7 +85,7 @@ ListView::ListView(QWidget *parent)
     auto mainLayout = new QVBoxLayout();
     mainLayout->addWidget(m_scrollArea, 1);
     mainLayout->addWidget(lineA);
-    mainLayout->addWidget(dragItems, 0);
+    mainLayout->addWidget(dragNodes, 0);
     setLayout(mainLayout);
 }
 
@@ -104,13 +104,13 @@ void ListView::setOakModel(Model::OakModel *model)
 
     if (m_model) {
         // Disconnect the old model
-        m_model->notifier_currentItemChanged.remove(this);
+        m_model->notifier_currentNodeChanged.remove(this);
 
-        m_model->notifier_itemInserteAfter.remove(this);
-        m_model->notifier_itemMoveBefore.remove(this);
-        m_model->notifier_itemMoveAfter.remove(this);
-        m_model->notifier_itemCloneAfter.remove(this);
-        m_model->notifier_itemRemoveBefore.remove(this);
+        m_model->notifier_nodeInserteAfter.remove(this);
+        m_model->notifier_nodeMoveBefore.remove(this);
+        m_model->notifier_nodeMoveAfter.remove(this);
+        m_model->notifier_nodeCloneAfter.remove(this);
+        m_model->notifier_nodeRemoveBefore.remove(this);
         m_model->notifier_variantLeafChangeAfter.remove(this);
         m_model->notifier_keyLeafChangeAfter.remove(this);
     }
@@ -120,13 +120,13 @@ void ListView::setOakModel(Model::OakModel *model)
 
     if (m_model) {
         // connect the new mobel
-        m_model->notifier_currentItemChanged.add(this, &ListView::currentItemChanged);
+        m_model->notifier_currentNodeChanged.add(this, &ListView::currentNodeChanged);
 
-        m_model->notifier_itemInserteAfter.add(this, &ListView::onItemInserteAfter);
-        m_model->notifier_itemMoveBefore.add(this, &ListView::onItemMoveBefore);
-        m_model->notifier_itemMoveAfter.add(this, &ListView::onItemMoveAfter);
-        m_model->notifier_itemCloneAfter.add(this, &ListView::onItemCloneAfter);
-        m_model->notifier_itemRemoveBefore.add(this, &ListView::onItemRemoveBefore);
+        m_model->notifier_nodeInserteAfter.add(this, &ListView::onNodeInserteAfter);
+        m_model->notifier_nodeMoveBefore.add(this, &ListView::onNodeMoveBefore);
+        m_model->notifier_nodeMoveAfter.add(this, &ListView::onNodeMoveAfter);
+        m_model->notifier_nodeCloneAfter.add(this, &ListView::onNodeCloneAfter);
+        m_model->notifier_nodeRemoveBefore.add(this, &ListView::onNodeRemoveBefore);
         m_model->notifier_variantLeafChangeAfter.add(this, &ListView::onVariantLeafChangeAfter);
         m_model->notifier_keyLeafChangeAfter.add(this, &ListView::onKeyLeafChangeAfter);
     }
@@ -134,49 +134,49 @@ void ListView::setOakModel(Model::OakModel *model)
 
 // =============================================================================
 // (public)
-void ListView::setRootItem(const Model::Item &item)
+void ListView::setRootNode(const Model::Node &node)
 {
-    if (m_rootItem != nullptr) {
-        // Do nothing if the root item is the same
-        if (m_rootItem->item() == item) { return; }
+    if (m_rootNode != nullptr) {
+        // Do nothing if the root node is the same
+        if (m_rootNode->node() == node) { return; }
 
-        disconnect(m_rootItem, SIGNAL(heightChanged()), this, SLOT(adjustItemWidth()));
-        //Clear existing item before creating a new one
+        disconnect(m_rootNode, SIGNAL(heightChanged()), this, SLOT(adjustNodeWidth()));
+        //Clear existing node before creating a new one
     }
-    m_rootItem = new ListViewItem(this, item, 0);
-    m_rootItemIndex = Model::ItemIndex::create(item);
+    m_rootNode = new ListViewNode(this, node, 0);
+    m_rootNodeIndex = Model::NodeIndex::create(node);
 
-    m_scrollArea->setWidget(m_rootItem);
-    m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
+    m_scrollArea->setWidget(m_rootNode);
+    m_rootNode->setFixedWidth(m_scrollArea->viewport()->width());
 
-    connect(m_rootItem, SIGNAL(heightChanged(int)), this, SLOT(adjustItemWidth()), Qt::QueuedConnection);
+    connect(m_rootNode, SIGNAL(heightChanged(int)), this, SLOT(adjustNodeWidth()), Qt::QueuedConnection);
 }
 
 // =============================================================================
 // (public)
-void ListView::currentItemChanged()
+void ListView::currentNodeChanged()
 {
-    ListViewItem * currentViewItem = getViewItem(m_model->currentItemIndex());
+    ListViewNode * currentViewNode = getViewNode(m_model->currentNodeIndex());
 
-    if (currentViewItem == m_currentViewItem) { return; }
+    if (currentViewNode == m_currentViewNode) { return; }
 
-    if (m_currentViewItem) {
-        m_currentViewItem->clearCurrent();
-        disconnect(m_currentViewItem, SIGNAL(destroyed()), this, SLOT(onCurrentItemViewDestoyed()));
+    if (m_currentViewNode) {
+        m_currentViewNode->clearCurrent();
+        disconnect(m_currentViewNode, SIGNAL(destroyed()), this, SLOT(onCurrentNodeViewDestoyed()));
     }
 
-    m_currentViewItem = currentViewItem;
+    m_currentViewNode = currentViewNode;
 
-    if (m_currentViewItem) {
-        m_currentViewItem->setCurrent();
-        connect(m_currentViewItem, SIGNAL(destroyed()), this, SLOT(onCurrentItemViewDestoyed()));
+    if (m_currentViewNode) {
+        m_currentViewNode->setCurrent();
+        connect(m_currentViewNode, SIGNAL(destroyed()), this, SLOT(onCurrentNodeViewDestoyed()));
 
-        // Make current items visible
-        ListViewItem * pItem = m_currentViewItem->parent();
-        if (pItem != nullptr) {
-            while (pItem != m_rootItem) {
-                pItem->setExspanded(true);
-                pItem = pItem->parent();
+        // Make current nodes visible
+        ListViewNode * pNode = m_currentViewNode->parent();
+        if (pNode != nullptr) {
+            while (pNode != m_rootNode) {
+                pNode->setExspanded(true);
+                pNode = pNode->parent();
             }
         }
     }
@@ -197,132 +197,132 @@ void ListView::setMaxDepth(int depth)
 
     m_maxDepth = depth;
 
-    // TODO: Update view and drag items when depth changes
+    // TODO: Update view and drag nodes when depth changes
 }
 
 // =============================================================================
 // (public)
 void ListView::resizeEvent(QResizeEvent *event)
 {
-    if (m_rootItem != nullptr) {
-        m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
+    if (m_rootNode != nullptr) {
+        m_rootNode->setFixedWidth(m_scrollArea->viewport()->width());
     }
     QWidget::resizeEvent(event);
 }
 
 // =============================================================================
 // (protected)
-ListViewItem *ListView::getViewItem(const Model::ItemIndex &itemIndex)
+ListViewNode *ListView::getViewNode(const Model::NodeIndex &nodeIndex)
 {
-    // Return if change is outside root item
-    if (!itemIndex.contains(*m_rootItemIndex.get())) { return nullptr; }
+    // Return if change is outside root node
+    if (!nodeIndex.contains(*m_rootNodeIndex.get())) { return nullptr; }
 
-    // Get the item index relative to the root item
-    const Model::ItemIndex &relItemIndex = itemIndex.childItemIndex(m_rootItemIndex->depth());
+    // Get the node index relative to the root node
+    const Model::NodeIndex &relNodeIndex = nodeIndex.childNodeIndex(m_rootNodeIndex->depth());
 
-    return m_rootItem->child(relItemIndex);
+    return m_rootNode->child(relNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::createDragItems() const
-{
-
-}
-
-// =============================================================================
-// (protected)
-void ListView::clearDragItems() const
+void ListView::createDragNodes() const
 {
 
 }
 
 // =============================================================================
 // (protected)
-void ListView::onItemInserteAfter(const Model::ItemIndex &itemIndex)
+void ListView::clearDragNodes() const
 {
-    // Return if change is outside root item
-    if (!itemIndex.contains(*m_rootItemIndex.get())) { return; }
 
-    // Get the item index relative to the root item
-    const Model::ItemIndex &relItemIndex = itemIndex.childItemIndex(m_rootItemIndex->depth());
-
-    m_rootItem->onItemInserteAfter(relItemIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void ListView::onNodeInserteAfter(const Model::NodeIndex &nodeIndex)
 {
-    Q_UNUSED(sourceItemIndex);
-    onItemInserteAfter(targetItemIndex);
+    // Return if change is outside root node
+    if (!nodeIndex.contains(*m_rootNodeIndex.get())) { return; }
+
+    // Get the node index relative to the root node
+    const Model::NodeIndex &relNodeIndex = nodeIndex.childNodeIndex(m_rootNodeIndex->depth());
+
+    m_rootNode->onNodeInserteAfter(relNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::onItemMoveBefore(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void ListView::onNodeMoveAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    Q_UNUSED(targetItemIndex);
-    onItemRemoveBefore(sourceItemIndex);
+    Q_UNUSED(sourceNodeIndex);
+    onNodeInserteAfter(targetNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void ListView::onNodeMoveBefore(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    Q_UNUSED(sourceItemIndex);
-    onItemInserteAfter(targetItemIndex);
+    Q_UNUSED(targetNodeIndex);
+    onNodeRemoveBefore(sourceNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
+void ListView::onNodeCloneAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    // Return if change is outside root item
-    if (!itemIndex.contains(*m_rootItemIndex.get())) { return; }
-
-    // Get the item index relative to the root item
-    const Model::ItemIndex &relItemIndex = itemIndex.childItemIndex(m_rootItemIndex->depth());
-
-    m_rootItem->onItemRemoveBefore(relItemIndex);
+    Q_UNUSED(sourceNodeIndex);
+    onNodeInserteAfter(targetNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::onVariantLeafChangeAfter(const Model::ItemIndex &itemIndex)
+void ListView::onNodeRemoveBefore(const Model::NodeIndex &nodeIndex)
 {
-    // Child items can change when the variant definition change
-    onItemRemoveBefore(itemIndex);
-    onItemInserteAfter(itemIndex);
+    // Return if change is outside root node
+    if (!nodeIndex.contains(*m_rootNodeIndex.get())) { return; }
 
-    currentItemChanged();
+    // Get the node index relative to the root node
+    const Model::NodeIndex &relNodeIndex = nodeIndex.childNodeIndex(m_rootNodeIndex->depth());
+
+    m_rootNode->onNodeRemoveBefore(relNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void ListView::onKeyLeafChangeAfter(const Model::ItemIndex &itemIndex)
+void ListView::onVariantLeafChangeAfter(const Model::NodeIndex &nodeIndex)
 {
-    // Child items can change when the variant definition change
-    ListViewItem * viewItem = getViewItem(itemIndex);
-    if (viewItem != nullptr) {
-        viewItem->updateLabel();
+    // Child nodes can change when the variant definition change
+    onNodeRemoveBefore(nodeIndex);
+    onNodeInserteAfter(nodeIndex);
+
+    currentNodeChanged();
+}
+
+// =============================================================================
+// (protected)
+void ListView::onKeyLeafChangeAfter(const Model::NodeIndex &nodeIndex)
+{
+    // Child nodes can change when the variant definition change
+    ListViewNode * viewNode = getViewNode(nodeIndex);
+    if (viewNode != nullptr) {
+        viewNode->updateLabel();
     }
 }
 
 // =============================================================================
 // (protected slots)
-void ListView::adjustItemWidth()
+void ListView::adjustNodeWidth()
 {
-    if (m_rootItem != nullptr) {
-        m_rootItem->setFixedWidth(m_scrollArea->viewport()->width());
+    if (m_rootNode != nullptr) {
+        m_rootNode->setFixedWidth(m_scrollArea->viewport()->width());
     }
 }
 
 // =============================================================================
 // (protected slots)
-void ListView::onCurrentItemViewDestoyed()
+void ListView::onCurrentNodeViewDestoyed()
 {
-    m_currentViewItem = nullptr;
+    m_currentViewNode = nullptr;
 }
 
 } // namespace Oak::View::QtWidgets

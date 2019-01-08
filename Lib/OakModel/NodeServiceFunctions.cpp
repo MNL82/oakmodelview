@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ItemServiceFunctions.h"
+#include "NodeServiceFunctions.h"
 
 #include "../ServiceFunctions/Trace.h"
 

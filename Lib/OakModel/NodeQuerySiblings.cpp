@@ -1,4 +1,4 @@
-#include "ItemQuerySiblings.h"
+#include "NodeQuerySiblings.h"
 
 #include "../ServiceFunctions/Trace.h"
 
@@ -7,34 +7,34 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-ItemQuerySiblings::ItemQuerySiblings()
+NodeQuerySiblings::NodeQuerySiblings()
 {
 }
 
 // =============================================================================
 // (public)
-ItemQuerySiblings::ItemQuerySiblings(const ItemQuerySiblings &copy)
-    : ItemQuery(copy)
+NodeQuerySiblings::NodeQuerySiblings(const NodeQuerySiblings &copy)
+    : NodeQuery(copy)
 {
 }
 
 // =============================================================================
 // (public)
-ItemQuerySiblings::ItemQuerySiblings(ItemQuerySiblings &&move)
-    : ItemQuery(move)
+NodeQuerySiblings::NodeQuerySiblings(NodeQuerySiblings &&move)
+    : NodeQuery(move)
 {
 }
 
 // =============================================================================
 // (protected)
-Item ItemQuerySiblings::first(const Item &refItem) const
+Node NodeQuerySiblings::first(const Node &refNode) const
 {
-    m_parent = refItem.parent();
-    Item sibling = m_parent.firstChild(refItem.def()->name());
+    m_parent = refNode.parent();
+    Node sibling = m_parent.firstChild(refNode.def()->name());
 
-    if (refItem == sibling) {
+    if (refNode == sibling) {
         // Skip self
-        return next(refItem, sibling);
+        return next(refNode, sibling);
     } else {
         return sibling;
     }
@@ -42,14 +42,14 @@ Item ItemQuerySiblings::first(const Item &refItem) const
 
 // =============================================================================
 // (protected)
-Item ItemQuerySiblings::last(const Item &refItem) const
+Node NodeQuerySiblings::last(const Node &refNode) const
 {
-    m_parent = refItem.parent();
-    Item sibling = m_parent.lastChild(refItem.def()->name());
+    m_parent = refNode.parent();
+    Node sibling = m_parent.lastChild(refNode.def()->name());
 
-    if (refItem == sibling) {
+    if (refNode == sibling) {
         // Skip self
-        return previous(refItem, sibling);
+        return previous(refNode, sibling);
     } else {
         return sibling;
     }
@@ -57,13 +57,13 @@ Item ItemQuerySiblings::last(const Item &refItem) const
 
 // =============================================================================
 // (protected)
-Item ItemQuerySiblings::next(const Item &refItem, const Item &cItem) const
+Node NodeQuerySiblings::next(const Node &refNode, const Node &cNode) const
 {
-    Item sibling = m_parent.nextChild(refItem.def()->name(), cItem);
+    Node sibling = m_parent.nextChild(refNode.def()->name(), cNode);
 
-    if (refItem == sibling) {
+    if (refNode == sibling) {
         // Skip self
-        return next(refItem, sibling);
+        return next(refNode, sibling);
     } else {
         return sibling;
     }
@@ -71,13 +71,13 @@ Item ItemQuerySiblings::next(const Item &refItem, const Item &cItem) const
 
 // =============================================================================
 // (protected)
-Item ItemQuerySiblings::previous(const Item &refItem, const Item &cItem) const
+Node NodeQuerySiblings::previous(const Node &refNode, const Node &cNode) const
 {
-    Item sibling = m_parent.previousChild(refItem.def()->name(), cItem);
+    Node sibling = m_parent.previousChild(refNode.def()->name(), cNode);
 
-    if (refItem == sibling) {
+    if (refNode == sibling) {
         // Skip self
-        return previous(refItem, sibling);
+        return previous(refNode, sibling);
     } else {
         return sibling;
     }
@@ -85,7 +85,7 @@ Item ItemQuerySiblings::previous(const Item &refItem, const Item &cItem) const
 
 // =============================================================================
 // (protected)
-const NodeDef *ItemQuerySiblings::_nodeDef(const NodeDef *nDef) const
+const NodeDef *NodeQuerySiblings::_nodeDef(const NodeDef *nDef) const
 {
     // TODO: Node can have multiple parents! Fix this...
     ASSERT(nDef);

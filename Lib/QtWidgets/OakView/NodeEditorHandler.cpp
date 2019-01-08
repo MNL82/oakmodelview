@@ -19,8 +19,8 @@ namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
-NodeEditorHandler::NodeEditorHandler(QObject *parent, const Model::Item &item)
-    : QObject(parent), m_item(item)
+NodeEditorHandler::NodeEditorHandler(QObject *parent, const Model::Node &node)
+    : QObject(parent), m_node(node)
 {
 }
 
@@ -35,21 +35,21 @@ NodeEditorHandler::~NodeEditorHandler()
 // (public)
 bool NodeEditorHandler::operator==(const Model::NodeDef* nodeDef)
 {
-    return m_item.def() == nodeDef;
+    return m_node.def() == nodeDef;
 }
 
 // =============================================================================
 // (public)
 bool NodeEditorHandler::operator!=(const Model::NodeDef* nodeDef)
 {
-    return m_item.def() != nodeDef;
+    return m_node.def() != nodeDef;
 }
 
 // =============================================================================
 // (public)
 const Model::NodeDef* NodeEditorHandler::nodeDef() const
 {
-    return m_item.def();
+    return m_node.def();
 }
 
 // =============================================================================
@@ -64,9 +64,9 @@ QWidget* NodeEditorHandler::getEditor()
 // (public)
 bool NodeEditorHandler::setNode(const Model::NodeData &nodeData)
 {
-    if (!m_item.def()->validate(nodeData)) { return false; }
+    if (!m_node.def()->validate(nodeData)) { return false; }
 
-    m_item = Model::Item(m_item.def(), nodeData, m_item.model());
+    m_node = Model::Node(m_node.def(), nodeData, m_node.model());
 
     foreach (ValueEditorHandler* vHandler, m_valueEditorMap) {
         vHandler->setNode(nodeData);
@@ -137,8 +137,8 @@ void NodeEditorHandler::createEditor()
 
     int row = 0;
 
-    Model::Item::LeafIterator vIt = m_item.leafBegin();
-    Model::Item::LeafIterator vItEnd = m_item.leafEnd();
+    Model::Node::LeafIterator vIt = m_node.leafBegin();
+    Model::Node::LeafIterator vItEnd = m_node.leafEnd();
     while (vIt != vItEnd) {
         if (!m_valueEditorMap.contains(vIt->name())) {
             auto vEditor = new ValueEditorHandler(this, *vIt);
@@ -157,12 +157,12 @@ void NodeEditorHandler::createEditor()
         vIt++;
     }
 
-    auto cList = m_item.def()->containerList();
+    auto cList = m_node.def()->containerList();
     for (const Model::ContainerDef* containerPtr: cList)
     {
         std::string id = containerPtr->containerDef()->name();
         if (!m_containerEditorMap.contains(id)) {
-            auto cHandler = new ContainerEditorHandler(m_item, id, this);
+            auto cHandler = new ContainerEditorHandler(m_node, id, this);
             m_containerEditorMap.insert(id, cHandler);
         }
 
@@ -170,8 +170,8 @@ void NodeEditorHandler::createEditor()
     }
 
     if (row == 0) {
-        std::string nodeName = m_item.def()->displayName();
-        QLabel* emptyLabel = new QLabel(QString("Item %1 is empty").arg(QString::fromStdString(nodeName)));
+        std::string nodeName = m_node.def()->displayName();
+        QLabel* emptyLabel = new QLabel(QString("Node %1 is empty").arg(QString::fromStdString(nodeName)));
         layout->addWidget(emptyLabel);
     } else {
         layout->addItem(new QSpacerItem(0,0, QSizePolicy::Preferred, QSizePolicy::Expanding), layout->rowCount(), 0);

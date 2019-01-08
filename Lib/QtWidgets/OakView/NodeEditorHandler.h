@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Item.h"
+#include "Node.h"
 #include "ValueEditorHandler.h"
 #include "ContainerEditorHandler.h"
 
@@ -30,7 +30,7 @@ class NodeEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    NodeEditorHandler(QObject* parent, const Model::Item &item);
+    NodeEditorHandler(QObject* parent, const Model::Node &node);
     virtual ~NodeEditorHandler();
 
     bool operator==(const Model::NodeDef* nodeDef);
@@ -55,7 +55,7 @@ protected slots:
     void onEditorDestroyed();
 
 protected:
-    Model::Item m_item;
+    Model::Node m_node;
     QWidget* m_editor = nullptr;
     QMap<std::string, ValueEditorHandler*> m_valueEditorMap;
     QMap<std::string, ContainerEditorHandler*> m_containerEditorMap;

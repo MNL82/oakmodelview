@@ -31,8 +31,8 @@ public:
     void setModel(Model::OakModel* model);
 
 protected:
-    void currentItemChanged();
-    void itemRemoveBefore(const Model::ItemIndex &itemIndex);
+    void currentNodeChanged();
+    void nodeRemoveBefore(const Model::NodeIndex &nodeIndex);
 
     void disableAllActions();
 
@@ -48,8 +48,8 @@ protected slots:
 protected:
     Model::OakModel* m_model = nullptr;
 
-    Model::Item m_cutItem;
-    Model::Item m_copyItem;
+    Model::Node m_cutNode;
+    Model::Node m_copyNode;
 
     QAction * m_actionInsert;
     QAction * m_actionDelete;

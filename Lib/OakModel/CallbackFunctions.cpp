@@ -50,14 +50,14 @@ void Callback::trigger() const
 
 // =============================================================================
 // (public)
-Callback_ItemIntItemInt::Callback_ItemIntItemInt()
+Callback_NodeIntNodeInt::Callback_NodeIntNodeInt()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_ItemIntItemInt::remove(void *funcObj)
+void Callback_NodeIntNodeInt::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -72,25 +72,25 @@ void Callback_ItemIntItemInt::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_ItemIntItemInt::trigger(const Item &sourceItem, int sourceIndex, const Item &targetItem, int targetIndex) const
+void Callback_NodeIntNodeInt::trigger(const Node &sourceNode, int sourceIndex, const Node &targetNode, int targetIndex) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_ItemIntItemInt::trigger()";
-        func.second(sourceItem, sourceIndex, targetItem, targetIndex);
+        //qDebug() << "Callback_NodeIntNodeInt::trigger()";
+        func.second(sourceNode, sourceIndex, targetNode, targetIndex);
     }
 }
 
 // =============================================================================
 // (public)
-Callback_ItemInt::Callback_ItemInt()
+Callback_NodeInt::Callback_NodeInt()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_ItemInt::remove(void *funcObj)
+void Callback_NodeInt::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -105,25 +105,25 @@ void Callback_ItemInt::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_ItemInt::trigger(const Item &parentItem, int index) const
+void Callback_NodeInt::trigger(const Node &parentNode, int index) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_ItemInt::trigger()";
-        func.second(parentItem, index);
+        //qDebug() << "Callback_NodeInt::trigger()";
+        func.second(parentNode, index);
     }
 }
 
 // =============================================================================
 // (public)
-Callback_Item::Callback_Item()
+Callback_Node::Callback_Node()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_Item::remove(void *funcObj)
+void Callback_Node::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -138,25 +138,25 @@ void Callback_Item::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_Item::trigger(const Item &parentItem) const
+void Callback_Node::trigger(const Node &parentNode) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_Item::trigger()";
-        func.second(parentItem);
+        //qDebug() << "Callback_Node::trigger()";
+        func.second(parentNode);
     }
 }
 
 // =============================================================================
 // (public)
-Callback_ItemIndex::Callback_ItemIndex()
+Callback_NodeIndex::Callback_NodeIndex()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_ItemIndex::remove(void *funcObj)
+void Callback_NodeIndex::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -171,25 +171,25 @@ void Callback_ItemIndex::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_ItemIndex::trigger(const ItemIndex &itemIndex) const
+void Callback_NodeIndex::trigger(const NodeIndex &nodeIndex) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_ItemIndex::trigger()";
-        func.second(itemIndex);
+        //qDebug() << "Callback_NodeIndex::trigger()";
+        func.second(nodeIndex);
     }
 }
 
 // =============================================================================
 // (public)
-Callback_ItemIndexItemIndex::Callback_ItemIndexItemIndex()
+Callback_NodeIndexNodeIndex::Callback_NodeIndexNodeIndex()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_ItemIndexItemIndex::remove(void *funcObj)
+void Callback_NodeIndexNodeIndex::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -204,25 +204,25 @@ void Callback_ItemIndexItemIndex::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_ItemIndexItemIndex::trigger(const ItemIndex &itemIndex1, const ItemIndex &itemIndex2) const
+void Callback_NodeIndexNodeIndex::trigger(const NodeIndex &nodeIndex1, const NodeIndex &nodeIndex2) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_ItemIndexItemIndex::trigger()";
-        func.second(itemIndex1, itemIndex2);
+        //qDebug() << "Callback_NodeIndexNodeIndex::trigger()";
+        func.second(nodeIndex1, nodeIndex2);
     }
 }
 
 // =============================================================================
 // (public)
-Callback_ItemIndexInt::Callback_ItemIndexInt()
+Callback_NodeIndexInt::Callback_NodeIndexInt()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_ItemIndexInt::remove(void *funcObj)
+void Callback_NodeIndexInt::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -237,25 +237,25 @@ void Callback_ItemIndexInt::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_ItemIndexInt::trigger(const ItemIndex &itemIndex, int index) const
+void Callback_NodeIndexInt::trigger(const NodeIndex &nodeIndex, int index) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_ItemIndexInt::trigger()";
-        func.second(itemIndex, index);
+        //qDebug() << "Callback_NodeIndexInt::trigger()";
+        func.second(nodeIndex, index);
     }
 }
 
 // =============================================================================
 // (public)
-Callback_ItemIndexString::Callback_ItemIndexString()
+Callback_NodeIndexString::Callback_NodeIndexString()
 {
 
 }
 
 // =============================================================================
 // (public)
-void Callback_ItemIndexString::remove(void *funcObj)
+void Callback_NodeIndexString::remove(void *funcObj)
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -270,12 +270,12 @@ void Callback_ItemIndexString::remove(void *funcObj)
 
 // =============================================================================
 // (public)
-void Callback_ItemIndexString::trigger(const ItemIndex &itemIndex, const std::string &name) const
+void Callback_NodeIndexString::trigger(const NodeIndex &nodeIndex, const std::string &name) const
 {
     for (auto func: m_functionMap)
     {
-        //qDebug() << "Callback_ItemIndexInt::trigger()";
-        func.second(itemIndex, name);
+        //qDebug() << "Callback_NodeIndexInt::trigger()";
+        func.second(nodeIndex, name);
     }
 }
 

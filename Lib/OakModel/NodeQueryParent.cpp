@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ItemQueryParent.h"
+#include "NodeQueryParent.h"
 
 #include "../ServiceFunctions/Trace.h"
 
@@ -17,45 +17,45 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-ItemQueryParent::ItemQueryParent()
-    : ItemQuery()
+NodeQueryParent::NodeQueryParent()
+    : NodeQuery()
 {
 
 }
 
 // =============================================================================
 // (public)
-ItemQueryParent::ItemQueryParent(const ItemQueryParent &copy)
-    : ItemQuery(copy)
+NodeQueryParent::NodeQueryParent(const NodeQueryParent &copy)
+    : NodeQuery(copy)
 {
 
 }
 
 // =============================================================================
 // (public)
-ItemQueryParent::ItemQueryParent(ItemQueryParent &&move)
-    : ItemQuery(move)
+NodeQueryParent::NodeQueryParent(NodeQueryParent &&move)
+    : NodeQuery(move)
 {
 
 }
 
 // =============================================================================
 // (protected)
-Item ItemQueryParent::first(const Item &refItem) const
+Node NodeQueryParent::first(const Node &refNode) const
 {
-    return refItem.parent();
+    return refNode.parent();
 }
 
 // =============================================================================
 // (protected)
-Item ItemQueryParent::last(const Item &refItem) const
+Node NodeQueryParent::last(const Node &refNode) const
 {
-    return refItem.parent();
+    return refNode.parent();
 }
 
 // =============================================================================
 // (protected)
-const NodeDef *ItemQueryParent::_nodeDef(const NodeDef *nDef) const
+const NodeDef *NodeQueryParent::_nodeDef(const NodeDef *nDef) const
 {
     // TODO: Node can have multiple parents! Fix this...
     ASSERT(nDef);

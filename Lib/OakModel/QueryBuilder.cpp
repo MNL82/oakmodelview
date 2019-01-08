@@ -10,9 +10,9 @@
 
 #include "QueryBuilder.h"
 
-#include "ItemQueryChildren.h"
-#include "ItemQueryParent.h"
-#include "ItemQuerySiblings.h"
+#include "NodeQueryChildren.h"
+#include "NodeQueryParent.h"
+#include "NodeQuerySiblings.h"
 #include "LeafQuery.h"
 
 #include "../ServiceFunctions/Trace.h"
@@ -29,32 +29,32 @@ QueryBuilder::QueryBuilder()
 
 // =============================================================================
 // (public)
-ItemQueryUPtr QueryBuilder::UPtr()
+NodeQueryUPtr QueryBuilder::UPtr()
 {
-    return std::move(m_itemQuery);
+    return std::move(m_nodeQuery);
 }
 
 // =============================================================================
 // (public)
 LeafQuerySPtr QueryBuilder::leafSPtr(const std::string &leafName)
 {
-    return LeafQuery::create(std::move(m_itemQuery), leafName);
+    return LeafQuery::create(std::move(m_nodeQuery), leafName);
 }
 
 // =============================================================================
 // (public)
 QueryBuilderSPtr QueryBuilder::children(const std::string &nodeName, bool invertOrder)
 {
-    if (m_itemQuery) {
+    if (m_nodeQuery) {
         if (invertOrder) {
-            ItemQueryUPtr tempQuery = std::make_unique<ItemQueryChildren>(nodeName);
-            tempQuery->addChildQuery(std::move(m_itemQuery));
-            m_itemQuery = std::move(tempQuery);
+            NodeQueryUPtr tempQuery = std::make_unique<NodeQueryChildren>(nodeName);
+            tempQuery->addChildQuery(std::move(m_nodeQuery));
+            m_nodeQuery = std::move(tempQuery);
         } else {
-            m_itemQuery->addChildQuery(std::make_unique<ItemQueryChildren>(nodeName));
+            m_nodeQuery->addChildQuery(std::make_unique<NodeQueryChildren>(nodeName));
         }
     } else {
-        m_itemQuery = std::make_unique<ItemQueryChildren>(nodeName);
+        m_nodeQuery = std::make_unique<NodeQueryChildren>(nodeName);
     }
     return m_thisWPtr.lock();
 }
@@ -63,16 +63,16 @@ QueryBuilderSPtr QueryBuilder::children(const std::string &nodeName, bool invert
 // (public)
 QueryBuilderSPtr QueryBuilder::parent(bool invertOrder)
 {
-    if (m_itemQuery) {
+    if (m_nodeQuery) {
         if (invertOrder) {
-            ItemQueryUPtr tempQuery = std::make_unique<ItemQueryParent>();
-            tempQuery->addChildQuery(std::move(m_itemQuery));
-            m_itemQuery = std::move(tempQuery);
+            NodeQueryUPtr tempQuery = std::make_unique<NodeQueryParent>();
+            tempQuery->addChildQuery(std::move(m_nodeQuery));
+            m_nodeQuery = std::move(tempQuery);
         } else {
-            m_itemQuery->addChildQuery(std::make_unique<ItemQueryParent>());
+            m_nodeQuery->addChildQuery(std::make_unique<NodeQueryParent>());
         }
     } else {
-        m_itemQuery = std::make_unique<ItemQueryParent>();
+        m_nodeQuery = std::make_unique<NodeQueryParent>();
     }
     return m_thisWPtr.lock();
 }
@@ -81,16 +81,16 @@ QueryBuilderSPtr QueryBuilder::parent(bool invertOrder)
 // (public)
 QueryBuilderSPtr QueryBuilder::siblings(bool invertOrder)
 {
-    if (m_itemQuery) {
+    if (m_nodeQuery) {
         if (invertOrder) {
-            ItemQueryUPtr tempQuery = std::make_unique<ItemQuerySiblings>();
-            tempQuery->addChildQuery(std::move(m_itemQuery));
-            m_itemQuery = std::move(tempQuery);
+            NodeQueryUPtr tempQuery = std::make_unique<NodeQuerySiblings>();
+            tempQuery->addChildQuery(std::move(m_nodeQuery));
+            m_nodeQuery = std::move(tempQuery);
         } else {
-            m_itemQuery->addChildQuery(std::make_unique<ItemQuerySiblings>());
+            m_nodeQuery->addChildQuery(std::make_unique<NodeQuerySiblings>());
         }
     } else {
-        m_itemQuery = std::make_unique<ItemQuerySiblings>();
+        m_nodeQuery = std::make_unique<NodeQuerySiblings>();
     }
     return m_thisWPtr.lock();
 }
@@ -127,26 +127,26 @@ QueryBuilderSPtr QueryBuilder::createSiblings()
 
 // =============================================================================
 // (public)
-QueryBuilderSPtr QueryBuilder::createInverse(const ItemQuery &query, const NodeDef *sourceNodeDef)
+QueryBuilderSPtr QueryBuilder::createInverse(const NodeQuery &query, const NodeDef *sourceNodeDef)
 {
     ASSERT(sourceNodeDef);
     QueryBuilderSPtr sPtr = std::make_shared<QueryBuilder>();
     sPtr->m_thisWPtr = sPtr;
 
-    const ItemQuery * q = &query;
+    const NodeQuery * q = &query;
     const NodeDef *nodeDef = sourceNodeDef;
 
     while (q != nullptr) {
-        const ItemQueryChildren * itemQueryChildren = dynamic_cast<const ItemQueryChildren *>(q);
-        if (itemQueryChildren) {
+        const NodeQueryChildren * nodeQueryChildren = dynamic_cast<const NodeQueryChildren *>(q);
+        if (nodeQueryChildren) {
             sPtr->parent(true);
         }
-        const ItemQueryParent * itemQueryParent = dynamic_cast<const ItemQueryParent *>(q);
-        if (itemQueryParent) {
+        const NodeQueryParent * nodeQueryParent = dynamic_cast<const NodeQueryParent *>(q);
+        if (nodeQueryParent) {
             sPtr->children(nodeDef->name(), true);
         }
-        const ItemQuerySiblings * itemQuerySiblings = dynamic_cast<const ItemQuerySiblings *>(q);
-        if (itemQuerySiblings) {
+        const NodeQuerySiblings * nodeQuerySiblings = dynamic_cast<const NodeQuerySiblings *>(q);
+        if (nodeQuerySiblings) {
             sPtr->siblings(true);
         }
 
@@ -166,35 +166,35 @@ LeafQuerySPtr QueryBuilder::createLeaf(const std::string &leafName)
 
 // =============================================================================
 // (public)
-ItemQueryUPtr QueryBuilder::duplicate(const ItemQueryUPtr &c)
+NodeQueryUPtr QueryBuilder::duplicate(const NodeQueryUPtr &c)
 {
     {
-        const ItemQueryChildren * itemQuery = dynamic_cast<const ItemQueryChildren * >(c.get());
-        if (itemQuery) {
-            return ItemQueryUPtr(new ItemQueryChildren(*itemQuery));
+        const NodeQueryChildren * nodeQuery = dynamic_cast<const NodeQueryChildren * >(c.get());
+        if (nodeQuery) {
+            return NodeQueryUPtr(new NodeQueryChildren(*nodeQuery));
         }
     }
 
     {
-        const ItemQueryParent * itemQuery = dynamic_cast<const ItemQueryParent * >(c.get());
-        if (itemQuery) {
-            return ItemQueryUPtr(new ItemQueryParent(*itemQuery));
+        const NodeQueryParent * nodeQuery = dynamic_cast<const NodeQueryParent * >(c.get());
+        if (nodeQuery) {
+            return NodeQueryUPtr(new NodeQueryParent(*nodeQuery));
         }
     }
 
     {
-        const ItemQuerySiblings * itemQuery = dynamic_cast<const ItemQuerySiblings * >(c.get());
-        if (itemQuery) {
-            return ItemQueryUPtr(new ItemQuerySiblings(*itemQuery));
+        const NodeQuerySiblings * nodeQuery = dynamic_cast<const NodeQuerySiblings * >(c.get());
+        if (nodeQuery) {
+            return NodeQueryUPtr(new NodeQuerySiblings(*nodeQuery));
         }
     }
 
-    return ItemQueryUPtr(new ItemQuery(*c.get()));
+    return NodeQueryUPtr(new NodeQuery(*c.get()));
 }
 
 // =============================================================================
 // (public)
-ItemQueryUPtr QueryBuilder::createItemQuery(const std::string& queryString)
+NodeQueryUPtr QueryBuilder::createNodeQuery(const std::string& queryString)
 {
     std::vector<std::string> strList = split(queryString, ';', true);
 
@@ -229,16 +229,16 @@ LeafQuerySPtr QueryBuilder::createLeafQuery(const std::string& queryString)
     auto it = std::find(queryString.rbegin(), queryString.rend(), ';');
 
     if (it == queryString.rend()) {
-        // No ItemQuery part
+        // No NodeQuery part
         return createLeaf(queryString);
     }
 
     size_t index = static_cast<size_t>(queryString.rend() - it);
-    std::string itemQueryString = queryString.substr(0, index-1);
+    std::string nodeQueryString = queryString.substr(0, index-1);
     std::string leafName = queryString.substr(index);
 
 
-    return LeafQuery::create(createItemQuery(itemQueryString), leafName);
+    return LeafQuery::create(createNodeQuery(nodeQueryString), leafName);
 }
 
 } // namespace Oak::Model

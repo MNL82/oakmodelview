@@ -8,18 +8,18 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ItemIndex.h"
+#include "NodeIndex.h"
 
 #include "../ServiceFunctions/Assert.h"
 
 
 namespace Oak::Model {
 
-ItemIndex ItemIndex::s_itemIndex = ItemIndex();
+NodeIndex NodeIndex::s_nodeIndex = NodeIndex();
 
 // =============================================================================
 // (public)
-ItemIndex::ItemIndex()
+NodeIndex::NodeIndex()
 {
     m_index = -1;
     m_childIndex = nullptr;
@@ -27,7 +27,7 @@ ItemIndex::ItemIndex()
 
 // =============================================================================
 // (public)
-ItemIndex::ItemIndex(int index)
+NodeIndex::NodeIndex(int index)
 {
     m_index = index;
     m_childIndex = nullptr;
@@ -35,7 +35,7 @@ ItemIndex::ItemIndex(int index)
 
 // =============================================================================
 // (public)
-ItemIndex::ItemIndex(const std::string &name, int index)
+NodeIndex::NodeIndex(const std::string &name, int index)
 {
     m_name = name;
     m_index = index;
@@ -44,12 +44,12 @@ ItemIndex::ItemIndex(const std::string &name, int index)
 
 // =============================================================================
 // (public)
-ItemIndex::ItemIndex(const ItemIndex &itemIndex)
+NodeIndex::NodeIndex(const NodeIndex &nodeIndex)
 {
-    m_name = itemIndex.m_name;
-    m_index = itemIndex.m_index;
-    if (itemIndex.m_childIndex) {
-        m_childIndex = new ItemIndex(*itemIndex.m_childIndex);
+    m_name = nodeIndex.m_name;
+    m_index = nodeIndex.m_index;
+    if (nodeIndex.m_childIndex) {
+        m_childIndex = new NodeIndex(*nodeIndex.m_childIndex);
     } else {
         m_childIndex = nullptr;
     }
@@ -57,7 +57,7 @@ ItemIndex::ItemIndex(const ItemIndex &itemIndex)
 
 // =============================================================================
 // (public)
-ItemIndex::~ItemIndex()
+NodeIndex::~NodeIndex()
 {
     if (m_childIndex) {
         delete m_childIndex;
@@ -67,14 +67,14 @@ ItemIndex::~ItemIndex()
 
 // =============================================================================
 // (public)
-bool ItemIndex::isNull() const
+bool NodeIndex::isNull() const
 {
     return m_index == -1;
 }
 
 // =============================================================================
 // (public)
-bool ItemIndex::isNamed(bool recursive) const
+bool NodeIndex::isNamed(bool recursive) const
 {
     if (m_name.empty()) {
         return false;
@@ -86,7 +86,7 @@ bool ItemIndex::isNamed(bool recursive) const
 
 // =============================================================================
 // (public)
-bool ItemIndex::isUnnamed(bool recursive) const
+bool NodeIndex::isUnnamed(bool recursive) const
 {
     if (!m_name.empty()) {
         return false;
@@ -98,10 +98,10 @@ bool ItemIndex::isUnnamed(bool recursive) const
 
 // =============================================================================
 // (public)
-bool ItemIndex::equal(const ItemIndex &itemIndex) const
+bool NodeIndex::equal(const NodeIndex &nodeIndex) const
 {
-    const ItemIndex *ii1 = this;
-    const ItemIndex *ii2 = &itemIndex;
+    const NodeIndex *ii1 = this;
+    const NodeIndex *ii2 = &nodeIndex;
     while (ii1 != nullptr &&
            ii2 != nullptr &&
            ii1->m_name == ii2->m_name &&
@@ -114,10 +114,10 @@ bool ItemIndex::equal(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (public)
-int ItemIndex::depthWhereEqual(const ItemIndex &itemIndex) const
+int NodeIndex::depthWhereEqual(const NodeIndex &nodeIndex) const
 {
-    const ItemIndex *ii1 = this;
-    const ItemIndex *ii2 = &itemIndex;
+    const NodeIndex *ii1 = this;
+    const NodeIndex *ii2 = &nodeIndex;
     int d = 0;
     while (ii1 != nullptr &&
            ii2 != nullptr &&
@@ -132,26 +132,26 @@ int ItemIndex::depthWhereEqual(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (public)
-const std::string &ItemIndex::name() const
+const std::string &NodeIndex::name() const
 {
     return m_name;
 }
 
 // =============================================================================
 // (public)
-int ItemIndex::index() const
+int NodeIndex::index() const
 {
     return m_index;
 }
 
 // =============================================================================
 // (public)
-int ItemIndex::depth() const
+int NodeIndex::depth() const
 {
     int d = 1;
-    const ItemIndex *itemIndex = this;
-    while(itemIndex->m_childIndex) {
-        itemIndex = itemIndex->m_childIndex;
+    const NodeIndex *nodeIndex = this;
+    while(nodeIndex->m_childIndex) {
+        nodeIndex = nodeIndex->m_childIndex;
         d++;
     }
     return d;
@@ -159,12 +159,12 @@ int ItemIndex::depth() const
 
 // =============================================================================
 // (public)
-bool ItemIndex::contains(const ItemIndex &itemIndex) const
+bool NodeIndex::contains(const NodeIndex &nodeIndex) const
 {
-    if (isNull() ||depth() < itemIndex.depth()) { return false; }
+    if (isNull() ||depth() < nodeIndex.depth()) { return false; }
 
-    const ItemIndex *ii1 = this;
-    const ItemIndex *ii2 = &itemIndex;
+    const NodeIndex *ii1 = this;
+    const NodeIndex *ii2 = &nodeIndex;
     while (ii2) {
         if (ii1->m_name != ii2->m_name) {
             return false;
@@ -180,67 +180,67 @@ bool ItemIndex::contains(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (public)
-Item ItemIndex::item(const Item &rootItem, int depth) const
+Node NodeIndex::node(const Node &rootNode, int depth) const
 {
-    if (isNull()) { return rootItem; }
-    Item item = (m_name.empty()) ? rootItem.childAt(m_index) : rootItem.childAt(m_name, m_index);
-    if (!m_childIndex || depth == 1 || item.isNull()) {
+    if (isNull()) { return rootNode; }
+    Node node = (m_name.empty()) ? rootNode.childAt(m_index) : rootNode.childAt(m_name, m_index);
+    if (!m_childIndex || depth == 1 || node.isNull()) {
         ASSERT(depth == 1 || depth < -1);
-        return item;
+        return node;
     }
-    return m_childIndex->item(item, --depth);
+    return m_childIndex->node(node, --depth);
 }
 
 // =============================================================================
 // (public)
-Item ItemIndex::itemParent(const Item &rootItem) const
+Node NodeIndex::nodeParent(const Node &rootNode) const
 {
-    if (isNull()) { return Item(); }
-    if (m_childIndex == nullptr) { return rootItem; }
-    Item item = (m_name.empty()) ? rootItem.childAt(m_index) : rootItem.childAt(m_name, m_index);
-    if (m_childIndex->hasChildItemIndex()) {
-        return m_childIndex->itemParent(item);
+    if (isNull()) { return Node(); }
+    if (m_childIndex == nullptr) { return rootNode; }
+    Node node = (m_name.empty()) ? rootNode.childAt(m_index) : rootNode.childAt(m_name, m_index);
+    if (m_childIndex->hasChildNodeIndex()) {
+        return m_childIndex->nodeParent(node);
     }
-    return item;
+    return node;
 }
 
 // =============================================================================
 // (public)
-bool ItemIndex::hasChildItemIndex() const
+bool NodeIndex::hasChildNodeIndex() const
 {
     return m_childIndex != nullptr;
 }
 
 // =============================================================================
 // (public)
-const ItemIndex &ItemIndex::childItemIndex(int depth) const
+const NodeIndex &NodeIndex::childNodeIndex(int depth) const
 {
     if (depth == 0) { return *this; }
     if (m_childIndex) {
-        return m_childIndex->childItemIndex(--depth);
+        return m_childIndex->childNodeIndex(--depth);
     } else {
-        return emptyItemIndex();
+        return emptyNodeIndex();
     }
 }
 
 // =============================================================================
 // (public)
-ItemIndex &ItemIndex::childItemIndex(int depth)
+NodeIndex &NodeIndex::childNodeIndex(int depth)
 {
     if (depth == 0) { return *this; }
     if (m_childIndex) {
-        return m_childIndex->childItemIndex(--depth);
+        return m_childIndex->childNodeIndex(--depth);
     } else {
-        return emptyItemIndex();
+        return emptyNodeIndex();
     }
 }
 
 // =============================================================================
 // (public)
-const ItemIndex &ItemIndex::lastItemIndex() const
+const NodeIndex &NodeIndex::lastNodeIndex() const
 {
     if (m_childIndex) {
-        return m_childIndex->lastItemIndex();
+        return m_childIndex->lastNodeIndex();
     } else {
         return *this;
     }
@@ -248,10 +248,10 @@ const ItemIndex &ItemIndex::lastItemIndex() const
 
 // =============================================================================
 // (public)
-ItemIndex &ItemIndex::lastItemIndex()
+NodeIndex &NodeIndex::lastNodeIndex()
 {
     if (m_childIndex) {
-        return m_childIndex->lastItemIndex();
+        return m_childIndex->lastNodeIndex();
     } else {
         return *this;
     }
@@ -259,67 +259,67 @@ ItemIndex &ItemIndex::lastItemIndex()
 
 // =============================================================================
 // (public)
-ItemIndex &ItemIndex::emptyItemIndex()
+NodeIndex &NodeIndex::emptyNodeIndex()
 {
-    return s_itemIndex;
+    return s_nodeIndex;
 }
 
 // =============================================================================
 // (public)
-ItemIndexUPtr ItemIndex::create(const Item &_item, bool namedIndex)
+NodeIndexUPtr NodeIndex::create(const Node &_node, bool namedIndex)
 {
-    if (_item.isNull()) { return ItemIndexUPtr(); }
-    Item cItem = _item;
-    Item pItem = cItem.parent();
+    if (_node.isNull()) { return NodeIndexUPtr(); }
+    Node cNode = _node;
+    Node pNode = cNode.parent();
 
-    ItemIndex *cIndex = nullptr;
-    ItemIndex *pIndex = nullptr;
-    while(!pItem.isNull()) {
-        pIndex = new ItemIndex();
+    NodeIndex *cIndex = nullptr;
+    NodeIndex *pIndex = nullptr;
+    while(!pNode.isNull()) {
+        pIndex = new NodeIndex();
         if (namedIndex) {
-            pIndex->m_name = cItem.def()->name();
-            pIndex->m_index = pItem.childIndex(pIndex->m_name, cItem);
+            pIndex->m_name = cNode.def()->name();
+            pIndex->m_index = pNode.childIndex(pIndex->m_name, cNode);
         } else {
-            pIndex->m_index = pItem.childIndex(cItem);
+            pIndex->m_index = pNode.childIndex(cNode);
         }
-        if (pIndex->m_index == -1) {  // If item is invalid (F.eks can be invalid after a move)
-            return ItemIndexUPtr();
+        if (pIndex->m_index == -1) {  // If node is invalid (F.eks can be invalid after a move)
+            return NodeIndexUPtr();
         };
         pIndex->m_childIndex = cIndex;
         cIndex = pIndex;
-        cItem = pItem;
-        pItem = cItem.parent();
+        cNode = pNode;
+        pNode = cNode.parent();
     }
-    return ItemIndexUPtr(cIndex);
+    return NodeIndexUPtr(cIndex);
 }
 
 // =============================================================================
 // (public)
-void ItemIndex::setChildItemIndex(ItemIndex *itemIndex)
+void NodeIndex::setChildNodeIndex(NodeIndex *nodeIndex)
 {
     if (m_childIndex != nullptr) {
         delete m_childIndex;
     }
-    m_childIndex = itemIndex;
+    m_childIndex = nodeIndex;
 }
 
 // =============================================================================
 // (public)
-int ItemIndex::convertIndexToUnnamed(const Item &_item) const
+int NodeIndex::convertIndexToUnnamed(const Node &_node) const
 {
     if (m_name.empty()) {
         return m_index;
     } else {
-        return _item.convertChildIndexToUnnamed(m_name, m_index);
+        return _node.convertChildIndexToUnnamed(m_name, m_index);
     }
 }
 
 // =============================================================================
 // (public)
-int ItemIndex::convertIndexToNamed(const Item &_item, std::string &name) const
+int NodeIndex::convertIndexToNamed(const Node &_node, std::string &name) const
 {
     if (m_name.empty()) {
-        return _item.convertChildIndexToNamed(name, m_index);
+        return _node.convertChildIndexToNamed(name, m_index);
     } else {
         name = m_name;
         return m_index;

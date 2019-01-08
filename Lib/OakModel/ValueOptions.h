@@ -18,7 +18,7 @@
 
 namespace Oak::Model {
 
-class Item;
+class Node;
 class LeafQuery;
 typedef std::shared_ptr<LeafQuery> LeafQuerySPtr;
 typedef std::weak_ptr<LeafQuery> LeafQueryWPtr;
@@ -34,10 +34,10 @@ public:
 
     bool isUsed() const;
 
-    bool getOptions(std::vector<UnionValue>& options, const Item *item, bool allowConversion, ConversionSPtr conversion) const;
+    bool getOptions(std::vector<UnionValue>& options, const Node *node, bool allowConversion, ConversionSPtr conversion) const;
 
     template<typename T>
-    bool getOptions(std::vector<T>& options, const Item *item, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+    bool getOptions(std::vector<T>& options, const Node *node, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     bool hasQuery() const;
     bool hasQueryExcluded() const;
@@ -61,10 +61,10 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-bool ValueOptions::getOptions(std::vector<T>& options, const Item *item, bool allowConversion, ConversionSPtr conversion) const
+bool ValueOptions::getOptions(std::vector<T>& options, const Node *node, bool allowConversion, ConversionSPtr conversion) const
 {
     std::vector<UnionValue> oList;
-    getOptions(oList, item, allowConversion, conversion);
+    getOptions(oList, node, allowConversion, conversion);
     options.resize(oList.size());
     for (std::vector<UnionValue>::size_type i = 0; i < oList.size(); i++)
     {

@@ -1,6 +1,6 @@
 #include "TableView.h"
 
-#include "ItemQuery.h"
+#include "NodeQuery.h"
 
 #include <QHeaderView>
 #include <QHBoxLayout>
@@ -58,19 +58,19 @@ TableView::TableView(QWidget *parent)
 
     m_toolBar->addSeparator();
 
-    m_actionCut = new QAction(QPixmap(":/OakView/Resources/cut_32.png"), "Cut Item");
+    m_actionCut = new QAction(QPixmap(":/OakView/Resources/cut_32.png"), "Cut Node");
     m_actionCut->setEnabled(false);
     m_actionCut->setShortcut(QKeySequence::Cut);
     connect(m_actionCut, SIGNAL(triggered()), this, SLOT(onActionCut()));
     m_toolBar->addAction(m_actionCut);
 
-    m_actionCopy = new QAction(QPixmap(":/OakView/Resources/copy_32.png"), "Copy Item");
+    m_actionCopy = new QAction(QPixmap(":/OakView/Resources/copy_32.png"), "Copy Node");
     m_actionCopy->setEnabled(false);
     m_actionCopy->setShortcut(QKeySequence::Copy);
     connect(m_actionCopy, SIGNAL(triggered()), this, SLOT(onActionCopy()));
     m_toolBar->addAction(m_actionCopy);
 
-    m_actionPaste = new QAction(QPixmap(":/OakView/Resources/paste_32.png"), "Paste Item");
+    m_actionPaste = new QAction(QPixmap(":/OakView/Resources/paste_32.png"), "Paste Node");
     m_actionPaste->setEnabled(false);
     m_actionPaste->setShortcut(QKeySequence::Paste);
     connect(m_actionPaste, SIGNAL(triggered()), this, SLOT(onActionPaste()));
@@ -97,8 +97,8 @@ TableView::TableView(QWidget *parent)
     layout->addWidget(m_toolBar);
     setLayout(layout);
 
-    connect(m_tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
-    connect(m_tableWidget, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(onItemChanged(QTableWidgetItem*)));
+    connect(m_tableWidget, SIGNAL(nodeSelectionChanged()), this, SLOT(onSelectionChanged()));
+    connect(m_tableWidget, SIGNAL(nodeChanged(QTableWidgetItem *)), this, SLOT(onNodeChanged(QTableWidgetItem*)));
 }
 
 // =============================================================================
@@ -110,9 +110,9 @@ TableView::~TableView()
 
 // =============================================================================
 // (public)
-void TableView::setBaseRef(Model::ItemQueryUPtr baseRef)
+void TableView::setBaseRef(Model::NodeQueryUPtr baseRef)
 {
-    m_tableQuery.setItemQuery(std::move(baseRef));
+    m_tableQuery.setNodeQuery(std::move(baseRef));
     updateTable();
 
 }
@@ -133,11 +133,11 @@ void TableView::updateTable()
     disableAllActions();
 
     if (m_model == nullptr) { return; }
-    if (m_model->rootItem().isNull()) { return; }
+    if (m_model->rootNode().isNull()) { return; }
 
-    m_rootItem = m_model->rootItem();
+    m_rootNode = m_model->rootNode();
 
-    int rowCount = m_tableQuery.count(m_rootItem);
+    int rowCount = m_tableQuery.count(m_rootNode);
     int columnCount = m_tableQuery.columnCount();
 
     m_tableWidget->blockSignals(true);
@@ -145,7 +145,7 @@ void TableView::updateTable()
     m_tableWidget->setColumnCount(columnCount);
     int row = 0;
 
-    auto it = m_tableQuery.iterator(m_rootItem);
+    auto it = m_tableQuery.iterator(m_rootNode);
     while (it->next()) {
         // Add Table Header
         if (row == 0) {
@@ -159,8 +159,8 @@ void TableView::updateTable()
         for (int column = 0; column < columnCount; column++)
         {
             std::string value = it->value<std::string>(column);
-            QTableWidgetItem *item = new QTableWidgetItem(QString::fromStdString(value));
-            m_tableWidget->setItem(row, column, item);
+            QTableWidgetItem *node = new QTableWidgetItem(QString::fromStdString(value));
+            m_tableWidget->setItem(row, column, node);
         }
         row++;
     }
@@ -176,15 +176,15 @@ void TableView::setOakModel(Model::OakModel *model)
 
     if (m_model) {
         // Disconnect the old model
-//        m_model->notifier_currentItemChanged.remove(this);
+//        m_model->notifier_currentNodeChanged.remove(this);
         m_model->notifier_rootNodeDefChanged.remove(this);
         m_model->notifier_rootNodeDataChanged.remove(this);
 //        m_model->notifier_destroyed.remove(this);
 
-        m_model->notifier_itemInserteAfter.remove(this);
-        m_model->notifier_itemMoveAfter.remove(this);
-        m_model->notifier_itemCloneAfter.remove(this);
-        m_model->notifier_itemRemoveAfter.remove(this);
+        m_model->notifier_nodeInserteAfter.remove(this);
+        m_model->notifier_nodeMoveAfter.remove(this);
+        m_model->notifier_nodeCloneAfter.remove(this);
+        m_model->notifier_nodeRemoveAfter.remove(this);
 
         m_model->notifier_leafChangeAfter.remove(this);
     }
@@ -194,15 +194,15 @@ void TableView::setOakModel(Model::OakModel *model)
 
     if (m_model) {
         // connect the new mobel
-//        m_model->notifier_currentItemChanged.add(this, &TableView::currentItemChanged);
+//        m_model->notifier_currentNodeChanged.add(this, &TableView::currentNodeChanged);
         m_model->notifier_rootNodeDefChanged.add(this, &TableView::updateTable);
         m_model->notifier_rootNodeDataChanged.add(this, &TableView::updateTable);
 //        m_model->notifier_destroyed.add(this, &ListView::modelDestroyed);
 
-        m_model->notifier_itemInserteAfter.add(this, &TableView::onItemInserteAfter);
-        m_model->notifier_itemMoveAfter.add(this, &TableView::onItemMoveAfter);
-        m_model->notifier_itemCloneAfter.add(this, &TableView::onItemCloneAfter);
-        m_model->notifier_itemRemoveBefore.add(this, &TableView::onItemRemoveBefore);
+        m_model->notifier_nodeInserteAfter.add(this, &TableView::onNodeInserteAfter);
+        m_model->notifier_nodeMoveAfter.add(this, &TableView::onNodeMoveAfter);
+        m_model->notifier_nodeCloneAfter.add(this, &TableView::onNodeCloneAfter);
+        m_model->notifier_nodeRemoveBefore.add(this, &TableView::onNodeRemoveBefore);
 
         m_model->notifier_leafChangeAfter.add(this, &TableView::onEntryChangeAfter);
     }
@@ -219,7 +219,7 @@ void TableView::onSelectionChanged()
 // (protected slots)
 void TableView::onActionAdd()
 {
-    m_tableQuery.itemQuery().insertItem(m_rootItem, -1);
+    m_tableQuery.nodeQuery().insertNode(m_rootNode, -1);
     updateTable();
 }
 
@@ -229,7 +229,7 @@ void TableView::onActionDelete()
 {
     QList<int> rows = selectedRows();
     if (rows.empty()) { return; }
-    m_tableQuery.itemQuery().removeItem(m_rootItem, rows.first());
+    m_tableQuery.nodeQuery().removeNode(m_rootNode, rows.first());
     updateTable();
 }
 
@@ -270,16 +270,16 @@ void TableView::onActionPaste()
 
 // =============================================================================
 // (protected slots)
-void TableView::onItemChanged(QTableWidgetItem *item)
+void TableView::onNodeChanged(QTableWidgetItem *node)
 {
     int row = 0;
-    auto it = m_tableQuery.iterator(m_rootItem);
+    auto it = m_tableQuery.iterator(m_rootNode);
     while (it->next()) {
-        if (row == item->row()) {
-            auto leaf = it->leaf(item->column());
-            if (!leaf.setValue(item->text().toStdString())) {
+        if (row == node->row()) {
+            auto leaf = it->leaf(node->column());
+            if (!leaf.setValue(node->text().toStdString())) {
                 m_tableWidget->blockSignals(true);
-                item->setText(QString::fromStdString(leaf.value<std::string>(item->column())));
+                node->setText(QString::fromStdString(leaf.value<std::string>(node->column())));
                 m_tableWidget->blockSignals(false);
             }
             return;
@@ -290,39 +290,39 @@ void TableView::onItemChanged(QTableWidgetItem *item)
 
 // =============================================================================
 // (protected)
-void TableView::onItemInserteAfter(const Model::ItemIndex &itemIndex)
+void TableView::onNodeInserteAfter(const Model::NodeIndex &nodeIndex)
 {
-    Q_UNUSED(itemIndex)
+    Q_UNUSED(nodeIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void TableView::onNodeMoveAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    Q_UNUSED(sourceItemIndex)
-    Q_UNUSED(targetItemIndex)
+    Q_UNUSED(sourceNodeIndex)
+    Q_UNUSED(targetNodeIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void TableView::onNodeCloneAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    Q_UNUSED(sourceItemIndex)
-    Q_UNUSED(targetItemIndex)
+    Q_UNUSED(sourceNodeIndex)
+    Q_UNUSED(targetNodeIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
+void TableView::onNodeRemoveBefore(const Model::NodeIndex &nodeIndex)
 {
-    Q_UNUSED(itemIndex)
+    Q_UNUSED(nodeIndex)
 }
 
 // =============================================================================
 // (protected)
-void TableView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName)
+void TableView::onEntryChangeAfter(const Model::NodeIndex &nodeIndex, const std::string &valueName)
 {
-    Q_UNUSED(itemIndex)
+    Q_UNUSED(nodeIndex)
     Q_UNUSED(valueName)
 }
 
@@ -367,14 +367,14 @@ void TableView::updateAllActions()
         m_actionCut->setEnabled(false);
         m_actionCopy->setEnabled(false);
     } else {
-        m_actionDelete->setEnabled(m_tableQuery.itemQuery().canRemoveItem(m_rootItem, rows.first()));
+        m_actionDelete->setEnabled(m_tableQuery.nodeQuery().canRemoveNode(m_rootNode, rows.first()));
         m_actionUp->setDisabled(rows.contains(0));
         m_actionDown->setDisabled(rows.contains(m_tableWidget->rowCount()-1));
         m_actionCut->setEnabled(true);
         m_actionCopy->setEnabled(true);
     }
 
-    m_actionPaste->setDisabled(m_cutItems.empty() && m_copyItems.empty());
+    m_actionPaste->setDisabled(m_cutNodes.empty() && m_copyNodes.empty());
 }
 
 // =============================================================================
@@ -383,10 +383,10 @@ QList<int> TableView::selectedRows() const
 {
     QList<int> list;
     QList<QTableWidgetItem*> selectedItems = m_tableWidget->selectedItems();
-    for (QTableWidgetItem *item: selectedItems)
+    for (QTableWidgetItem *node: selectedItems)
     {
-        if (!list.contains(item->row())) {
-            list.push_back(item->row());
+        if (!list.contains(node->row())) {
+            list.push_back(node->row());
         }
     }
     return list;

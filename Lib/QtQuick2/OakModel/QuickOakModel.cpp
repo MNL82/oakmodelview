@@ -137,10 +137,10 @@ QModelIndex QuickOakModel::index(int row, int column, const QModelIndex &parent)
 {
     if (m_model.isNull()) { return QModelIndex(); }
 
-    Oak::Model::Item parentItem = itemFromIndex(parent);
-    Oak::Model::Item item = parentItem.childAt(row);
-    ASSERT(!item.isNull());
-    return createModelIndex(row, column, item);
+    Oak::Model::Node parentNode = nodeFromIndex(parent);
+    Oak::Model::Node node = parentNode.childAt(row);
+    ASSERT(!node.isNull());
+    return createModelIndex(row, column, node);
 }
 
 // =============================================================================
@@ -149,13 +149,13 @@ QModelIndex QuickOakModel::parent(const QModelIndex &child) const
 {
     if (m_model.isNull()) { return QModelIndex(); }
 
-    Oak::Model::Item childItem = itemFromIndex(child);
-    Oak::Model::Item parentItem = childItem.parent();
-    ASSERT(!parentItem.isNull());
-    if (parentItem == m_model.rootItem()) {
+    Oak::Model::Node childNode = nodeFromIndex(child);
+    Oak::Model::Node parentNode = childNode.parent();
+    ASSERT(!parentNode.isNull());
+    if (parentNode == m_model.rootNode()) {
         return QModelIndex();
     }
-    return createModelIndex(child.row(), child.column(), parentItem);
+    return createModelIndex(child.row(), child.column(), parentNode);
 }
 
 // =============================================================================
@@ -164,12 +164,12 @@ QModelIndex QuickOakModel::sibling(int row, int column, const QModelIndex &idx) 
 {
     if (m_model.isNull()) { return QModelIndex(); }
 
-    Oak::Model::Item item= itemFromIndex(idx);
+    Oak::Model::Node node= nodeFromIndex(idx);
     if (row != idx.row()) {
-        Oak::Model::Item parentItem = item.parent();
-        item = parentItem.childAt(row);
+        Oak::Model::Node parentNode = node.parent();
+        node = parentNode.childAt(row);
     }
-    return createModelIndex(row, column, item);
+    return createModelIndex(row, column, node);
 }
 
 // =============================================================================
@@ -178,8 +178,8 @@ int QuickOakModel::rowCount(const QModelIndex &parent) const
 {
     if (m_model.isNull()) { return 0; }
 
-    Oak::Model::Item item= itemFromIndex(parent);
-    return item.childCount();
+    Oak::Model::Node node= nodeFromIndex(parent);
+    return node.childCount();
 }
 
 // =============================================================================
@@ -197,8 +197,8 @@ bool QuickOakModel::hasChildren(const QModelIndex &parent) const
 {
     if (m_model.isNull()) { return false; }
 
-    Oak::Model::Item item= itemFromIndex(parent);
-    return item.childCount() > 0;
+    Oak::Model::Node node = nodeFromIndex(parent);
+    return node.childCount() > 0;
 }
 
 // =============================================================================
@@ -209,23 +209,23 @@ QVariant QuickOakModel::data(const QModelIndex &index, int role) const
 
     if (!index.isValid()) { return QVariant(); }
 
-    Oak::Model::Item item= itemFromIndex(index);
-    ASSERT(!item.isNull());
+    Oak::Model::Node node = nodeFromIndex(index);
+    ASSERT(!node.isNull());
 
     switch (role) {
     case DisplayName:
-        return QString::fromStdString(item.def()->displayName());
+        return QString::fromStdString(node.def()->displayName());
     case Name:
-        return QString::fromStdString(item.def()->name());
+        return QString::fromStdString(node.def()->name());
     case KeyValue: {
-        if (item.hasKey()) {
-            return QString::fromStdString(item.keyLeaf().value<std::string>());
+        if (node.hasKey()) {
+            return QString::fromStdString(node.keyLeaf().value<std::string>());
         }
         return QString();
     }
     case VariantValue:
-        if (item.hasVariants()) {
-            return QString::fromStdString(item.variantLeaf().value<std::string>());
+        if (node.hasVariants()) {
+            return QString::fromStdString(node.variantLeaf().value<std::string>());
         }
         return QString();
     default:
@@ -250,17 +250,17 @@ QHash<int, QByteArray> QuickOakModel::roleNames() const
 
 // =============================================================================
 // (public)
-QModelIndex QuickOakModel::createModelIndex(int row, int column, const Oak::Model::Item &item) const
+QModelIndex QuickOakModel::createModelIndex(int row, int column, const Oak::Model::Node& node) const
 {
-    return createIndex(row, column, item.nodeData().internalPtr());
+    return createIndex(row, column, node.nodeData().internalPtr());
 }
 
 // =============================================================================
 // (public)
-Oak::Model::Item QuickOakModel::itemFromIndex(const QModelIndex &index) const
+Oak::Model::Node QuickOakModel::nodeFromIndex(const QModelIndex &index) const
 {
     if (!index.isValid()) {
-        return m_model.rootItem();
+        return m_model.rootNode();
     }
-    return m_model.itemFromDataPtr(index.internalPointer());
+    return m_model.nodeFromDataPtr(index.internalPointer());
 }

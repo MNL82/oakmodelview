@@ -24,18 +24,18 @@ TableQuery::TableQuery()
 
 // =============================================================================
 // (public)
-TableQuery::TableQuery(ItemQueryUPtr itemQuery)
+TableQuery::TableQuery(NodeQueryUPtr nodeQuery)
 {
-    if (itemQuery) {
-        m_itemQuery = std::move(itemQuery);
+    if (nodeQuery) {
+        m_nodeQuery = std::move(nodeQuery);
     }
 }
 
 // =============================================================================
 // (public)
-void TableQuery::setItemQuery(ItemQueryUPtr itemQuery)
+void TableQuery::setNodeQuery(NodeQueryUPtr nodeQuery)
 {
-    m_itemQuery = std::move(itemQuery);
+    m_nodeQuery = std::move(nodeQuery);
 }
 
 // =============================================================================
@@ -54,49 +54,49 @@ void TableQuery::addValueQuery(LeafQuerySPtr valueQuery)
 
 // =============================================================================
 // (public)
-int TableQuery::count(const Item &item) const
+int TableQuery::count(const Node &node) const
 {
-    ASSERT(m_itemQuery);
-    return m_itemQuery->count(item);
+    ASSERT(m_nodeQuery);
+    return m_nodeQuery->count(node);
 }
 
 // =============================================================================
 // (public)
-ItemQuery &TableQuery::itemQuery()
+NodeQuery &TableQuery::nodeQuery()
 {
-    return *m_itemQuery.get();
+    return *m_nodeQuery.get();
 }
 
 // =============================================================================
 // (public)
-const ItemQuery &TableQuery::itemQuery() const
+const NodeQuery &TableQuery::nodeQuery() const
 {
-    return *m_itemQuery.get();
+    return *m_nodeQuery.get();
 }
 
 // =============================================================================
 // (public)
-TableQuery::IteratorUPtr TableQuery::iterator(const Item &refItem) const
+TableQuery::IteratorUPtr TableQuery::iterator(const Node &refNode) const
 {
-    IteratorUPtr it(new Iterator(*this, &refItem));
+    IteratorUPtr it(new Iterator(*this, &refNode));
     return it;
 }
 
 //// =============================================================================
 //// (public)
-//TableQuery::IteratorUPtr TableQuery::begin(const Item &refItem) const
+//TableQuery::IteratorUPtr TableQuery::begin(const Node &refNode) const
 //{
 //    IteratorUPtr it(new Iterator(*this));
-//    it->first(refItem);
+//    it->first(refNode);
 //    return it;
 //}
 
 //// =============================================================================
 //// (public)
-//TableQuery::IteratorUPtr TableQuery::rBegin(const Item &refItem) const
+//TableQuery::IteratorUPtr TableQuery::rBegin(const Node &refNode) const
 //{
 //    IteratorUPtr it(new Iterator(*this));
-//    it->last(refItem);
+//    it->last(refNode);
 //    return it;
 //}
 
@@ -106,11 +106,11 @@ TableQuery::IteratorUPtr TableQuery::iterator(const Item &refItem) const
 
 // =============================================================================
 // (public)
-TableQuery::Iterator::Iterator(const TableQuery &tableQuery, const Item *refItem)
-    : ItemQuery::Iterator(tableQuery.itemQuery())
+TableQuery::Iterator::Iterator(const TableQuery &tableQuery, const Node *refNode)
+    : NodeQuery::Iterator(tableQuery.nodeQuery())
 {
     m_tableQuery = &tableQuery;
-    m_refItem = refItem;
+    m_refNode = refNode;
 
     size_t count = static_cast<size_t>(m_tableQuery->columnCount());
     for (size_t i = 0; i < count; i++)
@@ -129,7 +129,7 @@ TableQuery::Iterator::~Iterator()
     }
     m_leafIteratorList.clear();
     m_tableQuery = nullptr;
-    ItemQuery::Iterator::~Iterator();
+    NodeQuery::Iterator::~Iterator();
 }
 
 // =============================================================================
@@ -142,7 +142,7 @@ const Leaf &TableQuery::Iterator::leaf(int index) const
     }
 
     auto eIt = m_leafIteratorList[static_cast<size_t>(index)];
-    Item i = item();
+    Node i = node();
     if (eIt->first(i)) {
         return eIt->leaf();
     }

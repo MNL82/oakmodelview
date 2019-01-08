@@ -11,7 +11,7 @@
 #pragma once
 
 #include "NodeDef.h"
-#include "Item.h"
+#include "Node.h"
 #include "CallbackFunctions.h"
 
 #ifdef XML_BACKEND
@@ -39,7 +39,7 @@ public:
 
     bool createNewRootDocument(NodeData::Type backendType, bool setAsCurrent = true);
     void clearRoot();
-    const Item& rootItem() const;
+    const Node& rootNode() const;
 
     const std::string &rootDefName() const;
 
@@ -49,11 +49,11 @@ public:
 
     void setRootNode(const NodeData &nodeData);
 
-    void setRootItem(const Item& item);
+    void setRootNode(const Node& node);
 
-    const Item& currentItem() const;
-    const ItemIndex& currentItemIndex() const;
-    void setCurrentItem(const Item &item, bool forceUpdate = false) const;
+    const Node& currentNode() const;
+    const NodeIndex& currentNodeIndex() const;
+    void setCurrentNode(const Node &node, bool forceUpdate = false) const;
 
 #ifdef XML_BACKEND
     const std::string& docFilePathXML() { return m_xmlDocFilePath; }
@@ -66,52 +66,52 @@ public:
     // Starting with the root NodeDef and look through all NodeDefs recursive
     //  untill a match is found
     const NodeDef *findNodeDef(const NodeData &nodeData) const;
-    Item itemFromDataPtr(void * dPtr) const;
+    Node nodeFromDataPtr(void * dPtr) const;
 
-    ItemIndexUPtr convertItemIndexToNamed(const ItemIndex &itemIndex) const;
-    ItemIndexUPtr convertItemIndexToUnnamed(const ItemIndex &itemIndex) const;
+    NodeIndexUPtr convertNodeIndexToNamed(const NodeIndex &nodeIndex) const;
+    NodeIndexUPtr convertNodeIndexToUnnamed(const NodeIndex &nodeIndex) const;
 
 protected:
-    void onItemInserteAfter(const ItemIndex& itemIndex) const;
-    void onItemMoveAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex) const;
-    void onItemMoveBefore(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex) const;
-    void onItemCloneAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex) const;
+    void onNodeInserteAfter(const NodeIndex& nodeIndex) const;
+    void onNodeMoveAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
+    void onNodeMoveBefore(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
+    void onNodeCloneAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
 
-    void onItemRemoveAfter(const ItemIndex& itemIndex) const;
-    void onItemRemoveBefore(const ItemIndex& itemIndex) const;
+    void onNodeRemoveAfter(const NodeIndex& nodeIndex) const;
+    void onNodeRemoveBefore(const NodeIndex& nodeIndex) const;
 
-    void onLeafChangeBefore(const ItemIndex& itemIndex, const std::string &valueName) const;
-    void onLeafChangeAfter(const ItemIndex& itemIndex, const std::string &valueName) const;
-    void onVariantLeafChangeAfter(const ItemIndex& itemIndex) const;
-    void onKeyLeafChangeAfter(const ItemIndex& itemIndex) const;
+    void onLeafChangeBefore(const NodeIndex& nodeIndex, const std::string &valueName) const;
+    void onLeafChangeAfter(const NodeIndex& nodeIndex, const std::string &valueName) const;
+    void onVariantLeafChangeAfter(const NodeIndex& nodeIndex) const;
+    void onKeyLeafChangeAfter(const NodeIndex& nodeIndex) const;
 
     void createObservers();
     void clearObservers();
 
 public:
-    Callback notifier_currentItemChanged;
+    Callback notifier_currentNodeChanged;
     Callback notifier_rootNodeDataChanged;
     Callback notifier_rootNodeDefChanged;
 
     Callback notifier_destroyed;
 
-    Callback_ItemIndex notifier_itemInserteAfter;
-    Callback_ItemIndexItemIndex notifier_itemMoveBefore;
-    Callback_ItemIndexItemIndex notifier_itemMoveAfter;
-    Callback_ItemIndexItemIndex notifier_itemCloneAfter;
+    Callback_NodeIndex notifier_nodeInserteAfter;
+    Callback_NodeIndexNodeIndex notifier_nodeMoveBefore;
+    Callback_NodeIndexNodeIndex notifier_nodeMoveAfter;
+    Callback_NodeIndexNodeIndex notifier_nodeCloneAfter;
 
-    Callback_ItemIndex notifier_itemRemoveBefore;
-    Callback_ItemIndex notifier_itemRemoveAfter;
+    Callback_NodeIndex notifier_nodeRemoveBefore;
+    Callback_NodeIndex notifier_nodeRemoveAfter;
 
-    Callback_ItemIndexString notifier_leafChangeBefore;
-    Callback_ItemIndexString notifier_leafChangeAfter;
-    Callback_ItemIndex notifier_variantLeafChangeAfter;
-    Callback_ItemIndex notifier_keyLeafChangeAfter;
+    Callback_NodeIndexString notifier_leafChangeBefore;
+    Callback_NodeIndexString notifier_leafChangeAfter;
+    Callback_NodeIndex notifier_variantLeafChangeAfter;
+    Callback_NodeIndex notifier_keyLeafChangeAfter;
 
 protected:
-    Item m_rootItem;
-    mutable Item m_currentItem;
-    mutable ItemIndexUPtr m_currentItemIndex;
+    Node m_rootNode;
+    mutable Node m_currentNode;
+    mutable NodeIndexUPtr m_currentNodeIndex;
 
     std::vector<ObserverInterfaceUPtr> m_observerList;
 
@@ -124,7 +124,7 @@ protected:
     XML::Document m_xmlDoc;
 #endif // XML_BACKEND
 
-    friend class Item;
+    friend class Node;
     friend class Leaf;
 };
 

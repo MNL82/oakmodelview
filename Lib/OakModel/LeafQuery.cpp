@@ -10,8 +10,8 @@
 
 #include "LeafQuery.h"
 
-#include "ItemQueryChildren.h"
-#include "ItemQueryParent.h"
+#include "NodeQueryChildren.h"
+#include "NodeQueryParent.h"
 
 #include "../ServiceFunctions/Assert.h"
 
@@ -27,9 +27,9 @@ LeafQuery::LeafQuery(const std::string &leafName)
 
 // =============================================================================
 // (public)
-LeafQuery::LeafQuery(ItemQueryUPtr itemQueryUPtr, const std::string &leafName)
+LeafQuery::LeafQuery(NodeQueryUPtr nodeQueryUPtr, const std::string &leafName)
 {
-    m_itemQueryPtr = std::move(itemQueryUPtr);
+    m_nodeQueryPtr = std::move(nodeQueryUPtr);
     m_leafName = leafName;
 }
 
@@ -56,20 +56,20 @@ LeafQuerySPtr LeafQuery::setValueName(const std::string &leafName)
 
 // =============================================================================
 // (public)
-int LeafQuery::count(const Item &item)
+int LeafQuery::count(const Node &node)
 {
-    if (!m_itemQueryPtr) { return 1; }
-    return m_itemQueryPtr->count(item);
+    if (!m_nodeQueryPtr) { return 1; }
+    return m_nodeQueryPtr->count(node);
 }
 
 // =============================================================================
 // (public)
-const Leaf &LeafQuery::leaf(const Item &item, int index) const
+const Leaf &LeafQuery::leaf(const Node &node, int index) const
 {
     ASSERT(!m_leafName.empty());
 
     int i = 0;
-    auto it = iterator(item);
+    auto it = iterator(node);
     while (it->next()) {
         if (i == index) { return it->leaf(); }
         i++;
@@ -79,48 +79,48 @@ const Leaf &LeafQuery::leaf(const Item &item, int index) const
 
 // =============================================================================
 // (public)
-void LeafQuery::getValueList(const Item &item, std::vector<UnionValue> &valueList) const
+void LeafQuery::getValueList(const Node &node, std::vector<UnionValue> &valueList) const
 {
     ASSERT(!m_leafName.empty());
 
-    if (m_itemQueryPtr) {
-        auto it = m_itemQueryPtr->iterator(item);
+    if (m_nodeQueryPtr) {
+        auto it = m_nodeQueryPtr->iterator(node);
         while (it->next()) {
-            auto tempItem = it->item();
-            if (tempItem.hasLeaf(m_leafName)) {
-                valueList.push_back(tempItem.leaf(m_leafName).value());
+            auto tempNode = it->node();
+            if (tempNode.hasLeaf(m_leafName)) {
+                valueList.push_back(tempNode.leaf(m_leafName).value());
             }
         }
     } else {
-        if (item.hasLeaf(m_leafName)) {
-            valueList.push_back(item.leaf(m_leafName).value());
+        if (node.hasLeaf(m_leafName)) {
+            valueList.push_back(node.leaf(m_leafName).value());
         }
     }
 }
 
 // =============================================================================
 // (public)
-std::vector<UnionValue> LeafQuery::valueList(const Item &item) const
+std::vector<UnionValue> LeafQuery::valueList(const Node &node) const
 {
     std::vector<UnionValue> valueList;
-    getValueList(item, valueList);
+    getValueList(node, valueList);
     return valueList;
 }
 
 // =============================================================================
 // (public)
-void LeafQuery::getValue(const Item &item, int index, UnionValue value) const
+void LeafQuery::getValue(const Node &node, int index, UnionValue value) const
 {
     ASSERT(!m_leafName.empty());
 
-    if (m_itemQueryPtr) {
+    if (m_nodeQueryPtr) {
         int i = 0;
-        auto it = m_itemQueryPtr->iterator(item);
+        auto it = m_nodeQueryPtr->iterator(node);
         while (it->next()) {
             if (i == index) {
-                auto tempItem = it->item();
-                if (tempItem.hasLeaf(m_leafName)) {
-                    item.leaf(m_leafName).getValue(value);
+                auto tempNode = it->node();
+                if (tempNode.hasLeaf(m_leafName)) {
+                    node.leaf(m_leafName).getValue(value);
                 }
                 return;
             }
@@ -129,32 +129,32 @@ void LeafQuery::getValue(const Item &item, int index, UnionValue value) const
         ASSERT(false);
     } else {
         ASSERT(index == 0);
-        if (item.hasLeaf(m_leafName)) {
-            item.leaf(m_leafName).getValue(value);
+        if (node.hasLeaf(m_leafName)) {
+            node.leaf(m_leafName).getValue(value);
         }
     }
 }
 
 // =============================================================================
 // (public)
-std::vector<Item> LeafQuery::toItemList(const Item &item)
+std::vector<Node> LeafQuery::toNodeList(const Node &node)
 {
-    std::vector<Item> itemList;
-    if (!m_itemQueryPtr) { return itemList; }
+    std::vector<Node> nodeList;
+    if (!m_nodeQueryPtr) { return nodeList; }
 
-    auto it = m_itemQueryPtr->iterator(item);
+    auto it = m_nodeQueryPtr->iterator(node);
     while (it->next()) {
-        itemList.push_back(it->item());
+        nodeList.push_back(it->node());
     }
 
-    return itemList;
+    return nodeList;
 }
 
 // =============================================================================
 // (public)
-const ItemQuery &LeafQuery::itemQuery() const
+const NodeQuery &LeafQuery::nodeQuery() const
 {
-    return *m_itemQueryPtr.get();
+    return *m_nodeQueryPtr.get();
 }
 
 // =============================================================================
@@ -168,36 +168,36 @@ LeafQuerySPtr LeafQuery::create(const std::string &valueName)
 
 // =============================================================================
 // (public static)
-LeafQuerySPtr LeafQuery::create(ItemQueryUPtr itemQueryUPtr, const std::string &leafName)
+LeafQuerySPtr LeafQuery::create(NodeQueryUPtr nodeQueryUPtr, const std::string &leafName)
 {
-    LeafQuerySPtr sPtr = LeafQuerySPtr(new LeafQuery(std::move(itemQueryUPtr), leafName));
+    LeafQuerySPtr sPtr = LeafQuerySPtr(new LeafQuery(std::move(nodeQueryUPtr), leafName));
     sPtr->m_thisWPtr = sPtr;
     return sPtr;
 }
 
 // =============================================================================
 // (public)
-LeafQuery::IteratorUPtr LeafQuery::iterator(const Item &refItem) const
+LeafQuery::IteratorUPtr LeafQuery::iterator(const Node &refNode) const
 {
-    IteratorUPtr it(new Iterator(*this, &refItem));
+    IteratorUPtr it(new Iterator(*this, &refNode));
     return it;
 }
 
 //// =============================================================================
 //// (public)
-//LeafQuery::IteratorUPtr LeafQuery::begin(const Item &refItem) const
+//LeafQuery::IteratorUPtr LeafQuery::begin(const Node &refNode) const
 //{
 //    IteratorUPtr it(new Iterator(*this));
-//    it->first(refItem);
+//    it->first(refNode);
 //    return it;
 //}
 
 //// =============================================================================
 //// (public)
-//LeafQuery::IteratorUPtr LeafQuery::rBegin(const Item &refItem) const
+//LeafQuery::IteratorUPtr LeafQuery::rBegin(const Node &refNode) const
 //{
 //    IteratorUPtr it(new Iterator(*this));
-//    it->last(refItem);
+//    it->last(refNode);
 //    return it;
 //}
 
@@ -207,11 +207,11 @@ LeafQuery::IteratorUPtr LeafQuery::iterator(const Item &refItem) const
 
 // =============================================================================
 // (public)
-LeafQuery::Iterator::Iterator(const LeafQuery &leafQuery, const Item *refItem)
-    : ItemQuery::Iterator(leafQuery.itemQuery())
+LeafQuery::Iterator::Iterator(const LeafQuery &leafQuery, const Node *refNode)
+    : NodeQuery::Iterator(leafQuery.nodeQuery())
 {
     m_leafQuery = &leafQuery;
-    m_refItem = refItem;
+    m_refNode = refNode;
 }
 
 // =============================================================================
@@ -219,7 +219,7 @@ LeafQuery::Iterator::Iterator(const LeafQuery &leafQuery, const Item *refItem)
 LeafQuery::Iterator::~Iterator()
 {
     m_leafQuery = nullptr;
-    ItemQuery::Iterator::~Iterator();
+    NodeQuery::Iterator::~Iterator();
 }
 
 // =============================================================================
@@ -234,7 +234,7 @@ void LeafQuery::Iterator::getValue(UnionValue value) const
 const Leaf &LeafQuery::Iterator::leaf() const
 {
     ASSERT(!m_leafQuery->m_leafName.empty());
-    return this->item().leaf(m_leafQuery->m_leafName);
+    return this->node().leaf(m_leafQuery->m_leafName);
 }
 
 } // namespace Oak::Model

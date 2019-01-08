@@ -13,7 +13,7 @@
 #include <QFrame>
 
 #include "OakModel.h"
-#include "ItemIndex.h"
+#include "NodeIndex.h"
 
 class QScrollArea;
 class QGridLayout;
@@ -22,7 +22,7 @@ class QVBoxLayout;
 
 namespace Oak::View::QtWidgets {
 
-class ListViewItem;
+class ListViewNode;
 
 // =============================================================================
 // Class definition
@@ -36,9 +36,9 @@ public:
     virtual ~ListView() override;
 
     void setOakModel(Model::OakModel* model);
-    void setRootItem(const Model::Item& item);
+    void setRootNode(const Model::Node& node);
 
-    void currentItemChanged();
+    void currentNodeChanged();
 
     int maxDepth() const;
     void setMaxDepth(int maxDepth);
@@ -46,29 +46,29 @@ public:
     void resizeEvent(QResizeEvent *event) override;
 
 protected:
-    ListViewItem * getViewItem(const Model::ItemIndex &itemIndex);
+    ListViewNode * getViewNode(const Model::NodeIndex &nodeIndex);
 
-    void createDragItems() const;
-    void clearDragItems() const;
+    void createDragNodes() const;
+    void clearDragNodes() const;
 
-    void onItemInserteAfter(const Model::ItemIndex &itemIndex);
-    void onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
-    void onItemMoveBefore(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
-    void onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
-    void onItemRemoveBefore(const Model::ItemIndex &itemIndex);
-    void onVariantLeafChangeAfter(const Model::ItemIndex &itemIndex);
-    void onKeyLeafChangeAfter(const Model::ItemIndex &itemIndex);
+    void onNodeInserteAfter(const Model::NodeIndex &nodeIndex);
+    void onNodeMoveAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex);
+    void onNodeMoveBefore(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex);
+    void onNodeCloneAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex);
+    void onNodeRemoveBefore(const Model::NodeIndex &nodeIndex);
+    void onVariantLeafChangeAfter(const Model::NodeIndex &nodeIndex);
+    void onKeyLeafChangeAfter(const Model::NodeIndex &nodeIndex);
 
 protected slots:
-    void adjustItemWidth();
-    void onCurrentItemViewDestoyed();
+    void adjustNodeWidth();
+    void onCurrentNodeViewDestoyed();
 
 protected:
     Model::OakModel * m_model = nullptr;
-    ListViewItem * m_rootItem = nullptr;
-    Model::ItemIndexUPtr m_rootItemIndex;
+    ListViewNode * m_rootNode = nullptr;
+    Model::NodeIndexUPtr m_rootNodeIndex;
 
-    ListViewItem * m_currentViewItem = nullptr;
+    ListViewNode * m_currentViewNode = nullptr;
 
     int m_maxDepth = 2;
 

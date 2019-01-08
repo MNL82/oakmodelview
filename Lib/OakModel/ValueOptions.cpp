@@ -40,7 +40,7 @@ bool ValueOptions::isUsed() const
 
 // =============================================================================
 // (public)
-bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Item *item, bool allowConversion, ConversionSPtr conversion) const
+bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Node *node, bool allowConversion, ConversionSPtr conversion) const
 {
     options.resize(m_options.size());
     if (!isUsed()) { return false; }
@@ -52,8 +52,8 @@ bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Item *item
     }
 
     std::vector<UnionValue>::const_iterator it;
-    if (item && m_query) {
-        std::vector<UnionValue> oList = m_query->valueList(*item);
+    if (node && m_query) {
+        std::vector<UnionValue> oList = m_query->valueList(*node);
         for(const UnionValue &option: oList)
         {
             it = std::find(options.begin(), options.end(), option);
@@ -63,8 +63,8 @@ bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Item *item
         }
     }
 
-    if (item && m_queryExcluded) {
-        std::vector<UnionValue> oList = m_queryExcluded->valueList(*item);
+    if (node && m_queryExcluded) {
+        std::vector<UnionValue> oList = m_queryExcluded->valueList(*node);
         for(const UnionValue &option: oList)
         {
             it = std::find(options.begin(), options.end(), option);

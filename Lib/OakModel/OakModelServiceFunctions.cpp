@@ -304,19 +304,19 @@ std::string toString(double value)
 
 // =============================================================================
 // (public)
-std::string toString(bool value, const std::vector<std::string> &itemList)
+std::string toString(bool value, const std::vector<std::string> &nodeList)
 {
-    return value ? itemList.back() : itemList.front();
+    return value ? nodeList.back() : nodeList.front();
 }
 
 // =============================================================================
 // (public)
-std::string toString(BoolState value, const std::vector<std::string> &itemList)
+std::string toString(BoolState value, const std::vector<std::string> &nodeList)
 {
     if (value == BoolState_True) {
-        return itemList.back();
+        return nodeList.back();
     } else if (value == BoolState_False) {
-        return itemList.front();
+        return nodeList.front();
     } else {
         return std::string();
     }
@@ -357,22 +357,22 @@ std::vector<std::string> toStringList(const std::vector<double> &values)
 
 // =============================================================================
 // (public)
-std::vector<std::string> toStringList(const std::vector<bool> &values, const std::vector<std::string> &itemList)
+std::vector<std::string> toStringList(const std::vector<bool> &values, const std::vector<std::string> &nodeList)
 {
     std::vector<std::string> valueList;
     for (bool value: values) {
-        valueList.push_back(toString(value, itemList));
+        valueList.push_back(toString(value, nodeList));
     }
     return valueList;
 }
 
 // =============================================================================
 // (public)
-std::vector<std::string> toStringList(const std::vector<BoolState> &values, const std::vector<std::string> &itemList)
+std::vector<std::string> toStringList(const std::vector<BoolState> &values, const std::vector<std::string> &nodeList)
 {
     std::vector<std::string> valueList;
     for (BoolState value: values) {
-        valueList.push_back(toString(value, itemList));
+        valueList.push_back(toString(value, nodeList));
     }
     return valueList;
 }
@@ -425,9 +425,9 @@ bool toBool(BoolState value)
 
 // =============================================================================
 // (public)
-bool toBool(const std::string &value, const std::vector<std::string> &itemList)
+bool toBool(const std::string &value, const std::vector<std::string> &nodeList)
 {
-    return toBool(toBoolState(value, itemList));
+    return toBool(toBoolState(value, nodeList));
 }
 
 // =============================================================================
@@ -439,11 +439,11 @@ BoolState toBoolState(bool value)
 
 // =============================================================================
 // (public)
-BoolState toBoolState(const std::string &value, const std::vector<std::string> &itemList)
+BoolState toBoolState(const std::string &value, const std::vector<std::string> &nodeList)
 {
-    if (value == itemList.back()) {
+    if (value == nodeList.back()) {
         return BoolState_True;
-    } else if (value == itemList.front()) {
+    } else if (value == nodeList.front()) {
         return BoolState_False;
     } else {
         return BoolState_Undefined;
@@ -463,11 +463,11 @@ std::vector<bool> toBoolList(const std::vector<BoolState> &values)
 
 // =============================================================================
 // (public)
-std::vector<bool> toBoolList(const std::vector<std::string> &values, const std::vector<std::string> &itemList)
+std::vector<bool> toBoolList(const std::vector<std::string> &values, const std::vector<std::string> &nodeList)
 {
     std::vector<bool> boolList;
     for (const std::string &value: values) {
-        boolList.push_back(toBool(value, itemList));
+        boolList.push_back(toBool(value, nodeList));
     }
     return boolList;
 }
@@ -485,11 +485,11 @@ std::vector<BoolState> toBoolStateList(const std::vector<bool> &values)
 
 // =============================================================================
 // (public)
-std::vector<BoolState> toBoolStateList(const std::vector<std::string> &values, const std::vector<std::string> &itemList)
+std::vector<BoolState> toBoolStateList(const std::vector<std::string> &values, const std::vector<std::string> &nodeList)
 {
     std::vector<BoolState> boolList;
     for (const std::string &value: values) {
-        boolList.push_back(toBoolState(value, itemList));
+        boolList.push_back(toBoolState(value, nodeList));
     }
     return boolList;
 }

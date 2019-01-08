@@ -12,8 +12,8 @@
 
 #include <QWidget>
 
-#include "Item.h"
-#include "ItemIndex.h"
+#include "Node.h"
+#include "NodeIndex.h"
 
 
 class QVBoxLayout;
@@ -30,26 +30,26 @@ class ListView;
 // Class definition
 // =============================================================================
 
-class ListViewItem : public QWidget
+class ListViewNode : public QWidget
 {
     Q_OBJECT
 public:
-    ListViewItem(ListView * listView, const Model::Item &item, int depth, ListViewItem *parent = nullptr);
+    ListViewNode(ListView * listView, const Model::Node &node, int depth, ListViewNode *parent = nullptr);
 
-    const Model::Item& item() const;
+    const Model::Node& node() const;
 
     int childCount() const;
-    int childViewItemIndex(const ListViewItem * childViewItem);
+    int childViewNodeIndex(const ListViewNode * childViewNode);
 
-    ListViewItem * child(const Model::Item &item);
-    ListViewItem * child(int index);
-    ListViewItem * child(const Model::ItemIndex &itemIndex);
+    ListViewNode * child(const Model::Node &node);
+    ListViewNode * child(int index);
+    ListViewNode * child(const Model::NodeIndex &nodeIndex);
 
-    ListViewItem * parent();
-    ListViewItem * nextSibling();
-    ListViewItem * previousSibling();
+    ListViewNode * parent();
+    ListViewNode * nextSibling();
+    ListViewNode * previousSibling();
 
-    int childIndex(ListViewItem* child) const;
+    int childIndex(ListViewNode* child) const;
 
     void giveFocus();
 
@@ -69,8 +69,8 @@ protected:
 
     void updateFixedheight();
 
-    void onItemInserteAfter(const Model::ItemIndex &itemIndex);
-    void onItemRemoveBefore(const Model::ItemIndex &itemIndex);
+    void onNodeInserteAfter(const Model::NodeIndex &nodeIndex);
+    void onNodeRemoveBefore(const Model::NodeIndex &nodeIndex);
 
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
@@ -87,15 +87,15 @@ protected:
     int m_childCount = 0;
 
     ListView * m_listView;
-    ListViewItem * m_parent;
-    Model::Item m_item;
+    ListViewNode * m_parent;
+    Model::Node m_node;
 
-    QFrame * m_itemFrame = nullptr;
+    QFrame * m_nodeFrame = nullptr;
     QLabel * m_label = nullptr;
     QPushButton * m_exspandbuttom = nullptr;
 
-    QWidget * m_childItemWidget = nullptr;
-    QVBoxLayout * m_childItemLayout = nullptr;
+    QWidget * m_childNodeWidget = nullptr;
+    QVBoxLayout * m_childNodeLayout = nullptr;
 
     QString m_styleSheetNormal;
     QString m_styleSheetCurrent;

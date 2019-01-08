@@ -30,8 +30,8 @@ SOURCES += \
     OakView.cpp \
     ListView.cpp \
     TableView.cpp \
-    ListViewItem.cpp \
-    ActionToolBar.cpp
+    ActionToolBar.cpp \
+    ListViewNode.cpp
 
 HEADERS += \
     ValueEditorHandler.h \
@@ -44,8 +44,8 @@ HEADERS += \
     OakView.h \
     ListView.h \
     TableView.h \
-    ListViewItem.h \
-    ActionToolBar.h
+    ActionToolBar.h \
+    ListViewNode.h
 
 
 CONFIG(debug, debug|release) {

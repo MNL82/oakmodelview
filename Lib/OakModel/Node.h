@@ -22,23 +22,23 @@ class OakModel;
 // =============================================================================
 // Class definition
 // =============================================================================
-class Item
+class Node
 {
 public:
-    Item();
-    Item(const NodeDef* def, const NodeData &nodeData, const OakModel* model = nullptr);
-    Item(const Item &copy);
-    Item(Item&& move);
+    Node();
+    Node(const NodeDef* def, const NodeData &nodeData, const OakModel* model = nullptr);
+    Node(const Node &copy);
+    Node(Node&& move);
 
-    Item& operator=(const Item& copy);
-    Item& operator=(Item&& move);
+    Node& operator=(const Node& copy);
+    Node& operator=(Node&& move);
 
-    bool operator==(const Item& _item) const;
-    bool operator!=(const Item& _item) const;
+    bool operator==(const Node& _node) const;
+    bool operator!=(const Node& _node) const;
 
     const Leaf& operator()(const std::string &name) const;
 
-    Item operator[](int index) const;
+    Node operator[](int index) const;
 
     bool isNull() const;
     bool isDefNull() const;
@@ -71,7 +71,7 @@ public:
     typedef std::vector<Leaf>::const_iterator LeafIterator;
 
     const LeafIterator leafBegin() const;
-    Item::LeafIterator leafBegin();
+    Node::LeafIterator leafBegin();
 
     const LeafIterator leafEnd() const;
     LeafIterator leafEnd();
@@ -82,47 +82,47 @@ public:
     bool hasVariants() const;
     const Leaf& variantLeaf() const;
 
-    // ************* Child Item access *************
+    // ************* Child Node access *************
     int childCount() const;
     int childCount(const std::string &name) const;
 
-    int childIndex(const Item &refChild) const;
-    int childIndex(const std::string &name, const Item &refChild) const;
+    int childIndex(const Node &refChild) const;
+    int childIndex(const std::string &name, const Node &refChild) const;
 
-    Item childAt(int index) const;
-    Item childAt(const std::string &name, int index) const;
+    Node childAt(int index) const;
+    Node childAt(const std::string &name, int index) const;
 
-    Item firstChild() const;
-    Item firstChild(const std::string &name) const;
+    Node firstChild() const;
+    Node firstChild(const std::string &name) const;
 
-    Item lastChild() const;
-    Item lastChild(const std::string &name) const;
+    Node lastChild() const;
+    Node lastChild(const std::string &name) const;
 
-    Item nextChild(const Item& refChild) const;
-    Item nextChild(const std::string &name, const Item& refChild) const;
+    Node nextChild(const Node& refChild) const;
+    Node nextChild(const std::string &name, const Node& refChild) const;
 
-    Item previousChild(const Item& refChild) const;
-    Item previousChild(const std::string &name, const Item& refChild) const;
+    Node previousChild(const Node& refChild) const;
+    Node previousChild(const std::string &name, const Node& refChild) const;
 
-    // ************* Parent Item access *************
-    Item parent() const;
+    // ************* Parent Node access *************
+    Node parent() const;
 
-    // ************* Child Item edit *************
+    // ************* Child Node edit *************
     bool canInsertChild(const std::string &name, int &index) const;
 
-    Item insertChild(const std::string &name, int &index) const;
+    Node insertChild(const std::string &name, int &index) const;
 
-    bool canCloneChild(int &index, const Item &cloneItem) const;
-    bool canCloneChild(const std::string &name, int &index, const Item &cloneItem) const;
+    bool canCloneChild(int &index, const Node &cloneNode) const;
+    bool canCloneChild(const std::string &name, int &index, const Node &cloneNode) const;
 
-    Item cloneChild(int &index, const Item &cloneItem) const;
-    Item cloneChild(const std::string &name, int &index, const Item &cloneItem) const;
+    Node cloneChild(int &index, const Node &cloneNode) const;
+    Node cloneChild(const std::string &name, int &index, const Node &cloneNode) const;
 
-    bool canMoveChild(int &index, const Item &moveItem) const;
-    bool canMoveChild(const std::string &name, int &index, const Item &moveItem) const;
+    bool canMoveChild(int &index, const Node &moveNode) const;
+    bool canMoveChild(const std::string &name, int &index, const Node &moveNode) const;
 
-    Item moveChild(int &index, const Item &moveItem) const;
-    Item moveChild(const std::string &name, int &index, const Item &moveItem) const;
+    Node moveChild(int &index, const Node &moveNode) const;
+    Node moveChild(const std::string &name, int &index, const Node &moveNode) const;
 
     bool canRemoveChild(int index) const;
     bool canRemoveChild(const std::string &name, int index) const;
@@ -138,7 +138,7 @@ public:
 protected:
     inline void initLeafList() const;
 
-    static void updateUniqueValues(const Item &item);
+    static void updateUniqueValues(const Node &node);
 
 protected:
     const NodeDef* m_def;

@@ -19,8 +19,8 @@ namespace Oak::View::QtWidgets {
 
 // =============================================================================
 // (public)
-ContainerEditorHandler::ContainerEditorHandler(const Model::Item &item, const std::string &name, QObject* parent)
-    : QObject(parent), m_item(item), m_name(name)
+ContainerEditorHandler::ContainerEditorHandler(const Model::Node &node, const std::string &name, QObject* parent)
+    : QObject(parent), m_node(node), m_name(name)
 {
 
 }
@@ -29,30 +29,30 @@ ContainerEditorHandler::ContainerEditorHandler(const Model::Item &item, const st
 // (public)
 QString ContainerEditorHandler::listDisplayName() const
 {
-    return QString::fromStdString(m_item.def()->childDef(m_name)->displayName(true));
+    return QString::fromStdString(m_node.def()->childDef(m_name)->displayName(true));
 }
 
 // =============================================================================
 // (public)
-int ContainerEditorHandler::itemCount() const
+int ContainerEditorHandler::nodeCount() const
 {
-    return m_item.childCount(m_name);
+    return m_node.childCount(m_name);
 }
 
 // =============================================================================
 // (public)
-QStringList ContainerEditorHandler::itemIdList() const
+QStringList ContainerEditorHandler::nodeIdList() const
 {
-    int count = m_item.childCount(m_name);
+    int count = m_node.childCount(m_name);
     QStringList nIdList;
     std::string keyValue;
     QString lName = listDisplayName();
     QString nodeId;
     for (int i = 0; i < count; i++)
     {
-        Model::Item cItem = m_item.childAt(m_name, i);
-        if (cItem.hasKey()) {
-            cItem.keyLeaf().value().get(keyValue);
+        Model::Node cNode = m_node.childAt(m_name, i);
+        if (cNode.hasKey()) {
+            cNode.keyLeaf().value().get(keyValue);
             nodeId = QString::fromStdString(keyValue);
         } else {
             nodeId = QString::number(i+1);
@@ -68,14 +68,14 @@ QStringList ContainerEditorHandler::itemIdList() const
 // (public)
 bool ContainerEditorHandler::canInsert(int index) const
 {
-    return m_item.canInsertChild(m_name, index);
+    return m_node.canInsertChild(m_name, index);
 }
 
 // =============================================================================
 // (public)
 bool ContainerEditorHandler::canRemove(int index) const
 {
-    return m_item.canRemoveChild(m_name, index);
+    return m_node.canRemoveChild(m_name, index);
 }
 
 // =============================================================================
@@ -90,9 +90,9 @@ QWidget* ContainerEditorHandler::getEditor()
 // (public)
 bool ContainerEditorHandler::setNode(const Model::NodeData& nodeData)
 {
-    if (!m_item.def()->validate(nodeData)) { return false; }
+    if (!m_node.def()->validate(nodeData)) { return false; }
 
-    m_item = Model::Item(m_item.def(), nodeData, m_item.model());
+    m_node = Model::Node(m_node.def(), nodeData, m_node.model());
 
     updateEditor();
 
@@ -155,14 +155,14 @@ void ContainerEditorHandler::onEditorDestroyed()
 // (protected slots)
 void ContainerEditorHandler::onEntryClicked(int index)
 {
-    m_item.childAt(m_name, index).setCurrent();
+    m_node.childAt(m_name, index).setCurrent();
 }
 
 // =============================================================================
 // (protected slots)
 void ContainerEditorHandler::onEntryInsert(int index)
 {
-    m_item.insertChild(m_name, index);
+    m_node.insertChild(m_name, index);
     updateEditor();
 }
 
@@ -170,7 +170,7 @@ void ContainerEditorHandler::onEntryInsert(int index)
 // (protected slots)
 void ContainerEditorHandler::onEntryRemove(int index)
 {
-    m_item.removeChild(m_name, index);
+    m_node.removeChild(m_name, index);
     updateEditor();
 }
 

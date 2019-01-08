@@ -7,19 +7,19 @@
 # See accompanying file LICENSE in the root folder.
 
 SOURCES += \
-    $$PWD/ItemQuery.cpp \
-    $$PWD/ItemQueryChildren.cpp \
-    $$PWD/ItemQueryParent.cpp \
     $$PWD/TableQuery.cpp \
     $$PWD/QueryBuilder.cpp \
-    $$PWD/ItemQuerySiblings.cpp \
-    $$PWD/LeafQuery.cpp
+    $$PWD/LeafQuery.cpp \
+    $$PWD/NodeQuery.cpp \
+    $$PWD/NodeQueryChildren.cpp \
+    $$PWD/NodeQuerySiblings.cpp \
+    $$PWD/NodeQueryParent.cpp
 
 HEADERS += \
-    $$PWD/ItemQuery.h \
-    $$PWD/ItemQueryChildren.h \
-    $$PWD/ItemQueryParent.h \
     $$PWD/TableQuery.h \
     $$PWD/QueryBuilder.h \
-    $$PWD/ItemQuerySiblings.h \
-    $$PWD/LeafQuery.h
+    $$PWD/LeafQuery.h \
+    $$PWD/NodeQuery.h \
+    $$PWD/NodeQueryChildren.h \
+    $$PWD/NodeQuerySiblings.h \
+    $$PWD/NodeQueryParent.h

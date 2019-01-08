@@ -20,7 +20,7 @@ namespace Oak::Model {
 
 class NodeDef;
 class LeafDef;
-class ItemIndex;
+class NodeIndex;
 
 class LeafQuery;
 typedef std::shared_ptr<LeafQuery> LeafQuerySPtr;
@@ -37,15 +37,15 @@ public:
     virtual void disconnect() override;
 
 protected:
-    void onItemInserteAfter(const ItemIndex& itemIndex);
-    void onItemMoveAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex);
-    void onItemMoveBefore(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex);
-    void onItemCloneAfter(const ItemIndex& sourceItemIndex, const ItemIndex& targetItemIndex);
+    void onNodeInserteAfter(const NodeIndex& nodeIndex);
+    void onNodeMoveAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex);
+    void onNodeMoveBefore(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex);
+    void onNodeCloneAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex);
 
-    void onItemRemoveBefore(const ItemIndex& itemIndex);
+    void onNodeRemoveBefore(const NodeIndex& nodeIndex);
 
-    void onLeafChangeBefore(const ItemIndex& itemIndex, const std::string &valueName);
-    void onLeafChangeAfter(const ItemIndex& itemIndex, const std::string &valueName);
+    void onLeafChangeBefore(const NodeIndex& nodeIndex, const std::string &valueName);
+    void onLeafChangeAfter(const NodeIndex& nodeIndex, const std::string &valueName);
 
 protected:
     const NodeDef *m_optionsNodeDef;

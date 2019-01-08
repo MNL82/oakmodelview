@@ -14,7 +14,7 @@
 #include <QDebug>
 
 #include "../ServiceFunctions/Trace.h"
-#include "ItemServiceFunctions.h"
+#include "NodeServiceFunctions.h"
 #include "OptionsObserver.h"
 
 
@@ -46,28 +46,28 @@ bool OakModel::isNull() const
 // (public)
 bool OakModel::isDefNull() const
 {
-    return m_rootItem.isDefNull();
+    return m_rootNode.isDefNull();
 }
 
 // =============================================================================
 // (public)
 bool OakModel::isNodeNull() const
 {
-    return m_rootItem.isNodeNull();
+    return m_rootNode.isNodeNull();
 }
 
 // =============================================================================
 // (public)
 bool OakModel::createNewRootDocument(NodeData::Type backendType, bool setAsCurrent)
 {
-    if (m_rootItem.isDefNull()) {
+    if (m_rootNode.isDefNull()) {
         return false;
     }
 
     if (backendType == NodeData::Type::XML) {
         m_xmlDoc.clear();
-        NodeData documentNode(m_xmlDoc.appendChild(m_rootItem.def()->tagName()));
-        m_rootItem.def()->onNodeInserted(documentNode);
+        NodeData documentNode(m_xmlDoc.appendChild(m_rootNode.def()->tagName()));
+        m_rootNode.def()->onNodeInserted(documentNode);
         setRootNodeXML(documentNode, setAsCurrent);
         return true;
     }
@@ -85,23 +85,23 @@ void OakModel::clearRoot()
 
 // =============================================================================
 // (public)
-const Item &OakModel::rootItem() const
+const Node &OakModel::rootNode() const
 {
-    return m_rootItem;
+    return m_rootNode;
 }
 
 // =============================================================================
 // (public)
 const std::string &OakModel::rootDefName() const
 {
-    return m_rootItem.def()->name();
+    return m_rootNode.def()->name();
 }
 
 // =============================================================================
 // (public)
 const NodeDef* OakModel::rootNodeDef() const
 {
-    return m_rootItem.def();
+    return m_rootNode.def();
 }
 
 // =============================================================================
@@ -116,27 +116,27 @@ void OakModel::setRootNodeDef(NodeDefSPtr def)
 // (public)
 void OakModel::setRootNodeDef(const NodeDef *def)
 {
-    if (m_rootItem.def() != def) {
-        NodeData currentNode = m_currentItem.nodeData();
-        // Clear the current item before it becomes invalid
-        setCurrentItem(Item());
+    if (m_rootNode.def() != def) {
+        NodeData currentNode = m_currentNode.nodeData();
+        // Clear the current node before it becomes invalid
+        setCurrentNode(Node());
 
         clearObservers();
 
         // Update the root definition and trigger event
-        m_rootItem = Item(def, m_rootItem.nodeData(), this);
+        m_rootNode = Node(def, m_rootNode.nodeData(), this);
 
         createObservers();
 
         notifier_rootNodeDefChanged.trigger();
 
-        // Set the current item to the same node as before
+        // Set the current node to the same node as before
         // Otherwise sent the root node
-        const NodeDef * currentItemDef = findNodeDef(currentNode);
-        if (currentItemDef) {
-            setCurrentItem(Item(currentItemDef, currentNode, this));
+        const NodeDef * currentNodeDef = findNodeDef(currentNode);
+        if (currentNodeDef) {
+            setCurrentNode(Node(currentNodeDef, currentNode, this));
         } else {
-            setCurrentItem(rootItem());
+            setCurrentNode(rootNode());
         }
     }
 }
@@ -145,49 +145,49 @@ void OakModel::setRootNodeDef(const NodeDef *def)
 // (public)
 void OakModel::setRootNode(const NodeData &nodeData)
 {
-    if (m_rootItem.nodeData() != nodeData) {
-        setCurrentItem(Item());
-        m_rootItem = Item(m_rootItem.def(), nodeData, this);
+    if (m_rootNode.nodeData() != nodeData) {
+        setCurrentNode(Node());
+        m_rootNode = Node(m_rootNode.def(), nodeData, this);
 
         notifier_rootNodeDataChanged.trigger();
-        setCurrentItem(rootItem());
+        setCurrentNode(rootNode());
     }
 }
 
 // =============================================================================
 // (public)
-void OakModel::setRootItem(const Item& item)
+void OakModel::setRootNode(const Node& node)
 {
-    setRootNodeDef(item.def());
-    setRootNode(item.nodeData());
+    setRootNodeDef(node.def());
+    setRootNode(node.nodeData());
 }
 
 // =============================================================================
 // (public)
-const Item& OakModel::currentItem() const
+const Node& OakModel::currentNode() const
 {
-    return m_currentItem;
+    return m_currentNode;
 }
 
 // =============================================================================
 // (public)
-const ItemIndex &OakModel::currentItemIndex() const
+const NodeIndex &OakModel::currentNodeIndex() const
 {
-    if (m_currentItemIndex) {
-        return *m_currentItemIndex.get();
+    if (m_currentNodeIndex) {
+        return *m_currentNodeIndex.get();
     } else {
-        return ItemIndex::emptyItemIndex();
+        return NodeIndex::emptyNodeIndex();
     }
 }
 
 // =============================================================================
 // (public)
-void OakModel::setCurrentItem(const Item &item, bool forceUpdate) const
+void OakModel::setCurrentNode(const Node &node, bool forceUpdate) const
 {
-    if (m_currentItem != item || forceUpdate) {
-        m_currentItem = item;
-        m_currentItemIndex = ItemIndex::create(m_currentItem);
-        notifier_currentItemChanged.trigger();
+    if (m_currentNode != node || forceUpdate) {
+        m_currentNode = node;
+        m_currentNodeIndex = NodeIndex::create(m_currentNode);
+        notifier_currentNodeChanged.trigger();
     }
 }
 
@@ -240,15 +240,15 @@ bool OakModel::saveRootNodeXML(const std::string& filePath)
 // (public)
 const NodeDef* OakModel::findNodeDef(const NodeData &nodeData) const
 {
-    if (m_rootItem.isDefNull() || nodeData.isNull()) { return nullptr; }
+    if (m_rootNode.isDefNull() || nodeData.isNull()) { return nullptr; }
 
     // Check if the root definition match
-    const NodeDef* def = m_rootItem.def()->baseRoot()->validVariant(nodeData, false, true);
+    const NodeDef* def = m_rootNode.def()->baseRoot()->validVariant(nodeData, false, true);
     if (def) { return def; }
 
     std::list<const NodeDef*> defList;
     std::vector<const NodeDef*> ignoreList;
-    defList.push_back(m_rootItem.def());
+    defList.push_back(m_rootNode.def());
 
     // Recursive check if any child definition match the node
     const NodeDef * currentDef;
@@ -277,190 +277,190 @@ const NodeDef* OakModel::findNodeDef(const NodeData &nodeData) const
 
 // =============================================================================
 // (public)
-Item OakModel::itemFromDataPtr(void *dPtr) const
+Node OakModel::nodeFromDataPtr(void *dPtr) const
 {
-    if (dPtr == nullptr) { return Item(); }
+    if (dPtr == nullptr) { return Node(); }
 
-    Oak::Model::NodeData node(dPtr, m_rootItem.nodeData().type());
+    Oak::Model::NodeData node(dPtr, m_rootNode.nodeData().type());
     const Oak::Model::NodeDef *nDef = findNodeDef(node);
-    return Oak::Model::Item(nDef, node, this);
+    return Oak::Model::Node(nDef, node, this);
 }
 
 // =============================================================================
 // (public)
-ItemIndexUPtr OakModel::convertItemIndexToNamed(const ItemIndex &itemIndex) const
+NodeIndexUPtr OakModel::convertNodeIndexToNamed(const NodeIndex &nodeIndex) const
 {
-    ASSERT(!m_rootItem.isNull());
-    ASSERT(!itemIndex.isNull());
+    ASSERT(!m_rootNode.isNull());
+    ASSERT(!nodeIndex.isNull());
 
-    ItemIndex * newRootItemIndex = nullptr;
-    const ItemIndex * sItemIndex = &itemIndex;
-    ItemIndex *tItemIndex;
-    Item item = m_rootItem;
+    NodeIndex * newRootNodeIndex = nullptr;
+    const NodeIndex * sNodeIndex = &nodeIndex;
+    NodeIndex *tNodeIndex;
+    Node node = m_rootNode;
 
     while (true) {
-        if (sItemIndex->isNamed(true)) { // The all of the remaining item index is already named
-            tItemIndex = new ItemIndex(*sItemIndex); // Copy the item index
+        if (sNodeIndex->isNamed(true)) { // The all of the remaining node index is already named
+            tNodeIndex = new NodeIndex(*sNodeIndex); // Copy the node index
             break;
         }
-        if (sItemIndex->isNamed()) {
-            item = sItemIndex->item(item);
-            tItemIndex = new ItemIndex(sItemIndex->name(), sItemIndex->index());
+        if (sNodeIndex->isNamed()) {
+            node = sNodeIndex->node(node);
+            tNodeIndex = new NodeIndex(sNodeIndex->name(), sNodeIndex->index());
         } else {
-            // Item index needs to be converted from unnamed to named
-            int index = sItemIndex->index();
-            Item childItem = sItemIndex->item(item, 1);
-            std::string name = childItem.def()->name();
-            if (item.def()->containerCount() > 1) {
+            // Node index needs to be converted from unnamed to named
+            int index = sNodeIndex->index();
+            Node childNode = sNodeIndex->node(node, 1);
+            std::string name = childNode.def()->name();
+            if (node.def()->containerCount() > 1) {
                 // Index needs to be updated if more than one container
-                index = item.childIndex(name, childItem);
+                index = node.childIndex(name, childNode);
             }
-            item = childItem;
-            tItemIndex = new ItemIndex(name, index);
+            node = childNode;
+            tNodeIndex = new NodeIndex(name, index);
         }
 
-        if (newRootItemIndex == nullptr) {
-            newRootItemIndex = tItemIndex;
+        if (newRootNodeIndex == nullptr) {
+            newRootNodeIndex = tNodeIndex;
         } else {
-            newRootItemIndex->lastItemIndex().setChildItemIndex(tItemIndex);
+            newRootNodeIndex->lastNodeIndex().setChildNodeIndex(tNodeIndex);
         }
 
-        if (!sItemIndex->hasChildItemIndex()) {
+        if (!sNodeIndex->hasChildNodeIndex()) {
             // Conversion is complete
             break;
         }
-        sItemIndex = &sItemIndex->childItemIndex();
+        sNodeIndex = &sNodeIndex->childNodeIndex();
     }
 
-    return ItemIndexUPtr(newRootItemIndex);
+    return NodeIndexUPtr(newRootNodeIndex);
 }
 
 // =============================================================================
 // (public)
-ItemIndexUPtr OakModel::convertItemIndexToUnnamed(const ItemIndex &itemIndex) const
+NodeIndexUPtr OakModel::convertNodeIndexToUnnamed(const NodeIndex &nodeIndex) const
 {
-    ASSERT(!m_rootItem.isNull());
-    ASSERT(!itemIndex.isNull());
+    ASSERT(!m_rootNode.isNull());
+    ASSERT(!nodeIndex.isNull());
 
-    ItemIndex * newRootItemIndex = nullptr;
-    const ItemIndex * sItemIndex = &itemIndex;
-    ItemIndex *tItemIndex;
-    Item item = m_rootItem;
+    NodeIndex * newRootNodeIndex = nullptr;
+    const NodeIndex * sNodeIndex = &nodeIndex;
+    NodeIndex *tNodeIndex;
+    Node node = m_rootNode;
 
     while (true) {
-        if (sItemIndex->isUnnamed(true)) { // The all of the remaining item index is already unnamed
-            tItemIndex = new ItemIndex(*sItemIndex); // Copy the item index
+        if (sNodeIndex->isUnnamed(true)) { // The all of the remaining node index is already unnamed
+            tNodeIndex = new NodeIndex(*sNodeIndex); // Copy the node index
             break;
         }
-        if (sItemIndex->isUnnamed()) {
-            item = sItemIndex->item(item);
-            tItemIndex = new ItemIndex(sItemIndex->index());
+        if (sNodeIndex->isUnnamed()) {
+            node = sNodeIndex->node(node);
+            tNodeIndex = new NodeIndex(sNodeIndex->index());
         } else {
-            // Item index needs to be converted from named to unnamed
-            int index = sItemIndex->index();
-            Item childItem = sItemIndex->item(item, 1);
-            if (item.def()->containerCount() > 1) {
+            // Node index needs to be converted from named to unnamed
+            int index = sNodeIndex->index();
+            Node childNode = sNodeIndex->node(node, 1);
+            if (node.def()->containerCount() > 1) {
                 // Index needs to be updated if more than one container
-                index = item.childIndex(childItem);
+                index = node.childIndex(childNode);
             }
-            item = childItem;
-            tItemIndex = new ItemIndex(index);
+            node = childNode;
+            tNodeIndex = new NodeIndex(index);
         }
 
-        if (newRootItemIndex == nullptr) {
-            newRootItemIndex = tItemIndex;
+        if (newRootNodeIndex == nullptr) {
+            newRootNodeIndex = tNodeIndex;
         } else {
-            newRootItemIndex->lastItemIndex().setChildItemIndex(tItemIndex);
+            newRootNodeIndex->lastNodeIndex().setChildNodeIndex(tNodeIndex);
         }
 
-        if (!sItemIndex->hasChildItemIndex()) {
+        if (!sNodeIndex->hasChildNodeIndex()) {
             // Conversion is complete
             break;
         }
-        sItemIndex = &sItemIndex->childItemIndex();
+        sNodeIndex = &sNodeIndex->childNodeIndex();
     }
 
-    return ItemIndexUPtr(newRootItemIndex);
+    return NodeIndexUPtr(newRootNodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onItemRemoveBefore(const ItemIndex &itemIndex) const
+void OakModel::onNodeRemoveBefore(const NodeIndex &nodeIndex) const
 {
-    notifier_itemRemoveBefore.trigger(itemIndex);
+    notifier_nodeRemoveBefore.trigger(nodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onItemInserteAfter(const ItemIndex &itemIndex) const
+void OakModel::onNodeInserteAfter(const NodeIndex &nodeIndex) const
 {
-    notifier_itemInserteAfter.trigger(itemIndex);
+    notifier_nodeInserteAfter.trigger(nodeIndex);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onItemMoveAfter(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex) const
+void OakModel::onNodeMoveAfter(const NodeIndex &sourceNodeIndex, const NodeIndex &targetNodeIndex) const
 {
-    notifier_itemMoveAfter.trigger(sourceItemIndex, targetItemIndex);
+    notifier_nodeMoveAfter.trigger(sourceNodeIndex, targetNodeIndex);
 
-    // Check if the current item have moved and update it if so
-    ItemIndexUPtr currentItemIndex = ItemIndex::create(m_currentItem);
-    if (!currentItemIndex) {
-        setCurrentItem(targetItemIndex.item(m_rootItem));
-    } else if (!m_currentItemIndex->equal(*currentItemIndex.get())) {
-        setCurrentItem(m_currentItem, true);
-    }
-}
-
-// =============================================================================
-// (protected)
-void OakModel::onItemMoveBefore(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex) const
-{
-    notifier_itemMoveBefore.trigger(sourceItemIndex, targetItemIndex);
-}
-
-// =============================================================================
-// (protected)
-void OakModel::onItemCloneAfter(const ItemIndex &sourceItemIndex, const ItemIndex &targetItemIndex) const
-{
-    notifier_itemCloneAfter.trigger(sourceItemIndex, targetItemIndex);
-
-    // Change the current item to the clone if it was the one cloned
-    if (m_currentItemIndex->equal(sourceItemIndex)) {
-        setCurrentItem(targetItemIndex.item(m_rootItem));
+    // Check if the current node have moved and update it if so
+    NodeIndexUPtr currentNodeIndex = NodeIndex::create(m_currentNode);
+    if (!currentNodeIndex) {
+        setCurrentNode(targetNodeIndex.node(m_rootNode));
+    } else if (!m_currentNodeIndex->equal(*currentNodeIndex.get())) {
+        setCurrentNode(m_currentNode, true);
     }
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
+void OakModel::onNodeMoveBefore(const NodeIndex &sourceNodeIndex, const NodeIndex &targetNodeIndex) const
+{
+    notifier_nodeMoveBefore.trigger(sourceNodeIndex, targetNodeIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onNodeCloneAfter(const NodeIndex &sourceNodeIndex, const NodeIndex &targetNodeIndex) const
+{
+    notifier_nodeCloneAfter.trigger(sourceNodeIndex, targetNodeIndex);
+
+    // Change the current node to the clone if it was the one cloned
+    if (m_currentNodeIndex->equal(sourceNodeIndex)) {
+        setCurrentNode(targetNodeIndex.node(m_rootNode));
+    }
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onNodeRemoveAfter(const NodeIndex &nodeIndex) const
 {
     // Notify the view
-    notifier_itemRemoveAfter.trigger(itemIndex);
+    notifier_nodeRemoveAfter.trigger(nodeIndex);
 
-    // Check if the current item is removed and update it if so
-    if (m_currentItem.isNull()) { return; }
+    // Check if the current node is removed and update it if so
+    if (m_currentNode.isNull()) { return; }
 
-    if (m_currentItemIndex->contains(itemIndex)) {
-        // The current item is no longer valid
-        if (m_currentItemIndex->depth() == itemIndex.depth()) {
-            // The deleted item is the current item
-            Item parentItem = itemIndex.itemParent(m_rootItem);
-            const ItemIndex &lastItemIndex = itemIndex.lastItemIndex();
-            int count = parentItem.childCount(lastItemIndex.name());
-            if (count > lastItemIndex.index()) {
-                // Set the next sibling as the current item
-                setCurrentItem(parentItem.childAt(lastItemIndex.name(), lastItemIndex.index()));
+    if (m_currentNodeIndex->contains(nodeIndex)) {
+        // The current node is no longer valid
+        if (m_currentNodeIndex->depth() == nodeIndex.depth()) {
+            // The deleted node is the current node
+            Node parentNode = nodeIndex.nodeParent(m_rootNode);
+            const NodeIndex &lastNodeIndex = nodeIndex.lastNodeIndex();
+            int count = parentNode.childCount(lastNodeIndex.name());
+            if (count > lastNodeIndex.index()) {
+                // Set the next sibling as the current node
+                setCurrentNode(parentNode.childAt(lastNodeIndex.name(), lastNodeIndex.index()));
             } else if (count > 0) {
-                // Set the previous sibling as the current item
-                setCurrentItem(parentItem.childAt(lastItemIndex.name(), count-1));
+                // Set the previous sibling as the current node
+                setCurrentNode(parentNode.childAt(lastNodeIndex.name(), count-1));
             } else {
-                // Set the parent item as the current item
-                setCurrentItem(parentItem);
+                // Set the parent node as the current node
+                setCurrentNode(parentNode);
             }
         } else {
-            // The parent item is removed so clear the current item
-            setCurrentItem(Item());
+            // The parent node is removed so clear the current node
+            setCurrentNode(Node());
         }
 
         return;
@@ -469,38 +469,38 @@ void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (protected)
-void OakModel::onLeafChangeBefore(const ItemIndex &itemIndex, const std::string &valueName) const
+void OakModel::onLeafChangeBefore(const NodeIndex &nodeIndex, const std::string &valueName) const
 {
-    notifier_leafChangeBefore.trigger(itemIndex, valueName);
+    notifier_leafChangeBefore.trigger(nodeIndex, valueName);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onLeafChangeAfter(const ItemIndex &itemIndex, const std::string &valueName) const
+void OakModel::onLeafChangeAfter(const NodeIndex &nodeIndex, const std::string &valueName) const
 {
-    notifier_leafChangeAfter.trigger(itemIndex, valueName);
+    notifier_leafChangeAfter.trigger(nodeIndex, valueName);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onVariantLeafChangeAfter(const ItemIndex &itemIndex) const
+void OakModel::onVariantLeafChangeAfter(const NodeIndex &nodeIndex) const
 {
-    Item item = itemIndex.item(m_rootItem);
-    const NodeDef* def = findNodeDef(item.nodeData());
+    Node node = nodeIndex.node(m_rootNode);
+    const NodeDef* def = findNodeDef(node.nodeData());
     ASSERT(def);
-    Item newItem(def, item.nodeData(), this);
+    Node newNode(def, node.nodeData(), this);
 
-    notifier_variantLeafChangeAfter.trigger(itemIndex);
-    if (item == m_currentItem) {
-        setCurrentItem(newItem);
+    notifier_variantLeafChangeAfter.trigger(nodeIndex);
+    if (node == m_currentNode) {
+        setCurrentNode(newNode);
     }
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onKeyLeafChangeAfter(const ItemIndex &itemIndex) const
+void OakModel::onKeyLeafChangeAfter(const NodeIndex &nodeIndex) const
 {
-    notifier_keyLeafChangeAfter.trigger(itemIndex);
+    notifier_keyLeafChangeAfter.trigger(nodeIndex);
 }
 
 // =============================================================================
@@ -513,7 +513,7 @@ void OakModel::createObservers()
     // Find all option queries in the node definition tree
     std::vector<NodeLeafDefPair> queryList;
     std::vector<NodeLeafDefPair> queryExcludedList;
-    findOptionQueries(m_rootItem.def(), queryList, queryExcludedList, true);
+    findOptionQueries(m_rootNode.def(), queryList, queryExcludedList, true);
     for (const auto & query: queryList)
     {
         m_observerList.push_back(std::make_unique<OptionsObserver>(this, query.first, query.second));

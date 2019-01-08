@@ -77,14 +77,14 @@ std::string trim_copy(std::string s);
 std::string toString(int value);
 std::string toString(const std::vector<int> &values, char seperator);
 std::string toString(double value);
-std::string toString(bool value, const std::vector<std::string> &itemList);
-std::string toString(BoolState value, const std::vector<std::string> &itemList);
+std::string toString(bool value, const std::vector<std::string> &nodeList);
+std::string toString(BoolState value, const std::vector<std::string> &nodeList);
 
 std::vector<std::string> toStringList(const std::vector<int> &values);
 std::vector<std::string> toStringList(const std::vector<std::vector<int>> &values, char seperator);
 std::vector<std::string> toStringList(const std::vector<double> &values);
 std::vector<std::string> toStringList(const std::vector<bool> &values);
-std::vector<std::string> toStringList(const std::vector<BoolState> &values, const std::vector<std::string> &itemList);
+std::vector<std::string> toStringList(const std::vector<BoolState> &values, const std::vector<std::string> &nodeList);
 
 // integer
 int toInteger(const std::string &str, bool *ok = nullptr);
@@ -99,14 +99,14 @@ std::vector<double> toDoubleList(const std::vector<std::string> &values);
 
 // bool
 bool toBool(BoolState value);
-bool toBool(const std::string &value, const std::vector<std::string> &itemList);
+bool toBool(const std::string &value, const std::vector<std::string> &nodeList);
 
 // enum BoolState
 BoolState toBoolState(bool value);
-BoolState toBoolState(const std::string &value, const std::vector<std::string> &itemList);
+BoolState toBoolState(const std::string &value, const std::vector<std::string> &nodeList);
 
 std::vector<BoolState> toBoolStateList(const std::vector<bool> &values);
-std::vector<BoolState> toBoolStateList(const std::vector<std::string> &values, const std::vector<std::string> &itemList);
+std::vector<BoolState> toBoolStateList(const std::vector<std::string> &values, const std::vector<std::string> &nodeList);
 
 // =============================================================================
 // Class definition

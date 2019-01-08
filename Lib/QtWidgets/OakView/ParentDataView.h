@@ -29,9 +29,9 @@ public:
 
     void setModel(Model::OakModel* model);
 
-    void currentItemChanged();
+    void currentNodeChanged();
 
-    void setCurrentItem(const Model::Item& item);
+    void setCurrentNode(const Model::Node& node);
 
 protected slots:
     void onButtonClicked();
@@ -39,7 +39,7 @@ protected slots:
 protected:
     Model::OakModel* m_model = nullptr;
 
-    QList<Model::Item> m_itemList;
+    QList<Model::Node> m_nodeList;
     QHBoxLayout* m_layout;
 };
 

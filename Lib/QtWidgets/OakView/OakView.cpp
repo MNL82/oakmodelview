@@ -35,7 +35,7 @@ OakView::OakView(QWidget* parent)
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     setDragDropMode(QAbstractItemView::DragDrop);
 
-    connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(onCurrentQItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(this, SIGNAL(currentNodeChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(onCurrentQNodeChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 }
 
 // =============================================================================
@@ -54,15 +54,15 @@ void OakView::setOakModel(Model::OakModel* model)
 
     if (m_model) {
         // Disconnect the old model
-        m_model->notifier_currentItemChanged.remove(this);
+        m_model->notifier_currentNodeChanged.remove(this);
         m_model->notifier_rootNodeDefChanged.remove(this);
         m_model->notifier_rootNodeDataChanged.remove(this);
         m_model->notifier_destroyed.remove(this);
 
-        m_model->notifier_itemInserteAfter.remove(this);
-        m_model->notifier_itemMoveAfter.remove(this);
-        m_model->notifier_itemCloneAfter.remove(this);
-        m_model->notifier_itemRemoveBefore.remove(this);
+        m_model->notifier_nodeInserteAfter.remove(this);
+        m_model->notifier_nodeMoveAfter.remove(this);
+        m_model->notifier_nodeCloneAfter.remove(this);
+        m_model->notifier_nodeRemoveBefore.remove(this);
 
         m_model->notifier_variantLeafChangeAfter.remove(this);
         m_model->notifier_keyLeafChangeAfter.remove(this);
@@ -77,15 +77,15 @@ void OakView::setOakModel(Model::OakModel* model)
 
     if (m_model) {
         // connect the new mobel
-        m_model->notifier_currentItemChanged.add(this, &OakView::currentItemChanged);
+        m_model->notifier_currentNodeChanged.add(this, &OakView::currentNodeChanged);
         m_model->notifier_rootNodeDefChanged.add(this, &OakView::updateTreeStructure);
         m_model->notifier_rootNodeDataChanged.add(this, &OakView::updateTreeStructure);
         m_model->notifier_destroyed.add(this, &OakView::modelDestroyed);
 
-        m_model->notifier_itemInserteAfter.add(this, &OakView::onItemInserteAfter);
-        m_model->notifier_itemMoveAfter.add(this, &OakView::onItemMoveAfter);
-        m_model->notifier_itemCloneAfter.add(this, &OakView::onItemCloneAfter);
-        m_model->notifier_itemRemoveBefore.add(this, &OakView::onItemRemoveBefore);
+        m_model->notifier_nodeInserteAfter.add(this, &OakView::onNodeInserteAfter);
+        m_model->notifier_nodeMoveAfter.add(this, &OakView::onNodeMoveAfter);
+        m_model->notifier_nodeCloneAfter.add(this, &OakView::onNodeCloneAfter);
+        m_model->notifier_nodeRemoveBefore.add(this, &OakView::onNodeRemoveBefore);
 
         m_model->notifier_variantLeafChangeAfter.add(this, &OakView::onVariantLeafChangeAfter);
         m_model->notifier_keyLeafChangeAfter.add(this, &OakView::onKeyLeafChangeAfter);
@@ -96,23 +96,23 @@ void OakView::setOakModel(Model::OakModel* model)
 
 // =============================================================================
 // (public)
-void OakView::currentItemChanged()
+void OakView::currentNodeChanged()
 {
-    if (m_model && (m_model->currentItem().isNodeNull() || !m_model->isNull())) {
-        setCurrentItem(m_model->currentItemIndex());
+    if (m_model && (m_model->currentNode().isNodeNull() || !m_model->isNull())) {
+        setCurrentNode(m_model->currentNodeIndex());
     }
 }
 
 // =============================================================================
 // (public)
-void OakView::setCurrentItem(const Model::ItemIndex& itemIndex)
+void OakView::setCurrentNode(const Model::NodeIndex& nodeIndex)
 {
-    if (itemIndex.isNull()) {
+    if (nodeIndex.isNull()) {
         clearSelection();
         return;
     }
 
-    QTreeWidgetItem * newQItem = widgetFromIndex(itemIndex);
+    QTreeWidgetItem * newQItem = widgetFromIndex(nodeIndex);
 
     // Check if the selection changed
     if (selectedItems().count() == 1 &&
@@ -137,24 +137,24 @@ void OakView::keyPressEvent(QKeyEvent *event)
                 qDebug() << "OakView::keyPressEvent() Data model is not valid";
                 return;
             }
-            QTreeWidgetItem * cItem = currentItem();
-            QTreeWidgetItem * parentItem = cItem->parent();
+            QTreeWidgetItem * cNode = currentItem();
+            QTreeWidgetItem * parentNode = cNode->parent();
 
-            if (parentItem) {
-                Model::ItemIndexUPtr itemIndex = indexFromWidget(cItem);
-                Model::Item currentItem = itemIndex->item(m_model->rootItem());
-                Model::Item parentItem = currentItem.parent();
-                int destIndex = itemIndex->lastItemIndex().index();
+            if (parentNode) {
+                Model::NodeIndexUPtr nodeIndex = indexFromWidget(cNode);
+                Model::Node currentNode = nodeIndex->node(m_model->rootNode());
+                Model::Node parentNode = currentNode.parent();
+                int destIndex = nodeIndex->lastNodeIndex().index();
                 if (event->modifiers() & Qt::ControlModifier) {
-                    // Clone Item
+                    // Clone Node
                     if (event->key() == Qt::Key_Down) { destIndex++; }
-                    parentItem.cloneChild(destIndex, currentItem);
+                    parentNode.cloneChild(destIndex, currentNode);
                 } else if (event->modifiers() & Qt::ShiftModifier) {
-                    // Move Item
+                    // Move Node
                     if (event->key() == Qt::Key_Up)   { destIndex--; }
                     if (event->key() == Qt::Key_Down) { destIndex++; }
-                    if (destIndex >= 0 && destIndex < parentItem.childCount()) {
-                        parentItem.moveChild(destIndex, currentItem);
+                    if (destIndex >= 0 && destIndex < parentNode.childCount()) {
+                        parentNode.moveChild(destIndex, currentNode);
                     }
                 }
             }
@@ -162,11 +162,11 @@ void OakView::keyPressEvent(QKeyEvent *event)
             return;
         }
     } else if (event->key() == Qt::Key_Delete) {
-        Model::ItemIndexUPtr itemIndex = indexFromWidget(currentItem());
-        if (!itemIndex) {
-            Model::Item parentItem = itemIndex->itemParent(m_model->rootItem());
-            if (!parentItem.isNull()) {
-                parentItem.removeChild(itemIndex->lastItemIndex().index());
+        Model::NodeIndexUPtr nodeIndex = indexFromWidget(currentItem());
+        if (!nodeIndex) {
+            Model::Node parentNode = nodeIndex->nodeParent(m_model->rootNode());
+            if (!parentNode.isNull()) {
+                parentNode.removeChild(nodeIndex->lastNodeIndex().index());
             }
         }
     }
@@ -190,10 +190,10 @@ void OakView::dragEnterEvent(QDragEnterEvent * event)
 //    QTreeWidget::dragEnterEvent(event);
     if (event->source() == this) {
         setDropIndicatorShown(true);
-        QTreeWidgetItem * qItem = currentItem();
-        if (qItem) {
-            m_dragItem = indexFromWidget(qItem)->item(m_model->rootItem());
-            if (!m_dragItem.isNull()) {
+        QTreeWidgetItem * qNode = currentItem();
+        if (qNode) {
+            m_dragNode = indexFromWidget(qNode)->node(m_model->rootNode());
+            if (!m_dragNode.isNull()) {
                 event->acceptProposedAction();
                 event->accept();
                 setState(DraggingState);
@@ -233,14 +233,14 @@ void OakView::dragMoveEvent(QDragMoveEvent * event)
         return;
     }
 
-    QTreeWidgetItem * qItem = itemAt(event->pos());
-    if (qItem == nullptr) {
+    QTreeWidgetItem * qNode = itemAt(event->pos());
+    if (qNode == nullptr) {
         event->ignore();
         return;
     }
 
-    Model::Item item = indexFromWidget(qItem)->item(m_model->rootItem());
-    if (item.isNull()) {
+    Model::Node node = indexFromWidget(qNode)->node(m_model->rootNode());
+    if (node.isNull()) {
         event->ignore();
         return;
     }
@@ -248,28 +248,28 @@ void OakView::dragMoveEvent(QDragMoveEvent * event)
     if (indiPos == OnItem) {
         int index = 0;
         if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-            if (item.canCloneChild(index, m_dragItem)) {
+            if (node.canCloneChild(index, m_dragNode)) {
                 event->setDropAction(Qt::CopyAction);
                 return;
             }
         } else {
-            if (item.canMoveChild(index, m_dragItem)) {
+            if (node.canMoveChild(index, m_dragNode)) {
                 event->setDropAction(Qt::MoveAction);
                 return;
             }
         }
         event->ignore();
-    } else { // AboveItem or BelowItem
-        Model::Item parentItem = item.parent();
-        if (parentItem.isNull()) { return; }
-        int index = parentItem.childIndex(item);
+    } else { // AboveNode or BelowNode
+        Model::Node parentNode = node.parent();
+        if (parentNode.isNull()) { return; }
+        int index = parentNode.childIndex(node);
         if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-            if (parentItem.canCloneChild(index, m_dragItem)) {
+            if (parentNode.canCloneChild(index, m_dragNode)) {
                 event->setDropAction(Qt::CopyAction);
                 return;
             }
         } else {
-            if (parentItem.canMoveChild(index, m_dragItem)) {
+            if (parentNode.canMoveChild(index, m_dragNode)) {
                 event->setDropAction(Qt::MoveAction);
                 return;
             }
@@ -289,31 +289,31 @@ void OakView::dropEvent(QDropEvent * event)
 
     if (event->source() != this) { return; }
 
-    QTreeWidgetItem * cItem = itemAt(event->pos());
-    if (cItem == nullptr) { return; }
+    QTreeWidgetItem * cNode = itemAt(event->pos());
+    if (cNode == nullptr) { return; }
     int newIndex;
-    Model::Item targetItem;
+    Model::Node targetNode;
 
-    Model::ItemIndexUPtr targetIndex = indexFromWidget(cItem);
+    Model::NodeIndexUPtr targetIndex = indexFromWidget(cNode);
 
     auto indiPos = dropIndicatorPosition();
     if (indiPos == OnItem) {
         newIndex = 0;
-        targetItem = targetIndex->item(m_model->rootItem());
+        targetNode = targetIndex->node(m_model->rootNode());
     } else {
-        newIndex = targetIndex->lastItemIndex().index();
-        targetItem = targetIndex->itemParent(m_model->rootItem());
+        newIndex = targetIndex->lastNodeIndex().index();
+        targetNode = targetIndex->nodeParent(m_model->rootNode());
         if (indiPos == BelowItem) {
             newIndex++;
         }
     }
 
-    if (targetItem.isNull()) { event->ignore(); }
+    if (targetNode.isNull()) { event->ignore(); }
 
     if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-        targetItem.cloneChild(newIndex, m_dragItem);
+        targetNode.cloneChild(newIndex, m_dragNode);
     } else {
-        targetItem.moveChild(newIndex, m_dragItem);
+        targetNode.moveChild(newIndex, m_dragNode);
     }
 
 
@@ -364,8 +364,8 @@ void OakView::modelDestroyed()
 void OakView::createTreeStructure()
 {
     if (m_model && !m_model->isNull()) {
-        addTopLevelItem(getTreeItems(m_model->rootItem()));
-        currentItemChanged();
+        addTopLevelItem(getTreeNodes(m_model->rootNode()));
+        currentNodeChanged();
     }
 }
 
@@ -388,44 +388,44 @@ void OakView::updateTreeStructure()
 
 // =============================================================================
 // (protected)
-QTreeWidgetItem * OakView::getTreeItems(const Model::Item &item, QTreeWidgetItem *parentItem)
+QTreeWidgetItem * OakView::getTreeNodes(const Model::Node &node, QTreeWidgetItem *parentNode)
 {
-    if (item.isNull()) { return nullptr; }
+    if (node.isNull()) { return nullptr; }
 
     std::vector<std::string> values;
-    values.push_back(item.def()->displayName());
-    if (item.def()->hasKey()) { values.push_back(item.keyLeaf().toString()); }
+    values.push_back(node.def()->displayName());
+    if (node.def()->hasKey()) { values.push_back(node.keyLeaf().toString()); }
 
-    QTreeWidgetItem * elementItem;
-    if (parentItem) { elementItem = new QTreeWidgetItem(parentItem, toQStringList(values)); }
-    else      { elementItem = new QTreeWidgetItem(toQStringList(values)); }
+    QTreeWidgetItem * elementNode;
+    if (parentNode) { elementNode = new QTreeWidgetItem(parentNode, toQStringList(values)); }
+    else      { elementNode = new QTreeWidgetItem(toQStringList(values)); }
 
-    Model::Item childNode = item.firstChild();
+    Model::Node childNode = node.firstChild();
     while (!childNode.isNull()) {
-        getTreeItems(childNode, elementItem);
-        childNode = item.nextChild(childNode);
+        getTreeNodes(childNode, elementNode);
+        childNode = node.nextChild(childNode);
     }
-    return elementItem;
+    return elementNode;
 }
 
 // =============================================================================
 // (protected)
-void OakView::onItemInserteAfter(const Model::ItemIndex &itemIndex)
+void OakView::onNodeInserteAfter(const Model::NodeIndex &nodeIndex)
 {
-    QTreeWidgetItem* parentWidget = widgetFromIndex(itemIndex, true);
-    int insertIndex = itemIndex.lastItemIndex().index();
-    parentWidget->insertChild(insertIndex, getTreeItems(itemIndex.item(m_model->rootItem())));
+    QTreeWidgetItem* parentWidget = widgetFromIndex(nodeIndex, true);
+    int insertIndex = nodeIndex.lastNodeIndex().index();
+    parentWidget->insertChild(insertIndex, getTreeNodes(nodeIndex.node(m_model->rootNode())));
 }
 
 // =============================================================================
 // (protected)
-void OakView::onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void OakView::onNodeMoveAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    QTreeWidgetItem* sourceParentWidget = widgetFromIndex(sourceItemIndex, true);
-    QTreeWidgetItem* targetParentWidget = widgetFromIndex(targetItemIndex, true);
+    QTreeWidgetItem* sourceParentWidget = widgetFromIndex(sourceNodeIndex, true);
+    QTreeWidgetItem* targetParentWidget = widgetFromIndex(targetNodeIndex, true);
 
-    int sourceIndex = sourceItemIndex.lastItemIndex().index();
-    int targetIndex = targetItemIndex.lastItemIndex().index();
+    int sourceIndex = sourceNodeIndex.lastNodeIndex().index();
+    int targetIndex = targetNodeIndex.lastNodeIndex().index();
 
     blockSignals(true);
     targetParentWidget->insertChild(targetIndex, sourceParentWidget->takeChild(sourceIndex));
@@ -434,12 +434,12 @@ void OakView::onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Mod
 
 // =============================================================================
 // (protected)
-void OakView::onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex)
+void OakView::onNodeCloneAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex)
 {
-    QTreeWidgetItem* sourceWidget = widgetFromIndex(sourceItemIndex);
-    QTreeWidgetItem* targetParentWidget = widgetFromIndex(targetItemIndex, true);
+    QTreeWidgetItem* sourceWidget = widgetFromIndex(sourceNodeIndex);
+    QTreeWidgetItem* targetParentWidget = widgetFromIndex(targetNodeIndex, true);
 
-    int targetIndex = targetItemIndex.lastItemIndex().index();
+    int targetIndex = targetNodeIndex.lastNodeIndex().index();
 
     blockSignals(true);
     targetParentWidget->insertChild(targetIndex, sourceWidget->clone());
@@ -448,9 +448,9 @@ void OakView::onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Mo
 
 // =============================================================================
 // (protected)
-void OakView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
+void OakView::onNodeRemoveBefore(const Model::NodeIndex &nodeIndex)
 {
-    QTreeWidgetItem* removeWidget = widgetFromIndex(itemIndex);
+    QTreeWidgetItem* removeWidget = widgetFromIndex(nodeIndex);
 
     blockSignals(true);
     removeWidget->parent()->removeChild(removeWidget);
@@ -459,72 +459,72 @@ void OakView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void OakView::onVariantLeafChangeAfter(const Model::ItemIndex &itemIndex)
+void OakView::onVariantLeafChangeAfter(const Model::NodeIndex &nodeIndex)
 {
-    // Child items can change when the variant definition change
-    QTreeWidgetItem* qItem = widgetFromIndex(itemIndex);
-    QTreeWidgetItem* qParentItem = qItem->parent();
-    int index = qParentItem->indexOfChild(qItem);
+    // Child nodes can change when the variant definition change
+    QTreeWidgetItem* qNode = widgetFromIndex(nodeIndex);
+    QTreeWidgetItem* qParentNode = qNode->parent();
+    int index = qParentNode->indexOfChild(qNode);
     blockSignals(true);
-    qParentItem->insertChild(index, getTreeItems(itemIndex.item(m_model->rootItem())));
-    qParentItem->removeChild(qItem);
+    qParentNode->insertChild(index, getTreeNodes(nodeIndex.node(m_model->rootNode())));
+    qParentNode->removeChild(qNode);
     blockSignals(false);
 }
 
 // =============================================================================
 // (protected)
-void OakView::onKeyLeafChangeAfter(const Model::ItemIndex &itemIndex)
+void OakView::onKeyLeafChangeAfter(const Model::NodeIndex &nodeIndex)
 {
-    QTreeWidgetItem* qItem = widgetFromIndex(itemIndex);
-    Model::Item item = itemIndex.item(m_model->rootItem());
-    qItem->setText(1, QString::fromStdString(item.keyLeaf().toString()));
+    QTreeWidgetItem* qNode = widgetFromIndex(nodeIndex);
+    Model::Node node = nodeIndex.node(m_model->rootNode());
+    qNode->setText(1, QString::fromStdString(node.keyLeaf().toString()));
 }
 
 // =============================================================================
 // (protected)
-QTreeWidgetItem *OakView::widgetFromIndex(const Model::ItemIndex &itemIndex, bool parentWidget)
+QTreeWidgetItem *OakView::widgetFromIndex(const Model::NodeIndex &nodeIndex, bool parentWidget)
 {
     QTreeWidgetItem * currentWidget = this->topLevelItem(0);
-    Model::ItemIndexUPtr unnamedIndex = m_model->convertItemIndexToUnnamed(itemIndex);
-    const Model::ItemIndex *currentIndex = unnamedIndex.get();
+    Model::NodeIndexUPtr unnamedIndex = m_model->convertNodeIndexToUnnamed(nodeIndex);
+    const Model::NodeIndex *currentIndex = unnamedIndex.get();
     while (!currentIndex->isNull()) {
-        if (parentWidget && !currentIndex->hasChildItemIndex()) { break; } // Return the next to last widget
+        if (parentWidget && !currentIndex->hasChildNodeIndex()) { break; } // Return the next to last widget
         currentWidget = currentWidget->child(currentIndex->index());
-        currentIndex = &currentIndex->childItemIndex();
+        currentIndex = &currentIndex->childNodeIndex();
     }
     return currentWidget;
 }
 
 // =============================================================================
 // (protected)
-Model::ItemIndexUPtr OakView::indexFromWidget(QTreeWidgetItem *itemWidget)
+Model::NodeIndexUPtr OakView::indexFromWidget(QTreeWidgetItem *nodeWidget)
 {
-    if (itemWidget == nullptr) { return Model::ItemIndexUPtr(); }
-    QTreeWidgetItem * currentWidget = itemWidget;
+    if (nodeWidget == nullptr) { return Model::NodeIndexUPtr(); }
+    QTreeWidgetItem * currentWidget = nodeWidget;
     QTreeWidgetItem * parentWidget = currentWidget->parent();
 
-    Model::ItemIndex *currentIndex = nullptr;
-    Model::ItemIndex *parentIndex = nullptr;
+    Model::NodeIndex *currentIndex = nullptr;
+    Model::NodeIndex *parentIndex = nullptr;
     while(parentWidget) {
-        // Create next item index
-        parentIndex = new Model::ItemIndex(parentWidget->indexOfChild(currentWidget));
-        parentIndex->setChildItemIndex(currentIndex);
+        // Create next node index
+        parentIndex = new Model::NodeIndex(parentWidget->indexOfChild(currentWidget));
+        parentIndex->setChildNodeIndex(currentIndex);
 
         // Prepare for next iteration
         currentIndex = parentIndex;
         currentWidget = parentWidget;
         parentWidget = currentWidget->parent();
     }
-    return Model::ItemIndexUPtr(currentIndex);
+    return Model::NodeIndexUPtr(currentIndex);
 }
 
 // =============================================================================
 // (protected slots)
-void OakView::onCurrentQItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void OakView::onCurrentQNodeChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     Q_UNUSED(previous);
     if (current) {
-        m_model->setCurrentItem(indexFromWidget(current)->item(m_model->rootItem()));
+        m_model->setCurrentNode(indexFromWidget(current)->node(m_model->rootNode()));
     }
 
 }

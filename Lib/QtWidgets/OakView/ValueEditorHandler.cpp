@@ -60,7 +60,7 @@ QWidget* ValueEditorHandler::getEditor()
 // (public)
 void ValueEditorHandler::setNode(const Model::NodeData& nodeData)
 {
-    m_leaf = Model::Leaf(m_leaf.def(), nodeData, m_leaf.item());
+    m_leaf = Model::Leaf(m_leaf.def(), nodeData, m_leaf.node());
 
     updateLabelValue();
     updateEditorValue();
@@ -272,10 +272,10 @@ void ValueEditorHandler::setValue(const Model::UnionRef &value)
     // TODO: Add undo/redo stuff here...
 
     if (m_leaf.isNull() || !m_leaf.setValue(value)) {
-        // ItemValue is not changed
+        // NodeValue is not changed
         updateEditorValue();
     } else {
-        // ItemValue has been changed
+        // NodeValue has been changed
         updateLabelValue();
     }
 }

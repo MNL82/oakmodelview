@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ItemQuery.h"
+#include "NodeQuery.h"
 #include "QueryBuilder.h"
 
 #include <utility>
@@ -18,28 +18,28 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-ItemQuery::ItemQuery()
+NodeQuery::NodeQuery()
 {
 
 }
 
 // =============================================================================
 // (public)
-ItemQuery::ItemQuery(const ItemQuery& copy)
+NodeQuery::NodeQuery(const NodeQuery& copy)
 {
     m_childQueryUPtr = QueryBuilder::duplicate(copy.m_childQueryUPtr);
 }
 
 // =============================================================================
 // (public)
-ItemQuery::ItemQuery(ItemQuery&& move)
+NodeQuery::NodeQuery(NodeQuery&& move)
 {
     m_childQueryUPtr = std::move(move.m_childQueryUPtr);
 }
 
 // =============================================================================
 // (public)
-ItemQuery::~ItemQuery()
+NodeQuery::~NodeQuery()
 {
     std::vector<std::string>::iterator it;
     std::vector<std::string> list;
@@ -47,9 +47,9 @@ ItemQuery::~ItemQuery()
 
 // =============================================================================
 // (public)
-int ItemQuery::count(const Item &refItem)
+int NodeQuery::count(const Node &refNode)
 {
-    auto it = iterator(refItem);
+    auto it = iterator(refNode);
     int count = 0;
     while (it->next()) {
         count++;
@@ -59,38 +59,38 @@ int ItemQuery::count(const Item &refItem)
 
 // =============================================================================
 // (public)
-std::vector<Item> ItemQuery::itemList(const Item &refItem)
+std::vector<Node> NodeQuery::nodeList(const Node &refNode)
 {
-    std::vector<Item> itemList;
-    if (!m_childQueryUPtr) { return itemList; }
+    std::vector<Node> nodeList;
+    if (!m_childQueryUPtr) { return nodeList; }
 
-    auto it = iterator(refItem);
+    auto it = iterator(refNode);
     while (it->next()) {
-        itemList.push_back(it->item());
+        nodeList.push_back(it->node());
     }
 
-    return itemList;
+    return nodeList;
 }
 
 // =============================================================================
 // (public)
-Item ItemQuery::previous(const Item &refItem, const Item &cItem) const
+Node NodeQuery::previous(const Node &refNode, const Node &cNode) const
 {
-    UNUSED(refItem);
-    UNUSED(cItem);
-    return Item();
+    UNUSED(refNode);
+    UNUSED(cNode);
+    return Node();
 }
 
 // =============================================================================
 // (public)
-const ItemQuery *ItemQuery::childQuery() const
+const NodeQuery *NodeQuery::childQuery() const
 {
     return m_childQueryUPtr.get();
 }
 
 // =============================================================================
 // (public)
-const NodeDef *ItemQuery::nodeDef(const NodeDef *nDef) const
+const NodeDef *NodeQuery::nodeDef(const NodeDef *nDef) const
 {
     if (hasChildQuery()) {
         return m_childQueryUPtr->nodeDef(_nodeDef(nDef));
@@ -100,162 +100,162 @@ const NodeDef *ItemQuery::nodeDef(const NodeDef *nDef) const
 
 // =============================================================================
 // (public)
-bool ItemQuery::canInsertItem(const Item &refItem, int &index) const
+bool NodeQuery::canInsertNode(const Node &refNode, int &index) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            if (m_childQueryUPtr->canInsertItem(item, index)) {
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            if (m_childQueryUPtr->canInsertNode(node, index)) {
                 return true;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
         return false;
     } else {
-        // Default ItemQuery can not insert items
+        // Default NodeQuery can not insert nodes
         return false;
     }
 }
 
 // =============================================================================
 // (public)
-Item ItemQuery::insertItem(const Item &refItem, int index) const
+Node NodeQuery::insertNode(const Node &refNode, int index) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            Item newItem = m_childQueryUPtr->insertItem(item, index);
-            if (!newItem.isNull()) {
-                return newItem;
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            Node newNode = m_childQueryUPtr->insertNode(node, index);
+            if (!newNode.isNull()) {
+                return newNode;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
-        return Item();
+        return Node();
     } else {
-        // Default ItemQuery can not insert items
-        return Item();
+        // Default NodeQuery can not insert nodes
+        return Node();
     }
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::canCloneItem(const Item &refItem, int &index, const Item &cloneItem) const
+bool NodeQuery::canCloneNode(const Node &refNode, int &index, const Node &cloneNode) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            if (m_childQueryUPtr->canCloneItem(item, index, cloneItem)) {
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            if (m_childQueryUPtr->canCloneNode(node, index, cloneNode)) {
                 return true;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
         return false;
     } else {
-        // Default ItemQuery can not clone items
+        // Default NodeQuery can not clone nodes
         return false;
     }
 }
 
 // =============================================================================
 // (public)
-Item ItemQuery::cloneItem(const Item &refItem, int &index, const Item &cloneItem) const
+Node NodeQuery::cloneNode(const Node &refNode, int &index, const Node &cloneNode) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            Item newItem = m_childQueryUPtr->cloneItem(item, index, cloneItem);
-            if (!newItem.isNull()) {
-                return newItem;
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            Node newNode = m_childQueryUPtr->cloneNode(node, index, cloneNode);
+            if (!newNode.isNull()) {
+                return newNode;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
-        return Item();
+        return Node();
     } else {
-        // Default ItemQuery can not clone items
-        return Item();
+        // Default NodeQuery can not clone nodes
+        return Node();
     }
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::canMoveItem(const Item &refItem, int &index, const Item &moveItem) const
+bool NodeQuery::canMoveNode(const Node &refNode, int &index, const Node &moveNode) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            if (m_childQueryUPtr->canMoveItem(item, index, moveItem)) {
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            if (m_childQueryUPtr->canMoveNode(node, index, moveNode)) {
                 return true;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
         return false;
     } else {
-        // Default ItemQuery can not move items
+        // Default NodeQuery can not move nodes
         return false;
     }
 }
 
 // =============================================================================
 // (public)
-Item ItemQuery::moveItem(const Item &refItem, int &index, const Item &moveItem) const
+Node NodeQuery::moveNode(const Node &refNode, int &index, const Node &moveNode) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            Item newItem = m_childQueryUPtr->moveItem(item, index, moveItem);
-            if (!newItem.isNull()) {
-                return newItem;
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            Node newNode = m_childQueryUPtr->moveNode(node, index, moveNode);
+            if (!newNode.isNull()) {
+                return newNode;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
-        return Item();
+        return Node();
     } else {
-        // Default ItemQuery can not move items
-        return Item();
+        // Default NodeQuery can not move nodes
+        return Node();
     }
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::canRemoveItem(const Item &refItem, int index) const
+bool NodeQuery::canRemoveNode(const Node &refNode, int index) const
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            if (m_childQueryUPtr->canRemoveItem(item, index)) {
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            if (m_childQueryUPtr->canRemoveNode(node, index)) {
                 return true;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
         return false;
     } else {
-        // Default ItemQuery can not remove items
+        // Default NodeQuery can not remove nodes
         return false;
     }
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::removeItem(Item &refItem, int index)
+bool NodeQuery::removeNode(Node &refNode, int index)
 {
     if (m_childQueryUPtr) {
-        Item item = first(refItem);
-        while (!item.isNull()) {
-            if (m_childQueryUPtr->removeItem(item, index)) {
+        Node node = first(refNode);
+        while (!node.isNull()) {
+            if (m_childQueryUPtr->removeNode(node, index)) {
                 return true;
             }
-            item = next(refItem, item);
+            node = next(refNode, node);
         }
         return false;
     } else {
-        // Default ItemQuery can not remove items
+        // Default NodeQuery can not remove nodes
         return false;
     }
 }
 
 // =============================================================================
 // (protected)
-void ItemQuery::addChildQuery(ItemQueryUPtr query)
+void NodeQuery::addChildQuery(NodeQueryUPtr query)
 {
     if (m_childQueryUPtr) {
         m_childQueryUPtr->addChildQuery(std::move(query));
@@ -266,46 +266,46 @@ void ItemQuery::addChildQuery(ItemQueryUPtr query)
 
 // =============================================================================
 // (protected)
-bool ItemQuery::hasChildQuery() const
+bool NodeQuery::hasChildQuery() const
 {
     return static_cast<bool>(m_childQueryUPtr);
 }
 
 // =============================================================================
 // (protected)
-Item ItemQuery::first(const Item &refItem) const
+Node NodeQuery::first(const Node &refNode) const
 {
-    return refItem;
+    return refNode;
 }
 
 // =============================================================================
 // (protected)
-Item ItemQuery::last(const Item &refItem) const
+Node NodeQuery::last(const Node &refNode) const
 {
-    return refItem;
+    return refNode;
 }
 
 // =============================================================================
 // (protected)
-Item ItemQuery::next(const Item &refItem, const Item &cItem) const
+Node NodeQuery::next(const Node &refNode, const Node &cNode) const
 {
-    UNUSED(refItem);
-    UNUSED(cItem);
-    return Item();
+    UNUSED(refNode);
+    UNUSED(cNode);
+    return Node();
 }
 
 // =============================================================================
 // (protected)
-const NodeDef *ItemQuery::_nodeDef(const NodeDef *nDef) const
+const NodeDef *NodeQuery::_nodeDef(const NodeDef *nDef) const
 {
     return nDef;
 }
 
 // =============================================================================
 // (public)
-ItemQuery::IteratorUPtr ItemQuery::iterator(const Item &refItem) const
+NodeQuery::IteratorUPtr NodeQuery::iterator(const Node &refNode) const
 {
-    IteratorUPtr it(new Iterator(*this, &refItem));
+    IteratorUPtr it(new Iterator(*this, &refNode));
     return it;
 }
 
@@ -315,10 +315,10 @@ ItemQuery::IteratorUPtr ItemQuery::iterator(const Item &refItem) const
 
 // =============================================================================
 // (public)
-ItemQuery::Iterator::Iterator(const ItemQuery &query, const Item *refItem)
+NodeQuery::Iterator::Iterator(const NodeQuery &query, const Node *refNode)
 {
     m_query = &query;
-    m_refItem = refItem;
+    m_refNode = refNode;
     if (m_query && m_query->hasChildQuery()) {
         m_childIterator = new Iterator(*m_query->m_childQueryUPtr.get());
     } else {
@@ -328,7 +328,7 @@ ItemQuery::Iterator::Iterator(const ItemQuery &query, const Item *refItem)
 
 // =============================================================================
 // (public)
-ItemQuery::Iterator::~Iterator()
+NodeQuery::Iterator::~Iterator()
 {
     if (m_childIterator) {
         delete m_childIterator;
@@ -338,25 +338,25 @@ ItemQuery::Iterator::~Iterator()
 
 // =============================================================================
 // (public)
-bool ItemQuery::Iterator::isValid() const
+bool NodeQuery::Iterator::isValid() const
 {
-    return !m_currentItem.isNull();
+    return !m_currentNode.isNull();
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::Iterator::next()
+bool NodeQuery::Iterator::next()
 {
-    if (m_currentItem.isNull()) {
-        return first(*m_refItem);
+    if (m_currentNode.isNull()) {
+        return first(*m_refNode);
     }
 
     if (!m_childIterator) { // No child query
         // Move next
         if (m_query) {
-            m_currentItem = m_query->next(*m_refItem, m_currentItem);
+            m_currentNode = m_query->next(*m_refNode, m_currentNode);
         } else {
-            m_currentItem.clear();
+            m_currentNode.clear();
         }
         return isValid();
     }
@@ -367,15 +367,15 @@ bool ItemQuery::Iterator::next()
     while (!m_childIterator->isValid()) { // Child query not valid
         // Move next
         if (!m_query) { // Query is empty
-            m_currentItem.clear();
+            m_currentNode.clear();
             return isValid();
         }
-        m_currentItem = m_query->next(*m_refItem, m_currentItem);
-        if (m_currentItem.isNull()) { // End of Query
+        m_currentNode = m_query->next(*m_refNode, m_currentNode);
+        if (m_currentNode.isNull()) { // End of Query
             return isValid();
         } else {
             // Initialize child query
-            m_childIterator->first(m_currentItem);
+            m_childIterator->first(m_currentNode);
         }
     }
     return isValid();
@@ -383,18 +383,18 @@ bool ItemQuery::Iterator::next()
 
 // =============================================================================
 // (public)
-bool ItemQuery::Iterator::previous()
+bool NodeQuery::Iterator::previous()
 {
-    if (m_currentItem.isNull()) {
-        return last(*m_refItem);
+    if (m_currentNode.isNull()) {
+        return last(*m_refNode);
     }
 
     if (!m_childIterator) { // No child query
         // Move previous
         if (m_query) {
-            m_currentItem = m_query->previous(*m_refItem, m_currentItem);
+            m_currentNode = m_query->previous(*m_refNode, m_currentNode);
         } else {
-            m_currentItem.clear();
+            m_currentNode.clear();
         }
         return isValid();
     }
@@ -405,15 +405,15 @@ bool ItemQuery::Iterator::previous()
     while (!m_childIterator->isValid()) { // Child query not valid
         // Move previous
         if (m_query) { // Query is empty
-            m_currentItem.clear();
+            m_currentNode.clear();
             return isValid();
         }
-        m_currentItem = m_query->previous(*m_refItem, m_currentItem);
-        if (m_currentItem.isNull()) { // End of Query
+        m_currentNode = m_query->previous(*m_refNode, m_currentNode);
+        if (m_currentNode.isNull()) { // End of Query
             return isValid();
         } else {
             // Initialize child query
-            m_childIterator->last(m_currentItem);
+            m_childIterator->last(m_currentNode);
         }
     }
     return isValid();
@@ -421,56 +421,56 @@ bool ItemQuery::Iterator::previous()
 
 // =============================================================================
 // (public)
-const Item &ItemQuery::Iterator::item() const
+const Node &NodeQuery::Iterator::node() const
 {
     if (m_childIterator) {
-        return m_childIterator->item();
+        return m_childIterator->node();
     }
-    return m_currentItem;
+    return m_currentNode;
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::Iterator::first(const Item &refItem)
+bool NodeQuery::Iterator::first(const Node &refNode)
 {
-    m_refItem = &refItem;
+    m_refNode = &refNode;
 
     if (m_query) {
-        m_currentItem = m_query->first(*m_refItem);
+        m_currentNode = m_query->first(*m_refNode);
     } else {
-        m_currentItem = *m_refItem;
+        m_currentNode = *m_refNode;
     }
 
-    if (m_currentItem.isNull()) { return false; }
+    if (m_currentNode.isNull()) { return false; }
 
     if (!m_childIterator) { return true; }
 
-    if (m_childIterator->first(m_currentItem)) { return true; }
+    if (m_childIterator->first(m_currentNode)) { return true; }
 
-    m_currentItem.clear();
+    m_currentNode.clear();
 
     return false;
 }
 
 // =============================================================================
 // (public)
-bool ItemQuery::Iterator::last(const Item &refItem)
+bool NodeQuery::Iterator::last(const Node &refNode)
 {
-    m_refItem = &refItem;
+    m_refNode = &refNode;
 
     if (m_query) {
-        m_currentItem = m_query->last(*m_refItem);
+        m_currentNode = m_query->last(*m_refNode);
     } else {
-        m_currentItem = *m_refItem;
+        m_currentNode = *m_refNode;
     }
 
-    if (m_currentItem.isNull()) { return false; }
+    if (m_currentNode.isNull()) { return false; }
 
     if (!m_childIterator) { return true; }
 
-    if (m_childIterator->last(m_currentItem)) { return true; }
+    if (m_childIterator->last(m_currentNode)) { return true; }
 
-    m_currentItem.clear();
+    m_currentNode.clear();
 
     return false;
 }

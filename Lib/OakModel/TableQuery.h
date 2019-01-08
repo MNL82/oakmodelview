@@ -26,28 +26,28 @@ class TableQuery
 {
 public:
     TableQuery();
-    TableQuery(ItemQueryUPtr itemQuery);
+    TableQuery(NodeQueryUPtr nodeQuery);
 
-    void setItemQuery(ItemQueryUPtr itemQuery);
+    void setNodeQuery(NodeQueryUPtr nodeQuery);
 
     int columnCount() const;
     void addValueQuery(LeafQuerySPtr valueQuery);
 
-    int count(const Item &item) const;
+    int count(const Node &node) const;
 
-    ItemQuery &itemQuery();
-    const ItemQuery &itemQuery() const;
+    NodeQuery &nodeQuery();
+    const NodeQuery &nodeQuery() const;
 
 protected:
-    ItemQueryUPtr m_itemQuery;
+    NodeQueryUPtr m_nodeQuery;
     std::vector<LeafQuerySPtr> m_leafList; // Should be a valueRef (to be leafRef)
 
 public:
     // Iterator navigation implementation
-    class Iterator : public ItemQuery::Iterator {
+    class Iterator : public NodeQuery::Iterator {
 
     public:
-        Iterator(const TableQuery &tableQuery, const Item *refItem = nullptr);
+        Iterator(const TableQuery &tableQuery, const Node *refNode = nullptr);
 
         virtual ~Iterator() override;
 
@@ -65,9 +65,9 @@ public:
     };
     typedef std::unique_ptr<Iterator> IteratorUPtr;
 
-    IteratorUPtr iterator(const Item &refItem) const;
-//    IteratorUPtr begin(const Item &refItem) const;
-//    IteratorUPtr rBegin(const Item &refItem) const;
+    IteratorUPtr iterator(const Node &refNode) const;
+//    IteratorUPtr begin(const Node &refNode) const;
+//    IteratorUPtr rBegin(const Node &refNode) const;
 };
 
 // =============================================================================

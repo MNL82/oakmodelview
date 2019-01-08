@@ -19,7 +19,7 @@ public:
     TableView(QWidget *parent = nullptr);
     virtual ~TableView() override;
 
-    void setBaseRef(Model::ItemQueryUPtr baseRef);
+    void setBaseRef(Model::NodeQueryUPtr baseRef);
     void addValueRef(Model::LeafQuerySPtr valueRef);
 
     void updateTable();
@@ -37,14 +37,14 @@ protected slots:
     void onActionCopy();
     void onActionPaste();
 
-    void onItemChanged(QTableWidgetItem *item);
+    void onNodeChanged(QTableWidgetItem *node);
 
 protected:
-    void onItemInserteAfter(const Model::ItemIndex &itemIndex);
-    void onItemMoveAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
-    void onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
-    void onItemRemoveBefore(const Model::ItemIndex& tItemIndex);
-    void onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName);
+    void onNodeInserteAfter(const Model::NodeIndex &nodeIndex);
+    void onNodeMoveAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex);
+    void onNodeCloneAfter(const Model::NodeIndex &sourceNodeIndex, const Model::NodeIndex &targetNodeIndex);
+    void onNodeRemoveBefore(const Model::NodeIndex& tNodeIndex);
+    void onEntryChangeAfter(const Model::NodeIndex &nodeIndex, const std::string &valueName);
 
     virtual bool event(QEvent *event) override;
 
@@ -55,7 +55,7 @@ protected:
 
 protected:
     Model::OakModel * m_model = nullptr;
-    Model::Item m_rootItem;
+    Model::Node m_rootNode;
 
     Model::TableQuery m_tableQuery;
 
@@ -70,8 +70,8 @@ protected:
     QAction * m_actionCopy;
     QAction * m_actionPaste;
 
-    QList<Model::Item> m_cutItems;
-    QList<Model::Item> m_copyItems;
+    QList<Model::Node> m_cutNodes;
+    QList<Model::Node> m_copyNodes;
 };
 
 } // namespace Oak::View::QtWidgets

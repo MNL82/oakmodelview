@@ -18,7 +18,7 @@
 
 namespace Oak::Model {
 
-class Item;
+class Node;
 
 // =============================================================================
 // Class definition
@@ -27,7 +27,7 @@ class Leaf
 {
 public:
     Leaf();
-    Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Item* item/* = nullptr*/);
+    Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Node* node/* = nullptr*/);
     Leaf(const Leaf& copy);
     Leaf(Leaf&& move);
 
@@ -48,7 +48,7 @@ public:
 
     const NodeData& nodeData() const;
     const LeafDef* def() const;
-    const Item* item() const;
+    const Node* node() const;
 
     template<typename T>
     bool canGetValue(T &value, bool useDefault = true) const;
@@ -90,9 +90,9 @@ protected:
 protected:
     const LeafDef* m_def;
     NodeData m_nodeData;
-    const Item* m_item;
+    const Node* m_node;
 
-    friend class Item;
+    friend class Node;
 };
 
 // =============================================================================
@@ -137,11 +137,11 @@ template<typename T>
 bool Leaf::setValue(const T &value) const
 {
     assert(m_def != nullptr);
-    if (m_item) {
+    if (m_node) {
         onLeafChangeBefore();
     }
     bool result = m_def->setValue(m_nodeData, value, true);
-    if (m_item) {
+    if (m_node) {
         onLeafChangeAfter();
     }
     return result;
@@ -173,7 +173,7 @@ template<typename T>
 bool Leaf::getOptions(std::vector<T>& value) const
 {
     assert(m_def != nullptr);
-    return m_def->options().getOptions(value, m_item);
+    return m_def->options().getOptions(value, m_node);
 }
 
 // =============================================================================
@@ -187,10 +187,10 @@ bool Leaf::operator<<(const T& value) const
 // =============================================================================
 // (free)
 template<typename T>
-bool operator<<(T & value, const Leaf &item)
+bool operator<<(T & value, const Leaf &node)
 {
-    assert(!item.isNull());
-    return item.getValue(value);
+    assert(!node.isNull());
+    return node.getValue(value);
 }
 
 

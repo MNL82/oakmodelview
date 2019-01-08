@@ -32,7 +32,7 @@ void ParentDataView::setModel(Model::OakModel* model)
 
     if (m_model) {
         // Disconnect the old model
-        m_model->notifier_currentItemChanged.remove(this);
+        m_model->notifier_currentNodeChanged.remove(this);
     }
 
     // Change the model
@@ -40,9 +40,9 @@ void ParentDataView::setModel(Model::OakModel* model)
 
     if (m_model) {
         // connect the new mobel
-        m_model->notifier_currentItemChanged.add(this, &ParentDataView::currentItemChanged);
-        if (!m_model->currentItem().isNull()) {
-            currentItemChanged();
+        m_model->notifier_currentNodeChanged.add(this, &ParentDataView::currentNodeChanged);
+        if (!m_model->currentNode().isNull()) {
+            currentNodeChanged();
         }
     }
 
@@ -51,31 +51,31 @@ void ParentDataView::setModel(Model::OakModel* model)
 
 // =============================================================================
 // (public)
-void ParentDataView::currentItemChanged()
+void ParentDataView::currentNodeChanged()
 {
-    setCurrentItem(m_model->currentItem());
+    setCurrentNode(m_model->currentNode());
 }
 
 // =============================================================================
 // (public)
-void ParentDataView::setCurrentItem(const Model::Item& item)
+void ParentDataView::setCurrentNode(const Model::Node& node)
 {
-    m_itemList.clear();
-    Model::Item bItem(item);
-    while (!bItem.isNull()) {
-        m_itemList.prepend(bItem);
-        bItem = bItem.parent();
+    m_nodeList.clear();
+    Model::Node bNode(node);
+    while (!bNode.isNull()) {
+        m_nodeList.prepend(bNode);
+        bNode = bNode.parent();
     }
 
     int index = 0;
-    QLayoutItem* layoutItem;
+    QLayoutItem* layoutNode;
     QPushButton* button;
-    while (index < m_itemList.count()) {
-        bItem = m_itemList.at(index);
-        QString nodeName = QString::fromStdString(bItem.def()->displayName());
+    while (index < m_nodeList.count()) {
+        bNode = m_nodeList.at(index);
+        QString nodeName = QString::fromStdString(bNode.def()->displayName());
         if (index < m_layout->count()-1) {
-            layoutItem = m_layout->itemAt(index);
-            button = dynamic_cast<QPushButton*>(layoutItem->widget());
+            layoutNode = m_layout->itemAt(index);
+            button = dynamic_cast<QPushButton*>(layoutNode->widget());
             if (button) {
                 button->setText(nodeName);
                 index++;
@@ -101,8 +101,8 @@ void ParentDataView::onButtonClicked()
     QPushButton* button = dynamic_cast<QPushButton*>(sender());
     if (button) {
         int index = m_layout->indexOf(button);
-        if (index >= 0 && index < m_itemList.count()) {
-            m_model->setCurrentItem(m_itemList.at(index));
+        if (index >= 0 && index < m_nodeList.count()) {
+            m_model->setCurrentNode(m_nodeList.at(index));
         }
     }
 }

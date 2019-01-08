@@ -13,8 +13,8 @@
 #include <map>
 #include <functional>
 
-#include "Item.h"
-#include "ItemIndex.h"
+#include "Node.h"
+#include "NodeIndex.h"
 
 
 namespace Oak::Model {
@@ -48,13 +48,13 @@ protected:
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_ItemIntItemInt
+class Callback_NodeIntNodeInt
 {
 public:
-    Callback_ItemIntItemInt();
+    Callback_NodeIntNodeInt();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const Item&, int, const Item&, int))
+    void add(T* funcObj, void (T::*func)(const Node&, int, const Node&, int))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -65,22 +65,22 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const Item& sourceItem, int sourceIndex, const Item& targetItem, int targetIndex) const;
+    void trigger(const Node& sourceNode, int sourceIndex, const Node& targetNode, int targetIndex) const;
 
 protected:
-    std::map<void*, std::function<void(const Item&, int, const Item&, int)>> m_functionMap;
+    std::map<void*, std::function<void(const Node&, int, const Node&, int)>> m_functionMap;
 };
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_ItemInt
+class Callback_NodeInt
 {
 public:
-    Callback_ItemInt();
+    Callback_NodeInt();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const Item&, int))
+    void add(T* funcObj, void (T::*func)(const Node&, int))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -91,22 +91,22 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const Item &parentItem, int index) const;
+    void trigger(const Node &parentNode, int index) const;
 
 protected:
-    std::map<void*, std::function<void(const Item&, int)>> m_functionMap;
+    std::map<void*, std::function<void(const Node&, int)>> m_functionMap;
 };
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_Item
+class Callback_Node
 {
 public:
-    Callback_Item();
+    Callback_Node();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const Item&))
+    void add(T* funcObj, void (T::*func)(const Node&))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -117,22 +117,22 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const Item &parentItem) const;
+    void trigger(const Node &parentNode) const;
 
 protected:
-    std::map<void*, std::function<void(const Item&)>> m_functionMap;
+    std::map<void*, std::function<void(const Node&)>> m_functionMap;
 };
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_ItemIndex
+class Callback_NodeIndex
 {
 public:
-    Callback_ItemIndex();
+    Callback_NodeIndex();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const ItemIndex&))
+    void add(T* funcObj, void (T::*func)(const NodeIndex&))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -143,22 +143,22 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const ItemIndex &itemIndex) const;
+    void trigger(const NodeIndex &nodeIndex) const;
 
 protected:
-    std::map<void*, std::function<void(const ItemIndex&)>> m_functionMap;
+    std::map<void*, std::function<void(const NodeIndex&)>> m_functionMap;
 };
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_ItemIndexItemIndex
+class Callback_NodeIndexNodeIndex
 {
 public:
-    Callback_ItemIndexItemIndex();
+    Callback_NodeIndexNodeIndex();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const ItemIndex&, const ItemIndex&))
+    void add(T* funcObj, void (T::*func)(const NodeIndex&, const NodeIndex&))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -169,22 +169,22 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const ItemIndex &itemIndex1, const ItemIndex &itemIndex2) const;
+    void trigger(const NodeIndex &nodeIndex1, const NodeIndex &nodeIndex2) const;
 
 protected:
-    std::map<void*, std::function<void(const ItemIndex&, const ItemIndex&)>> m_functionMap;
+    std::map<void*, std::function<void(const NodeIndex&, const NodeIndex&)>> m_functionMap;
 };
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_ItemIndexInt
+class Callback_NodeIndexInt
 {
 public:
-    Callback_ItemIndexInt();
+    Callback_NodeIndexInt();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const ItemIndex&, int))
+    void add(T* funcObj, void (T::*func)(const NodeIndex&, int))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -195,22 +195,22 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const ItemIndex &itemIndex, int index) const;
+    void trigger(const NodeIndex &nodeIndex, int index) const;
 
 protected:
-    std::map<void*, std::function<void(const ItemIndex&, int)>> m_functionMap;
+    std::map<void*, std::function<void(const NodeIndex&, int)>> m_functionMap;
 };
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class Callback_ItemIndexString
+class Callback_NodeIndexString
 {
 public:
-    Callback_ItemIndexString();
+    Callback_NodeIndexString();
 
     template<typename T>
-    void add(T* funcObj, void (T::*func)(const ItemIndex&, const std::string &))
+    void add(T* funcObj, void (T::*func)(const NodeIndex&, const std::string &))
     {
         if (funcObj == nullptr) {
             assert(false);
@@ -221,10 +221,10 @@ public:
 
     void remove(void* funcObj = nullptr);
 
-    void trigger(const ItemIndex &itemIndex, const std::string & name) const;
+    void trigger(const NodeIndex &nodeIndex, const std::string & name) const;
 
 protected:
-    std::map<void*, std::function<void(const ItemIndex&, const std::string &)>> m_functionMap;
+    std::map<void*, std::function<void(const NodeIndex&, const std::string &)>> m_functionMap;
 };
 
 } // namespace Oak::Model

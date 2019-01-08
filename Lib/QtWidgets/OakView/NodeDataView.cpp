@@ -59,7 +59,7 @@ void NodeDataView::setModel(Model::OakModel* model)
 
     if (m_model) {
         // Disconnect the old model
-        m_model->notifier_currentItemChanged.remove(this);
+        m_model->notifier_currentNodeChanged.remove(this);
         m_model->notifier_rootNodeDefChanged.remove(this);
 
         m_model->notifier_destroyed.remove(this);
@@ -72,14 +72,14 @@ void NodeDataView::setModel(Model::OakModel* model)
 
     if (m_model) {
         // connect the new mobel
-        m_model->notifier_currentItemChanged.add(this, &NodeDataView::currentItemChanged);
+        m_model->notifier_currentNodeChanged.add(this, &NodeDataView::currentNodeChanged);
         m_model->notifier_rootNodeDefChanged.add(this, &NodeDataView::clearEditorCash);
 
         m_model->notifier_destroyed.add(this, &NodeDataView::modelDestroyed);
         m_model->notifier_leafChangeAfter.add(this, &NodeDataView::onLeafChangeAfter);
 
-        if (!m_model->currentItem().isNull()) {
-            currentItemChanged();
+        if (!m_model->currentNode().isNull()) {
+            currentNodeChanged();
         }
     }
 
@@ -102,40 +102,40 @@ void NodeDataView::clearEditorCash()
 
 // =============================================================================
 // (public)
-void NodeDataView::currentItemChanged()
+void NodeDataView::currentNodeChanged()
 {
-    setCurrentItem(m_model->currentItem());
+    setCurrentNode(m_model->currentNode());
 }
 
 // =============================================================================
 // (public)
-void NodeDataView::setCurrentItem(const Model::Item& item)
+void NodeDataView::setCurrentNode(const Model::Node& node)
 {
-    if (item.isNull()) {
+    if (node.isNull()) {
         setCurrentWidget(0);
         return;
     }
 
-    NodeEditorHandler* eHandler = getEditorHandler(item);
+    NodeEditorHandler* eHandler = getEditorHandler(node);
     if (eHandler == nullptr) { return; }
 
-    eHandler->setNode(item.nodeData());
+    eHandler->setNode(node.nodeData());
     QWidget* editor = eHandler->getEditor();
     setCurrentEditor(editor);
 }
 
 // =============================================================================
 // (public)
-NodeEditorHandler* NodeDataView::getEditorHandler(const Model::Item& item)
+NodeEditorHandler* NodeDataView::getEditorHandler(const Model::Node& node)
 {
-    if (item.isDefNull()) { return nullptr; }
+    if (node.isDefNull()) { return nullptr; }
 
     for (const auto& eHandler: m_editorList) {
-        if (eHandler->nodeDef() == item.def()) {
+        if (eHandler->nodeDef() == node.def()) {
             return eHandler.get();
         }
     }
-    m_editorList.push_back(std::make_unique<NodeEditorHandler>(this, item));
+    m_editorList.push_back(std::make_unique<NodeEditorHandler>(this, node));
     NodeEditorHandler* nHandler = m_editorList.back().get();
     return nHandler;
 }
@@ -175,12 +175,12 @@ void NodeDataView::setCurrentWidget(int index)
 
 // =============================================================================
 // (protected)
-void NodeDataView::onLeafChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName)
+void NodeDataView::onLeafChangeAfter(const Model::NodeIndex &nodeIndex, const std::string &valueName)
 {
 
-    if (m_model->currentItemIndex().equal(itemIndex)) {
+    if (m_model->currentNodeIndex().equal(nodeIndex)) {
         // Pass on the event to the current editor
-        getEditorHandler(m_model->currentItem())->updateEditorValue(valueName);
+        getEditorHandler(m_model->currentNode())->updateEditorValue(valueName);
     }
 }
 

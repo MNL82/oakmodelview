@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ItemQuery.h"
+#include "NodeQuery.h"
 
 
 namespace Oak::Model {
@@ -26,7 +26,7 @@ class QueryBuilder
 {
 public:
     QueryBuilder();
-    ItemQueryUPtr UPtr();
+    NodeQueryUPtr UPtr();
     LeafQuerySPtr leafSPtr(const std::string &leafName);
 
     QueryBuilderSPtr children(const std::string &nodeName, bool invertOrder = false);
@@ -37,17 +37,17 @@ public:
     static QueryBuilderSPtr createParent();
     static QueryBuilderSPtr createSiblings();
 
-    static QueryBuilderSPtr createInverse(const ItemQuery &query, const NodeDef *sourceNodeDef);
+    static QueryBuilderSPtr createInverse(const NodeQuery &query, const NodeDef *sourceNodeDef);
 
     static LeafQuerySPtr createLeaf(const std::string &leafName);
 
-    static ItemQueryUPtr duplicate(const ItemQueryUPtr &c);
+    static NodeQueryUPtr duplicate(const NodeQueryUPtr &c);
 
-    static ItemQueryUPtr createItemQuery(const std::string& queryString);
+    static NodeQueryUPtr createNodeQuery(const std::string& queryString);
     static LeafQuerySPtr createLeafQuery(const std::string& queryString);
 
 protected:
-    ItemQueryUPtr m_itemQuery;
+    NodeQueryUPtr m_nodeQuery;
     QueryBuilderWPtr m_thisWPtr;
 };
 
