@@ -12,7 +12,7 @@
 
 #include "OakModel.h"
 #include "NodeDef.h"
-#include "EntryQuery.h"
+#include "LeafQuery.h"
 #include "ItemIndex.h"
 #include "QueryBuilder.h"
 
@@ -23,21 +23,21 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-OptionsObserver::OptionsObserver(OakModel *model, const NodeDef *optionsNodeDef, const ValueDef *optionsValueDef)
+OptionsObserver::OptionsObserver(OakModel *model, const NodeDef *optionsNodeDef, const LeafDef *optionsLeafDef)
     : ObserverInterface(model),
       m_optionsNodeDef { optionsNodeDef},
-      m_optionsValueDef { optionsValueDef}
+      m_optionsLeafDef { optionsLeafDef}
 {
     ASSERT(m_optionsNodeDef);
-    ASSERT(m_optionsValueDef);
-    ASSERT(m_optionsValueDef->options().hasQuery());
+    ASSERT(m_optionsLeafDef);
+    ASSERT(m_optionsLeafDef->options().hasQuery());
 
-    const EntryQuery *query = m_optionsValueDef->options().query();
+    const LeafQuery *query = m_optionsLeafDef->options().query();
     m_sourceNodeDef = query->itemQuery().nodeDef(m_optionsNodeDef);
     m_sourceValueName = query->valueName();
 
-    // Create an inverse query that points from the option values to the entry where there can be chosen
-    m_inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->EntrySPtr(m_optionsValueDef->name());
+    // Create an inverse query that points from the option values to the leaf where there can be chosen
+    m_inverseQuery = QueryBuilder::createInverse(query->itemQuery(), m_optionsNodeDef)->leafSPtr(m_optionsLeafDef->name());
 
 
 }
@@ -53,8 +53,8 @@ void OptionsObserver::connect()
 
     m_model->notifier_itemRemoveBefore.add(this, &OptionsObserver::onItemRemoveBefore);
 
-    m_model->notifier_entryChangeBefore.add(this, &OptionsObserver::onEntryChangeBefore);
-    m_model->notifier_entryChangeAfter.add(this, &OptionsObserver::onEntryChangeAfter);
+    m_model->notifier_leafChangeBefore.add(this, &OptionsObserver::onLeafChangeBefore);
+    m_model->notifier_leafChangeAfter.add(this, &OptionsObserver::onLeafChangeAfter);
 }
 
 // =============================================================================
@@ -68,8 +68,8 @@ void OptionsObserver::disconnect()
 
     m_model->notifier_itemRemoveBefore.remove(this);
 
-    m_model->notifier_entryChangeBefore.remove(this);
-    m_model->notifier_entryChangeAfter.remove(this);
+    m_model->notifier_leafChangeBefore.remove(this);
+    m_model->notifier_leafChangeAfter.remove(this);
 }
 
 // =============================================================================
@@ -109,7 +109,7 @@ void OptionsObserver::onItemRemoveBefore(const ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void OptionsObserver::onEntryChangeBefore(const ItemIndex &itemIndex, const std::string &valueName)
+void OptionsObserver::onLeafChangeBefore(const ItemIndex &itemIndex, const std::string &valueName)
 {
     // If not valid return as fast as possible
     if (m_sourceValueName != valueName) { return; }
@@ -117,12 +117,12 @@ void OptionsObserver::onEntryChangeBefore(const ItemIndex &itemIndex, const std:
 
     Item sourceItem = itemIndex.item(m_model->rootItem());
 
-    m_valueBeforeChange = sourceItem.entry(valueName).value();
+    m_valueBeforeChange = sourceItem.leaf(valueName).value();
 }
 
 // =============================================================================
 // (protected)
-void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::string &valueName)
+void OptionsObserver::onLeafChangeAfter(const ItemIndex &itemIndex, const std::string &valueName)
 {
     // If not valid return as fast as possible
     if (m_valueBeforeChange.isNull()) { return; }
@@ -130,17 +130,17 @@ void OptionsObserver::onEntryChangeAfter(const ItemIndex &itemIndex, const std::
     if (m_sourceNodeDef->name() != itemIndex.lastItemIndex().name()) { return; }
 
     Item sourceItem = itemIndex.item(m_model->rootItem());
-    UnionValue newValue = sourceItem.entry(valueName).value();
+    UnionValue newValue = sourceItem.leaf(valueName).value();
 
     if (m_valueBeforeChange == newValue) { return; }
 
     // Loop though all the entries where the option have been used
     auto it = m_inverseQuery->iterator(sourceItem);
     while (it->next()) {
-        UnionValue value = it->entry().value();
+        UnionValue value = it->leaf().value();
         if (value == m_valueBeforeChange) {
             // Update the value if it is the one changed
-            it->entry().setValue(newValue);
+            it->leaf().setValue(newValue);
         } else if (it->item() == m_model->currentItem()) {
             // Update the current item because the option list have changed
             m_model->setCurrentItem(m_model->currentItem(), true);

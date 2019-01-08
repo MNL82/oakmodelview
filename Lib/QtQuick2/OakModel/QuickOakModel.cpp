@@ -219,13 +219,13 @@ QVariant QuickOakModel::data(const QModelIndex &index, int role) const
         return QString::fromStdString(item.def()->name());
     case KeyValue: {
         if (item.hasKey()) {
-            return QString::fromStdString(item.entryKey().value<std::string>());
+            return QString::fromStdString(item.keyLeaf().value<std::string>());
         }
         return QString();
     }
     case VariantValue:
         if (item.hasVariants()) {
-            return QString::fromStdString(item.variantEntry().value<std::string>());
+            return QString::fromStdString(item.variantLeaf().value<std::string>());
         }
         return QString();
     default:

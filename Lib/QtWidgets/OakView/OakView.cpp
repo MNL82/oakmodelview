@@ -56,7 +56,7 @@ void OakView::setOakModel(Model::OakModel* model)
         // Disconnect the old model
         m_model->notifier_currentItemChanged.remove(this);
         m_model->notifier_rootNodeDefChanged.remove(this);
-        m_model->notifier_rootNodeChanged.remove(this);
+        m_model->notifier_rootNodeDataChanged.remove(this);
         m_model->notifier_destroyed.remove(this);
 
         m_model->notifier_itemInserteAfter.remove(this);
@@ -64,8 +64,8 @@ void OakView::setOakModel(Model::OakModel* model)
         m_model->notifier_itemCloneAfter.remove(this);
         m_model->notifier_itemRemoveBefore.remove(this);
 
-        m_model->notifier_entryTypeChangeAfter.remove(this);
-        m_model->notifier_entryKeyChangeAfter.remove(this);
+        m_model->notifier_variantLeafChangeAfter.remove(this);
+        m_model->notifier_keyLeafChangeAfter.remove(this);
 
         if (!m_model->isNull()) {
             clearTreeStructure();
@@ -79,7 +79,7 @@ void OakView::setOakModel(Model::OakModel* model)
         // connect the new mobel
         m_model->notifier_currentItemChanged.add(this, &OakView::currentItemChanged);
         m_model->notifier_rootNodeDefChanged.add(this, &OakView::updateTreeStructure);
-        m_model->notifier_rootNodeChanged.add(this, &OakView::updateTreeStructure);
+        m_model->notifier_rootNodeDataChanged.add(this, &OakView::updateTreeStructure);
         m_model->notifier_destroyed.add(this, &OakView::modelDestroyed);
 
         m_model->notifier_itemInserteAfter.add(this, &OakView::onItemInserteAfter);
@@ -87,8 +87,8 @@ void OakView::setOakModel(Model::OakModel* model)
         m_model->notifier_itemCloneAfter.add(this, &OakView::onItemCloneAfter);
         m_model->notifier_itemRemoveBefore.add(this, &OakView::onItemRemoveBefore);
 
-        m_model->notifier_entryTypeChangeAfter.add(this, &OakView::onEntryTypeChangeAfter);
-        m_model->notifier_entryKeyChangeAfter.add(this, &OakView::onEntryKeyChangeAfter);
+        m_model->notifier_variantLeafChangeAfter.add(this, &OakView::onVariantLeafChangeAfter);
+        m_model->notifier_keyLeafChangeAfter.add(this, &OakView::onKeyLeafChangeAfter);
 
         createTreeStructure();
     }
@@ -394,7 +394,7 @@ QTreeWidgetItem * OakView::getTreeItems(const Model::Item &item, QTreeWidgetItem
 
     std::vector<std::string> values;
     values.push_back(item.def()->displayName());
-    if (item.def()->hasKey()) { values.push_back(item.entryKey().toString()); }
+    if (item.def()->hasKey()) { values.push_back(item.keyLeaf().toString()); }
 
     QTreeWidgetItem * elementItem;
     if (parentItem) { elementItem = new QTreeWidgetItem(parentItem, toQStringList(values)); }
@@ -459,7 +459,7 @@ void OakView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void OakView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
+void OakView::onVariantLeafChangeAfter(const Model::ItemIndex &itemIndex)
 {
     // Child items can change when the variant definition change
     QTreeWidgetItem* qItem = widgetFromIndex(itemIndex);
@@ -473,11 +473,11 @@ void OakView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void OakView::onEntryKeyChangeAfter(const Model::ItemIndex &itemIndex)
+void OakView::onKeyLeafChangeAfter(const Model::ItemIndex &itemIndex)
 {
     QTreeWidgetItem* qItem = widgetFromIndex(itemIndex);
     Model::Item item = itemIndex.item(m_model->rootItem());
-    qItem->setText(1, QString::fromStdString(item.entryKey().toString()));
+    qItem->setText(1, QString::fromStdString(item.keyLeaf().toString()));
 }
 
 // =============================================================================

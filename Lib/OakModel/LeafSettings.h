@@ -10,33 +10,41 @@
 
 #pragma once
 
-#include <string>
 
-#include "OakModelServiceFunctions.h"
+
+#include <string>
+#include <map>
+
+#include "UnionValue.h"
+
 
 namespace Oak::Model {
 
-class ValueDefBuilder;
-typedef std::shared_ptr<ValueDefBuilder> ValueDefBuilderSPtr;
+#define OPTION_ONLY     "OptionsOnly"
+#define UNIT            "Unit"
+#define UNIQUE          "Unique"
+#define REQUIRED        "Required"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueSettingsBuilderData
+class LeafSettings
 {
 public:
-    ValueSettingsBuilderData();
-    virtual ~ValueSettingsBuilderData() {}
+    LeafSettings();
 
-    void validate(std::vector<std::string> &errorMessages) const;
-    void set(ValueDefBuilderSPtr builder) const;
+    LeafSettings& operator=(const LeafSettings& copy);
 
-    BoolState readOnly = BoolState_Undefined;
-    std::string unit;
-    BoolState unique = BoolState_Undefined;
-    BoolState required = BoolState_Undefined;
+    const UnionValue &value(const std::string &settingName, const UnionValue &defaultValue = UnionValue()) const;
+    void setValue(const std::string &settingName, const UnionRef &value);
+
+private:
+    // x < 0 => false
+    // x > 0 => true
+    // x == 0 => undefined (default is false)
+
+    std::map<std::string, UnionValue> m_settingsMap;
 };
 
-typedef std::unique_ptr<ValueSettingsBuilderData> ValueSettingsBuilderDataUPtr;
-
 } // namespace Oak::Model
+

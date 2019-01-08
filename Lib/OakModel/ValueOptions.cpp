@@ -11,7 +11,7 @@
 #include "ValueOptions.h"
 
 #include "UnionRef.h"
-#include "EntryQuery.h"
+#include "LeafQuery.h"
 
 
 namespace Oak::Model {
@@ -108,14 +108,14 @@ bool ValueOptions::hasQueryExcluded() const
 
 // =============================================================================
 // (public)
-const EntryQuery *ValueOptions::query() const
+const LeafQuery *ValueOptions::query() const
 {
     return m_query.get();
 }
 
 // =============================================================================
 // (public)
-const EntryQuery *ValueOptions::queryExcluded() const
+const LeafQuery *ValueOptions::queryExcluded() const
 {
     return m_queryExcluded.get();
 }

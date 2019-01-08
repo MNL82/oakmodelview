@@ -27,7 +27,7 @@ class QueryBuilder
 public:
     QueryBuilder();
     ItemQueryUPtr UPtr();
-    EntryQuerySPtr EntrySPtr(const std::string &entryName);
+    LeafQuerySPtr leafSPtr(const std::string &leafName);
 
     QueryBuilderSPtr children(const std::string &nodeName, bool invertOrder = false);
     QueryBuilderSPtr parent(bool invertOrder = false);
@@ -39,12 +39,12 @@ public:
 
     static QueryBuilderSPtr createInverse(const ItemQuery &query, const NodeDef *sourceNodeDef);
 
-    static EntryQuerySPtr createEntry(const std::string &entryName);
+    static LeafQuerySPtr createLeaf(const std::string &leafName);
 
     static ItemQueryUPtr duplicate(const ItemQueryUPtr &c);
 
     static ItemQueryUPtr createItemQuery(const std::string& queryString);
-    static EntryQuerySPtr createEntryQuery(const std::string& queryString);
+    static LeafQuerySPtr createLeafQuery(const std::string& queryString);
 
 protected:
     ItemQueryUPtr m_itemQuery;

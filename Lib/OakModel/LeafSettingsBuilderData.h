@@ -10,11 +10,11 @@
 
 #pragma once
 
-#include <UnionValue.h>
+#include <string>
+
+#include "OakModelServiceFunctions.h"
 
 namespace Oak::Model {
-
-class LeafDef;
 
 class LeafDefBuilder;
 typedef std::shared_ptr<LeafDefBuilder> LeafDefBuilderSPtr;
@@ -22,21 +22,21 @@ typedef std::shared_ptr<LeafDefBuilder> LeafDefBuilderSPtr;
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueOptionsBuilderData
+class LeafSettingsBuilderData
 {
 public:
-    ValueOptionsBuilderData();
-    virtual ~ValueOptionsBuilderData() {}
+    LeafSettingsBuilderData();
+    virtual ~LeafSettingsBuilderData() {}
 
     void validate(std::vector<std::string> &errorMessages) const;
     void set(LeafDefBuilderSPtr builder) const;
 
-    std::vector<UnionValue> values;
-    std::vector<UnionValue> excludedValues;
-    std::string valueQuery;
-    std::string excludedValueQuery;
+    BoolState readOnly = BoolState_Undefined;
+    std::string unit;
+    BoolState unique = BoolState_Undefined;
+    BoolState required = BoolState_Undefined;
 };
 
-typedef std::unique_ptr<ValueOptionsBuilderData> ValueOptionsBuilderDataUPtr;
+typedef std::unique_ptr<LeafSettingsBuilderData> LeafSettingsBuilderDataUPtr;
 
 } // namespace Oak::Model

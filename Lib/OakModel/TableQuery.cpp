@@ -42,14 +42,14 @@ void TableQuery::setItemQuery(ItemQueryUPtr itemQuery)
 // (public)
 int TableQuery::columnCount() const
 {
-    return static_cast<int>(m_entryList.size());
+    return static_cast<int>(m_leafList.size());
 }
 
 // =============================================================================
 // (public)
-void TableQuery::addValueQuery(EntryQuerySPtr valueQuery)
+void TableQuery::addValueQuery(LeafQuerySPtr valueQuery)
 {
-    m_entryList.push_back(valueQuery);
+    m_leafList.push_back(valueQuery);
 }
 
 // =============================================================================
@@ -115,7 +115,7 @@ TableQuery::Iterator::Iterator(const TableQuery &tableQuery, const Item *refItem
     size_t count = static_cast<size_t>(m_tableQuery->columnCount());
     for (size_t i = 0; i < count; i++)
     {
-        m_entryIteratorList.push_back(new EntryQuery::Iterator(*m_tableQuery->m_entryList[i].get()));
+        m_leafIteratorList.push_back(new LeafQuery::Iterator(*m_tableQuery->m_leafList[i].get()));
     }
 }
 
@@ -123,37 +123,37 @@ TableQuery::Iterator::Iterator(const TableQuery &tableQuery, const Item *refItem
 // (public)
 TableQuery::Iterator::~Iterator()
 {
-    for (auto eIt: m_entryIteratorList)
+    for (auto eIt: m_leafIteratorList)
     {
         delete eIt;
     }
-    m_entryIteratorList.clear();
+    m_leafIteratorList.clear();
     m_tableQuery = nullptr;
     ItemQuery::Iterator::~Iterator();
 }
 
 // =============================================================================
 // (public)
-const Entry &TableQuery::Iterator::entry(int index) const
+const Leaf &TableQuery::Iterator::leaf(int index) const
 {
     if (!isValid() ||
-        index >= static_cast<int>(m_entryIteratorList.size())) {
-        return Entry::emptyEntry();
+        index >= static_cast<int>(m_leafIteratorList.size())) {
+        return Leaf::emptyLeaf();
     }
 
-    auto eIt = m_entryIteratorList[static_cast<size_t>(index)];
+    auto eIt = m_leafIteratorList[static_cast<size_t>(index)];
     Item i = item();
     if (eIt->first(i)) {
-        return eIt->entry();
+        return eIt->leaf();
     }
-    return Entry::emptyEntry();
+    return Leaf::emptyLeaf();
 }
 
 // =============================================================================
 // (public)
 void TableQuery::Iterator::getValue(int index, UnionValue value) const
 {
-    const Entry &e = entry(index);
+    const Leaf &e = leaf(index);
     if (e.isNull()) { return; }
     e.getValue(value);
 }

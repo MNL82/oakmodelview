@@ -15,7 +15,7 @@
 #include <QColor>
 
 #include "QuickContainerDef.h"
-#include "QuickValueDef.h"
+#include "QuickLeafDef.h"
 
 #include "NodeDefBuilderData.h"
 
@@ -34,9 +34,9 @@ class QuickNodeDef : public QObject
     BUILDER_PROPERTY_STRING(imagePath)
     BUILDER_PROPERTY_STRING(variantId)
     BUILDER_PROPERTY_STRING(tagName)
-    BUILDER_PROPERTY_OBJECT(QuickValueDef, keyValue)
-    BUILDER_PROPERTY_OBJECT(QuickValueDef, variantValue)
-    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickValueDef, values, value)
+    BUILDER_PROPERTY_OBJECT(QuickLeafDef, keyLeaf)
+    BUILDER_PROPERTY_OBJECT(QuickLeafDef, variantLeaf)
+    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickLeafDef, leafs, leaf)
     BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickContainerDef, containers, container)
     BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickNodeDef, derivedNodeDefs, derivedNodeDef)
 

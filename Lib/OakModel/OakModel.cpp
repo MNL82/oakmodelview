@@ -469,28 +469,28 @@ void OakModel::onItemRemoveAfter(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (protected)
-void OakModel::onEntryChangeBefore(const ItemIndex &itemIndex, const std::string &valueName) const
+void OakModel::onLeafChangeBefore(const ItemIndex &itemIndex, const std::string &valueName) const
 {
-    notifier_entryChangeBefore.trigger(itemIndex, valueName);
+    notifier_leafChangeBefore.trigger(itemIndex, valueName);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onEntryChangeAfter(const ItemIndex &itemIndex, const std::string &valueName) const
+void OakModel::onLeafChangeAfter(const ItemIndex &itemIndex, const std::string &valueName) const
 {
-    notifier_entryChangeAfter.trigger(itemIndex, valueName);
+    notifier_leafChangeAfter.trigger(itemIndex, valueName);
 }
 
 // =============================================================================
 // (protected)
-void OakModel::onEntryTypeChangeAfter(const ItemIndex &itemIndex) const
+void OakModel::onVariantLeafChangeAfter(const ItemIndex &itemIndex) const
 {
     Item item = itemIndex.item(m_rootItem);
     const NodeDef* def = findNodeDef(item.nodeData());
     ASSERT(def);
     Item newItem(def, item.nodeData(), this);
 
-    notifier_entryTypeChangeAfter.trigger(itemIndex);
+    notifier_variantLeafChangeAfter.trigger(itemIndex);
     if (item == m_currentItem) {
         setCurrentItem(newItem);
     }
@@ -498,9 +498,9 @@ void OakModel::onEntryTypeChangeAfter(const ItemIndex &itemIndex) const
 
 // =============================================================================
 // (protected)
-void OakModel::onEntryKeyChangeAfter(const ItemIndex &itemIndex) const
+void OakModel::onKeyLeafChangeAfter(const ItemIndex &itemIndex) const
 {
-    notifier_entryKeyChangeAfter.trigger(itemIndex);
+    notifier_keyLeafChangeAfter.trigger(itemIndex);
 }
 
 // =============================================================================
@@ -511,8 +511,8 @@ void OakModel::createObservers()
 
     /******************* Create Option Observers ******************/
     // Find all option queries in the node definition tree
-    std::vector<NodeValueDefPair> queryList;
-    std::vector<NodeValueDefPair> queryExcludedList;
+    std::vector<NodeLeafDefPair> queryList;
+    std::vector<NodeLeafDefPair> queryExcludedList;
     findOptionQueries(m_rootItem.def(), queryList, queryExcludedList, true);
     for (const auto & query: queryList)
     {

@@ -12,7 +12,7 @@
 
 #include <utility>
 
-#include "ValueDef.h"
+#include "LeafDef.h"
 #include "ValueOptions.h"
 
 
@@ -23,19 +23,19 @@ class Item;
 // =============================================================================
 // Class definition
 // =============================================================================
-class Entry
+class Leaf
 {
 public:
-    Entry();
-    Entry(const ValueDef* valueDef, const NodeData &nodeData, const Item* item/* = nullptr*/);
-    Entry(const Entry& copy);
-    Entry(Entry&& move);
+    Leaf();
+    Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Item* item/* = nullptr*/);
+    Leaf(const Leaf& copy);
+    Leaf(Leaf&& move);
 
-    Entry& operator=( const Entry& copy);
-    Entry& operator=(Entry&& move);
+    Leaf& operator=( const Leaf& copy);
+    Leaf& operator=(Leaf&& move);
 
-    bool operator==(const Entry& _entry) const;
-    bool operator!=(const Entry& _entry) const;
+    bool operator==(const Leaf& _leaf) const;
+    bool operator!=(const Leaf& _leaf) const;
 
     bool isNull() const;
     bool isDefNull() const;
@@ -47,7 +47,7 @@ public:
     const std::string &tooltip() const;
 
     const NodeData& nodeData() const;
-    const ValueDef* valueDef() const;
+    const LeafDef* def() const;
     const Item* item() const;
 
     template<typename T>
@@ -73,24 +73,22 @@ public:
     template<typename T>
     T defaultValue() const;
 
-    //bool getOptions(std::vector<VariantCRef>& value) const;
-
     template<typename T>
     bool getOptions(std::vector<T>& value) const;
 
-    const ValueSettings& settings() const;
+    const LeafSettings& settings() const;
 
-    static Entry &emptyEntry();
+    static Leaf &emptyLeaf();
 
     template<typename T>
     bool operator<<(const T& value) const;
 
 protected:
-    void onEntryChangeBefore() const;
-    void onEntryChangeAfter() const;
+    void onLeafChangeBefore() const;
+    void onLeafChangeAfter() const;
 
 protected:
-    const ValueDef* m_valueDef;
+    const LeafDef* m_def;
     NodeData m_nodeData;
     const Item* m_item;
 
@@ -100,51 +98,51 @@ protected:
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::canGetValue(T &value, bool useDefault) const
+bool Leaf::canGetValue(T &value, bool useDefault) const
 {
-    assert(m_valueDef != nullptr);
-    return m_valueDef->canGetValue(m_nodeData, value, useDefault, true);
+    assert(m_def != nullptr);
+    return m_def->canGetValue(m_nodeData, value, useDefault, true);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::getValue(T &value, bool useDefault) const
+bool Leaf::getValue(T &value, bool useDefault) const
 {
-    assert(m_valueDef != nullptr);
-    return m_valueDef->getValue(m_nodeData, value, useDefault, true);
+    assert(m_def != nullptr);
+    return m_def->getValue(m_nodeData, value, useDefault, true);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-T Entry::value(bool useDefault) const
+T Leaf::value(bool useDefault) const
 {
-    assert(m_valueDef != nullptr);
-    return m_valueDef->value<T>(m_nodeData, useDefault, true);
+    assert(m_def != nullptr);
+    return m_def->value<T>(m_nodeData, useDefault, true);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::canSetValue(const T &value) const
+bool Leaf::canSetValue(const T &value) const
 {
-    assert(m_valueDef != nullptr);
-    return m_valueDef->canSetValue(m_nodeData, value, true);
+    assert(m_def != nullptr);
+    return m_def->canSetValue(m_nodeData, value, true);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::setValue(const T &value) const
+bool Leaf::setValue(const T &value) const
 {
-    assert(m_valueDef != nullptr);
+    assert(m_def != nullptr);
     if (m_item) {
-        onEntryChangeBefore();
+        onLeafChangeBefore();
     }
-    bool result = m_valueDef->setValue(m_nodeData, value, true);
+    bool result = m_def->setValue(m_nodeData, value, true);
     if (m_item) {
-        onEntryChangeAfter();
+        onLeafChangeAfter();
     }
     return result;
 }
@@ -152,36 +150,36 @@ bool Entry::setValue(const T &value) const
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::getDefaultValue(T &value) const
+bool Leaf::getDefaultValue(T &value) const
 {
-    assert(m_valueDef != nullptr);
-    return m_valueDef->getDefaultValue(value);
+    assert(m_def != nullptr);
+    return m_def->getDefaultValue(value);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-T Entry::defaultValue() const
+T Leaf::defaultValue() const
 {
-    assert(m_valueDef != nullptr);
+    assert(m_def != nullptr);
     T value;
-    m_valueDef->getDefaultValue(value);
+    m_def->getDefaultValue(value);
     return std::move(value);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::getOptions(std::vector<T>& value) const
+bool Leaf::getOptions(std::vector<T>& value) const
 {
-    assert(m_valueDef != nullptr);
-    return m_valueDef->options().getOptions(value, m_item);
+    assert(m_def != nullptr);
+    return m_def->options().getOptions(value, m_item);
 }
 
 // =============================================================================
 // (public)
 template<typename T>
-bool Entry::operator<<(const T& value) const
+bool Leaf::operator<<(const T& value) const
 {
     return setValue(value);
 }
@@ -189,7 +187,7 @@ bool Entry::operator<<(const T& value) const
 // =============================================================================
 // (free)
 template<typename T>
-bool operator<<(T & value, const Entry &item)
+bool operator<<(T & value, const Leaf &item)
 {
     assert(!item.isNull());
     return item.getValue(value);

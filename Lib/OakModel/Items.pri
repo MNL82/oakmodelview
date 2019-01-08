@@ -8,12 +8,12 @@
 
 HEADERS += \
     $$PWD/Item.h \
-    $$PWD/Entry.h \
     $$PWD/ItemIndex.h \
-    $$PWD/ItemServiceFunctions.h
+    $$PWD/ItemServiceFunctions.h \
+    $$PWD/Leaf.h
 
 SOURCES += \
     $$PWD/Item.cpp \
-    $$PWD/Entry.cpp \
     $$PWD/ItemIndex.cpp \
-    $$PWD/ItemServiceFunctions.cpp
+    $$PWD/ItemServiceFunctions.cpp \
+    $$PWD/Leaf.cpp

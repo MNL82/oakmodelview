@@ -13,7 +13,7 @@
 #include <algorithm>
 
 #include "OakModel.h"
-#include "EntryQuery.h"
+#include "LeafQuery.h"
 #include "OakModelServiceFunctions.h"
 #include "QueryBuilder.h"
 
@@ -50,7 +50,7 @@ Item::Item(const Item& copy)
     : m_def(copy.m_def),
       m_nodeData(copy.m_nodeData),
       m_model(copy.m_model),
-      m_entryList(copy.m_entryList)
+      m_leafList(copy.m_leafList)
 {
 
 }
@@ -61,7 +61,7 @@ Item::Item(Item &&move)
     : m_def(std::move(move.m_def)),
       m_nodeData(std::move(move.m_nodeData)),
       m_model(move.m_model),
-      m_entryList(std::move(move.m_entryList))
+      m_leafList(std::move(move.m_leafList))
 {
 
 }
@@ -74,15 +74,15 @@ Item& Item::operator=(const Item& copy)
     m_nodeData = copy.m_nodeData;
     m_model = copy.m_model;
 
-    if (m_def == copy.m_def) {  // NodeDef is the same: Entry list is still valid
-        if (!m_entryList.empty()) { // Entry list is initialized
-            // Update node for entry lists
-            for (auto &entry: m_entryList) {
-                entry.m_nodeData = m_nodeData;
+    if (m_def == copy.m_def) {  // NodeDef is the same: Leaf list is still valid
+        if (!m_leafList.empty()) { // Leaf list is initialized
+            // Update node for leaf lists
+            for (auto &leaf: m_leafList) {
+                leaf.m_nodeData = m_nodeData;
             }
         }
     } else {
-        m_entryList.assign(copy.m_entryList.begin(), copy.m_entryList.end());
+        m_leafList.assign(copy.m_leafList.begin(), copy.m_leafList.end());
     }
 
     return *this;
@@ -92,7 +92,7 @@ Item& Item::operator=(const Item& copy)
 // (public)
 Item& Item::operator=(Item&& move)
 {
-    m_entryList = std::move(move.m_entryList);
+    m_leafList = std::move(move.m_leafList);
     m_def = std::move(move.m_def);
     m_nodeData = std::move(move.m_nodeData);
     m_model = move.m_model;
@@ -115,9 +115,9 @@ bool Item::operator!=(const Item& _item) const
 
 // =============================================================================
 // (public)
-const Entry& Item::operator()(const std::string &valueName) const
+const Leaf& Item::operator()(const std::string &valueName) const
 {
-    return entry(valueName);
+    return leaf(valueName);
 }
 
 // =============================================================================
@@ -155,7 +155,7 @@ void Item::clear()
     m_def = nullptr;
     m_nodeData.clear();
     m_model = nullptr;
-    m_entryList.clear();
+    m_leafList.clear();
 }
 
 // =============================================================================
@@ -179,9 +179,9 @@ void Item::setCurrent()
 // (public)
 std::vector<std::string> Item::valueNameList() const
 {
-    initEntryList();
+    initLeafList();
     std::vector<std::string> nameList;
-    for (const Entry& iv: m_entryList)
+    for (const Leaf& iv: m_leafList)
     {
         nameList.push_back(iv.name());
     }
@@ -205,106 +205,106 @@ std::vector<std::string> Item::childNameList() const
 
 // =============================================================================
 // (public)
-int Item::entryCount() const
+int Item::leafCount() const
 {
-    initEntryList();
-    return static_cast<int>(m_entryList.size());
+    initLeafList();
+    return static_cast<int>(m_leafList.size());
 }
 
 // =============================================================================
 // (public)
-bool Item::hasEntry(const std::string &entryName) const
+bool Item::hasLeaf(const std::string &leafName) const
 {
-    return m_def->hasValue(entryName);
+    return m_def->hasValue(leafName);
 }
 
 // =============================================================================
 // (public)
-int Item::entryIndex(const Entry &entry) const
+int Item::leafIndex(const Leaf &leaf) const
 {
-    initEntryList();
-    auto it = std::find(m_entryList.begin(), m_entryList.end(), entry);
-    if (it == m_entryList.end()) {
+    initLeafList();
+    auto it = std::find(m_leafList.begin(), m_leafList.end(), leaf);
+    if (it == m_leafList.end()) {
         return -1;
     } else {
-        return static_cast<int>(std::distance(m_entryList.begin(), it));
+        return static_cast<int>(std::distance(m_leafList.begin(), it));
     }
 }
 
 // =============================================================================
 // (public)
-const Entry& Item::entryAt(int index) const
+const Leaf& Item::leafAt(int index) const
 {
-    initEntryList();
-    return m_entryList.at(static_cast<vSize>(index));
+    initLeafList();
+    return m_leafList.at(static_cast<vSize>(index));
 }
 
 // =============================================================================
 // (public)
-Entry &Item::entryAt(int index)
+Leaf &Item::leafAt(int index)
 {
-    initEntryList();
-    return m_entryList.at(static_cast<vSize>(index));
+    initLeafList();
+    return m_leafList.at(static_cast<vSize>(index));
 }
 
 // =============================================================================
 // (public)
-const Entry& Item::entry(const std::string &entryName) const
+const Leaf& Item::leaf(const std::string &leafName) const
 {
-    initEntryList();
-    for (const Entry& iv: m_entryList)
+    initLeafList();
+    for (const Leaf& iv: m_leafList)
     {
-        if (iv.name() == entryName) {
+        if (iv.name() == leafName) {
             return iv;
         }
     }
-    return Entry::emptyEntry();
+    return Leaf::emptyLeaf();
 }
 
 // =============================================================================
 // (public)
-Entry &Item::entry(const std::string &entryName)
+Leaf &Item::leaf(const std::string &leafName)
 {
-    initEntryList();
-    for (Entry& iv: m_entryList)
+    initLeafList();
+    for (Leaf& iv: m_leafList)
     {
-        if (iv.name() == entryName) {
+        if (iv.name() == leafName) {
             return iv;
         }
     }
-    return Entry::emptyEntry();
+    return Leaf::emptyLeaf();
 }
 
 // =============================================================================
 // (public)
-const Item::entryIterator Item::entryBegin() const
+const Item::LeafIterator Item::leafBegin() const
 {
-    initEntryList();
-    return m_entryList.begin();
+    initLeafList();
+    return m_leafList.begin();
 }
 
 // =============================================================================
 // (public)
-Item::entryIterator Item::entryBegin()
+Item::LeafIterator Item::leafBegin()
 {
-    initEntryList();
-    return m_entryList.begin();
+    initLeafList();
+    return m_leafList.begin();
 }
 
 // =============================================================================
 // (public)
-const Item::entryIterator Item::entryEnd() const
+const Item::LeafIterator Item::leafEnd() const
 {
-    initEntryList();
-    return m_entryList.end();
+    initLeafList();
+    return m_leafList.end();
 }
 
 // =============================================================================
 // (public)
-Item::entryIterator Item::entryEnd()
+Item::LeafIterator Item::leafEnd()
 {
-    initEntryList();
-    return m_entryList.end();
+    initLeafList();
+    return m_leafList.end();
 }
 
 // =============================================================================
@@ -317,11 +317,11 @@ bool Item::hasKey() const
 
 // =============================================================================
 // (public)
-const Entry& Item::entryKey() const
+const Leaf& Item::keyLeaf() const
 {
-    initEntryList();
-    if (hasKey()) { return m_entryList[static_cast<vSize>(m_def->indexOfKeyValueDef())]; }
-    return Entry::emptyEntry();
+    initLeafList();
+    if (hasKey()) { return m_leafList[static_cast<vSize>(m_def->indexOfKeyLeafDef())]; }
+    return Leaf::emptyLeaf();
 }
 
 // =============================================================================
@@ -334,11 +334,11 @@ bool Item::hasVariants() const
 
 // =============================================================================
 // (public)
-const Entry& Item::variantEntry() const
+const Leaf& Item::variantLeaf() const
 {
-    initEntryList();
-    if (hasVariants()) { return m_entryList[static_cast<vSize>(m_def->indexOfVariantValueDef())]; }
-    return Entry::emptyEntry();
+    initLeafList();
+    if (hasVariants()) { return m_leafList[static_cast<vSize>(m_def->indexOfVariantLeafDef())]; }
+    return Leaf::emptyLeaf();
 }
 
 // =============================================================================
@@ -739,13 +739,13 @@ int Item::convertChildIndexToNamed(std::string &name, int index) const
 
 // =============================================================================
 // (protected)
-void Item::initEntryList() const
+void Item::initLeafList() const
 {
     ASSERT(m_def);
-    if (m_entryList.empty() && m_def && !m_nodeData.isNull()) {
+    if (m_leafList.empty() && m_def && !m_nodeData.isNull()) {
         auto vList = m_def->valueList();
-        for (const ValueDef* vi: vList) {
-            m_entryList.push_back(Entry(vi, m_nodeData, this));
+        for (const LeafDef* vi: vList) {
+            m_leafList.push_back(Leaf(vi, m_nodeData, this));
         }
     }
 }
@@ -754,14 +754,14 @@ void Item::initEntryList() const
 // (protected)
 void Item::updateUniqueValues(const Item &item)
 {
-    Model::Item::entryIterator vIt = item.entryBegin();
-    Model::Item::entryIterator vItEnd = item.entryEnd();
+    Model::Item::LeafIterator vIt = item.leafBegin();
+    Model::Item::LeafIterator vItEnd = item.leafEnd();
     while (vIt != vItEnd) {
         if (vIt->settings().value(REQUIRED) > 0 &&
             vIt->settings().value(UNIQUE) > 0 &&
             vIt->hasDefaultValue()) {
 
-            std::vector<std::string> valueList = QB::createParent()->children(item.def()->name())->EntrySPtr(vIt->name())->toValueList<std::string>(item);
+            std::vector<std::string> valueList = QB::createParent()->children(item.def()->name())->leafSPtr(vIt->name())->toValueList<std::string>(item);
             std::string value = vIt->value<std::string>();
             if (count(valueList, value) == 1) {
                 return;

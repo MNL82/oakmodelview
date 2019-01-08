@@ -22,7 +22,7 @@
 #include "NodeData.h"
 #include "NodeSettings.h"
 
-#include "ValueDef.h"
+#include "LeafDef.h"
 
 #include "ContainerDef.h"
 #include "ContainerGroupDef.h"
@@ -110,8 +110,8 @@ protected:
 public:
     /// 'NodeDefs' can a variant of an inheritance hieraki with derived and base nodes in a tree like structure.
     /// All 'NodeDef' variants in the same hieraki will have the same 'name' but different 'variantId'.
-    /// Derived 'NodeDef's will inherate all 'ValueDef's and "ContainerDef's of its base 'NodeDef'.
-    /// The 'variantId' of a node is accessed with a 'ValueDef' belonging to the baseRoot so all 'NodeDef' variants
+    /// Derived 'NodeDef's will inherate all 'LeafDef's and "ContainerDef's of its base 'NodeDef'.
+    /// The 'variantId' of a node is accessed with a 'LeafDef' belonging to the baseRoot so all 'NodeDef' variants
     /// of the inheritance hieraki will read the same value.
     const UnionRef variantId() const;
 
@@ -157,28 +157,28 @@ public:
 public:
     virtual int valueCount(bool includeBase = true, bool includeDerived = false) const;
     virtual bool hasValue(const std::string &valueName, bool includeBase = true, bool includeDerived = false) const;
-    virtual int valueIndex(const ValueDef *valueDef, bool includeBase = true, bool includeDerived = false) const;
-    virtual const ValueDef& value(int index, bool includeBase = true, bool includeDerived = false) const;
-    virtual const ValueDef& value(const std::string &valueName, bool includeBase = true, bool includeDerived = false) const;
-    virtual ValueDef& value(int index, bool includeBase = true, bool includeDerived = false);
-    virtual ValueDef& value(const std::string &valueName, bool includeBase = true, bool includeDerived = false);
+    virtual int valueIndex(const LeafDef *leafDef, bool includeBase = true, bool includeDerived = false) const;
+    virtual const LeafDef& value(int index, bool includeBase = true, bool includeDerived = false) const;
+    virtual const LeafDef& value(const std::string &valueName, bool includeBase = true, bool includeDerived = false) const;
+    virtual LeafDef& value(int index, bool includeBase = true, bool includeDerived = false);
+    virtual LeafDef& value(const std::string &valueName, bool includeBase = true, bool includeDerived = false);
 
-    std::vector<const ValueDef*> valueList(bool includeBase = true, bool includeDerived = false) const;
-    void getValueList(std::vector<const ValueDef*>& vList, bool includeBase = true, bool includeDerived = false) const;
+    std::vector<const LeafDef*> valueList(bool includeBase = true, bool includeDerived = false) const;
+    void getValueList(std::vector<const LeafDef*>& vList, bool includeBase = true, bool includeDerived = false) const;
 
     bool hasKey() const;
-    const ValueDef& keyValueDef() const;
-    ValueDef& keyValueDef();
-    int indexOfKeyValueDef() const { return m_indexOfKeyValueDef; }
+    const LeafDef& keyLeafDef() const;
+    LeafDef& keyLeafDef();
+    int indexOfKeyLeafDef() const { return m_indexOfKeyLeafDef; }
 
-    const ValueDef &variantValueDef() const;
-    ValueDef &variantValueDef();
-    int indexOfVariantValueDef() const { return m_indexOfVariantValueDef; }
+    const LeafDef &variantLeafDef() const;
+    LeafDef &variantLeafDef();
+    int indexOfVariantLeafDef() const { return m_indexOfVariantLeafDef; }
 
 protected:
-    std::vector<ValueDefUPtr> m_valueList;
-    int m_indexOfKeyValueDef = -1;
-    int m_indexOfVariantValueDef = -1;
+    std::vector<LeafDefUPtr> m_valueList;
+    int m_indexOfKeyLeafDef = -1;
+    int m_indexOfVariantLeafDef = -1;
 // *****************************************************************************
 
 

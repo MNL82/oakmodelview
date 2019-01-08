@@ -8,9 +8,9 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ValueSettingsBuilderData.h"
+#include "LeafSettingsBuilderData.h"
 
-#include "ValueDefBuilder.h"
+#include "LeafDefBuilder.h"
 
 #include "../ServiceFunctions/Trace.h"
 
@@ -18,22 +18,22 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-ValueSettingsBuilderData::ValueSettingsBuilderData()
+LeafSettingsBuilderData::LeafSettingsBuilderData()
 {
-    //TRACE("ValueSettingsBuilderData");
+    //TRACE("LeafSettingsBuilderData");
 }
 
 // =============================================================================
 // (public)
-void ValueSettingsBuilderData::validate(std::vector<std::string>& errorMessages) const
+void LeafSettingsBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
     UNUSED(errorMessages)
-    //errorMessages.push_back("ValueSettings validation not implemented");
+    //errorMessages.push_back("LeafSettings validation not implemented");
 }
 
 // =============================================================================
 // (public)
-void ValueSettingsBuilderData::set(ValueDefBuilderSPtr builder) const
+void LeafSettingsBuilderData::set(LeafDefBuilderSPtr builder) const
 {
     if (readOnly != BoolState_Undefined) {
         builder->setSetting(OPTION_ONLY, readOnly == BoolState_True);

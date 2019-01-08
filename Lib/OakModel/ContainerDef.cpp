@@ -573,7 +573,7 @@ bool ContainerDef::checkUniqueOptionValues(const NodeData &_nodeData) const
 {
     // Check if a unique options only list do not have any options left
     auto vList = m_containerDef->valueList();
-    for (const ValueDef* vDef: vList)
+    for (const LeafDef* vDef: vList)
     {
         if (vDef->settings().value(UNIQUE) > 0 &&
             vDef->options().isUsed() &&

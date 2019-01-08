@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ValueSettings.h"
+#include "LeafSettings.h"
 
 #include "NodeData.h"
 
@@ -26,25 +26,24 @@ namespace Oak::Model {
 
 class ValueOptions;
 
-class ValueDef;
-typedef std::unique_ptr<ValueDef> ValueDefUPtr;
-typedef std::unique_ptr<ValueDef> ValueDefUPtr;
+class LeafDef;
+typedef std::unique_ptr<LeafDef> LeafDefUPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueDef
+class LeafDef
 {
 public:
-    ValueDef(const UnionRef& valueTemplate);
-    ValueDef(UnionType type);
+    LeafDef(const UnionRef& valueTemplate);
+    LeafDef(UnionType type);
 
-    ValueDef(const ValueDef &copy);
-    ValueDef(ValueDef &&move);
+    LeafDef(const LeafDef &copy);
+    LeafDef(LeafDef &&move);
 
-    virtual ValueDefUPtr copy() const;
+    virtual LeafDefUPtr copy() const;
 
-    virtual ~ValueDef();
+    virtual ~LeafDef();
 
     UnionType valueType() const;
     const UnionRef valueTemplate() const;
@@ -55,7 +54,7 @@ public:
     bool isNull() const;
     ConversionSPtr defaultConversion() const;
 
-    const ValueSettings& settings() const;
+    const LeafSettings& settings() const;
 
     const ValueOptions &options() const;
 
@@ -80,40 +79,34 @@ public:
 
     // Service functions
     template<class... _Types> inline
-    static ValueDefUPtr MakeUPtr(_Types&&... _Args);
+    static LeafDefUPtr MakeUPtr(_Types&&... _Args);
 
-    static ValueDef &emptyDef();
+    static LeafDef &emptyDef();
 
 protected:
     UnionValue m_valueTemplate;
-    ValueSettings m_settings;
+    LeafSettings m_settings;
     std::string m_name;
     std::string m_displayName;
     UnionValue m_defaultValue;
     ConversionSPtr m_defaultConversion;
     ValueOptions *m_options;
     std::string m_tooltip;
-    //std::vector<Variant> m_options;
 
 
 #ifdef XML_BACKEND
     XML::ValueRefUPtr m_valueRef;
 #endif // XML_BACKEND
 
-    //TODO: Have a optional validator class
-    // - Values only list
-    // - Values excluded list
-    // - Value filter
+    static LeafDef s_emptyDef;
 
-    static ValueDef s_emptyDef;
-
-    friend class ValueDefBuilder;
+    friend class LeafDefBuilder;
 };
 
 // =============================================================================
 // (public)
 template<typename T>
-T ValueDef::value(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+T LeafDef::value(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     T val;
     getValue(_node, val, useDefault, allowConversion, conversion);
@@ -123,12 +116,12 @@ T ValueDef::value(const NodeData &_node, bool useDefault, bool allowConversion, 
 // =============================================================================
 // (public)
 template<class... _Types>
-ValueDefUPtr ValueDef::MakeUPtr(_Types&&... _Args)
+LeafDefUPtr LeafDef::MakeUPtr(_Types&&... _Args)
 {
-    return (ValueDefUPtr(new ValueDef(_STD forward<_Types>(_Args)...)));
+    return (LeafDefUPtr(new LeafDef(_STD forward<_Types>(_Args)...)));
 }
 
-typedef ValueDef ValueDef;
+typedef LeafDef LeafDef;
 
 } // namespace Oak::Model
 

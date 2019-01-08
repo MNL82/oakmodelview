@@ -11,7 +11,7 @@
 #pragma once
 
 #include "NodeDef.h"
-#include "ValueDefBuilder.h"
+#include "LeafDefBuilder.h"
 
 
 namespace Oak::Model {
@@ -42,9 +42,9 @@ public:
 
     NodeDefSPtr get();
 
-    NodeDefBuilderSPtr addValueDef(ValueDefBuilderSPtr valueDef);
-    NodeDefBuilderSPtr addValueKey(ValueDefBuilderSPtr valueDefKey);
-    NodeDefBuilderSPtr addValueVariant(ValueDefBuilderSPtr variantValueDef);
+    NodeDefBuilderSPtr addLeafDef(LeafDefBuilderSPtr leafDef);
+    NodeDefBuilderSPtr addKeyLeaf(LeafDefBuilderSPtr keyLeafDef);
+    NodeDefBuilderSPtr addVariantLeaf(LeafDefBuilderSPtr variantLeafDef);
 
     NodeDefBuilderSPtr addContainerDef(ContainerDefBuilderSPtr cDef);
 
@@ -62,14 +62,14 @@ public:
 
     NodeDefSPtr getDerivedNodeDef(const std::string &variantId);
 
-    static ValueDefUPtr takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName);
+    static LeafDefUPtr takeLeafDef(NodeDefSPtr nodeDef, const std::string &valueName);
     static ContainerDefUPtr takeContainerDef(NodeDefSPtr nodeDef, const std::string &name);
 
 protected:
     // ************* SERVICE FUNCTIONS *************
-    // Set the keyValueDef or variantValueDef on all variants in the inheritance heiracky
-    static void setKeyValueDefForAllVariants(NodeDefSPtr nodeDef, int index);
-    static void setVariantValueDefForAllVariants(NodeDefSPtr nodeDef, int index);
+    // Set the keyLeafDef or variantLeafDef on all variants in the inheritance heiracky
+    static void setKeyLeafDefForAllVariants(NodeDefSPtr nodeDef, int index);
+    static void setVariantLeafDefForAllVariants(NodeDefSPtr nodeDef, int index);
 
 #ifdef XML_BACKEND
     static void setTagNameForAllVariants(NodeDefSPtr nodeDef, const std::string& tagName);

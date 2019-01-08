@@ -17,7 +17,7 @@
 #include "QuickOakModel.h"
 #include "QuickOakModelBuilder.h"
 
-#include "QuickValueDef.h"
+#include "QuickLeafDef.h"
 #include "QuickValueOptions.h"
 
 #include <qqml.h>
@@ -31,7 +31,7 @@ void OakModePlugin::registerTypes(const char *uri)
     qmlRegisterType<QuickNodeDef>("Oak.Model", 1, 0, "NodeDef");
     qmlRegisterType<QuickOakModel>("Oak.Model", 1, 0, "OakModel");
     qmlRegisterType<QuickOakModelBuilder>("Oak.Model", 1, 0, "OakModelBuilder");
-    qmlRegisterType<QuickValueDef>("Oak.Model", 1, 0, "ValueDef");
+    qmlRegisterType<QuickLeafDef>("Oak.Model", 1, 0, "LeafDef");
+    qmlRegisterType<QuickLeafSettings>("Oak.Model", 1, 0, "LeafSettings");
     qmlRegisterType<QuickValueOptions>("Oak.Model", 1, 0, "ValueOptions");
-    qmlRegisterType<QuickValueSettings>("Oak.Model", 1, 0, "ValueSettings");
 }

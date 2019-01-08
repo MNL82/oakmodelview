@@ -56,8 +56,8 @@ protected:
     void onItemMoveBefore(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
     void onItemCloneAfter(const Model::ItemIndex &sourceItemIndex, const Model::ItemIndex &targetItemIndex);
     void onItemRemoveBefore(const Model::ItemIndex &itemIndex);
-    void onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex);
-    void onEntryKeyChangeAfter(const Model::ItemIndex &itemIndex);
+    void onVariantLeafChangeAfter(const Model::ItemIndex &itemIndex);
+    void onKeyLeafChangeAfter(const Model::ItemIndex &itemIndex);
 
 protected slots:
     void adjustItemWidth();

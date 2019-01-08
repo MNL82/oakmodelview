@@ -19,9 +19,9 @@
 namespace Oak::Model {
 
 class Item;
-class EntryQuery;
-typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
-typedef std::weak_ptr<EntryQuery> EntryQueryWPtr;
+class LeafQuery;
+typedef std::shared_ptr<LeafQuery> LeafQuerySPtr;
+typedef std::weak_ptr<LeafQuery> LeafQueryWPtr;
 
 // =============================================================================
 // Class definition
@@ -42,8 +42,8 @@ public:
     bool hasQuery() const;
     bool hasQueryExcluded() const;
 
-    const EntryQuery *query() const;
-    const EntryQuery *queryExcluded() const;
+    const LeafQuery *query() const;
+    const LeafQuery *queryExcluded() const;
 
     static const ValueOptions& empty();
 
@@ -51,11 +51,11 @@ protected:
     std::vector<UnionValue> m_options;
     std::vector<UnionValue> m_excluded;
 
-    EntryQuerySPtr m_query;
-    EntryQuerySPtr m_queryExcluded;
+    LeafQuerySPtr m_query;
+    LeafQuerySPtr m_queryExcluded;
 
-    friend class ValueDef;
-    friend class ValueDefBuilder;
+    friend class LeafDef;
+    friend class LeafDefBuilder;
 };
 
 // =============================================================================

@@ -37,7 +37,7 @@ public:
     bool canRemove(int index) const;
 
     QWidget* getEditor();
-    bool setNode(const Model::Node& node);
+    bool setNode(const Model::NodeData& nodeData);
     void updateEditor();
     void clearEditor();
 

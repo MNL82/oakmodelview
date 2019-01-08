@@ -52,7 +52,7 @@ QStringList ContainerEditorHandler::itemIdList() const
     {
         Model::Item cItem = m_item.childAt(m_name, i);
         if (cItem.hasKey()) {
-            cItem.entryKey().value().get(keyValue);
+            cItem.keyLeaf().value().get(keyValue);
             nodeId = QString::fromStdString(keyValue);
         } else {
             nodeId = QString::number(i+1);
@@ -88,11 +88,11 @@ QWidget* ContainerEditorHandler::getEditor()
 
 // =============================================================================
 // (public)
-bool ContainerEditorHandler::setNode(const Model::Node& node)
+bool ContainerEditorHandler::setNode(const Model::NodeData& nodeData)
 {
-    if (!m_item.def()->validate(node)) { return false; }
+    if (!m_item.def()->validate(nodeData)) { return false; }
 
-    m_item = Model::Item(m_item.def(), node, m_item.model());
+    m_item = Model::Item(m_item.def(), nodeData, m_item.model());
 
     updateEditor();
 

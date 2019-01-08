@@ -62,18 +62,18 @@ QWidget* NodeEditorHandler::getEditor()
 
 // =============================================================================
 // (public)
-bool NodeEditorHandler::setNode(const Model::Node &node)
+bool NodeEditorHandler::setNode(const Model::NodeData &nodeData)
 {
-    if (!m_item.def()->validate(node)) { return false; }
+    if (!m_item.def()->validate(nodeData)) { return false; }
 
-    m_item = Model::Item(m_item.def(), node, m_item.model());
+    m_item = Model::Item(m_item.def(), nodeData, m_item.model());
 
     foreach (ValueEditorHandler* vHandler, m_valueEditorMap) {
-        vHandler->setNode(node);
+        vHandler->setNode(nodeData);
     }
 
     foreach (ContainerEditorHandler* cHandler, m_containerEditorMap) {
-        cHandler->setNode(node);
+        cHandler->setNode(nodeData);
     }
 
     return true;
@@ -137,8 +137,8 @@ void NodeEditorHandler::createEditor()
 
     int row = 0;
 
-    Model::Item::entryIterator vIt = m_item.entryBegin();
-    Model::Item::entryIterator vItEnd = m_item.entryEnd();
+    Model::Item::LeafIterator vIt = m_item.leafBegin();
+    Model::Item::LeafIterator vItEnd = m_item.leafEnd();
     while (vIt != vItEnd) {
         if (!m_valueEditorMap.contains(vIt->name())) {
             auto vEditor = new ValueEditorHandler(this, *vIt);

@@ -13,7 +13,7 @@
 #include <QString>
 
 #include "QuickOakBaseTypes.h"
-#include "ValueSettingsBuilderData.h"
+#include "LeafSettingsBuilderData.h"
 
 #include "QuickPropertyHelpers.h"
 
@@ -21,7 +21,7 @@
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickValueSettings : public QObject
+class QuickLeafSettings : public QObject
 {
     Q_OBJECT
     BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, readOnly)
@@ -30,10 +30,10 @@ class QuickValueSettings : public QObject
     BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, required)
 
 public:
-    QuickValueSettings(QObject *parent = nullptr);
-    Oak::Model::ValueSettingsBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
+    QuickLeafSettings(QObject *parent = nullptr);
+    Oak::Model::LeafSettingsBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
 private:
-    Oak::Model::ValueSettingsBuilderData * m_builder;
-    Oak::Model::ValueSettingsBuilderDataUPtr m_builderOwner;
+    Oak::Model::LeafSettingsBuilderData * m_builder;
+    Oak::Model::LeafSettingsBuilderDataUPtr m_builderOwner;
 };

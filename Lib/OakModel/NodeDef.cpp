@@ -12,8 +12,8 @@
 #include <functional>
 
 #include "NodeDef.h"
-#include "ValueDefBuilder.h"
-#include "EntryQuery.h"
+#include "LeafDefBuilder.h"
+#include "LeafQuery.h"
 #include "OakModelServiceFunctions.h"
 #include "QueryBuilder.h"
 
@@ -104,8 +104,8 @@ NodeDef &NodeDef::operator=(const NodeDef &copy)
     {
         m_valueList.push_back(value->copy());
     }
-    m_indexOfKeyValueDef = copy.m_indexOfKeyValueDef;
-    m_indexOfVariantValueDef = copy.m_indexOfVariantValueDef;
+    m_indexOfKeyLeafDef = copy.m_indexOfKeyLeafDef;
+    m_indexOfVariantLeafDef = copy.m_indexOfVariantLeafDef;
 
     m_containerList.clear();
     for (const auto& container: copy.m_containerList) {
@@ -134,8 +134,8 @@ NodeDef &NodeDef::operator=(NodeDef &&move)
     m_derivedList = std::move(move.m_derivedList);
 
     m_valueList = std::move(move.m_valueList);
-    m_indexOfKeyValueDef = move.m_indexOfKeyValueDef;
-    m_indexOfVariantValueDef = move.m_indexOfVariantValueDef;
+    m_indexOfKeyLeafDef = move.m_indexOfKeyLeafDef;
+    m_indexOfVariantLeafDef = move.m_indexOfVariantLeafDef;
 
     m_containerList = std::move(move.m_containerList);
     m_containerGroup = std::move(move.m_containerGroup);
@@ -355,7 +355,7 @@ const NodeDef *NodeDef::validVariant(const NodeData &nodeData, bool includeBase,
     }
 
     // Check if the part id of the variant type matches
-    UnionValue variantId = variantValueDef().value(nodeData);
+    UnionValue variantId = variantLeafDef().value(nodeData);
 
     return validVariant(variantId, includeBase, includeDerived);
 }
@@ -447,7 +447,7 @@ bool NodeDef::validate(const NodeData &_nodeData, bool includeBase, bool include
     }
 
     // Check if the part id of the variant type matches
-    UnionValue variantId = variantValueDef().value(_nodeData);
+    UnionValue variantId = variantLeafDef().value(_nodeData);
 
     return validate(variantId, includeBase, includeDerived);
 }
@@ -482,7 +482,7 @@ ValidationState NodeDef::validationState(const NodeData &nodeData) const
         return VALIDATION_STATE_INVALID;
     }
 
-    UnionValue _variantId = variantValueDef().value(nodeData);
+    UnionValue _variantId = variantLeafDef().value(nodeData);
 
     if (!hasDerived() || validate(_variantId, false, false)) {
         return VALIDATION_STATE_VALID;
@@ -549,12 +549,12 @@ bool NodeDef::hasValue(const std::string &valueName, bool includeBase, bool incl
 
 // =============================================================================
 // (public)
-int NodeDef::valueIndex(const ValueDef *valueDef, bool includeBase, bool includeDerived) const
+int NodeDef::valueIndex(const LeafDef *leafDef, bool includeBase, bool includeDerived) const
 {
     int i = 0;
-    for (const ValueDefUPtr &value: m_valueList)
+    for (const LeafDefUPtr &value: m_valueList)
     {
-        if (value.get() == valueDef) {
+        if (value.get() == leafDef) {
             if (includeBase && hasBase()) {
                 i += m_base.lock()->valueCount(true, false);
             }
@@ -564,7 +564,7 @@ int NodeDef::valueIndex(const ValueDef *valueDef, bool includeBase, bool include
     }
 
     if (includeBase && hasBase()) {
-        i = m_base.lock()->valueIndex(valueDef, true, false);
+        i = m_base.lock()->valueIndex(leafDef, true, false);
         if (i != -1) {
             return i;
         }
@@ -574,7 +574,7 @@ int NodeDef::valueIndex(const ValueDef *valueDef, bool includeBase, bool include
         i = valueCount(includeBase, false);
         for (const auto &dNodeDef: m_derivedList)
         {
-            int i2 = dNodeDef->valueIndex(valueDef, false, true);
+            int i2 = dNodeDef->valueIndex(leafDef, false, true);
             if (i2 != -1) {
                 return i + i2;
             } else {
@@ -588,7 +588,7 @@ int NodeDef::valueIndex(const ValueDef *valueDef, bool includeBase, bool include
 
 // =============================================================================
 // (public)
-const ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived) const
+const LeafDef &NodeDef::value(int index, bool includeBase, bool includeDerived) const
 {
     if (includeBase && hasBase()) {
         int baseDefCount = m_base.lock()->valueCount(true, false);
@@ -615,12 +615,12 @@ const ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
         }
     }
 
-    return ValueDef::emptyDef();
+    return LeafDef::emptyDef();
 }
 
 // =============================================================================
 // (public)
-const ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, bool includeDerived) const
+const LeafDef &NodeDef::value(const std::string &valueName, bool includeBase, bool includeDerived) const
 {
     for (const auto &value: m_valueList) {
         if (value->name() == valueName) {
@@ -629,7 +629,7 @@ const ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, b
     }
 
     if (includeBase && hasBase()) {
-        const ValueDef & result = m_base.lock()->value(valueName, true, false);
+        const LeafDef & result = m_base.lock()->value(valueName, true, false);
         if (!result.isNull()) {
             return result;
         }
@@ -638,19 +638,19 @@ const ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, b
     if (includeDerived && hasDerived()) {
         for (const auto &dNodeDef: m_derivedList)
         {
-            const ValueDef & result = dNodeDef->value(valueName, false, true);
+            const LeafDef & result = dNodeDef->value(valueName, false, true);
             if (!result.isNull()) {
                 return result;
             }
         }
     }
 
-    return ValueDef::emptyDef();
+    return LeafDef::emptyDef();
 }
 
 // =============================================================================
 // (public)
-ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
+LeafDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
 {
     if (includeBase && hasBase()) {
         int baseDefCount = m_base.lock()->valueCount(true, false);
@@ -677,12 +677,12 @@ ValueDef &NodeDef::value(int index, bool includeBase, bool includeDerived)
         }
     }
 
-    return ValueDef::emptyDef();
+    return LeafDef::emptyDef();
 }
 
 // =============================================================================
 // (public)
-ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, bool includeDerived)
+LeafDef &NodeDef::value(const std::string &valueName, bool includeBase, bool includeDerived)
 {
     for (const auto &value: m_valueList) {
         if (value->name() == valueName) {
@@ -691,7 +691,7 @@ ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, bool in
     }
 
     if (includeBase && hasBase()) {
-        ValueDef & result = m_base.lock()->value(valueName, true, false);
+        LeafDef & result = m_base.lock()->value(valueName, true, false);
         if (!result.isNull()) {
             return result;
         }
@@ -700,28 +700,28 @@ ValueDef &NodeDef::value(const std::string &valueName, bool includeBase, bool in
     if (includeDerived && hasDerived()) {
         for (const auto &dNodeDef: m_derivedList)
         {
-            ValueDef & result = dNodeDef->value(valueName, false, true);
+            LeafDef & result = dNodeDef->value(valueName, false, true);
             if (!result.isNull()) {
                 return result;
             }
         }
     }
 
-    return ValueDef::emptyDef();
+    return LeafDef::emptyDef();
 }
 
 // =============================================================================
 // (public)
-std::vector<const ValueDef *> NodeDef::valueList(bool includeBase, bool includeDerived) const
+std::vector<const LeafDef *> NodeDef::valueList(bool includeBase, bool includeDerived) const
 {
-    std::vector<const ValueDef *> vList;
+    std::vector<const LeafDef *> vList;
     getValueList(vList, includeBase, includeDerived);
     return vList;
 }
 
 // =============================================================================
 // (public)
-void NodeDef::getValueList(std::vector<const ValueDef*>& vList, bool includeBase, bool includeDerived) const
+void NodeDef::getValueList(std::vector<const LeafDef*>& vList, bool includeBase, bool includeDerived) const
 {
     if (includeBase && hasBase()) {
         m_base.lock()->getValueList(vList, true, false);
@@ -744,37 +744,37 @@ void NodeDef::getValueList(std::vector<const ValueDef*>& vList, bool includeBase
 // (public)
 bool NodeDef::hasKey() const
 {
-    return m_indexOfKeyValueDef >= 0;
+    return m_indexOfKeyLeafDef >= 0;
 }
 
 // =============================================================================
 // (public)
-const ValueDef& NodeDef::keyValueDef() const
+const LeafDef& NodeDef::keyLeafDef() const
 {
-    return value(m_indexOfKeyValueDef);
+    return value(m_indexOfKeyLeafDef);
 }
 
 // =============================================================================
 // (public)
-ValueDef& NodeDef::keyValueDef()
+LeafDef& NodeDef::keyLeafDef()
 {
-    return value(m_indexOfKeyValueDef);
+    return value(m_indexOfKeyLeafDef);
 }
 
 // =============================================================================
 // (public)
-const ValueDef& NodeDef::variantValueDef() const
+const LeafDef& NodeDef::variantLeafDef() const
 {
-    if (m_indexOfVariantValueDef < 0) { return ValueDef::emptyDef(); }
-    else { return value(m_indexOfVariantValueDef); }
+    if (m_indexOfVariantLeafDef < 0) { return LeafDef::emptyDef(); }
+    else { return value(m_indexOfVariantLeafDef); }
 }
 
 // =============================================================================
 // (public)
-ValueDef& NodeDef::variantValueDef()
+LeafDef& NodeDef::variantLeafDef()
 {
-    if (m_indexOfVariantValueDef < 0) { return ValueDef::emptyDef(); }
-    else { return value(m_indexOfVariantValueDef); }
+    if (m_indexOfVariantLeafDef < 0) { return LeafDef::emptyDef(); }
+    else { return value(m_indexOfVariantLeafDef); }
 }
 
 // =============================================================================
@@ -1184,12 +1184,12 @@ void NodeDef::onNodeInserted(const NodeData &_nodeData) const
 
     Item item(this, _nodeData);
     auto vList = valueList();
-    for (const ValueDef* vDef: vList)
+    for (const LeafDef* vDef: vList)
     {
         if (vDef->settings().value(REQUIRED) > 0 &&
             vDef->settings().value(UNIQUE) > 0) {
 
-            std::vector<std::string> valueList = QB::createSiblings()->EntrySPtr(vDef->name())->toValueList<std::string>(item);
+            std::vector<std::string> valueList = QB::createSiblings()->leafSPtr(vDef->name())->toValueList<std::string>(item);
             if (vDef->options().isUsed() && vDef->settings().value(OPTION_ONLY)) {
                 std::vector<std::string> optionList;
                 if (vDef->options().getOptions(optionList, &item)) {

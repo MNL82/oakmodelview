@@ -19,11 +19,11 @@
 namespace Oak::Model {
 
 class NodeDef;
-class ValueDef;
+class LeafDef;
 class ItemIndex;
 
-class EntryQuery;
-typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
+class LeafQuery;
+typedef std::shared_ptr<LeafQuery> LeafQuerySPtr;
 
 // =============================================================================
 // Class definition
@@ -31,7 +31,7 @@ typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
 class OptionsObserver : public ObserverInterface
 {
 public:
-    OptionsObserver(OakModel * model, const NodeDef *optionsNodeDef, const ValueDef *optionsValueDef);
+    OptionsObserver(OakModel * model, const NodeDef *optionsNodeDef, const LeafDef *optionsLeafDef);
 
     virtual void connect() override;
     virtual void disconnect() override;
@@ -44,13 +44,13 @@ protected:
 
     void onItemRemoveBefore(const ItemIndex& itemIndex);
 
-    void onEntryChangeBefore(const ItemIndex& itemIndex, const std::string &valueName);
-    void onEntryChangeAfter(const ItemIndex& itemIndex, const std::string &valueName);
+    void onLeafChangeBefore(const ItemIndex& itemIndex, const std::string &valueName);
+    void onLeafChangeAfter(const ItemIndex& itemIndex, const std::string &valueName);
 
 protected:
     const NodeDef *m_optionsNodeDef;
-    const ValueDef *m_optionsValueDef;
-    EntryQuerySPtr m_inverseQuery;
+    const LeafDef *m_optionsLeafDef;
+    LeafQuerySPtr m_inverseQuery;
 
     const NodeDef *m_sourceNodeDef;
     std::string m_sourceValueName;

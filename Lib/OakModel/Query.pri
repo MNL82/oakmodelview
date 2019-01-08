@@ -12,8 +12,8 @@ SOURCES += \
     $$PWD/ItemQueryParent.cpp \
     $$PWD/TableQuery.cpp \
     $$PWD/QueryBuilder.cpp \
-    $$PWD/EntryQuery.cpp \
-    $$PWD/ItemQuerySiblings.cpp
+    $$PWD/ItemQuerySiblings.cpp \
+    $$PWD/LeafQuery.cpp
 
 HEADERS += \
     $$PWD/ItemQuery.h \
@@ -21,5 +21,5 @@ HEADERS += \
     $$PWD/ItemQueryParent.h \
     $$PWD/TableQuery.h \
     $$PWD/QueryBuilder.h \
-    $$PWD/EntryQuery.h \
-    $$PWD/ItemQuerySiblings.h
+    $$PWD/ItemQuerySiblings.h \
+    $$PWD/LeafQuery.h

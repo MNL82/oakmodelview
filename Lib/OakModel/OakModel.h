@@ -80,10 +80,10 @@ protected:
     void onItemRemoveAfter(const ItemIndex& itemIndex) const;
     void onItemRemoveBefore(const ItemIndex& itemIndex) const;
 
-    void onEntryChangeBefore(const ItemIndex& itemIndex, const std::string &valueName) const;
-    void onEntryChangeAfter(const ItemIndex& itemIndex, const std::string &valueName) const;
-    void onEntryTypeChangeAfter(const ItemIndex& itemIndex) const;
-    void onEntryKeyChangeAfter(const ItemIndex& itemIndex) const;
+    void onLeafChangeBefore(const ItemIndex& itemIndex, const std::string &valueName) const;
+    void onLeafChangeAfter(const ItemIndex& itemIndex, const std::string &valueName) const;
+    void onVariantLeafChangeAfter(const ItemIndex& itemIndex) const;
+    void onKeyLeafChangeAfter(const ItemIndex& itemIndex) const;
 
     void createObservers();
     void clearObservers();
@@ -103,10 +103,10 @@ public:
     Callback_ItemIndex notifier_itemRemoveBefore;
     Callback_ItemIndex notifier_itemRemoveAfter;
 
-    Callback_ItemIndexString notifier_entryChangeBefore;
-    Callback_ItemIndexString notifier_entryChangeAfter;
-    Callback_ItemIndex notifier_entryTypeChangeAfter;
-    Callback_ItemIndex notifier_entryKeyChangeAfter;
+    Callback_ItemIndexString notifier_leafChangeBefore;
+    Callback_ItemIndexString notifier_leafChangeAfter;
+    Callback_ItemIndex notifier_variantLeafChangeAfter;
+    Callback_ItemIndex notifier_keyLeafChangeAfter;
 
 protected:
     Item m_rootItem;
@@ -125,7 +125,7 @@ protected:
 #endif // XML_BACKEND
 
     friend class Item;
-    friend class Entry;
+    friend class Leaf;
 };
 
 } // namespace Oak::Model

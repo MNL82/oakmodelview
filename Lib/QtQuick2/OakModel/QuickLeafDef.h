@@ -14,17 +14,17 @@
 #include <QVariant>
 
 #include "QuickValueOptions.h"
-#include "QuickValueSettings.h"
+#include "QuickLeafSettings.h"
 
 #include "Union.h"
 #include "QuickPropertyHelpers.h"
 
-#include "ValueDefBuilderData.h"
+#include "LeafDefBuilderData.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickValueDef : public QObject
+class QuickLeafDef : public QObject
 {
     Q_OBJECT
 public:
@@ -45,14 +45,14 @@ private:
     BUILDER_PROPERTY_STRING(tooltip)
     BUILDER_PROPERTY_VARIANT(defaultValue)
     BUILDER_PROPERTY_ENUM(dataTypeEnum, Oak::Model::UnionType, dataType)
-    BUILDER_PROPERTY_OBJECT(QuickValueSettings, settings)
+    BUILDER_PROPERTY_OBJECT(QuickLeafSettings, settings)
     BUILDER_PROPERTY_OBJECT(QuickValueOptions, options)
 
 public:
-    QuickValueDef(QObject* parent = nullptr);
-    Oak::Model::ValueDefBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
+    QuickLeafDef(QObject* parent = nullptr);
+    Oak::Model::LeafDefBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
 private:
-    Oak::Model::ValueDefBuilderData * m_builder;
-    Oak::Model::ValueDefBuilderDataUPtr m_builderOwner;
+    Oak::Model::LeafDefBuilderData * m_builder;
+    Oak::Model::LeafDefBuilderDataUPtr m_builderOwner;
 };

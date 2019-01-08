@@ -119,7 +119,7 @@ void TableView::setBaseRef(Model::ItemQueryUPtr baseRef)
 
 // =============================================================================
 // (public)
-void TableView::addValueRef(Model::EntryQuerySPtr valueRef)
+void TableView::addValueRef(Model::LeafQuerySPtr valueRef)
 {
     m_tableQuery.addValueQuery(valueRef);
     updateTable();
@@ -151,7 +151,7 @@ void TableView::updateTable()
         if (row == 0) {
             for (int column = 0; column < columnCount; column++)
             {
-                m_tableWidget->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(it->entry(column).displayName())));
+                m_tableWidget->setHorizontalHeaderItem(column, new QTableWidgetItem(QString::fromStdString(it->leaf(column).displayName())));
             }
             m_tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         }
@@ -178,7 +178,7 @@ void TableView::setOakModel(Model::OakModel *model)
         // Disconnect the old model
 //        m_model->notifier_currentItemChanged.remove(this);
         m_model->notifier_rootNodeDefChanged.remove(this);
-        m_model->notifier_rootNodeChanged.remove(this);
+        m_model->notifier_rootNodeDataChanged.remove(this);
 //        m_model->notifier_destroyed.remove(this);
 
         m_model->notifier_itemInserteAfter.remove(this);
@@ -186,7 +186,7 @@ void TableView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloneAfter.remove(this);
         m_model->notifier_itemRemoveAfter.remove(this);
 
-        m_model->notifier_entryChangeAfter.remove(this);
+        m_model->notifier_leafChangeAfter.remove(this);
     }
 
     // Change the model
@@ -196,7 +196,7 @@ void TableView::setOakModel(Model::OakModel *model)
         // connect the new mobel
 //        m_model->notifier_currentItemChanged.add(this, &TableView::currentItemChanged);
         m_model->notifier_rootNodeDefChanged.add(this, &TableView::updateTable);
-        m_model->notifier_rootNodeChanged.add(this, &TableView::updateTable);
+        m_model->notifier_rootNodeDataChanged.add(this, &TableView::updateTable);
 //        m_model->notifier_destroyed.add(this, &ListView::modelDestroyed);
 
         m_model->notifier_itemInserteAfter.add(this, &TableView::onItemInserteAfter);
@@ -204,7 +204,7 @@ void TableView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemCloneAfter.add(this, &TableView::onItemCloneAfter);
         m_model->notifier_itemRemoveBefore.add(this, &TableView::onItemRemoveBefore);
 
-        m_model->notifier_entryChangeAfter.add(this, &TableView::onEntryChangeAfter);
+        m_model->notifier_leafChangeAfter.add(this, &TableView::onEntryChangeAfter);
     }
 }
 
@@ -276,10 +276,10 @@ void TableView::onItemChanged(QTableWidgetItem *item)
     auto it = m_tableQuery.iterator(m_rootItem);
     while (it->next()) {
         if (row == item->row()) {
-            auto entry = it->entry(item->column());
-            if (!entry.setValue(item->text().toStdString())) {
+            auto leaf = it->leaf(item->column());
+            if (!leaf.setValue(item->text().toStdString())) {
                 m_tableWidget->blockSignals(true);
-                item->setText(QString::fromStdString(entry.value<std::string>(item->column())));
+                item->setText(QString::fromStdString(leaf.value<std::string>(item->column())));
                 m_tableWidget->blockSignals(false);
             }
             return;

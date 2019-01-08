@@ -10,35 +10,35 @@
 
 #pragma once
 
-#include "ValueSettingsBuilderData.h"
+#include "LeafSettingsBuilderData.h"
 #include "ValueOptionsBuilderData.h"
 
 namespace Oak::Model {
 
-class ValueDefBuilder;
-typedef std::shared_ptr<ValueDefBuilder> ValueDefBuilderSPtr;
+class LeafDefBuilder;
+typedef std::shared_ptr<LeafDefBuilder> LeafDefBuilderSPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class ValueDefBuilderData
+class LeafDefBuilderData
 {
 public:
-    ValueDefBuilderData();
-    virtual ~ValueDefBuilderData() {}
+    LeafDefBuilderData();
+    virtual ~LeafDefBuilderData() {}
 
     void validate(std::vector<std::string> &errorMessages) const;
-    ValueDefBuilderSPtr create() const;
+    LeafDefBuilderSPtr create() const;
 
     std::string name;
     std::string displayName;
     std::string tooltip;
     UnionValue defaultValue;
     UnionType dataType = UnionType::Undefined;
-    ValueSettingsBuilderDataUPtr settings;
+    LeafSettingsBuilderDataUPtr settings;
     ValueOptionsBuilderDataUPtr options;
 };
 
-typedef std::unique_ptr<ValueDefBuilderData> ValueDefBuilderDataUPtr;
+typedef std::unique_ptr<LeafDefBuilderData> LeafDefBuilderDataUPtr;
 
 } // namespace Oak::Model

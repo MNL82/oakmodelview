@@ -10,7 +10,7 @@
 
 #include "ValueOptionsBuilderData.h"
 
-#include "ValueDefBuilder.h"
+#include "LeafDefBuilder.h"
 #include "QueryBuilder.h"
 
 #include "../ServiceFunctions/Trace.h"
@@ -34,7 +34,7 @@ void ValueOptionsBuilderData::validate(std::vector<std::string>& errorMessages) 
 
 // =============================================================================
 // (public)
-void ValueOptionsBuilderData::set(ValueDefBuilderSPtr builder) const
+void ValueOptionsBuilderData::set(LeafDefBuilderSPtr builder) const
 {
     if(!values.empty()) {
         builder->setOptionsStatic(values);
@@ -43,10 +43,10 @@ void ValueOptionsBuilderData::set(ValueDefBuilderSPtr builder) const
         builder->setOptionsExcludedStatic(excludedValues);
     }
     if (!valueQuery.empty()) {
-        builder->setOptionsQuery(QueryBuilder::createEntryQuery(valueQuery));
+        builder->setOptionsQuery(QueryBuilder::createLeafQuery(valueQuery));
     }
     if (!excludedValueQuery.empty()) {
-        builder->setOptionsExcludedQuery(QueryBuilder::createEntryQuery(excludedValueQuery));
+        builder->setOptionsExcludedQuery(QueryBuilder::createLeafQuery(excludedValueQuery));
     }
 }
 

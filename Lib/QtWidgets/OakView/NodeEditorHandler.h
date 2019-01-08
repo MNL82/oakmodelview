@@ -40,7 +40,7 @@ public:
 
     QWidget* getEditor();
 
-    bool setNode(const Model::Node &node);
+    bool setNode(const Model::NodeData &nodeData);
 
     void updateEditorValue(const std::string &name);
     void updateEditorValues();

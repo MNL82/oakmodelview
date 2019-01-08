@@ -64,7 +64,7 @@ void NodeDataView::setModel(Model::OakModel* model)
 
         m_model->notifier_destroyed.remove(this);
 
-        m_model->notifier_entryChangeAfter.remove(this);
+        m_model->notifier_leafChangeAfter.remove(this);
     }
 
     // Change the model
@@ -76,7 +76,7 @@ void NodeDataView::setModel(Model::OakModel* model)
         m_model->notifier_rootNodeDefChanged.add(this, &NodeDataView::clearEditorCash);
 
         m_model->notifier_destroyed.add(this, &NodeDataView::modelDestroyed);
-        m_model->notifier_entryChangeAfter.add(this, &NodeDataView::onEntryChangeAfter);
+        m_model->notifier_leafChangeAfter.add(this, &NodeDataView::onLeafChangeAfter);
 
         if (!m_model->currentItem().isNull()) {
             currentItemChanged();
@@ -119,7 +119,7 @@ void NodeDataView::setCurrentItem(const Model::Item& item)
     NodeEditorHandler* eHandler = getEditorHandler(item);
     if (eHandler == nullptr) { return; }
 
-    eHandler->setNode(item.node());
+    eHandler->setNode(item.nodeData());
     QWidget* editor = eHandler->getEditor();
     setCurrentEditor(editor);
 }
@@ -175,7 +175,7 @@ void NodeDataView::setCurrentWidget(int index)
 
 // =============================================================================
 // (protected)
-void NodeDataView::onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName)
+void NodeDataView::onLeafChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName)
 {
 
     if (m_model->currentItemIndex().equal(itemIndex)) {

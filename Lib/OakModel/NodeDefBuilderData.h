@@ -16,7 +16,7 @@
 #include <memory>
 #include <vector>
 
-#include "ValueDefBuilderData.h"
+#include "LeafDefBuilderData.h"
 #include "ContainerDefBuilderData.h"
 
 #include "NodeDef.h"
@@ -60,10 +60,10 @@ public:
     std::string tagName;
 #endif // XML_BACKEND
 
-    ValueDefBuilderDataUPtr keyValue;
-    ValueDefBuilderDataUPtr variantValue;
+    LeafDefBuilderDataUPtr keyLeaf;
+    LeafDefBuilderDataUPtr variantLeaf;
 
-    std::vector<ValueDefBuilderDataUPtr> values;
+    std::vector<LeafDefBuilderDataUPtr> leafs;
     std::vector<ContainerDefBuilderDataUPtr> containers;
     std::vector<NodeDefBuilderDataUPtr> derivedNodeDefs;
 };

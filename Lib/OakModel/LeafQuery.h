@@ -15,28 +15,28 @@
 
 namespace Oak::Model {
 
-class EntryQuery;
-typedef std::shared_ptr<EntryQuery> EntryQuerySPtr;
-typedef std::weak_ptr<EntryQuery> EntryQueryWPtr;
+class LeafQuery;
+typedef std::shared_ptr<LeafQuery> LeafQuerySPtr;
+typedef std::weak_ptr<LeafQuery> LeafQueryWPtr;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class EntryQuery
+class LeafQuery
 {
 protected:
-    EntryQuery(const std::string &valueName = "");
-    EntryQuery(ItemQueryUPtr itemQueryUPtr, const std::string &entryName = "");
+    LeafQuery(const std::string &leafName = "");
+    LeafQuery(ItemQueryUPtr itemQueryUPtr, const std::string &leafName = "");
 
 public:
-    ~EntryQuery();
+    ~LeafQuery();
 
     const std::string &valueName() const;
-    EntryQuerySPtr setValueName(const std::string &entryName);
+    LeafQuerySPtr setValueName(const std::string &leafName);
 
     int count(const Item &item);
 
-    const Entry &entry(const Item &item, int index) const;
+    const Leaf &leaf(const Item &item, int index) const;
 
     void getValueList(const Item &item, std::vector<UnionValue> &valueList) const;
     std::vector<UnionValue> valueList(const Item &item) const;
@@ -54,21 +54,21 @@ public:
 
     const ItemQuery &itemQuery() const;
 
-    static EntryQuerySPtr create(const std::string &valueName = "");
-    static EntryQuerySPtr create(ItemQueryUPtr itemQueryUPtr, const std::string &valueName = "");
+    static LeafQuerySPtr create(const std::string &valueName = "");
+    static LeafQuerySPtr create(ItemQueryUPtr itemQueryUPtr, const std::string &leafName = "");
 
 protected:
-    std::string m_entryName;
+    std::string m_leafName;
     ItemQueryUPtr m_itemQueryPtr = ItemQueryUPtr();
 
-    EntryQueryWPtr m_thisWPtr;
+    LeafQueryWPtr m_thisWPtr;
 
 public:
     // Iterator navigation implementation
     class Iterator : public ItemQuery::Iterator {
 
     public:
-        Iterator(const EntryQuery &entryQuery, const Item *refItem = nullptr);
+        Iterator(const LeafQuery &leafQuery, const Item *refItem = nullptr);
 
         virtual ~Iterator() override;
 
@@ -77,12 +77,12 @@ public:
         template<typename T>
         T value() const;
 
-        const Entry &entry() const;
+        const Leaf &leaf() const;
 
     protected:
-        const EntryQuery *m_entryQuery;
+        const LeafQuery *m_leafQuery;
 
-        friend class EntryQuery;
+        friend class LeafQuery;
     };
     typedef std::unique_ptr<Iterator> IteratorUPtr;
 
@@ -96,9 +96,9 @@ public:
 // =============================================================================
 // (public)
 template<typename T>
-T EntryQuery::value(const Item &item, int index) const
+T LeafQuery::value(const Item &item, int index) const
 {
-    assert(!m_entryName.empty());
+    assert(!m_leafName.empty());
 
     if (m_itemQueryPtr) {
 
@@ -107,8 +107,8 @@ T EntryQuery::value(const Item &item, int index) const
         while(it->next()) {
             if (i == index) {
                 auto tempItem = it->item();
-                if (tempItem.hasEntry(m_entryName)) {
-                    return item.entry(m_entryName).value<T>();
+                if (tempItem.hasLeaf(m_leafName)) {
+                    return item.leaf(m_leafName).value<T>();
                 }
                 return T();
             }
@@ -117,8 +117,8 @@ T EntryQuery::value(const Item &item, int index) const
         assert(false);
     } else {
         assert(index == 0);
-        if (item.hasEntry(m_entryName)) {
-            return item.entry(m_entryName).value<T>();
+        if (item.hasLeaf(m_leafName)) {
+            return item.leaf(m_leafName).value<T>();
         }
     }
     return T();
@@ -127,22 +127,22 @@ T EntryQuery::value(const Item &item, int index) const
 // =============================================================================
 // (public)
 template<typename T>
-std::vector<T> EntryQuery::toValueList(const Item &item)
+std::vector<T> LeafQuery::toValueList(const Item &item)
 {
-    assert(!m_entryName.empty());
+    assert(!m_leafName.empty());
 
     std::vector<T> valueList;
     if (m_itemQueryPtr) {
         auto it = m_itemQueryPtr->iterator(item);
         while (it->next()) {
             Item tempItem = it->item();
-            if (tempItem.hasEntry(m_entryName)) {
-                valueList.push_back(tempItem.entry(m_entryName).value<T>());
+            if (tempItem.hasLeaf(m_leafName)) {
+                valueList.push_back(tempItem.leaf(m_leafName).value<T>());
             }
         }
     } else {
-        if (item.hasEntry(m_entryName)) {
-            valueList.push_back(item.entry(m_entryName).value<T>());
+        if (item.hasLeaf(m_leafName)) {
+            valueList.push_back(item.leaf(m_leafName).value<T>());
         }
     }
 
@@ -152,9 +152,9 @@ std::vector<T> EntryQuery::toValueList(const Item &item)
 // =============================================================================
 // (public)
 template<typename T>
-T EntryQuery::Iterator::value() const
+T LeafQuery::Iterator::value() const
 {
-    return entry().value<T>();
+    return leaf().value<T>();
 }
 
 } // namespace Oak::Model

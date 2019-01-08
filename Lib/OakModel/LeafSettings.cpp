@@ -10,7 +10,7 @@
 
 #include "../ServiceFunctions/Assert.h"
 
-#include "ValueSettings.h"
+#include "LeafSettings.h"
 #include "UnionRef.h"
 
 
@@ -18,7 +18,7 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-ValueSettings::ValueSettings()
+LeafSettings::LeafSettings()
 {
     m_settingsMap[OPTION_ONLY] = false;
     m_settingsMap[UNIT] = "";
@@ -28,7 +28,7 @@ ValueSettings::ValueSettings()
 
 // =============================================================================
 // (public)
-ValueSettings& ValueSettings::operator=(const ValueSettings& copy)
+LeafSettings& LeafSettings::operator=(const LeafSettings& copy)
 {
     m_settingsMap = copy.m_settingsMap;
     return *this;
@@ -36,7 +36,7 @@ ValueSettings& ValueSettings::operator=(const ValueSettings& copy)
 
 // =============================================================================
 // (public)
-const UnionValue &ValueSettings::value(const std::string &settingName, const UnionValue &defaultValue) const
+const UnionValue &LeafSettings::value(const std::string &settingName, const UnionValue &defaultValue) const
 {
     auto it = m_settingsMap.find(settingName);
     if (it != m_settingsMap.end()) {
@@ -48,7 +48,7 @@ const UnionValue &ValueSettings::value(const std::string &settingName, const Uni
 
 // =============================================================================
 // (public)
-void ValueSettings::setValue(const std::string &settingName, const UnionRef &value)
+void LeafSettings::setValue(const std::string &settingName, const UnionRef &value)
 {
     m_settingsMap[settingName] = value;
 }

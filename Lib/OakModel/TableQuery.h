@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "EntryQuery.h"
+#include "LeafQuery.h"
 
 
 namespace Oak::Model {
@@ -31,7 +31,7 @@ public:
     void setItemQuery(ItemQueryUPtr itemQuery);
 
     int columnCount() const;
-    void addValueQuery(EntryQuerySPtr valueQuery);
+    void addValueQuery(LeafQuerySPtr valueQuery);
 
     int count(const Item &item) const;
 
@@ -40,7 +40,7 @@ public:
 
 protected:
     ItemQueryUPtr m_itemQuery;
-    std::vector<EntryQuerySPtr> m_entryList; // Should be a valueRef (to be entryRef)
+    std::vector<LeafQuerySPtr> m_leafList; // Should be a valueRef (to be leafRef)
 
 public:
     // Iterator navigation implementation
@@ -51,7 +51,7 @@ public:
 
         virtual ~Iterator() override;
 
-        const Entry &entry(int index) const;
+        const Leaf &leaf(int index) const;
         void getValue(int index, UnionValue value) const;
 
         template<typename T>
@@ -59,7 +59,7 @@ public:
 
     protected:
         const TableQuery *m_tableQuery;
-        std::vector<EntryQuery::Iterator*> m_entryIteratorList;
+        std::vector<LeafQuery::Iterator*> m_leafIteratorList;
 
         friend class TableQuery;
     };
@@ -75,7 +75,7 @@ public:
 template<typename T>
 T TableQuery::Iterator::value(int index)
 {
-    const Entry &e = entry(index);
+    const Leaf &e = leaf(index);
     if (e.isNull()) { T(); }
     return e.value<T>();
 }

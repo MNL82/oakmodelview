@@ -36,15 +36,15 @@ void NodeDefBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
     //errorMessages.push_back("NodeDef validation not implemented");
 
-    if (keyValue) {
-        keyValue->validate(errorMessages);
+    if (keyLeaf) {
+        keyLeaf->validate(errorMessages);
     }
 
-    if (variantValue) {
-        variantValue->validate(errorMessages);
+    if (variantLeaf) {
+        variantLeaf->validate(errorMessages);
     }
 
-    for (const auto& value: values) {
+    for (const auto& value: leafs) {
         value->validate(errorMessages);
     }
 
@@ -63,11 +63,11 @@ void NodeDefBuilderData::validateDerived(std::vector<std::string>& errorMessages
 {
     //errorMessages.push_back("Derived NodeDef validation not implemented");
 
-    if (keyValue) {
+    if (keyLeaf) {
         errorMessages.push_back("Derived NodeDef can not have a key value (It is inherited from it's base NodeDef)");
     }
 
-    if (variantValue) {
+    if (variantLeaf) {
         errorMessages.push_back("Derived NodeDef can not have a variant value (It is inherited from it's base NodeDef)");
     }
 
@@ -75,7 +75,7 @@ void NodeDefBuilderData::validateDerived(std::vector<std::string>& errorMessages
         errorMessages.push_back("Derived NodeDef must have a variant id");
     }
 
-    for (const auto& value: values) {
+    for (const auto& value: leafs) {
         value->validate(errorMessages);
     }
 
@@ -92,7 +92,7 @@ void NodeDefBuilderData::validateDerived(std::vector<std::string>& errorMessages
 // (public)
 NodeDefSPtr NodeDefBuilderData::create()
 {
-    bool isRoot = variantValue != nullptr;
+    bool isRoot = variantLeaf != nullptr;
     NodeDefBuilderSPtr builder;
     if (isRoot) {
         builder = NodeDefBuilder::createVariantRoot(name, variantId);
@@ -177,16 +177,16 @@ void NodeDefBuilderData::createShared(NodeDefBuilderSPtr builder) const
     }
 #endif // XML_BACKEND
 
-    if (keyValue) {
-        builder->addValueKey(keyValue->create());
+    if (keyLeaf) {
+        builder->addKeyLeaf(keyLeaf->create());
     }
 
-    if (variantValue) {
-        builder->addValueVariant(variantValue->create());
+    if (variantLeaf) {
+        builder->addVariantLeaf(variantLeaf->create());
     }
 
-    for (const ValueDefBuilderDataUPtr& value: values) {
-        builder->addValueDef(value->create());
+    for (const LeafDefBuilderDataUPtr& value: leafs) {
+        builder->addLeafDef(value->create());
     }
 }
 

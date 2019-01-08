@@ -8,9 +8,9 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ValueDefBuilderData.h"
+#include "LeafDefBuilderData.h"
 
-#include "ValueDefBuilder.h"
+#include "LeafDefBuilder.h"
 
 #include "../ServiceFunctions/Trace.h"
 
@@ -18,25 +18,25 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-ValueDefBuilderData::ValueDefBuilderData()
+LeafDefBuilderData::LeafDefBuilderData()
 {
-    //TRACE("ValueDefBuilderData");
+    //TRACE("LeafDefBuilderData");
 }
 
 // =============================================================================
 // (public)
-void ValueDefBuilderData::validate(std::vector<std::string>& errorMessages) const
+void LeafDefBuilderData::validate(std::vector<std::string>& errorMessages) const
 {
-    //errorMessages.push_back("ValueDef validation not implemented");
+    //errorMessages.push_back("LeafDef validation not implemented");
 
     if (name.empty()) {
-        errorMessages.push_back("ValueDef have to have a name");
+        errorMessages.push_back("LeafDef have to have a name");
     }
 
     if (dataType == UnionType::Undefined) {
-        errorMessages.push_back("ValueDef dataType have to be defined");
+        errorMessages.push_back("LeafDef dataType have to be defined");
     } else if (dataType == UnionType::Char) {
-        errorMessages.push_back("ValueDef dataType Char is not supported use String");
+        errorMessages.push_back("LeafDef dataType Char is not supported use String");
     }
 
     if (settings) {
@@ -50,10 +50,10 @@ void ValueDefBuilderData::validate(std::vector<std::string>& errorMessages) cons
 
 // =============================================================================
 // (public)
-ValueDefBuilderSPtr ValueDefBuilderData::create() const
+LeafDefBuilderSPtr LeafDefBuilderData::create() const
 {
     UnionType type = (dataType == UnionType::Undefined) ? UnionType::String : dataType;
-    ValueDefBuilderSPtr builder = ValueDefBuilder::create(type, name);
+    LeafDefBuilderSPtr builder = LeafDefBuilder::create(type, name);
     if (!displayName.empty()) {
         builder->setDisplayName(displayName);
     }

@@ -17,11 +17,11 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryList, std::vector<NodeValueDefPair> &queryExcludedList, bool recursive)
+void findOptionQueries(const NodeDef *def, std::vector<NodeLeafDefPair> &queryList, std::vector<NodeLeafDefPair> &queryExcludedList, bool recursive)
 {
-    std::vector<const ValueDef *> valueDefList = def->valueList(true, true);
+    std::vector<const LeafDef *> leafDefList = def->valueList(true, true);
 
-    for (const ValueDef *vDef: valueDefList) {
+    for (const LeafDef *vDef: leafDefList) {
         //TRACE(L"Searching %S:%S", def->displayName().c_str(), vDef->displayName().c_str());
         if (vDef->options().hasQuery()) {
             queryList.push_back({ def, vDef });

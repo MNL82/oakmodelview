@@ -57,8 +57,8 @@ protected:
     void onItemCloneAfter(const Model::ItemIndex& sourceItemIndex, const Model::ItemIndex& targetItemIndex);
     void onItemRemoveBefore(const Model::ItemIndex& itemIndex);
 
-    void onEntryTypeChangeAfter(const Model::ItemIndex& itemIndex);
-    void onEntryKeyChangeAfter(const Model::ItemIndex& itemIndex);
+    void onVariantLeafChangeAfter(const Model::ItemIndex& itemIndex);
+    void onKeyLeafChangeAfter(const Model::ItemIndex& itemIndex);
 
     QTreeWidgetItem * widgetFromIndex(const Model::ItemIndex &itemIndex, bool parentWidget = false);
     Model::ItemIndexUPtr indexFromWidget(QTreeWidgetItem *itemWidget);

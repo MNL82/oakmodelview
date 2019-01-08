@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "Entry.h"
+#include "Leaf.h"
 #include "Item.h"
 #include "OakModel.h"
 #include "ItemIndex.h"
@@ -20,8 +20,8 @@ namespace Oak::Model {
 
 // =============================================================================
 // (public)
-Entry::Entry()
-    : m_valueDef(nullptr),
+Leaf::Leaf()
+    : m_def(nullptr),
       m_item(nullptr)
 {
 
@@ -29,8 +29,8 @@ Entry::Entry()
 
 // =============================================================================
 // (public)
-Entry::Entry(const ValueDef* valueDef, const NodeData &nodeData, const Item *model)
-    : m_valueDef(valueDef),
+Leaf::Leaf(const LeafDef* leafDef, const NodeData &nodeData, const Item *model)
+    : m_def(leafDef),
       m_nodeData(nodeData),
       m_item(model)
 {
@@ -39,8 +39,8 @@ Entry::Entry(const ValueDef* valueDef, const NodeData &nodeData, const Item *mod
 
 // =============================================================================
 // (public)
-Entry::Entry(const Entry &copy)
-    : m_valueDef(copy.m_valueDef),
+Leaf::Leaf(const Leaf &copy)
+    : m_def(copy.m_def),
       m_nodeData(copy.m_nodeData),
       m_item(copy.m_item)
 {
@@ -49,8 +49,8 @@ Entry::Entry(const Entry &copy)
 
 // =============================================================================
 // (public)
-Entry::Entry(Entry&& move)
-    : m_valueDef(move.m_valueDef),
+Leaf::Leaf(Leaf&& move)
+    : m_def(move.m_def),
       m_nodeData(std::move(move.m_nodeData)),
       m_item(move.m_item)
 {
@@ -59,9 +59,9 @@ Entry::Entry(Entry&& move)
 
 // =============================================================================
 // (public)
-Entry& Entry::operator=(const Entry& copy)
+Leaf& Leaf::operator=(const Leaf& copy)
 {
-    m_valueDef = copy.m_valueDef;
+    m_def = copy.m_def;
     m_nodeData = copy.m_nodeData;
     m_item = copy.m_item;
     return *this;
@@ -69,9 +69,9 @@ Entry& Entry::operator=(const Entry& copy)
 
 // =============================================================================
 // (public)
-Entry& Entry::operator=(Entry&& move)
+Leaf& Leaf::operator=(Leaf&& move)
 {
-    m_valueDef = move.m_valueDef;
+    m_def = move.m_def;
     m_nodeData = std::move(move.m_nodeData);
     m_item = move.m_item;
     return *this;
@@ -79,159 +79,151 @@ Entry& Entry::operator=(Entry&& move)
 
 // =============================================================================
 // (public)
-bool Entry::operator==(const Entry &_entry) const
+bool Leaf::operator==(const Leaf &_leaf) const
 {
-    return m_valueDef == _entry.m_valueDef && m_nodeData == _entry.m_nodeData;
+    return m_def == _leaf.m_def && m_nodeData == _leaf.m_nodeData;
 }
 
 // =============================================================================
 // (public)
-bool Entry::operator!=(const Entry &_entry) const
+bool Leaf::operator!=(const Leaf &_leaf) const
 {
-    return m_valueDef != _entry.m_valueDef || m_nodeData != _entry.m_nodeData;
+    return m_def != _leaf.m_def || m_nodeData != _leaf.m_nodeData;
 }
 
 // =============================================================================
 // (public)
-bool Entry::isNull() const
+bool Leaf::isNull() const
 {
     return isDefNull() || isNodeNull();
 }
 
 // =============================================================================
 // (public)
-bool Entry::isDefNull() const
+bool Leaf::isDefNull() const
 {
-    return !m_valueDef || m_valueDef->isNull();
+    return !m_def || m_def->isNull();
 }
 
 // =============================================================================
 // (public)
-bool Entry::isNodeNull() const
+bool Leaf::isNodeNull() const
 {
     return m_nodeData.isNull();
 }
 
 // =============================================================================
 // (public)
-const std::string &Entry::name() const
+const std::string &Leaf::name() const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->name();
+    ASSERT(m_def != nullptr);
+    return m_def->name();
 }
 
 // =============================================================================
 // (public)
-const std::string & Entry::displayName() const
+const std::string & Leaf::displayName() const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->displayName();
+    ASSERT(m_def != nullptr);
+    return m_def->displayName();
 }
 
 // =============================================================================
 // (public)
-const std::string &Entry::tooltip() const
+const std::string &Leaf::tooltip() const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->tooltip();
+    ASSERT(m_def != nullptr);
+    return m_def->tooltip();
 }
 
 // =============================================================================
 // (public)
-const NodeData& Entry::nodeData() const
+const NodeData& Leaf::nodeData() const
 {
-    ASSERT(m_valueDef != nullptr);
+    ASSERT(m_def != nullptr);
     return m_nodeData;
 }
 
 // =============================================================================
 // (public)
-const ValueDef*Entry::valueDef() const
+const LeafDef* Leaf::def() const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef;
+    ASSERT(m_def != nullptr);
+    return m_def;
 }
 
 // =============================================================================
 // (public)
-const Item* Entry::item() const
+const Item* Leaf::item() const
 {
     return m_item;
 }
 
 // =============================================================================
 // (public)
-UnionValue Entry::value(bool useDefault) const
+UnionValue Leaf::value(bool useDefault) const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->value(m_nodeData, useDefault);
+    ASSERT(m_def != nullptr);
+    return m_def->value(m_nodeData, useDefault);
 }
 
 // =============================================================================
 // (public)
-std::string Entry::toString(bool useDefault) const
+std::string Leaf::toString(bool useDefault) const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->toString(m_nodeData, useDefault);
+    ASSERT(m_def != nullptr);
+    return m_def->toString(m_nodeData, useDefault);
 }
 
 // =============================================================================
 // (public)
-bool Entry::hasDefaultValue() const
+bool Leaf::hasDefaultValue() const
 {
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->hasDefaultValue();
-}
-
-//// =============================================================================
-//// (public)
-//bool Entry::getOptions(std::vector<VariantCRef>& value) const
-//{
-//    ASSERT(m_valueDef != nullptr);
-//    return m_valueDef->getOptions(value);
-//}
-
-// =============================================================================
-// (public)
-const ValueSettings &Entry::settings() const
-{
-    ASSERT(m_valueDef != nullptr);
-    return m_valueDef->settings();
+    ASSERT(m_def != nullptr);
+    return m_def->hasDefaultValue();
 }
 
 // =============================================================================
 // (public)
-Entry& Entry::emptyEntry()
+const LeafSettings &Leaf::settings() const
 {
-    static Entry empty;
+    ASSERT(m_def != nullptr);
+    return m_def->settings();
+}
+
+// =============================================================================
+// (public)
+Leaf& Leaf::emptyLeaf()
+{
+    static Leaf empty;
     return empty;
 }
 
 // =============================================================================
 // (protected)
-void Entry::onEntryChangeBefore() const
+void Leaf::onLeafChangeBefore() const
 {
     if (m_item->model() == nullptr) { return; }
     ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
-    m_item->model()->onEntryChangeBefore(*iIndex.get(), m_valueDef->name());
+    m_item->model()->onLeafChangeBefore(*iIndex.get(), m_def->name());
 }
 
 // =============================================================================
 // (protected)
-void Entry::onEntryChangeAfter() const
+void Leaf::onLeafChangeAfter() const
 {
     if (m_item->model() == nullptr) { return; }
 
-    int index = m_item->entryIndex(*this);
+    int index = m_item->leafIndex(*this);
     ItemIndexUPtr iIndex = ItemIndex::create(*m_item);
 
-    if (m_item->def()->indexOfVariantValueDef() == index) {
-        m_item->model()->onEntryTypeChangeAfter(*iIndex.get());
-    } else if (m_item->def()->indexOfKeyValueDef() == index) {
-        m_item->model()->onEntryKeyChangeAfter(*iIndex.get());
+    if (m_item->def()->indexOfVariantLeafDef() == index) {
+        m_item->model()->onVariantLeafChangeAfter(*iIndex.get());
+    } else if (m_item->def()->indexOfKeyLeafDef() == index) {
+        m_item->model()->onKeyLeafChangeAfter(*iIndex.get());
     }
 
-    m_item->model()->onEntryChangeAfter(*iIndex.get(), m_valueDef->name());
+    m_item->model()->onLeafChangeAfter(*iIndex.get(), m_def->name());
 }
 
 } // namespace Oak::Model

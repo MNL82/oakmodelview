@@ -58,12 +58,12 @@ NodeDefBuilder::NodeDefBuilder(NodeDefSPtr variantRoot, const UnionRef &variantI
     // The name is the same for all definitions in the inheritance heiraki
     m_nodeDef->m_name = variantRoot->m_name;
 
-    // The keyValueDef and variantValueDef are the same for all definitions in the inheritance heiraki
-    m_nodeDef->m_indexOfKeyValueDef = variantRoot->m_indexOfKeyValueDef;
-    m_nodeDef->m_indexOfVariantValueDef = variantRoot->m_indexOfVariantValueDef;
+    // The keyLeafDef and variantLeafDef are the same for all definitions in the inheritance heiraki
+    m_nodeDef->m_indexOfKeyLeafDef = variantRoot->m_indexOfKeyLeafDef;
+    m_nodeDef->m_indexOfVariantLeafDef = variantRoot->m_indexOfVariantLeafDef;
 
-    if (!variantRoot->variantValueDef().isNull()) {
-        VDB::use(&variantRoot->variantValueDef())->addOptionStatic(variantId);
+    if (!variantRoot->variantLeafDef().isNull()) {
+        VDB::use(&variantRoot->variantLeafDef())->addOptionStatic(variantId);
     }
 
 #ifdef XML_BACKEND
@@ -124,69 +124,69 @@ NodeDefSPtr NodeDefBuilder::get()
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueDef(ValueDefBuilderSPtr valueDef)
+NodeDefBuilderSPtr NodeDefBuilder::addLeafDef(LeafDefBuilderSPtr leafDef)
 {
     ASSERT(m_nodeDef);
-    ASSERT(valueDef);
+    ASSERT(leafDef);
     // A NodeDef can only have
-    ASSERT(!m_nodeDef->hasValue(valueDef->valueDef().name()));
+    ASSERT(!m_nodeDef->hasValue(leafDef->leafDef().name()));
 
-    m_nodeDef->m_valueList.push_back(valueDef->get());
+    m_nodeDef->m_valueList.push_back(leafDef->get());
 
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueKey(ValueDefBuilderSPtr valueDefKey)
+NodeDefBuilderSPtr NodeDefBuilder::addKeyLeaf(LeafDefBuilderSPtr keyLeafDef)
 {
     ASSERT(m_nodeDef);
-    ASSERT(valueDefKey);
+    ASSERT(keyLeafDef);
 
     // Variant node definitions inherate its node id value from its base and can not have it's own
     ASSERT(!m_nodeDef->hasBase());
 
-    if (valueDefKey->valueDef().settings().value(UNIQUE) != 0) {
-        valueDefKey->setSetting(UNIQUE, 1);
+    if (keyLeafDef->leafDef().settings().value(UNIQUE) != 0) {
+        keyLeafDef->setSetting(UNIQUE, 1);
     }
-    if (valueDefKey->valueDef().settings().value(REQUIRED) != 0) {
-        valueDefKey->setSetting(REQUIRED, 1);
+    if (keyLeafDef->leafDef().settings().value(REQUIRED) != 0) {
+        keyLeafDef->setSetting(REQUIRED, 1);
     }
 
-    addValueDef(valueDefKey);
+    addLeafDef(keyLeafDef);
 
     int index = m_nodeDef->valueCount()-1;
-    setKeyValueDefForAllVariants(m_nodeDef, index);
+    setKeyLeafDefForAllVariants(m_nodeDef, index);
     return m_thisWPtr.lock();
 }
 
 // =============================================================================
 // (public)
-NodeDefBuilderSPtr NodeDefBuilder::addValueVariant(ValueDefBuilderSPtr variantValueDef)
+NodeDefBuilderSPtr NodeDefBuilder::addVariantLeaf(LeafDefBuilderSPtr variantLeafDef)
 {
     ASSERT(m_nodeDef);
-    ASSERT(variantValueDef);
+    ASSERT(variantLeafDef);
 
     // The node must have an variant id
     ASSERT(!m_nodeDef->variantId().isNull());
 
-    // The value type of the variantId and the variantValueDef must match
-    ASSERT(m_nodeDef->variantId().type() == variantValueDef->valueDef().valueType());
+    // The value type of the variantId and the variantLeafDef must match
+    ASSERT(m_nodeDef->variantId().type() == variantLeafDef->leafDef().valueType());
 
-    // Derived node definitions inherate its variantValueDef value from its base and can not have it's own
+    // Derived node definitions inherate its variantLeafDef value from its base and can not have it's own
     ASSERT(!m_nodeDef->hasBase());
 
     //
     std::vector<UnionRef> optionList = m_nodeDef->baseRoot()->variantIdList(false, true);
-    variantValueDef->setOptionsStatic(optionList);
-    variantValueDef->setSetting("OptionsOnly", true);
-    if (!variantValueDef->valueDef().hasDefaultValue()) {
-        variantValueDef->setDefaultValue(m_nodeDef->variantId());
+    variantLeafDef->setOptionsStatic(optionList);
+    variantLeafDef->setSetting("OptionsOnly", true);
+    if (!variantLeafDef->leafDef().hasDefaultValue()) {
+        variantLeafDef->setDefaultValue(m_nodeDef->variantId());
     }
 
-    addValueDef(variantValueDef);
+    addLeafDef(variantLeafDef);
     int index = m_nodeDef->valueCount()-1;
-    setVariantValueDefForAllVariants(m_nodeDef, index);
+    setVariantLeafDefForAllVariants(m_nodeDef, index);
     return m_thisWPtr.lock();
 }
 
@@ -299,20 +299,20 @@ NodeDefSPtr NodeDefBuilder::getDerivedNodeDef(const std::string &variantId)
 
 // =============================================================================
 // (public)
-ValueDefUPtr NodeDefBuilder::takeValueDef(NodeDefSPtr nodeDef, const std::string &valueName)
+LeafDefUPtr NodeDefBuilder::takeLeafDef(NodeDefSPtr nodeDef, const std::string &valueName)
 {
-    if (!nodeDef || valueName.empty()) { return ValueDefUPtr(); }
+    if (!nodeDef || valueName.empty()) { return LeafDefUPtr(); }
 
     auto it = nodeDef->m_valueList.begin();
     while (it != nodeDef->m_valueList.end()) {
         if ((*it)->name() == valueName) {
-            ValueDefUPtr movedValue(std::move(*it));
+            LeafDefUPtr movedValue(std::move(*it));
             nodeDef->m_valueList.erase(it);
             return movedValue;
         }
     }
 
-    return ValueDefUPtr();
+    return LeafDefUPtr();
 }
 
 // =============================================================================
@@ -341,26 +341,26 @@ ContainerDefUPtr NodeDefBuilder::takeContainerDef(NodeDefSPtr nodeDef, const std
 
 // =============================================================================
 // (protected)
-void NodeDefBuilder::setKeyValueDefForAllVariants(NodeDefSPtr nodeDef, int index)
+void NodeDefBuilder::setKeyLeafDefForAllVariants(NodeDefSPtr nodeDef, int index)
 {
-    nodeDef->m_indexOfKeyValueDef = index;
+    nodeDef->m_indexOfKeyLeafDef = index;
     if (nodeDef->hasDerived()) {
         for (NodeDefSPtr ni: nodeDef->m_derivedList)
         {
-            setKeyValueDefForAllVariants(ni, index);
+            setKeyLeafDefForAllVariants(ni, index);
         }
     }
 }
 
 // =============================================================================
 // (protected)
-void NodeDefBuilder::setVariantValueDefForAllVariants(NodeDefSPtr nodeDef, int index)
+void NodeDefBuilder::setVariantLeafDefForAllVariants(NodeDefSPtr nodeDef, int index)
 {
-    nodeDef->m_indexOfVariantValueDef = index;
+    nodeDef->m_indexOfVariantLeafDef = index;
     if (nodeDef->hasDerived()) {
         for (NodeDefSPtr ni: nodeDef->m_derivedList)
         {
-            setVariantValueDefForAllVariants(ni, index);
+            setVariantLeafDefForAllVariants(ni, index);
         }
     }
 }

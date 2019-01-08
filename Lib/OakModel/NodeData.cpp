@@ -158,6 +158,7 @@ void *NodeData::internalPtr() const
         return m_xmlNode.internalObject().internal_object();
 #endif // XML_BACKEND
     }
+    return nullptr;
 }
 
 #ifdef XML_BACKEND

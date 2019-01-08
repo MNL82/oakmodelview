@@ -20,7 +20,7 @@ public:
     virtual ~TableView() override;
 
     void setBaseRef(Model::ItemQueryUPtr baseRef);
-    void addValueRef(Model::EntryQuerySPtr valueRef);
+    void addValueRef(Model::LeafQuerySPtr valueRef);
 
     void updateTable();
 

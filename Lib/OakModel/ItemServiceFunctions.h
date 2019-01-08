@@ -11,17 +11,17 @@
 #pragma once
 
 #include "Item.h"
-#include "EntryQuery.h"
+#include "LeafQuery.h"
 
 
 namespace Oak::Model {
 
-typedef std::pair<const NodeDef *, const ValueDef *> NodeValueDefPair;
+typedef std::pair<const NodeDef *, const LeafDef *> NodeLeafDefPair;
 
 // =============================================================================
 // Service Functions
 // =============================================================================
-void findOptionQueries(const NodeDef *def, std::vector<NodeValueDefPair> &queryList, std::vector<NodeValueDefPair> &queryExcludedList, bool recursive = false);
+void findOptionQueries(const NodeDef *def, std::vector<NodeLeafDefPair> &queryList, std::vector<NodeLeafDefPair> &queryExcludedList, bool recursive = false);
 
 } // namespace Oak::Model
 

@@ -44,7 +44,7 @@ protected:
     void setCurrentEditor(QWidget* editor);
     void setCurrentWidget(int index);
 
-    void onEntryChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName);
+    void onLeafChangeAfter(const Model::ItemIndex &itemIndex, const std::string &valueName);
 
 protected:
     Model::OakModel* m_model = nullptr;

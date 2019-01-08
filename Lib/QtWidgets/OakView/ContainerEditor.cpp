@@ -82,7 +82,7 @@ void ContainerEditor::updateEditor()
         return;
     }
 
-    // Update entry text of existing entries
+    // Update leaf text of existing entries
     for (int i = 0; i < qMin(eCount, m_count); i++)
     {
         QLabel* label = dynamic_cast<QLabel*>(m_listLayout->itemAtPosition(i, 0)->widget());

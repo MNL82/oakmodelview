@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "Node.h"
-#include "Entry.h"
-#include "ValueDef.h"
+#include "NodeData.h"
+#include "Leaf.h"
+#include "LeafDef.h"
 
 #include <QObject>
 
@@ -26,7 +26,7 @@ class ValueEditorHandler : public QObject
 {
     Q_OBJECT
 public:
-    ValueEditorHandler(QObject *parent, Model::Entry entry);
+    ValueEditorHandler(QObject *parent, Model::Leaf leaf);
     virtual ~ValueEditorHandler();
 
     ValueEditorHandler& operator=(const ValueEditorHandler& copy) = delete;
@@ -34,7 +34,7 @@ public:
     QWidget* getLabel();
     QWidget* getEditor();
 
-    void setNode(const Model::Node& node);
+    void setNode(const Model::NodeData& nodeData);
 
     void updateLabelValue();
     void updateEditorValue();
@@ -60,7 +60,7 @@ signals:
     void valueEditedFinished();
 
 protected:
-    Model::Entry m_entry;
+    Model::Leaf m_leaf;
     QWidget* m_label = nullptr;
     QWidget* m_editor = nullptr;
 };

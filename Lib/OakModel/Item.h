@@ -12,7 +12,7 @@
 
 #include "NodeData.h"
 #include "NodeDef.h"
-#include "Entry.h"
+#include "Leaf.h"
 
 
 namespace Oak::Model {
@@ -36,7 +36,7 @@ public:
     bool operator==(const Item& _item) const;
     bool operator!=(const Item& _item) const;
 
-    const Entry& operator()(const std::string &name) const;
+    const Leaf& operator()(const std::string &name) const;
 
     Item operator[](int index) const;
 
@@ -57,30 +57,30 @@ public:
     std::vector<std::string> valueNameList() const;
     std::vector<std::string> childNameList() const;
 
-    // ************* Entry Access *************
-    int entryCount() const;
-    bool hasEntry(const std::string &entryName) const;
-    int entryIndex(const Entry& entry) const;
+    // ************* Leaf Access *************
+    int leafCount() const;
+    bool hasLeaf(const std::string &leafName) const;
+    int leafIndex(const Leaf& leaf) const;
 
-    const Entry& entryAt(int index) const;
-    Entry& entryAt(int index);
+    const Leaf& leafAt(int index) const;
+    Leaf& leafAt(int index);
 
-    const Entry& entry(const std::string &entryName) const;
-    Entry& entry(const std::string &entryName);
+    const Leaf& leaf(const std::string &leafName) const;
+    Leaf& leaf(const std::string &leafName);
 
-    typedef std::vector<Entry>::const_iterator entryIterator;
+    typedef std::vector<Leaf>::const_iterator LeafIterator;
 
-    const entryIterator entryBegin() const;
-    Item::entryIterator entryBegin();
+    const LeafIterator leafBegin() const;
+    Item::LeafIterator leafBegin();
 
-    const entryIterator entryEnd() const;
-    entryIterator entryEnd();
+    const LeafIterator leafEnd() const;
+    LeafIterator leafEnd();
 
     bool hasKey() const;
-    const Entry& entryKey() const;
+    const Leaf& keyLeaf() const;
 
     bool hasVariants() const;
-    const Entry& variantEntry() const;
+    const Leaf& variantLeaf() const;
 
     // ************* Child Item access *************
     int childCount() const;
@@ -136,7 +136,7 @@ public:
     int convertChildIndexToNamed(std::string &name, int index) const;
 
 protected:
-    inline void initEntryList() const;
+    inline void initLeafList() const;
 
     static void updateUniqueValues(const Item &item);
 
@@ -145,7 +145,7 @@ protected:
     NodeData m_nodeData;
     const OakModel* m_model;
 
-    mutable std::vector<Entry> m_entryList;
+    mutable std::vector<Leaf> m_leafList;
 };
 
 } // namespace Oak::Model

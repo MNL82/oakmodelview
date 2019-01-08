@@ -12,8 +12,8 @@
 
 #include "NodeDefBuilder.h"
 #include "ContainerDefBuilder.h"
-#include "ValueDefBuilder.h"
-#include "EntryQuery.h"
+#include "LeafDefBuilder.h"
+#include "LeafQuery.h"
 #include <memory>
 
 #include "QueryBuilder.h"
@@ -36,70 +36,70 @@ void ModelDesignDef::createModelDesign()
     /************************** Node(Standard) **************************/
     auto NodeDef = NDB::createVariantRoot("Node", "Standard")
         ->setDisplayName("Node")
-        ->addValueKey(VDB::create(UnionType::String, "Name")
+        ->addKeyLeaf(VDB::create(UnionType::String, "Name")
             ->setDefaultValue("Noname"))
-        ->addValueDef(VDB::create(UnionType::String, "DisplayName")
+        ->addLeafDef(VDB::create(UnionType::String, "DisplayName")
             ->setDisplayName("Display Name")
             ->setTooltip("The name will be used if left empty"))
-        ->addValueDef(VDB::create(UnionType::String, "KeyValue")
+        ->addLeafDef(VDB::create(UnionType::String, "KeyValue")
             ->setDisplayName("Key Value")
-            ->setOptionsQuery(QB::createChildren("Value")->EntrySPtr("Name"))
-            ->setOptionsExcludedQuery(EntryQuery::create()->setValueName("InheritanceIDValue"))
+            ->setOptionsQuery(QB::createChildren("Value")->leafSPtr("Name"))
+            ->setOptionsExcludedQuery(LeafQuery::create()->setValueName("InheritanceIDValue"))
             ->setSetting("OptionsOnly", true))
-        ->addValueVariant(VDB::create(UnionType::String, "Type")
+        ->addVariantLeaf(VDB::create(UnionType::String, "Type")
             ->setDisplayName("Node Type"));
 
     /************************** Node(InheritanceRoot) **************************/
     auto NodeRootDef = NDB::createVariant(NodeDef, "InheritanceRoot")
-        ->addValueDef(VDB::create(UnionType::String, "NodeInheritanceId")
+        ->addLeafDef(VDB::create(UnionType::String, "NodeInheritanceId")
             ->setDisplayName("Root Inheritance ID"))
-        ->addValueDef(VDB::create(UnionType::String, "InheritanceIDValue")
+        ->addLeafDef(VDB::create(UnionType::String, "InheritanceIDValue")
             ->setDisplayName("Value for Inheritance ID")
-            ->setOptionsQuery(QB::createChildren("Value")->EntrySPtr("Name"))
-            ->setOptionsExcludedQuery(EntryQuery::create()->setValueName("KeyValue"))
+            ->setOptionsQuery(QB::createChildren("Value")->leafSPtr("Name"))
+            ->setOptionsExcludedQuery(LeafQuery::create()->setValueName("KeyValue"))
             ->setSetting("OptionsOnly", true));
 
     /************************** Node(Rerived) **************************/
     auto NodeVariantDef = NDB::createVariant(NodeDef, "Variant")
-        ->addValueDef(VDB::create(UnionType::String, "VariantId")
+        ->addLeafDef(VDB::create(UnionType::String, "VariantId")
             ->setDisplayName("Variant ID"))
-        ->addValueDef(VDB::create(UnionType::String, "Base")
+        ->addLeafDef(VDB::create(UnionType::String, "Base")
             ->setDisplayName("Base Node"));
 
     /************************** Value(String) **************************/
-    auto ValueDef = NDB::createVariantRoot("Value", "String")
-        ->addValueKey(VDB::create(UnionType::String, "Name")
-            ->setDefaultValue("Value"))
-        ->addValueDef(VDB::create(UnionType::String, "DisplayName")
+    auto LeafDef = NDB::createVariantRoot("Leaf", "String")
+        ->addKeyLeaf(VDB::create(UnionType::String, "Name")
+            ->setDefaultValue("Leaf"))
+        ->addLeafDef(VDB::create(UnionType::String, "DisplayName")
             ->setDisplayName("Display Name"))
-        ->addValueVariant(VDB::create(UnionType::String, "Type"))
-        ->addValueDef(VDB::create(UnionType::String, "Tooltip"));
+        ->addVariantLeaf(VDB::create(UnionType::String, "Type"))
+        ->addLeafDef(VDB::create(UnionType::String, "Tooltip"));
 
-    NodeDef->addContainerDef(CDB::create(ValueDef));
+    NodeDef->addContainerDef(CDB::create(LeafDef));
 
     /************************** Value(Integer) **************************/
-    auto ValueDefInt = NDB::createVariant(ValueDef, "Integer")
-        ->addValueDef(VDB::create(UnionType::Integer, "Min")
+    auto LeafDefInt = NDB::createVariant(LeafDef, "Integer")
+        ->addLeafDef(VDB::create(UnionType::Integer, "Min")
             ->setDefaultValue(-std::numeric_limits<int>::max()))
-        ->addValueDef(VDB::create(UnionType::Integer, "Max")
+        ->addLeafDef(VDB::create(UnionType::Integer, "Max")
             ->setDefaultValue(std::numeric_limits<int>::max()));
 
     /************************** Value(Double) **************************/
-    auto ValueDefReal = NDB::createVariant(ValueDef, "Real")
-        ->addValueDef(VDB::create(UnionType::Double, "Min")
+    auto LeafDefReal = NDB::createVariant(LeafDef, "Real")
+        ->addLeafDef(VDB::create(UnionType::Double, "Min")
             ->setDefaultValue(-std::numeric_limits<double>::max()))
-        ->addValueDef(VDB::create(UnionType::Double, "Max")
+        ->addLeafDef(VDB::create(UnionType::Double, "Max")
             ->setDefaultValue(std::numeric_limits<double>::max()));
 
     /************************** Container **************************/
     auto ContainerDef = NDB::create("Container")
-        ->addValueKey(VDB::create(UnionType::String, "Name")
+        ->addKeyLeaf(VDB::create(UnionType::String, "Name")
             ->setDisplayName("Container Node Name")
-            ->setOptionsQuery(QB::createParent()->createSiblings()->EntrySPtr("Name"))
+            ->setOptionsQuery(QB::createParent()->createSiblings()->leafSPtr("Name"))
             ->setSetting("OptionsOnly", true))
-        ->addValueDef(VDB::create(UnionType::Integer, "Min")
+        ->addLeafDef(VDB::create(UnionType::Integer, "Min")
             ->setDefaultValue(0))
-        ->addValueDef(VDB::create(UnionType::Integer, "Max")
+        ->addLeafDef(VDB::create(UnionType::Integer, "Max")
             ->setDefaultValue(std::numeric_limits<int>::max()));
 
     NodeDef->addContainerDef(CDB::create(ContainerDef));

@@ -8,15 +8,13 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QuickValueDef.h"
-
-#include "../ServiceFunctions/Trace.h"
+#include "QuickLeafSettings.h"
 
 // =============================================================================
 // (public)
-QuickValueDef::QuickValueDef(QObject* parent)
+QuickLeafSettings::QuickLeafSettings(QObject *parent)
     : QObject(parent)
 {
-    m_builderOwner = std::make_unique<Oak::Model::ValueDefBuilderData>();
+    m_builderOwner = std::make_unique<Oak::Model::LeafSettingsBuilderData>();
     m_builder = m_builderOwner.get();
 }

@@ -111,8 +111,8 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemMoveAfter.remove(this);
         m_model->notifier_itemCloneAfter.remove(this);
         m_model->notifier_itemRemoveBefore.remove(this);
-        m_model->notifier_entryTypeChangeAfter.remove(this);
-        m_model->notifier_entryKeyChangeAfter.remove(this);
+        m_model->notifier_variantLeafChangeAfter.remove(this);
+        m_model->notifier_keyLeafChangeAfter.remove(this);
     }
 
     // Change the model
@@ -127,8 +127,8 @@ void ListView::setOakModel(Model::OakModel *model)
         m_model->notifier_itemMoveAfter.add(this, &ListView::onItemMoveAfter);
         m_model->notifier_itemCloneAfter.add(this, &ListView::onItemCloneAfter);
         m_model->notifier_itemRemoveBefore.add(this, &ListView::onItemRemoveBefore);
-        m_model->notifier_entryTypeChangeAfter.add(this, &ListView::onEntryTypeChangeAfter);
-        m_model->notifier_entryKeyChangeAfter.add(this, &ListView::onEntryKeyChangeAfter);
+        m_model->notifier_variantLeafChangeAfter.add(this, &ListView::onVariantLeafChangeAfter);
+        m_model->notifier_keyLeafChangeAfter.add(this, &ListView::onKeyLeafChangeAfter);
     }
 }
 
@@ -289,7 +289,7 @@ void ListView::onItemRemoveBefore(const Model::ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void ListView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
+void ListView::onVariantLeafChangeAfter(const Model::ItemIndex &itemIndex)
 {
     // Child items can change when the variant definition change
     onItemRemoveBefore(itemIndex);
@@ -300,7 +300,7 @@ void ListView::onEntryTypeChangeAfter(const Model::ItemIndex &itemIndex)
 
 // =============================================================================
 // (protected)
-void ListView::onEntryKeyChangeAfter(const Model::ItemIndex &itemIndex)
+void ListView::onKeyLeafChangeAfter(const Model::ItemIndex &itemIndex)
 {
     // Child items can change when the variant definition change
     ListViewItem * viewItem = getViewItem(itemIndex);

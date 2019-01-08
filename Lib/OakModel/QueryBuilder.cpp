@@ -13,7 +13,7 @@
 #include "ItemQueryChildren.h"
 #include "ItemQueryParent.h"
 #include "ItemQuerySiblings.h"
-#include "EntryQuery.h"
+#include "LeafQuery.h"
 
 #include "../ServiceFunctions/Trace.h"
 #include "OakModelServiceFunctions.h"
@@ -36,9 +36,9 @@ ItemQueryUPtr QueryBuilder::UPtr()
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::EntrySPtr(const std::string &entryName)
+LeafQuerySPtr QueryBuilder::leafSPtr(const std::string &leafName)
 {
-    return EntryQuery::create(std::move(m_itemQuery), entryName);
+    return LeafQuery::create(std::move(m_itemQuery), leafName);
 }
 
 // =============================================================================
@@ -159,9 +159,9 @@ QueryBuilderSPtr QueryBuilder::createInverse(const ItemQuery &query, const NodeD
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::createEntry(const std::string &entryName)
+LeafQuerySPtr QueryBuilder::createLeaf(const std::string &leafName)
 {
-    return EntryQuery::create(entryName);
+    return LeafQuery::create(leafName);
 }
 
 // =============================================================================
@@ -222,23 +222,23 @@ ItemQueryUPtr QueryBuilder::createItemQuery(const std::string& queryString)
 
 // =============================================================================
 // (public)
-EntryQuerySPtr QueryBuilder::createEntryQuery(const std::string& queryString)
+LeafQuerySPtr QueryBuilder::createLeafQuery(const std::string& queryString)
 {
-    if (queryString.empty()) { return EntryQuerySPtr(); }
+    if (queryString.empty()) { return LeafQuerySPtr(); }
 
     auto it = std::find(queryString.rbegin(), queryString.rend(), ';');
 
     if (it == queryString.rend()) {
         // No ItemQuery part
-        return createEntry(queryString);
+        return createLeaf(queryString);
     }
 
     size_t index = static_cast<size_t>(queryString.rend() - it);
     std::string itemQueryString = queryString.substr(0, index-1);
-    std::string entryName = queryString.substr(index);
+    std::string leafName = queryString.substr(index);
 
 
-    return EntryQuery::create(createItemQuery(itemQueryString), entryName);
+    return LeafQuery::create(createItemQuery(itemQueryString), leafName);
 }
 
 } // namespace Oak::Model

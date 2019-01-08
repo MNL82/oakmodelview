@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "ValueDef.h"
+#include "LeafDef.h"
 
 #include <algorithm>
 
@@ -20,11 +20,11 @@
 
 namespace Oak::Model {
 
-ValueDef ValueDef::s_emptyDef = ValueDef(UnionRef());
+LeafDef LeafDef::s_emptyDef = LeafDef(UnionRef());
 
 // =============================================================================
 // (public)
-ValueDef::ValueDef(const UnionRef &valueTemplate)
+LeafDef::LeafDef(const UnionRef &valueTemplate)
     : m_valueTemplate(valueTemplate), m_options(new ValueOptions())
 {
 
@@ -32,7 +32,7 @@ ValueDef::ValueDef(const UnionRef &valueTemplate)
 
 // =============================================================================
 // (public)
-ValueDef::ValueDef(UnionType type)
+LeafDef::LeafDef(UnionType type)
     : m_valueTemplate(type), m_options(new ValueOptions())
 {
 
@@ -40,7 +40,7 @@ ValueDef::ValueDef(UnionType type)
 
 // =============================================================================
 // (public)
-ValueDef::ValueDef(const ValueDef &copy)
+LeafDef::LeafDef(const LeafDef &copy)
     : m_valueTemplate(copy.m_valueTemplate)
 {
     m_defaultValue = copy.m_defaultValue;
@@ -55,7 +55,7 @@ ValueDef::ValueDef(const ValueDef &copy)
 
 // =============================================================================
 // (public)
-ValueDef::ValueDef(ValueDef&& move)
+LeafDef::LeafDef(LeafDef&& move)
     : m_valueTemplate(move.m_valueTemplate)
 {
     m_defaultValue = std::move(move.m_defaultValue);
@@ -71,14 +71,14 @@ ValueDef::ValueDef(ValueDef&& move)
 
 // =============================================================================
 // (public)
-ValueDefUPtr ValueDef::copy() const
+LeafDefUPtr LeafDef::copy() const
 {
     return MakeUPtr(*this);
 }
 
 // =============================================================================
 // (public)
-ValueDef::~ValueDef()
+LeafDef::~LeafDef()
 {
     if (m_options) {
         delete m_options;
@@ -88,28 +88,28 @@ ValueDef::~ValueDef()
 
 // =============================================================================
 // (public)
-UnionType ValueDef::valueType() const
+UnionType LeafDef::valueType() const
 {
     return m_valueTemplate.type();
 }
 
 // =============================================================================
 // (public)
-const UnionRef ValueDef::valueTemplate() const
+const UnionRef LeafDef::valueTemplate() const
 {
     return m_valueTemplate;
 }
 
 // =============================================================================
 // (public)
-const std::string &ValueDef::name() const
+const std::string &LeafDef::name() const
 {
     return m_name;
 }
 
 // =============================================================================
 // (public)
-const std::string &ValueDef::displayName() const
+const std::string &LeafDef::displayName() const
 {
     if (m_displayName.empty()) {
         return m_name;
@@ -120,35 +120,35 @@ const std::string &ValueDef::displayName() const
 
 // =============================================================================
 // (public)
-const std::string &ValueDef::tooltip() const
+const std::string &LeafDef::tooltip() const
 {
     return m_tooltip;
 }
 
 // =============================================================================
 // (public)
-bool ValueDef::isNull() const
+bool LeafDef::isNull() const
 {
     return m_valueTemplate.isNull();
 }
 
 // =============================================================================
 // (public)
-ConversionSPtr ValueDef::defaultConversion() const
+ConversionSPtr LeafDef::defaultConversion() const
 {
     return m_defaultConversion;
 }
 
 // =============================================================================
 // (public)
-const ValueSettings& ValueDef::settings() const
+const LeafSettings& LeafDef::settings() const
 {
     return m_settings;
 }
 
 // =============================================================================
 // (public)
-const ValueOptions &ValueDef::options() const
+const ValueOptions &LeafDef::options() const
 {
     if (m_options) {
         return *m_options;
@@ -159,7 +159,7 @@ const ValueOptions &ValueDef::options() const
 
 // =============================================================================
 // (public)
-int ValueDef::compareValue(const NodeData &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+int LeafDef::compareValue(const NodeData &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return -2; }
 
@@ -206,7 +206,7 @@ int ValueDef::compareValue(const NodeData &_node, const UnionRef &value, bool us
 
 // =============================================================================
 // (public)
-bool ValueDef::hasValue(const NodeData &_node) const
+bool LeafDef::hasValue(const NodeData &_node) const
 {
     if (_node.isNull()) { return false; }
 
@@ -227,7 +227,7 @@ bool ValueDef::hasValue(const NodeData &_node) const
 
 // =============================================================================
 // (public)
-bool ValueDef::canGetValue(const NodeData &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool LeafDef::canGetValue(const NodeData &_node, const UnionRef &value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
 
@@ -250,7 +250,7 @@ bool ValueDef::canGetValue(const NodeData &_node, const UnionRef &value, bool us
 
 // =============================================================================
 // (public)
-bool ValueDef::getValue(const NodeData &_node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+bool LeafDef::getValue(const NodeData &_node, UnionRef value, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -290,7 +290,7 @@ bool ValueDef::getValue(const NodeData &_node, UnionRef value, bool useDefault, 
 
 // =============================================================================
 // (public)
-UnionValue ValueDef::value(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+UnionValue LeafDef::value(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     UnionValue val(m_valueTemplate);
     UnionRef uRef(val);
@@ -300,7 +300,7 @@ UnionValue ValueDef::value(const NodeData &_node, bool useDefault, bool allowCon
 
 // =============================================================================
 // (public)
-std::string ValueDef::toString(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
+std::string LeafDef::toString(const NodeData &_node, bool useDefault, bool allowConversion, ConversionSPtr conversion) const
 {
     std::string str;
     UnionRef uRef(str);
@@ -310,7 +310,7 @@ std::string ValueDef::toString(const NodeData &_node, bool useDefault, bool allo
 
 // =============================================================================
 // (public)
-bool ValueDef::canSetValue(const NodeData &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool LeafDef::canSetValue(const NodeData &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (_node.isNull()) { return false; }
     if (value.isNull()) { return false; }
@@ -352,7 +352,7 @@ bool ValueDef::canSetValue(const NodeData &_node, const UnionRef &value, bool al
 
 // =============================================================================
 // (public)
-bool ValueDef::setValue(const NodeData &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool LeafDef::setValue(const NodeData &_node, const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     if (value.isNull()) { return false; }
     if (_node.isNull()) { return false; }
@@ -393,28 +393,28 @@ bool ValueDef::setValue(const NodeData &_node, const UnionRef &value, bool allow
 
 // =============================================================================
 // (public)
-bool ValueDef::hasDefaultValue() const
+bool LeafDef::hasDefaultValue() const
 {
     return !m_defaultValue.isNull();
 }
 
 // =============================================================================
 // (public)
-const UnionRef ValueDef::defaultValue() const
+const UnionRef LeafDef::defaultValue() const
 {
     return m_defaultValue;
 }
 
 // =============================================================================
 // (public)
-bool ValueDef::getDefaultValue(const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
+bool LeafDef::getDefaultValue(const UnionRef &value, bool allowConversion, ConversionSPtr conversion) const
 {
     return m_defaultValue.get(value, allowConversion, (conversion) ? conversion.get() : m_defaultConversion.get());
 }
 
 // =============================================================================
 // (public)
-ValueDef &ValueDef::emptyDef()
+LeafDef &LeafDef::emptyDef()
 {
     return s_emptyDef;
 }
