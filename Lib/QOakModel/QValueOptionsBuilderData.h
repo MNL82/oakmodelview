@@ -11,29 +11,30 @@
 #pragma once
 
 #include <QObject>
+#include <QVariant>
+#include <QVariantList>
 
-class QNodeDefBuilderData;
+#include "ValueOptionsBuilderData.h"
 
-#include "ContainerDefBuilderData.h"
-
-#include "QuickPropertyHelpers.h"
+#include "QPropertyHelpers.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QContainerDefBuilderData : public QObject
+class QValueOptionsBuilderData : public QObject
 {
     Q_OBJECT
-    BUILDER_PROPERTY_STRING(name)
-    BUILDER_PROPERTY_STRING(variantId)
-    BUILDER_PROPERTY_BASE(int, minCount)
-    BUILDER_PROPERTY_BASE(int, maxCount)
+
+    BUILDER_PROPERTY_VARIANT_LIST(values)
+    BUILDER_PROPERTY_VARIANT_LIST(excludedValues)
+    BUILDER_PROPERTY_STRING(valueQuery)
+    BUILDER_PROPERTY_STRING(excludedValueQuery)
 
 public:
-    QContainerDefBuilderData(QObject *parent = nullptr);
-    Oak::Model::ContainerDefBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
+    QValueOptionsBuilderData(QObject *parent = nullptr);
+    Oak::Model::ValueOptionsBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
 private:
-    Oak::Model::ContainerDefBuilderData * m_builder;
-    Oak::Model::ContainerDefBuilderDataUPtr m_builderOwner;
+    Oak::Model::ValueOptionsBuilderData * m_builder;
+    Oak::Model::ValueOptionsBuilderDataUPtr m_builderOwner;
 };

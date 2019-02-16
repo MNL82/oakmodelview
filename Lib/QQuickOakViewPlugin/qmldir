@@ -1,0 +1,3 @@
+module Oak.View
+OakToolButton 1.0 OakToolButton.qml
+plugin oakviewplugin

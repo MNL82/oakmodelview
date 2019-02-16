@@ -8,20 +8,13 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#pragma once
+#include "QLeafSettingsBuilderData.h"
 
-#include <QObject>
-
-class QTriState : public QObject {
-    Q_OBJECT
-public:
-    enum TriStateEnum {
-        Undefined = -1,
-        False = 0,
-        True = 1
-    };
-    Q_ENUM(TriStateEnum)
-
-    QTriState() : QObject() {}
-};
-
+// =============================================================================
+// (public)
+QLeafSettingsBuilderData::QLeafSettingsBuilderData(QObject *parent)
+    : QObject(parent)
+{
+    m_builderOwner = std::make_unique<Oak::Model::LeafSettingsBuilderData>();
+    m_builder = m_builderOwner.get();
+}

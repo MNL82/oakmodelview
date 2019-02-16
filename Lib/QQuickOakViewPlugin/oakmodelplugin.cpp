@@ -8,20 +8,11 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#pragma once
+#include "oakmodelplugin.h"
 
-#include <QObject>
+#include <qqml.h>
 
-class QTriState : public QObject {
-    Q_OBJECT
-public:
-    enum TriStateEnum {
-        Undefined = -1,
-        False = 0,
-        True = 1
-    };
-    Q_ENUM(TriStateEnum)
-
-    QTriState() : QObject() {}
-};
-
+void OakViewPlugin::registerTypes(const char *uri)
+{
+    Q_UNUSED(uri)
+}

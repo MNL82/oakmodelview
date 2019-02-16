@@ -14,12 +14,11 @@
 #include <QtQuick/QQuickItem>
 #include <QColor>
 
-#include "QuickContainerDef.h"
-#include "QuickLeafDef.h"
+#include "QContainerDefBuilderData.h"
+#include "QLeafDefBuilderData.h"
+#include "QPropertyHelpers.h"
 
 #include "NodeDefBuilderData.h"
-
-#include "QuickPropertyHelpers.h"
 
 // =============================================================================
 // Class definition
@@ -34,11 +33,11 @@ class QNodeDefBuilderData : public QObject
     BUILDER_PROPERTY_STRING(imagePath)
     BUILDER_PROPERTY_STRING(variantId)
     BUILDER_PROPERTY_STRING(tagName)
-    BUILDER_PROPERTY_OBJECT(QuickLeafDef, keyLeaf)
-    BUILDER_PROPERTY_OBJECT(QuickLeafDef, variantLeaf)
-    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickLeafDef, leafs, leaf)
-    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickContainerDef, containers, container)
-    BUILDER_PROPERTY_OBJECT_LIST(QuickNodeDef, QuickNodeDef, derivedNodeDefs, derivedNodeDef)
+    BUILDER_PROPERTY_OBJECT(QLeafDefBuilderData, keyLeaf)
+    BUILDER_PROPERTY_OBJECT(QLeafDefBuilderData, variantLeaf)
+    BUILDER_PROPERTY_OBJECT_LIST(QNodeDefBuilderData, QLeafDefBuilderData, leafs, leaf)
+    BUILDER_PROPERTY_OBJECT_LIST(QNodeDefBuilderData, QContainerDefBuilderData, containers, container)
+    BUILDER_PROPERTY_OBJECT_LIST(QNodeDefBuilderData, QNodeDefBuilderData, derivedNodeDefs, derivedNodeDef)
 
 public:
     QNodeDefBuilderData(QObject *parent = nullptr);

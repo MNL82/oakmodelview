@@ -13,11 +13,11 @@
 #include <QObject>
 #include <QVariant>
 
-#include "QuickValueOptions.h"
-#include "QuickLeafSettings.h"
+#include "QValueOptionsBuilderData.h"
+#include "QLeafSettingsBuilderData.h"
 
 #include "Union.h"
-#include "QuickPropertyHelpers.h"
+#include "QPropertyHelpers.h"
 
 #include "LeafDefBuilderData.h"
 
@@ -45,8 +45,8 @@ private:
     BUILDER_PROPERTY_STRING(tooltip)
     BUILDER_PROPERTY_VARIANT(defaultValue)
     BUILDER_PROPERTY_ENUM(dataTypeEnum, Oak::Model::UnionType, dataType)
-    BUILDER_PROPERTY_OBJECT(QuickLeafSettings, settings)
-    BUILDER_PROPERTY_OBJECT(QuickValueOptions, options)
+    BUILDER_PROPERTY_OBJECT(QLeafSettingsBuilderData, settings)
+    BUILDER_PROPERTY_OBJECT(QValueOptionsBuilderData, options)
 
 public:
     QLeafDefBuilderData(QObject* parent = nullptr);

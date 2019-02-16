@@ -16,7 +16,7 @@ class QNodeDefBuilderData;
 
 #include "ContainerDefBuilderData.h"
 
-#include "QuickPropertyHelpers.h"
+#include "QPropertyHelpers.h"
 
 // =============================================================================
 // Class definition

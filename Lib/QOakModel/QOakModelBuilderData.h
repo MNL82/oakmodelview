@@ -14,11 +14,11 @@
 #include <QString>
 #include <memory>
 
-#include "QuickServiceFunctions.h"
-#include "QuickNodeDef.h"
+#include "QServiceFunctions.h"
+#include "QNodeDefBuilderData.h"
 
 #include "ModelBuilderData.h"
-#include "QuickPropertyHelpers.h"
+#include "QPropertyHelpers.h"
 
 namespace Oak::Model {
     class NodeDef;
@@ -41,7 +41,7 @@ public:
     Q_ENUM(StatusEnum)
 
 private:
-    BUILDER_PROPERTY_OBJECT_LIST(QuickOakModelBuilder, QuickNodeDef, nodeDefs, nodeDef)
+    BUILDER_PROPERTY_OBJECT_LIST(QOakModelBuilderData, QNodeDefBuilderData, nodeDefs, nodeDef)
     BUILDER_PROPERTY_STRING_LIST(errorMessages)
 
 public:

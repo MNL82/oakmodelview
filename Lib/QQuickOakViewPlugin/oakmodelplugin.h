@@ -10,18 +10,14 @@
 
 #pragma once
 
-#include <QObject>
+#include <QQmlExtensionPlugin>
 
-class QTriState : public QObject {
+class OakViewPlugin : public QQmlExtensionPlugin
+{
     Q_OBJECT
-public:
-    enum TriStateEnum {
-        Undefined = -1,
-        False = 0,
-        True = 1
-    };
-    Q_ENUM(TriStateEnum)
+    Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
-    QTriState() : QObject() {}
+public:
+    void registerTypes(const char *uri);
 };
 

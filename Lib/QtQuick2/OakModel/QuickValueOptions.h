@@ -22,7 +22,7 @@
 // =============================================================================
 // Class definition
 // =============================================================================
-class QuickValueOptions : public QObject
+class QValueOptionsBuilderData : public QObject
 {
     Q_OBJECT
 
@@ -32,7 +32,7 @@ class QuickValueOptions : public QObject
     BUILDER_PROPERTY_STRING(excludedValueQuery)
 
 public:
-    QuickValueOptions(QObject *parent = nullptr);
+    QValueOptionsBuilderData(QObject *parent = nullptr);
     Oak::Model::ValueOptionsBuilderDataUPtr takeBuilder() { return std::move(m_builderOwner); }
 
 private:

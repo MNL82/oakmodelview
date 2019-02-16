@@ -12,10 +12,10 @@
 #include <QObject>
 #include <QString>
 
-#include "QuickOakBaseTypes.h"
+#include "QOakBaseTypes.h"
 #include "LeafSettingsBuilderData.h"
 
-#include "QuickPropertyHelpers.h"
+#include "QPropertyHelpers.h"
 
 
 // =============================================================================
@@ -24,10 +24,10 @@
 class QLeafSettingsBuilderData : public QObject
 {
     Q_OBJECT
-    BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, readOnly)
+    BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, readOnly)
     BUILDER_PROPERTY_STRING(unit)
-    BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, unique)
-    BUILDER_PROPERTY_ENUM(QuickTriState::TriStateEnum, Oak::Model::BoolState, required)
+    BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, unique)
+    BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, required)
 
 public:
     QLeafSettingsBuilderData(QObject *parent = nullptr);
