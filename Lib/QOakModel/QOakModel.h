@@ -39,7 +39,8 @@ public:
         DisplayName = Qt::UserRole + 1,
         Name = Qt::UserRole + 2,
         KeyValue = Qt::UserRole + 3,
-        VariantValue = Qt::UserRole + 4
+        VariantValue = Qt::UserRole + 4,
+        NodeDataId = Qt::UserRole + 100
     };
     Q_ENUM(Roles)
 
@@ -56,8 +57,10 @@ public slots:
     bool saveModel();
     bool saveModelAs(const QString &filePath);
 
+    void testClick(const QVariant& nodeDataId);
 
-private:
+
+protected:
     void setBuilder(QOakModelBuilderData* rootNodeDef);
     void updateEnabledActions();
 
@@ -65,7 +68,7 @@ signals:
     void dataLoaded();
     void builderChanged();
 
-private:
+protected:
     Oak::Model::OakModel m_model;
     QOakModelBuilderData* m_builder;
     QString m_name;
@@ -112,5 +115,9 @@ public:
 
 public:
     QModelIndex createModelIndex(int row, int column, const Oak::Model::Node &node) const;
-    Oak::Model::Node nodeFromIndex(const QModelIndex &index) const;
+    Oak::Model::Node toNode(const QModelIndex &index) const;
+    Oak::Model::Node toNode(const QVariant &nodeDataId) const;
+    QVariant toNodeDataId(const QModelIndex &index) const;
+
+
 };
