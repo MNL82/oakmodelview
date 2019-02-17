@@ -11,13 +11,13 @@ QT       += widgets
 TEMPLATE = lib
 CONFIG += staticlib
 
-include(../../Configure.pri)
+include(../Configure.pri)
 
 INCLUDEPATH += \
     . \
     .. \
-    ../../OakXML \
-    ../../OakModel
+    ../OakXML \
+    ../OakModel
 
 SOURCES += \
     ValueEditorHandler.cpp \
@@ -49,10 +49,10 @@ HEADERS += \
 
 
 CONFIG(debug, debug|release) {
-    TARGET = ../../../OakView_QtWidgetsd
+    TARGET = ../../QtWidgetOakViewd
     OBJECTS_DIR = ./debug
 } else {
-    TARGET = ../../../OakView_QtWidgets
+    TARGET = ../../QtWidgetOakView
     OBJECTS_DIR = ./release
 }
 
