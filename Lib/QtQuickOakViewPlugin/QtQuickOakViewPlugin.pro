@@ -23,7 +23,7 @@ INCLUDEPATH += \
     .. \
     ../OakXML \
     ../OakModel \
-    ../QOakModel
+    ../QtOakModel
 
 	
 HEADERS += \

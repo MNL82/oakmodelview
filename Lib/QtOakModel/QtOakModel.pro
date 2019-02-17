@@ -44,7 +44,7 @@ SOURCES += \
     QOakModelBuilderData.cpp
 
 CONFIG(debug, debug|release) {
-    TARGET = ../../QOakModeld
+    TARGET = ../../QtOakModeld
     win32:POST_TARGETDEPS = \
         ../OakXMLd.lib \
         ../OakModeld.lib
@@ -53,7 +53,7 @@ CONFIG(debug, debug|release) {
         ../OakModeld.lib
     OBJECTS_DIR = ./debug
 } else {
-    TARGET = ../../QOakModel
+    TARGET = ../../QtOakModel
     win32:POST_TARGETDEPS = \
         ../OakXML.lib \
         ../OakModel.lib

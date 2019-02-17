@@ -23,7 +23,7 @@ INCLUDEPATH += \
     .. \
     ../OakXML \
     ../OakModel \
-    ../QOakModel
+    ../QtOakModel
 
 	
 HEADERS += \
@@ -48,21 +48,21 @@ CONFIG(debug, debug|release) {
     win32:POST_TARGETDEPS = \
         ../OakXMLd.lib \
         ../OakModeld.lib \
-        ../QOakModeld.lib
+        ../QtOakModeld.lib
     win32:LIBS = \
         ../OakXMLd.lib \
         ../OakModeld.lib \
-        ../QOakModeld.lib
+        ../QtOakModeld.lib
     OBJECTS_DIR = ./debug
 } else {
     win32:POST_TARGETDEPS = \
         ../OakXML.lib \
         ../OakModel.lib \
-        ../QOakModel.lib
+        ../QtOakModel.lib
     win32:LIBS = \
         ../OakXML.lib \
         ../OakModel.lib \
-        ../QOakModel.lib
+        ../QtOakModel.lib
     OBJECTS_DIR = ./release
 }
 
