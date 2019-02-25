@@ -34,6 +34,7 @@ OptionsObserver::OptionsObserver(OakModel *model, const NodeDef *optionsNodeDef,
 
     const LeafQuery *query = m_optionsLeafDef->options().query();
     m_sourceNodeDef = query->nodeQuery().nodeDef(m_optionsNodeDef);
+    ASSERT(m_sourceNodeDef != nullptr);
     m_sourceValueName = query->valueName();
 
     // Create an inverse query that points from the option values to the leaf where there can be chosen
