@@ -8,6 +8,8 @@
  * See accompanying file LICENSE in the root folder.
  */
 
+#include <QImage>
+
 #include "QOakModel.h"
 
 #include "QOakModelBuilderData.h"
@@ -196,7 +198,7 @@ int QOakModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     if (m_model.isNull()) { return 0; }
-    return 2;
+    return 1;
 }
 
 // =============================================================================
@@ -221,8 +223,20 @@ QVariant QOakModel::data(const QModelIndex &index, int role) const
     ASSERT(!node.isNull());
 
     switch (role) {
-    case DisplayName:
-        return QString::fromStdString(node.def()->displayName());
+    case Qt::DisplayRole: // QML: display
+         return QString::fromStdString(node.def()->displayName());
+    case Qt::DecorationRole: { // QML: decoration
+        if (node.def()->hasImagePath()) {
+            return QImage(QString::fromStdString(node.def()->imagePath()));
+        }
+        return QVariant();
+    }
+    case Qt::ToolTipRole: // QML: toolTip
+        return QString::fromStdString(node.def()->tooltip());
+    case Qt::StatusTipRole: // QML: statusTip
+        return QVariant();
+    case Qt::WhatsThisRole: // QML: whatsThis
+        return QVariant();
     case Name:
         return QString::fromStdString(node.def()->name());
     case KeyValue: {
@@ -236,13 +250,11 @@ QVariant QOakModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(node.variantLeaf().value<std::string>());
         }
         return QString();
-    case NodeDataId: {
+    case NodeDataId:
         return toNodeDataId(index);
-    }
     default:
         break;
     }
-
 
     return QVariant();
 }
@@ -252,7 +264,6 @@ QVariant QOakModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> QOakModel::roleNames() const
 {
     QHash<int, QByteArray> result = QAbstractItemModel::roleNames();
-    result.insert(DisplayName, QByteArrayLiteral("displayName"));
     result.insert(Name, QByteArrayLiteral("name"));
     result.insert(KeyValue, QByteArrayLiteral("keyValue"));
     result.insert(VariantValue, QByteArrayLiteral("variantValue"));

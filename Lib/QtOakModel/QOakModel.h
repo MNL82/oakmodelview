@@ -36,10 +36,9 @@ class QOakModel : public QAbstractItemModel
 
 public:
     enum Roles  {
-        DisplayName = Qt::UserRole + 1,
-        Name = Qt::UserRole + 2,
-        KeyValue = Qt::UserRole + 3,
-        VariantValue = Qt::UserRole + 4,
+        Name = Qt::UserRole + 1,
+        KeyValue = Qt::UserRole + 2,
+        VariantValue = Qt::UserRole + 3,
         NodeDataId = Qt::UserRole + 100
     };
     Q_ENUM(Roles)
