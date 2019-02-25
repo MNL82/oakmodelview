@@ -261,6 +261,42 @@ QVariant QOakModel::data(const QModelIndex &index, int role) const
 
 // =============================================================================
 // (public)
+Qt::ItemFlags QOakModel::flags(const QModelIndex& index) const
+{
+    if (m_model.isNull()) { return Qt::NoItemFlags; }
+
+    if (!index.isValid()) { return Qt::NoItemFlags; }
+
+    Oak::Model::Node node = toNode(index);
+    ASSERT(!node.isNull());
+
+    Qt::ItemFlags flagList;
+
+    // Currently all nodes can be selected
+    flagList |= Qt::ItemIsSelectable;
+
+//    // No node can be edited from this model
+//    flagList |= Qt::ItemIsEditable;
+
+//    // Drag and drop will be enabled in the future
+//    flagList |= Qt::ItemIsDragEnabled;
+//    flagList |= Qt::ItemIsDropEnabled;
+
+//    // Currently no nodes can be checked
+//    flagList |= Qt::ItemIsUserCheckable;
+
+    // Currently all nodes are enabled
+    flagList |= Qt::ItemIsEnabled;
+
+    if (node.def()->containerCount() == 0) {
+        flagList |= Qt::ItemNeverHasChildren;
+    }
+
+    return flagList;
+}
+
+// =============================================================================
+// (public)
 QHash<int, QByteArray> QOakModel::roleNames() const
 {
     QHash<int, QByteArray> result = QAbstractItemModel::roleNames();
