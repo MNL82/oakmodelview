@@ -70,7 +70,6 @@ Node::Node(Node &&move)
 // (public)
 Node& Node::operator=(const Node& copy)
 {
-    m_def = copy.m_def;
     m_nodeData = copy.m_nodeData;
     m_model = copy.m_model;
 
@@ -84,6 +83,8 @@ Node& Node::operator=(const Node& copy)
     } else {
         m_leafList.assign(copy.m_leafList.begin(), copy.m_leafList.end());
     }
+
+    m_def = copy.m_def;
 
     return *this;
 }
