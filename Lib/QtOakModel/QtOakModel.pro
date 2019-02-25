@@ -30,7 +30,8 @@ HEADERS += \
     QServiceFunctions.h \
     QValueOptionsBuilderData.h \
     QOakModel.h \
-    QOakModelBuilderData.h
+    QOakModelBuilderData.h \
+    QOakNodeProxyModel.h
 
 
 SOURCES += \
@@ -41,7 +42,8 @@ SOURCES += \
     QServiceFunctions.cpp \
     QValueOptionsBuilderData.cpp \
     QOakModel.cpp \
-    QOakModelBuilderData.cpp
+    QOakModelBuilderData.cpp \
+    QOakNodeProxyModel.cpp
 
 CONFIG(debug, debug|release) {
     TARGET = ../../QtOakModeld
