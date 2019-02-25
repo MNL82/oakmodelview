@@ -36,9 +36,10 @@ class QOakModel : public QAbstractItemModel
 
 public:
     enum Roles  {
-        Name = Qt::UserRole + 1,
-        KeyValue = Qt::UserRole + 2,
-        VariantValue = Qt::UserRole + 3,
+        DisplayName = Qt::UserRole + 1,
+        Name = Qt::UserRole + 2,
+        KeyValue = Qt::UserRole + 3,
+        VariantValue = Qt::UserRole + 4,
         NodeDataId = Qt::UserRole + 100
     };
     Q_ENUM(Roles)
@@ -100,7 +101,7 @@ public:
 //    virtual bool moveColumns(const QModelIndex& sourceParent, int sourceColumn, int count, const QModelIndex& destinationParent, int destinationChild) override;
 //    virtual void fetchMore(const QModelIndex& parent) override;
 //    virtual bool canFetchMore(const QModelIndex& parent) const override;
-//    virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
+    virtual Qt::ItemFlags flags(const QModelIndex& index) const override;
 //    virtual void sort(int column, Qt::SortOrder order) override;
 //    virtual QModelIndex buddy(const QModelIndex& index) const override;
 //    virtual QModelIndexList match(const QModelIndex& start, int role, const QVariant& value, int hits, Qt::MatchFlags flags) const override;
