@@ -15,6 +15,7 @@
 #include "QContainerDefBuilderData.h"
 #include "QNodeDefBuilderData.h"
 #include "QOakModel.h"
+#include "QOakNodeProxyModel.h"
 #include "QOakModelBuilderData.h"
 
 #include "QLeafDefBuilderData.h"
@@ -30,6 +31,7 @@ void OakModePlugin::registerTypes(const char *uri)
     qmlRegisterType<QContainerDefBuilderData>("Oak.Model", 1, 0, "ContainerDef");
     qmlRegisterType<QNodeDefBuilderData>("Oak.Model", 1, 0, "NodeDef");
     qmlRegisterType<QOakModel>("Oak.Model", 1, 0, "OakModel");
+    qmlRegisterType<QOakNodeProxyModel>("Oak.Model", 1, 0, "OakNodeProxyModel");
     qmlRegisterType<QOakModelBuilderData>("Oak.Model", 1, 0, "OakModelBuilder");
     qmlRegisterType<QLeafDefBuilderData>("Oak.Model", 1, 0, "LeafDef");
     qmlRegisterType<QLeafSettingsBuilderData>("Oak.Model", 1, 0, "LeafSettings");

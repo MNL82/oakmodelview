@@ -33,7 +33,8 @@ SOURCES += \
     oakmodelplugin.cpp
 
 DISTFILES += \
-    OakToolButton.qml
+    OakToolButton.qml \
+    OakToolTip.qml
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir

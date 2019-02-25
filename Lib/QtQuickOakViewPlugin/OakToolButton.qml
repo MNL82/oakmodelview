@@ -3,7 +3,7 @@ import QtQuick.Controls 2.4
 import QtGraphicalEffects 1.0
 
 ToolButton {
-    property alias tooltip: tooltipId.text
+    property alias toolTip: toolTipId.text
     property alias imageSource: imageId.source
 
     enabled: oakModelID.saveActionEnabled
@@ -21,7 +21,7 @@ ToolButton {
     hoverEnabled: true
     highlighted: hovered
     ToolTip {
-        id: tooltipId
+        id: toolTipId
         visible: parent.hovered
     }
 }

@@ -1,3 +1,4 @@
 module Oak.View
 OakToolButton 1.0 OakToolButton.qml
+OakToolTip 1.0 OakToolTip.qml
 plugin oakviewplugin
