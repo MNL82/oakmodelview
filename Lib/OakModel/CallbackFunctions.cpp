@@ -24,7 +24,7 @@ Callback::Callback()
 
 // =============================================================================
 // (public)
-void Callback::remove(void* funcObj)
+void Callback::remove(void* funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -57,7 +57,7 @@ Callback_NodeIntNodeInt::Callback_NodeIntNodeInt()
 
 // =============================================================================
 // (public)
-void Callback_NodeIntNodeInt::remove(void *funcObj)
+void Callback_NodeIntNodeInt::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -90,7 +90,7 @@ Callback_NodeInt::Callback_NodeInt()
 
 // =============================================================================
 // (public)
-void Callback_NodeInt::remove(void *funcObj)
+void Callback_NodeInt::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -123,7 +123,7 @@ Callback_Node::Callback_Node()
 
 // =============================================================================
 // (public)
-void Callback_Node::remove(void *funcObj)
+void Callback_Node::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -156,7 +156,7 @@ Callback_NodeIndex::Callback_NodeIndex()
 
 // =============================================================================
 // (public)
-void Callback_NodeIndex::remove(void *funcObj)
+void Callback_NodeIndex::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -189,7 +189,7 @@ Callback_NodeIndexNodeIndex::Callback_NodeIndexNodeIndex()
 
 // =============================================================================
 // (public)
-void Callback_NodeIndexNodeIndex::remove(void *funcObj)
+void Callback_NodeIndexNodeIndex::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -222,7 +222,7 @@ Callback_NodeIndexInt::Callback_NodeIndexInt()
 
 // =============================================================================
 // (public)
-void Callback_NodeIndexInt::remove(void *funcObj)
+void Callback_NodeIndexInt::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
@@ -255,7 +255,7 @@ Callback_NodeIndexString::Callback_NodeIndexString()
 
 // =============================================================================
 // (public)
-void Callback_NodeIndexString::remove(void *funcObj)
+void Callback_NodeIndexString::remove(void *funcObj) const
 {
     if (funcObj == nullptr) {
         m_functionMap.clear();
