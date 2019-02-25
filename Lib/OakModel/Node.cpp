@@ -237,6 +237,7 @@ int Node::leafIndex(const Leaf &leaf) const
 const Leaf& Node::leafAt(int index) const
 {
     initLeafList();
+    if (index < 0 || index >= static_cast<int>(m_leafList.size())) { return Leaf::emptyLeaf(); }
     return m_leafList.at(static_cast<vSize>(index));
 }
 
@@ -245,6 +246,7 @@ const Leaf& Node::leafAt(int index) const
 Leaf &Node::leafAt(int index)
 {
     initLeafList();
+    if (index < 0 || index >= static_cast<int>(m_leafList.size())) { return Leaf::emptyLeaf(); }
     return m_leafList.at(static_cast<vSize>(index));
 }
 
