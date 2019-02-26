@@ -17,6 +17,7 @@
 #include "Conversion.h"
 #include "DateTime.h"
 
+#include "../ServiceFunctions/Assert.h"
 
 namespace Oak::Model {
 
@@ -99,6 +100,7 @@ bool convert(T1 &dest, const T2 &source, Conversion* properties = nullptr)
     UNUSED(dest);
     UNUSED(source);
     UNUSED(properties);
+    ASSERT(false);
     return false;
 }
 
