@@ -14,7 +14,7 @@ Rectangle {
         textEditId.selectAll();
     }
 
-    TextEdit {
+    TextInput {
         id: textEditId
         anchors.fill: parent
         verticalAlignment: Text.AlignVCenter
@@ -24,7 +24,7 @@ Rectangle {
 
         color: "#660000"
         text: edit
-
+        validator: leafValidator
 //        onTextChanged: {
 //            console.log("Text changed: " +  textEditId.text)
 //        }

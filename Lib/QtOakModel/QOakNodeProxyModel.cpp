@@ -2,6 +2,9 @@
 
 #include "../ServiceFunctions/Trace.h"
 
+#include <QIntValidator>
+#include <QDoubleValidator>
+
 // =============================================================================
 // (public)
 QOakNodeProxyModel::QOakNodeProxyModel(QObject *parent)
@@ -109,10 +112,19 @@ QVariant QOakNodeProxyModel::data(const QModelIndex &index, int role) const
     case Qt::WhatsThisRole: { // QML: whatsThis
         return QVariant();
     }
-    case QOakModel::DisplayName:
-        return QString::fromStdString(leaf.def()->displayName());
     case QOakModel::Name:
         return QString::fromStdString(leaf.def()->name());
+    case QOakNodeProxyModel::DisplayName:
+        return QString::fromStdString(leaf.def()->displayName());
+    case QOakNodeProxyModel::LeafValidator: {
+        QValidator *v = nullptr;
+        if (leaf.def()->valueType() == Oak::Model::UnionType::Integer) {
+            v = new QIntValidator();
+        } else if (leaf.def()->valueType() == Oak::Model::UnionType::Double) {
+            v =new QDoubleValidator();
+        }
+        return QVariant::fromValue(v);
+    }
     default:
         break;
     }
@@ -184,7 +196,8 @@ Qt::ItemFlags QOakNodeProxyModel::flags(const QModelIndex &index) const
 QHash<int, QByteArray> QOakNodeProxyModel::roleNames() const
 {
     QHash<int, QByteArray> result = QAbstractItemModel::roleNames();
-    result.insert(QOakModel::DisplayName, QByteArrayLiteral("displayName"));
+    result.insert(QOakNodeProxyModel::DisplayName, QByteArrayLiteral("displayName"));
+    result.insert(QOakNodeProxyModel::LeafValidator, QByteArrayLiteral("leafValidator"));
     result.insert(QOakModel::Name, QByteArrayLiteral("name"));
     return result;
 }

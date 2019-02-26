@@ -22,6 +22,13 @@ class QOakNodeProxyModel : public QAbstractItemModel
     Q_PROPERTY(QModelIndex sourceModelItem READ sourceModelItem WRITE setSourceModelItem NOTIFY sourceModelItemChanged)
 
 public:
+    enum Roles  {
+        DisplayName = Qt::UserRole + 10,
+        LeafValidator = Qt::UserRole + 11
+    };
+    Q_ENUM(Roles)
+
+
     QOakNodeProxyModel(QObject *parent = nullptr);
     virtual ~QOakNodeProxyModel() override;
 
