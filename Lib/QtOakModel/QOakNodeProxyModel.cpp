@@ -148,10 +148,35 @@ bool QOakNodeProxyModel::setData(const QModelIndex &index, const QVariant &value
 // (public)
 Qt::ItemFlags QOakNodeProxyModel::flags(const QModelIndex &index) const
 {
-    if (!index.isValid())
-        return Qt::NoItemFlags;
+    if (isNull()) { return Qt::NoItemFlags; }
 
-    return Qt::ItemIsEditable; // FIXME: Implement me!
+    if (!index.isValid()) { return Qt::NoItemFlags; }
+
+    Oak::Model::Leaf leaf = toLeaf(index);
+    ASSERT(!leaf.isNull());
+
+    Qt::ItemFlags flagList;
+
+//    // Currently no nodes can be selected
+//    flagList |= Qt::ItemIsSelectable;
+
+    // Leafs can be edited from this model
+    flagList |= Qt::ItemIsEditable;
+
+//    // Drag and drop will not be used for leaf items
+//    flagList |= Qt::ItemIsDragEnabled;
+//    flagList |= Qt::ItemIsDropEnabled;
+
+//    // No leaf can be checked
+//    flagList |= Qt::ItemIsUserCheckable;
+
+    // Currently all leafs are enabled
+    flagList |= Qt::ItemIsEnabled;
+
+    // No leaf can have children
+    flagList |= Qt::ItemNeverHasChildren;
+
+    return flagList;
 }
 
 // =============================================================================
