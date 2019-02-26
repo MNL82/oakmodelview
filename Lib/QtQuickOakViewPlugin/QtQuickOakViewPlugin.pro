@@ -36,6 +36,8 @@ DISTFILES += \
     OakToolButton.qml \
     OakToolTip.qml
 
+include(Delegates.pri)
+
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir
 
