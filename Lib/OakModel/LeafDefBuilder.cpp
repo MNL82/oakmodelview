@@ -90,7 +90,8 @@ LeafDefBuilderSPtr LeafDefBuilder::setTooltip(const std::string &value)
 LeafDefBuilderSPtr LeafDefBuilder::setDefaultValue(const UnionRef &value)
 {
     ASSERT(m_leafDef);
-    m_leafDef->m_defaultValue = value;
+    m_leafDef->m_defaultValue = m_leafDef->m_valueTemplate;
+    value.get(m_leafDef->m_defaultValue);
     return m_thisWPtr.lock();
 }
 
