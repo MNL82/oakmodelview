@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.5
 
 Rectangle {
     id: rootId
@@ -32,7 +31,7 @@ Rectangle {
         Connections {
             target: textEditId
             onEditingFinished: {
-                console.log("Editing Fished: " + textEditId.text);
+                //console.log("Editing Fished: " + textEditId.text);
                 edit = textEditId.text;
                 rootId.editingFinished();
             }

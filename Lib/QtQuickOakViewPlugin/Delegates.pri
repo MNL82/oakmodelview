@@ -4,4 +4,5 @@ DISTFILES += \
     $$PWD/OakNodeDelegate.qml \
     $$PWD/LabelOakDelegate.qml \
     $$PWD/TextDisplayOakDelegate.qml \
-    $$PWD/TextEditOakDelegate.qml
+    $$PWD/TextEditOakDelegate.qml \
+    $$PWD/TextEditOptionsOakDelegate.qml

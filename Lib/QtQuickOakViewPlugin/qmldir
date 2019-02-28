@@ -5,5 +5,6 @@ OakNodeDelegate 1.0 OakNodeDelegate.qml
 LabelOakDelegate 1.0 LabelOakDelegate.qml
 TextDisplayOakDelegate 1.0 TextDisplayOakDelegate.qml
 TextEditOakDelegate 1.0 TextEditOakDelegate.qml
+TextEditOptionsOakDelegate 1.0 TextEditOptionsOakDelegate.qml
 TextOakNodeDelegate 1.0 TextOakNodeDelegate.qml
 plugin oakviewplugin

@@ -76,7 +76,7 @@ Item {
             acceptedButtons: Qt.LeftButton
             enabled: !isEditing
             onClicked: {
-                console.log("Display value clicked");
+                //console.log("Display value clicked");
                 isEditing = true;
             }
         }
