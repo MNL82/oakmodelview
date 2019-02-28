@@ -40,6 +40,17 @@ bool ValueOptions::isUsed() const
 
 // =============================================================================
 // (public)
+bool ValueOptions::hasOption(const UnionRef& value, const Node* node, bool allowConversion, ConversionSPtr conversion) const
+{
+    UnionValueList options;
+    // Todo: This function can be optimized
+    if (!getOptions(options, node, allowConversion, conversion)) { return false; }
+
+    return std::find(options.begin(), options.end(), value) != options.end();
+}
+
+// =============================================================================
+// (public)
 bool ValueOptions::getOptions(std::vector<UnionValue> &options, const Node *node, bool allowConversion, ConversionSPtr conversion) const
 {
     options.resize(m_options.size());

@@ -34,6 +34,11 @@ public:
 
     bool isUsed() const;
 
+    bool hasOption(const UnionRef& value, const Node *node, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+
+    template<typename T>
+    bool hasOption(const T& value, const Node *node, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
+
     bool getOptions(std::vector<UnionValue>& options, const Node *node, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     template<typename T>
@@ -57,6 +62,15 @@ protected:
     friend class LeafDef;
     friend class LeafDefBuilder;
 };
+
+// =============================================================================
+// (public)
+template<typename T>
+bool ValueOptions::hasOption(const T& value, const Node* node, bool allowConversion, ConversionSPtr conversion) const
+{
+    UnionRef uRef(value);
+    return hasOption(uRef, node, allowConversion, conversion);
+}
 
 // =============================================================================
 // (public)

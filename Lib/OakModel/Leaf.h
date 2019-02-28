@@ -73,6 +73,10 @@ public:
     template<typename T>
     T defaultValue() const;
 
+    bool hasOptions() const;
+    template<typename T>
+    bool hasOption(const T &value) const;
+    
     template<typename T>
     bool getOptions(std::vector<T>& value) const;
 
@@ -137,6 +141,7 @@ template<typename T>
 bool Leaf::setValue(const T &value) const
 {
     assert(m_def != nullptr);
+
     if (m_node) {
         onLeafChangeBefore();
     }
@@ -165,6 +170,14 @@ T Leaf::defaultValue() const
     T value;
     m_def->getDefaultValue(value);
     return std::move(value);
+}
+
+// =============================================================================
+// (public)
+template<typename T>
+bool Leaf::hasOption(const T& value) const
+{
+    return m_def->options().hasOption(value, m_node);
 }
 
 // =============================================================================

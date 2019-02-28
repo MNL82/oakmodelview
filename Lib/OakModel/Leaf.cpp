@@ -185,6 +185,14 @@ bool Leaf::hasDefaultValue() const
 
 // =============================================================================
 // (public)
+bool Leaf::hasOptions() const
+{
+    ASSERT(m_def != nullptr);
+    return m_def->options().isUsed();
+}
+
+// =============================================================================
+// (public)
 const LeafSettings &Leaf::settings() const
 {
     ASSERT(m_def != nullptr);
