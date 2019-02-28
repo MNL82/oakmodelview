@@ -125,6 +125,27 @@ QVariant QOakNodeProxyModel::data(const QModelIndex &index, int role) const
         }
         return QVariant::fromValue(v);
     }
+    case QOakNodeProxyModel::HasOptions:
+        return leaf.def()->options().isUsed();
+    case QOakNodeProxyModel::OptionsOnly:
+        return leaf.def()->settings().value(OPTION_ONLY).value<bool>();
+    case QOakNodeProxyModel::Options: {
+        if (!leaf.def()->options().isUsed()) { return QVariant(); }
+
+//        std::vector<std::string> optionList2;
+//        if (!leaf.getOptions(optionList2)) { return QVariant(); }
+//        QStringList qOptionList2 = toQStringList(optionList2);
+
+        Oak::Model::UnionValueList optionList;
+        if (!leaf.getOptions(optionList)) { return QVariant(); }
+
+        QVariantList qOptionList = toQVariantList(optionList);
+        return qOptionList;
+    }
+    case QOakNodeProxyModel::Unit:
+        return QString::fromStdString(leaf.def()->settings().value(UNIT).value<std::string>());
+    case QOakNodeProxyModel::Required:
+        return leaf.def()->settings().value(REQUIRED).value<int>() == 1;
     default:
         break;
     }
@@ -199,6 +220,11 @@ QHash<int, QByteArray> QOakNodeProxyModel::roleNames() const
     result.insert(QOakNodeProxyModel::DisplayName, QByteArrayLiteral("displayName"));
     result.insert(QOakNodeProxyModel::LeafValidator, QByteArrayLiteral("leafValidator"));
     result.insert(QOakModel::Name, QByteArrayLiteral("name"));
+    result.insert(QOakNodeProxyModel::HasOptions, QByteArrayLiteral("hasOptions"));
+    result.insert(QOakNodeProxyModel::Options, QByteArrayLiteral("options"));
+    result.insert(QOakNodeProxyModel::OptionsOnly, QByteArrayLiteral("optionsOnly"));
+    result.insert(QOakNodeProxyModel::Unit, QByteArrayLiteral("unit"));
+    result.insert(QOakNodeProxyModel::Required, QByteArrayLiteral("required"));
     return result;
 }
 

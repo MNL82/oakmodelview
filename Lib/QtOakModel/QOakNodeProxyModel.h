@@ -24,10 +24,13 @@ class QOakNodeProxyModel : public QAbstractItemModel
 public:
     enum Roles  {
         DisplayName = Qt::UserRole + 10,
-        LeafValidator = Qt::UserRole + 11
+        LeafValidator = Qt::UserRole + 11,
+        HasOptions = Qt::UserRole + 12,
+        OptionsOnly = Qt::UserRole + 13,
+        Options = Qt::UserRole +14,
+        Unit = Qt::UserRole +15,
+        Required = Qt::UserRole + 16
     };
-    Q_ENUM(Roles)
-
 
     QOakNodeProxyModel(QObject *parent = nullptr);
     virtual ~QOakNodeProxyModel() override;
