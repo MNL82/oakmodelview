@@ -487,6 +487,8 @@ void OakModel::onVariantLeafChangeAfter(const NodeIndex &nodeIndex) const
 {
     Node node = nodeIndex.node(m_rootNode);
     const NodeDef* def = findNodeDef(node.nodeData());
+    // ASSERTION can be caused by the variantValue being changed to a value that do not corespond to a node definition variant
+    // Make sure the variantLeaf optionsOnly setting is set to true
     ASSERT(def);
     Node newNode(def, node.nodeData(), this);
 
