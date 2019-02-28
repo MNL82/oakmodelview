@@ -34,7 +34,7 @@ public:
 
     bool isUsed() const;
 
-    bool getOptions(std::vector<UnionValue>& options, const Node *node, bool allowConversion, ConversionSPtr conversion) const;
+    bool getOptions(std::vector<UnionValue>& options, const Node *node, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
 
     template<typename T>
     bool getOptions(std::vector<T>& options, const Node *node, bool allowConversion = false, ConversionSPtr conversion = ConversionSPtr()) const;
