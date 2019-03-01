@@ -26,51 +26,15 @@ Rectangle {
         model: options
         editText: edit
         validator: leafValidator
-        editable: optionsOnly
+        editable: !optionsOnly
 
         onActiveFocusChanged: {
-            console.log("ActiveFocus: " + comboBoxId.activeFocus ? "yes" : "no");
-        }
-
-        onCurrentTextChanged: {
-            console.log("CurrentText: " + comboBoxId.currentText);
-            edit = comboBoxId.currentText;
-        }
-
-        Connections {
-            target: comboBoxId
-
-            onAccepted: {
-                edit = comboBoxId.editText;
+            if (!comboBoxId.activeFocus) {
+                edit = comboBoxId.currentText;
                 rootId.editingFinished();
             }
         }
     }
-
-//    TextInput {
-//        id: textEditId
-//        anchors.fill: parent
-//        verticalAlignment: Text.AlignVCenter
-
-//        focus: true
-//        selectByMouse: true
-
-//        color: "#660000"
-//        text: edit
-//        validator: leafValidator
-////        onTextChanged: {
-////            console.log("Text changed: " +  textEditId.text)
-////        }
-
-//        Connections {
-//            target: textEditId
-//            onEditingFinished: {
-//                //console.log("Editing Fished: " + textEditId.text);
-//                edit = textEditId.text;
-//                rootId.editingFinished();
-//            }
-//        }
-//    }
 }
 
 
