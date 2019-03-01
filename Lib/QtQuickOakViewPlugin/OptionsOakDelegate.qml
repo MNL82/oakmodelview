@@ -30,9 +30,12 @@ Rectangle {
 
         onActiveFocusChanged: {
             if (!comboBoxId.activeFocus) {
-                edit = comboBoxId.currentText;
                 rootId.editingFinished();
             }
+        }
+
+        onCurrentTextChanged: {
+            edit = comboBoxId.currentText;
         }
     }
 }

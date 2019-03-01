@@ -279,6 +279,7 @@ void QOakNodeProxyModel::setSourceModelItem(QModelIndex sourceModelItem)
     if (modelChanged && m_node.model() != nullptr) {
         m_node.model()->notifier_destroyed.remove(this);
         m_node.model()->notifier_leafChangeAfter.remove(this);
+        m_node.model()->notifier_variantLeafChangeAfter.remove(this);
     }
 
     m_sourceModelItem = sourceModelItem;
@@ -290,6 +291,7 @@ void QOakNodeProxyModel::setSourceModelItem(QModelIndex sourceModelItem)
     if (modelChanged && m_node.model() != nullptr) {
         m_node.model()->notifier_destroyed.add(this, &QOakNodeProxyModel::clearModel);
         m_node.model()->notifier_leafChangeAfter.add(this, &QOakNodeProxyModel::onLeafValueChanged);
+        m_node.model()->notifier_variantLeafChangeAfter.add(this, &QOakNodeProxyModel::onVariantLeafChanged);
     }
 
     emit sourceModelItemChanged(m_sourceModelItem);
@@ -313,6 +315,20 @@ void QOakNodeProxyModel::onLeafValueChanged(const Oak::Model::NodeIndex& nIndex,
     QModelIndex index = createIndex(leafIndex, 0, m_node.nodeData().internalPtr());
 
     emit dataChanged(index, index, QVector<int>() << Qt::EditRole << Qt::DisplayRole);
+}
+
+// =============================================================================
+// (protected)
+void QOakNodeProxyModel::onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex)
+{
+    if (!m_nodeIndexUPtr || !m_nodeIndexUPtr->equal(nIndex)) { return; }
+    Oak::Model::Node newNode = nIndex.node(m_node.model()->rootNode());
+    if (newNode.isNull()) { return; }
+
+    beginResetModel();
+    m_node = newNode;
+    resetInternalData();
+    endResetModel();
 }
 
 // =============================================================================

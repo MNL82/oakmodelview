@@ -68,6 +68,8 @@ signals:
 
 protected:
     void onLeafValueChanged(const Oak::Model::NodeIndex& nIndex, const std::string &str);
+    void onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex);
+
     void clearModel();
 
 protected:
