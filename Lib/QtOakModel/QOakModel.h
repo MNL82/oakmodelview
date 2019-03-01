@@ -62,6 +62,8 @@ public slots:
 protected:
     void setBuilder(QOakModelBuilderData* rootNodeDef);
     void updateEnabledActions();
+    void onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex);
+    void onKeyLeafChanged(const Oak::Model::NodeIndex& nIndex);
 
 signals:
     void dataLoaded();

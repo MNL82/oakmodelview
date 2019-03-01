@@ -22,6 +22,8 @@ QOakModel::QOakModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     //TRACE("Constructor: QuickOakModel");
+    m_model.notifier_keyLeafChangeAfter.add(this, &QOakModel::onKeyLeafChanged);
+    m_model.notifier_variantLeafChangeAfter.add(this, &QOakModel::onVariantLeafChanged);
     updateEnabledActions();
 }
 
@@ -51,9 +53,13 @@ void QOakModel::setName(QString name)
 void QOakModel::newModel()
 {
     if (m_model.isDefNull()) { return; }
+    beginResetModel();
     m_model.createNewRootDocument(Oak::Model::NodeData::Type::XML);
+    if (!m_model.isNull()) {
+        this->resetInternalData();
+    }
+    endResetModel();
     updateEnabledActions();
-    if (!m_model.isNull()) { this->resetInternalData(); }
 }
 
 // =============================================================================
@@ -139,6 +145,26 @@ void QOakModel::updateEnabledActions()
     set_loadActionEnabled(!m_model.isDefNull());
     set_saveActionEnabled(!m_model.isNull() && !m_model.docFilePathXML().empty());
     set_saveAsActionEnabled(!m_model.isNull());
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex)
+{
+    Oak::Model::Node node = nIndex.node(m_model.rootNode());
+    if (node.isNull()) { return; }
+    QModelIndex index = createModelIndex(nIndex.lastNodeIndex().index(), 0, node);
+    dataChanged(index, index, QVector<int>() << Qt::DisplayRole << QOakModel::VariantValue);
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onKeyLeafChanged(const Oak::Model::NodeIndex& nIndex)
+{
+    Oak::Model::Node node = nIndex.node(m_model.rootNode());
+    if (node.isNull()) { return; }
+    QModelIndex index = createModelIndex(nIndex.lastNodeIndex().index(), 0, node);
+    dataChanged(index, index, QVector<int>() <<  QOakModel::KeyValue);
 }
 
 // =============================================================================

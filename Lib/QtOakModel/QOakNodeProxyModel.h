@@ -63,14 +63,14 @@ public:
 public slots:
     void setSourceModelItem(QModelIndex sourceModelItem);
 
-signals:
-    void sourceModelItemChanged(QModelIndex sourceModelItem);
-
 protected:
     void onLeafValueChanged(const Oak::Model::NodeIndex& nIndex, const std::string &str);
     void onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex);
 
     void clearModel();
+
+signals:
+    void sourceModelItemChanged(QModelIndex sourceModelItem);
 
 protected:
     QModelIndex m_sourceModelItem;
