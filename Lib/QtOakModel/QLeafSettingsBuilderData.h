@@ -24,7 +24,7 @@
 class QLeafSettingsBuilderData : public QObject
 {
     Q_OBJECT
-    BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, readOnly)
+    BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, optionsOnly)
     BUILDER_PROPERTY_STRING(unit)
     BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, unique)
     BUILDER_PROPERTY_ENUM(QTriState::TriStateEnum, Oak::Model::BoolState, required)

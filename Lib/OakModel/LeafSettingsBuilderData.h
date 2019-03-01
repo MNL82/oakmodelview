@@ -31,7 +31,7 @@ public:
     void validate(std::vector<std::string> &errorMessages) const;
     void set(LeafDefBuilderSPtr builder) const;
 
-    BoolState readOnly = BoolState_Undefined;
+    BoolState optionsOnly = BoolState_Undefined;
     std::string unit;
     BoolState unique = BoolState_Undefined;
     BoolState required = BoolState_Undefined;

@@ -41,7 +41,7 @@ public:
     void validate(std::vector<std::string> &errorMessages) const;
     void validateDerived(std::vector<std::string> &errorMessages) const;
     NodeDefSPtr create();
-    bool createDerived(NodeDefBuilderSPtr baseNodeDefBuilder) const;
+    bool createVariant(NodeDefBuilderSPtr baseNodeDefBuilder) const;
 
     bool createContainers(NodeDefSPtr nodeDef, std::vector<NodeDefSPtr> nodeDefList) const;
 

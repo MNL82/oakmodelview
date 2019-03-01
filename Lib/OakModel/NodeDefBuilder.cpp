@@ -179,7 +179,7 @@ NodeDefBuilderSPtr NodeDefBuilder::addVariantLeaf(LeafDefBuilderSPtr variantLeaf
     //
     std::vector<UnionRef> optionList = m_nodeDef->baseRoot()->variantIdList(false, true);
     variantLeafDef->setOptionsStatic(optionList);
-    variantLeafDef->setSetting("OptionsOnly", true);
+    variantLeafDef->setSetting(OPTION_ONLY, true);
     if (!variantLeafDef->leafDef().hasDefaultValue()) {
         variantLeafDef->setDefaultValue(m_nodeDef->variantId());
     }

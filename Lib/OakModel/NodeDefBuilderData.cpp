@@ -104,7 +104,7 @@ NodeDefSPtr NodeDefBuilderData::create()
 
     for (const auto & derivedBuilder: derivedNodeDefs)
     {
-        derivedBuilder->createDerived(builder);
+        derivedBuilder->createVariant(builder);
     }
 
     return builder->get();
@@ -112,7 +112,7 @@ NodeDefSPtr NodeDefBuilderData::create()
 
 // =============================================================================
 // (public)
-bool NodeDefBuilderData::createDerived(NodeDefBuilderSPtr baseNodeDefBuilder) const
+bool NodeDefBuilderData::createVariant(NodeDefBuilderSPtr baseNodeDefBuilder) const
 {
     NodeDefBuilderSPtr builder = NodeDefBuilder::createVariant(baseNodeDefBuilder, variantId);
 
@@ -120,7 +120,7 @@ bool NodeDefBuilderData::createDerived(NodeDefBuilderSPtr baseNodeDefBuilder) co
 
     for (const auto & derivedBuilder: derivedNodeDefs)
     {
-        derivedBuilder->createDerived(builder);
+        derivedBuilder->createVariant(builder);
     }
 
     return builder.get();

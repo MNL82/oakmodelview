@@ -35,8 +35,8 @@ void LeafSettingsBuilderData::validate(std::vector<std::string>& errorMessages) 
 // (public)
 void LeafSettingsBuilderData::set(LeafDefBuilderSPtr builder) const
 {
-    if (readOnly != BoolState_Undefined) {
-        builder->setSetting(OPTION_ONLY, readOnly == BoolState_True);
+    if (optionsOnly != BoolState_Undefined) {
+        builder->setSetting(OPTION_ONLY, optionsOnly == BoolState_True);
     }
 
     if (!unit.empty()) {
