@@ -3,8 +3,7 @@ OakToolButton 1.0 OakToolButton.qml
 OakToolTip 1.0 OakToolTip.qml
 OakNodeDelegate 1.0 OakNodeDelegate.qml
 LabelOakDelegate 1.0 LabelOakDelegate.qml
-TextDisplayOakDelegate 1.0 TextDisplayOakDelegate.qml
-TextEditOakDelegate 1.0 TextEditOakDelegate.qml
-TextEditOptionsOakDelegate 1.0 TextEditOptionsOakDelegate.qml
-TextOakNodeDelegate 1.0 TextOakNodeDelegate.qml
+DisplayOakDelegate 1.0 DisplayOakDelegate.qml
+EditOakDelegate 1.0 EditOakDelegate.qml
+OptionsOakDelegate 1.0 OptionsOakDelegate.qml
 plugin oakviewplugin

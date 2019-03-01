@@ -1,8 +1,7 @@
 DISTFILES += \
     $$PWD/DisplayNameDelegate.qml \
-    $$PWD/TextOakNodeDelegate.qml \
     $$PWD/OakNodeDelegate.qml \
     $$PWD/LabelOakDelegate.qml \
-    $$PWD/TextDisplayOakDelegate.qml \
-    $$PWD/TextEditOakDelegate.qml \
-    $$PWD/TextEditOptionsOakDelegate.qml
+    $$PWD/DisplayOakDelegate.qml \
+    $$PWD/EditOakDelegate.qml \
+    $$PWD/OptionsOakDelegate.qml

@@ -4,9 +4,9 @@ import QtQuick.Layouts 1.3
 Item {
     property bool isEditing : false
 
-    property alias labelItem : labelContentId.data
-    property alias valueItem : valueContentId.data
-    property alias editItem: editLoaderId.sourceComponent
+    property alias labelComponent : labelContentId.data
+    property alias displayComponent : valueContentId.data
+    property alias editComponent: editLoaderId.sourceComponent
 
     id: rootId
     anchors.left: parent.left
