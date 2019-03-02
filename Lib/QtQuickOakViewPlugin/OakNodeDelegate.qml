@@ -23,7 +23,7 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        implicitWidth: 80
+        implicitWidth: 90
 
         Item {
             id: labelContentId
