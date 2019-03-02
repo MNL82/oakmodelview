@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<process>
+  <solvents>
+    <solvent>
+      <name>Solvent</name>
+      <inletB>B4</inletB>
+    </solvent>
+    <solvent>
+      <name>Solvent_1</name>
+      <pctb>15</pctb>
+    </solvent>
+    <solvent>
+      <name>Solvent_2</name>
+      <inletA>A5</inletA>
+      <inletB>B2</inletB>
+      <pctb>80</pctb>
+    </solvent>
+    <solvent>
+      <name>Solvent_3</name>
+      <inletB>B5</inletB>
+      <inletA>A3</inletA>
+      <pctb>20</pctb>
+    </solvent>
+    <solvent>
+      <name>Solvent_4</name>
+      <inletB>B8</inletB>
+      <inletA>A8</inletA>
+      <pctb>40</pctb>
+    </solvent>
+  </solvents>
+  <columns>
+    <column>
+      <name>Column Testing...</name>
+      <step>
+        <name>First Step</name>
+        <type>CIP</type>
+        <pumpwash>true</pumpwash>
+        <cv>0</cv>
+        <solvent>Solvent_3</solvent>
+        <test5>Hej</test5>
+      </step>
+      <step>
+        <name>Step_2</name>
+        <type>Elute</type>
+        <solvent>Solvent_4</solvent>
+      </step>
+      <step>
+        <name>Step_3</name>
+        <solvent>Solvent</solvent>
+      </step>
+      <volume>50</volume>
+    </column>
+    <column>
+      <name>Column 1</name>
+      <step>
+        <name>Step_1</name>
+      </step>
+      <step>
+        <name>Step_2</name>
+        <type>Equil</type>
+        <solvent>Solvent_1</solvent>
+      </step>
+      <step>
+        <name>Step_3</name>
+        <type>CIP</type>
+      </step>
+    </column>
+    <column>
+      <name>Column 2</name>
+    </column>
+    <column>
+      <name>Test</name>
+      <step>
+        <name>Step_4</name>
+        <solvent>Solvent_3</solvent>
+      </step>
+      <step>
+        <name>Step</name>
+        <solvent>Solvent_3</solvent>
+        <type>Elute</type>
+      </step>
+      <step>
+        <name>Step_1</name>
+        <solvent>Solvent</solvent>
+      </step>
+      <step>
+        <name>Step_2</name>
+        <type>Load</type>
+        <solvent>Solvent_3</solvent>
+      </step>
+      <step>
+        <name>Step_3</name>
+        <type>CIP</type>
+        <solvent>Solvent_2</solvent>
+      </step>
+      <volume>50</volume>
+    </column>
+    <column>
+      <name>Column 4</name>
+      <step>
+        <name>Step_1</name>
+        <created>1975-01-01 00:00:00</created>
+      </step>
+    </column>
+    <column>
+      <name>Column 5</name>
+      <step>
+        <name>Step_1</name>
+        <type>Equil</type>
+      </step>
+      <step>
+        <name>Step_2</name>
+        <type>Elute</type>
+        <solvent>Solvent_4</solvent>
+      </step>
+      <step>
+        <name>Step_3</name>
+      </step>
+    </column>
+    <column>
+      <name>Column 6</name>
+    </column>
+    <column>
+      <name>Column 7</name>
+    </column>
+  </columns>
+</process>
