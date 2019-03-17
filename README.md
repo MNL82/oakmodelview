@@ -14,4 +14,3 @@ See accompanying file LICENSE in the root folder.
 # Dependencies
 Thanks to.
  * pugixml parser - http://pugixml.org
- * boost - http://www.boost.org
