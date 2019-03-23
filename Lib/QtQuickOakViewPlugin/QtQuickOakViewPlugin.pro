@@ -34,7 +34,8 @@ SOURCES += \
 
 DISTFILES += \
     OakToolButton.qml \
-    OakToolTip.qml
+    OakToolTip.qml \
+    expandArrow_32.png
 
 include(Delegates.pri)
 
@@ -50,6 +51,7 @@ cpqml.path = $$DESTDIR
 
 COPIES += \
     cpqmldir \
+    cppicsdir \
     cpqml
 
 TARGET = $$qtLibraryTarget($$TARGET)

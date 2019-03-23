@@ -159,38 +159,7 @@ Window {
 //                        //width: 150
 //                    }
 
-                    itemDelegate: Item {
-                       height: 30
-                       implicitHeight: 30
-
-                       Text {
-                           anchors.verticalCenter: parent.verticalCenter
-                           anchors.left: parent.left
-                           text: styleData.value
-                       }
-                       Button {
-                           id: expandButtonId
-                           visible: styleData.hasChildren && styleData.column === 0
-                           anchors.right: parent.right
-                           anchors.top: parent.top
-                           anchors.bottom: parent.bottom
-                           anchors.margins: 4
-                           width: height
-                           text: ( styleData.isExpanded ) ? "-" : "+"
-                           MouseArea {
-                               anchors.fill: parent
-                               acceptedButtons: Qt.LeftButton
-                               onClicked: {
-                                   if (styleData.isExpanded) {
-                                       treeViewId.collapse(styleData.index);
-                                   } else {
-                                       treeViewId.expand(styleData.index);
-                                   }
-                                   mouse.accepted = true;
-                               }
-                           }
-                       }
-                    }
+                    itemDelegate: OakTreeViewDelegate { view: treeViewId }
 
                 }
 

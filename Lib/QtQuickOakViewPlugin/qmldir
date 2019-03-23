@@ -6,4 +6,5 @@ LabelOakDelegate 1.0 LabelOakDelegate.qml
 DisplayOakDelegate 1.0 DisplayOakDelegate.qml
 EditOakDelegate 1.0 EditOakDelegate.qml
 OptionsOakDelegate 1.0 OptionsOakDelegate.qml
+OakTreeViewDelegate 1.0 OakTreeViewDelegate.qml
 plugin oakviewplugin
