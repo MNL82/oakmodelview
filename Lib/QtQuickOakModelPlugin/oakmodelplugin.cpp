@@ -20,6 +20,8 @@
 
 #include "QLeafDefBuilderData.h"
 #include "QValueOptionsBuilderData.h"
+#include "QOakToolbarModel.h"
+#include "QOakToolButtonAddChild.h"
 
 #include <qqml.h>
 
@@ -36,4 +38,7 @@ void OakModePlugin::registerTypes(const char *uri)
     qmlRegisterType<QLeafDefBuilderData>("Oak.Model", 1, 0, "LeafDef");
     qmlRegisterType<QLeafSettingsBuilderData>("Oak.Model", 1, 0, "LeafSettings");
     qmlRegisterType<QValueOptionsBuilderData>("Oak.Model", 1, 0, "ValueOptions");
+    qmlRegisterType<QOakToolBarModel>("Oak.Model", 1, 0, "OakToolBarModel");
+    qmlRegisterType<QOakToolButton>("Oak.Model", 1, 0, "OakToolButton");
+    qmlRegisterType<QOakToolButtonAddChild>("Oak.Model", 1, 0, "OakToolButtonAddChild");
 }

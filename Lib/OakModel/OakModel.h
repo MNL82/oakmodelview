@@ -72,9 +72,11 @@ public:
     NodeIndexUPtr convertNodeIndexToUnnamed(const NodeIndex &nodeIndex) const;
 
 protected:
+    void onNodeInserteBefore(const NodeIndex& nodeIndex) const;
     void onNodeInserteAfter(const NodeIndex& nodeIndex) const;
-    void onNodeMoveAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
     void onNodeMoveBefore(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
+    void onNodeMoveAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
+    void onNodeCloneBefore(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
     void onNodeCloneAfter(const NodeIndex& sourceNodeIndex, const NodeIndex& targetNodeIndex) const;
 
     void onNodeRemoveAfter(const NodeIndex& nodeIndex) const;
@@ -95,9 +97,11 @@ public:
 
     Callback notifier_destroyed;
 
+    Callback_NodeIndex notifier_nodeInserteBefore;
     Callback_NodeIndex notifier_nodeInserteAfter;
     Callback_NodeIndexNodeIndex notifier_nodeMoveBefore;
     Callback_NodeIndexNodeIndex notifier_nodeMoveAfter;
+    Callback_NodeIndexNodeIndex notifier_nodeCloneBefore;
     Callback_NodeIndexNodeIndex notifier_nodeCloneAfter;
 
     Callback_NodeIndex notifier_nodeRemoveBefore;

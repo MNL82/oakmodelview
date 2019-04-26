@@ -66,6 +66,9 @@ public:
     int convertIndexToUnnamed(const Node &_node) const;
     int convertIndexToNamed(const Node &_node, std::string &name) const;
 
+    std::string toString() const;
+    void toString(std::stringstream &ss) const;
+
 protected:
     std::string m_name;
     int m_index;

@@ -886,6 +886,29 @@ const ContainerDef &NodeDef::container(const std::string& _name, bool includeBas
 
 // =============================================================================
 // (public)
+int NodeDef::containerIndex(const std::string &_name, bool includeBase) const
+{
+    int count = 0;
+    for (const auto& _child: m_containerList)
+    {
+        if (_child->containerDef()->name() == _name) {
+            if (includeBase && hasBase()) {
+                count += m_base.lock()->containerCount(true, false);
+            }
+            return count;
+        }
+        count++;
+    }
+
+    if (includeBase && hasBase()) {
+        return m_base.lock()->containerIndex(_name, true);
+    }
+
+    return -1;
+}
+
+// =============================================================================
+// (public)
 const ContainerDef &NodeDef::container(const NodeData &childNodeData, bool includeBase, bool includeDerived) const
 {
     if (childNodeData.isNull()) { return ContainerDef::emptyChildNodeDef(); }

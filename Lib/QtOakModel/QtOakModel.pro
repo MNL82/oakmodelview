@@ -19,9 +19,11 @@ INCLUDEPATH += \
     ../OakXML \
     ../OakModel
 
-	
+include(ToolBar.pri)
+
 HEADERS += \
     QContainerDefBuilderData.h \
+    QOakAbstractNodeModel.h \
     QPropertyHelpers.h \
     QLeafDefBuilderData.h \
     QLeafSettingsBuilderData.h \
@@ -39,6 +41,7 @@ SOURCES += \
     QLeafDefBuilderData.cpp \
     QLeafSettingsBuilderData.cpp \
     QNodeDefBuilderData.cpp \
+    QOakAbstractNodeModel.cpp \
     QServiceFunctions.cpp \
     QValueOptionsBuilderData.cpp \
     QOakModel.cpp \

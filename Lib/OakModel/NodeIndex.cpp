@@ -11,7 +11,7 @@
 #include "NodeIndex.h"
 
 #include "../ServiceFunctions/Assert.h"
-
+#include <sstream>
 
 namespace Oak::Model {
 
@@ -323,6 +323,30 @@ int NodeIndex::convertIndexToNamed(const Node &_node, std::string &name) const
     } else {
         name = m_name;
         return m_index;
+    }
+}
+
+// =============================================================================
+// (public)
+std::string NodeIndex::toString() const
+{
+    std::stringstream ss;
+    toString(ss);
+    return ss.str();
+}
+
+// =============================================================================
+// (public)
+void NodeIndex::toString(std::stringstream &ss) const
+{
+    if (m_name.empty()) {
+        ss << "[" << std::to_string(m_index) << "]";
+    } else {
+        ss << m_name << "[" << m_index << "]";
+    }
+    if (m_childIndex) {
+        ss << ";";
+        m_childIndex->toString(ss);
     }
 }
 

@@ -19,14 +19,13 @@ Window {
     height: 600
     title: qsTr("Testing Qt Quick 2")
 
-
     ContinuousChromatographyModel {
         id: oakModelId
     }
 
     OakNodeProxyModel {
         id: oakNodeModelId
-        sourceModelItem: treeViewId.currentIndex
+        sourceItem: treeViewId.currentIndex
     }
 
     FileDialog {
@@ -92,7 +91,7 @@ Window {
             }
         }
 
-        Rectangle {
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -100,68 +99,109 @@ Window {
                 anchors.fill: parent
                 spacing: 0
 
-                QQC1.TreeView {
-
-                    id: treeViewId
+                Item { // Tree View and ToolBar
                     Layout.fillHeight: true
                     implicitWidth: 250
-                    model: oakModelId
-                    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-                    verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 0
+
+                        QQC1.TreeView {
+
+                            id: treeViewId
+                            Layout.fillHeight: true
+                            implicitWidth: 250
+                            model: oakModelId
+
+                            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+                            verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
 
 
-                    rowDelegate: Rectangle {
-                        color: (styleData.selected) ? "#c0c0ff" : (styleData.row % 2 == 0) ? "#f8f8f8" : "#f0f0f0"
-                        height: 30
-                    }
+                            rowDelegate: Rectangle {
+                                color: (styleData.selected) ? "#c0c0ff" : (styleData.row % 2 == 0) ? "#f8f8f8" : "#f0f0f0"
+                                height: 30
+                            }
 
-                    onWidthChanged: {
-                        console.log("Width: " + width);
-                    }
+                            onWidthChanged: {
+                                console.log("Width: " + width);
+                            }
 
+                            style: TreeViewStyle {
+        //                        scrollBarBackground: Rectangle {
+        //                            color: "blue"
+        //                        }
 
-                    style: TreeViewStyle {
-//                        scrollBarBackground: Rectangle {
-//                            color: "blue"
-//                        }
+                                branchDelegate: Item {
+        //                            id: branchId
+        //                            width: 10
+        //                            height: 20
+        //                            MouseArea {
+        //                                anchors.fill: parent
+        //                                acceptedButtons: Qt.LeftButton
+        //                                onClicked: {
+        //                                    if (styleData.isExpanded) {
+        //                                        treeViewId.collapse(styleData.index);
+        //                                    } else {
+        //                                        treeViewId.expand(styleData.index);
+        //                                    }
+        //                                }
+        //                            }
+        //                            Rectangle {
+        //                                anchors.fill: parent
+        //                                color: "red"
+        //                            }
+                                }
+                            }
 
-                        branchDelegate: Item {
-//                            id: branchId
-//                            width: 10
-//                            height: 20
-//                            MouseArea {
-//                                anchors.fill: parent
-//                                acceptedButtons: Qt.LeftButton
-//                                onClicked: {
-//                                    if (styleData.isExpanded) {
-//                                        treeViewId.collapse(styleData.index);
-//                                    } else {
-//                                        treeViewId.expand(styleData.index);
-//                                    }
-//                                }
-//                            }
-//                            Rectangle {
-//                                anchors.fill: parent
-//                                color: "red"
-//                            }
+                            QQC1.TableViewColumn {
+                                title: "Name"
+                                role: "display"
+                                resizable: false
+                            }
+                            itemDelegate: OakTreeViewDelegate { view: treeViewId }
+                        } // TreeView end
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.margins: 4
+                            implicitHeight: 30
+                            //visible: selectedToolBarModelId.rowCount() !== 0
+
+                            ListView {
+                                id: selectionToolBarId
+                                anchors.fill: parent
+                                orientation: ListView.Horizontal
+                                spacing: 4
+
+                                model: OakToolBarModel {
+                                    id: selectedToolBarModelId
+
+                                    sourceItem: treeViewId.currentIndex
+
+                                    buttons: [
+                                        OakToolButtonAddChild {
+
+                                        }
+
+                                    ]
+
+                                }
+                                delegate: ToolButton {
+                                    implicitWidth: 30
+                                    implicitHeight: 30
+                                    onClicked: selectedToolBarModelId.trigger(index)
+                                    Text {
+                                        anchors.fill: parent
+                                        text: name
+                                    }
+                                }
+                            }
                         }
                     }
-
-                    QQC1.TableViewColumn {
-                        title: "Name"
-                        role: "display"
-                        resizable: false
-                    }
-//                    QQC1.TableViewColumn {
-//                        title: "Key"
-//                        role: "keyValue"
-//                        resizable: true
-//                        //width: 150
-//                    }
-
-                    itemDelegate: OakTreeViewDelegate { view: treeViewId }
-
                 }
+
+
 
                 Rectangle {
                     Layout.fillHeight: true

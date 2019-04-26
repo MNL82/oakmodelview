@@ -8,7 +8,7 @@
 // =============================================================================
 // (public)
 QOakNodeProxyModel::QOakNodeProxyModel(QObject *parent)
-    : QAbstractItemModel(parent)
+    : QOakAbstractNodeModel(parent)
 {
 }
 
@@ -16,14 +16,7 @@ QOakNodeProxyModel::QOakNodeProxyModel(QObject *parent)
 // (public)
 QOakNodeProxyModel::~QOakNodeProxyModel()
 {
-    setSourceModelItem(QModelIndex());
-}
-
-// =============================================================================
-// (public)
-bool QOakNodeProxyModel::isNull() const
-{
-    return !m_sourceModelItem.isValid();
+    setSourceItem(QModelIndex());
 }
 
 // =============================================================================
@@ -33,7 +26,7 @@ QModelIndex QOakNodeProxyModel::index(int row, int column, const QModelIndex &pa
     if (isNull()) { return QModelIndex(); }
     if (parent.isValid()) { return QModelIndex(); }
 
-    return createIndex(row, column, m_sourceModelItem.internalPointer());
+    return createIndex(row, column, m_sourceItem.internalPointer());
 }
 
 // =============================================================================
@@ -230,73 +223,35 @@ QHash<int, QByteArray> QOakNodeProxyModel::roleNames() const
 
 // =============================================================================
 // (public)
-QModelIndex QOakNodeProxyModel::sourceModelItem() const
-{
-    return m_sourceModelItem;
-}
-
-// =============================================================================
-// (public)
 const Oak::Model::Leaf &QOakNodeProxyModel::toLeaf(const QModelIndex& index) const
 {
-    ASSERT(index.internalPointer() == m_node.nodeData().internalPtr());
+    ASSERT(index.internalPointer() == m_node.parent().nodeData().internalPtr());
     ASSERT(index.row() < m_node.leafCount());
 
     return m_node.leafAt(index.row());
 }
 
 // =============================================================================
-// (public slots)
-void QOakNodeProxyModel::setSourceModelItem(QModelIndex sourceModelItem)
+// (protected)
+void QOakNodeProxyModel::sourceModelConnect()
 {
-    if (m_sourceModelItem == sourceModelItem) { return; }
+    sourceOakModel()->notifier_leafChangeAfter.add(this, &QOakNodeProxyModel::onLeafValueChanged);
+    sourceOakModel()->notifier_variantLeafChangeAfter.add(this, &QOakNodeProxyModel::onVariantLeafChanged);
+}
 
-    // 1. The model of the index have to be the QOakModel
-    const QOakModel *newModel = qobject_cast<const QOakModel*>(sourceModelItem.model());
+// =============================================================================
+// (protected)
+void QOakNodeProxyModel::sourceModelDisconnect()
+{
+    sourceOakModel()->notifier_leafChangeAfter.remove(this);
+    sourceOakModel()->notifier_variantLeafChangeAfter.remove(this);
+}
 
-    // 2. Find the node the index refers to
-    Oak::Model::Node newNode;
-    if (newModel != nullptr) {
-        newNode = newModel->toNode(sourceModelItem);
-    }
+// =============================================================================
+// (protected)
+void QOakNodeProxyModel::sourceItemChanged()
+{
 
-    // 3. Calculate the NodeIndex the process events faster
-    Oak::Model::NodeIndexUPtr newNodeIndex = Oak::Model::NodeIndex::create(newNode);
-
-    if (newNode.isNull()) { // If one fail all fail
-        sourceModelItem = QModelIndex();
-        newModel = nullptr;
-    }
-    if (newNode.isNull() && m_node.isNull()) { return; }
-
-    // The model source have changed and needs to be reset
-    beginResetModel();
-
-    // Only disconnect/connect notifiers if model changed
-    bool modelChanged = newNode.model() != m_node.model();
-
-    // Disconnect notifiers from previous connected model
-    if (modelChanged && m_node.model() != nullptr) {
-        m_node.model()->notifier_destroyed.remove(this);
-        m_node.model()->notifier_leafChangeAfter.remove(this);
-        m_node.model()->notifier_variantLeafChangeAfter.remove(this);
-    }
-
-    m_sourceModelItem = sourceModelItem;
-    m_sourceModel = newModel;
-    m_node = newNode;
-    m_nodeIndexUPtr = std::move(newNodeIndex);
-
-    // Connect notifiers to the new model
-    if (modelChanged && m_node.model() != nullptr) {
-        m_node.model()->notifier_destroyed.add(this, &QOakNodeProxyModel::clearModel);
-        m_node.model()->notifier_leafChangeAfter.add(this, &QOakNodeProxyModel::onLeafValueChanged);
-        m_node.model()->notifier_variantLeafChangeAfter.add(this, &QOakNodeProxyModel::onVariantLeafChanged);
-    }
-
-    emit sourceModelItemChanged(m_sourceModelItem);
-    resetInternalData();
-    endResetModel();
 }
 
 // =============================================================================
@@ -329,14 +284,4 @@ void QOakNodeProxyModel::onVariantLeafChanged(const Oak::Model::NodeIndex& nInde
     m_node = newNode;
     resetInternalData();
     endResetModel();
-}
-
-// =============================================================================
-// (protected)
-void QOakNodeProxyModel::clearModel()
-{
-    m_sourceModelItem = QModelIndex();
-    m_sourceModel = nullptr;
-    m_node = Oak::Model::Node();
-    m_nodeIndexUPtr = Oak::Model::NodeIndexUPtr();
 }

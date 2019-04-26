@@ -24,6 +24,14 @@ QOakModel::QOakModel(QObject *parent)
     //TRACE("Constructor: QuickOakModel");
     m_model.notifier_keyLeafChangeAfter.add(this, &QOakModel::onKeyLeafChanged);
     m_model.notifier_variantLeafChangeAfter.add(this, &QOakModel::onVariantLeafChanged);
+    m_model.notifier_nodeInserteBefore.add(this,&QOakModel::onNodeInserteBefore);
+    m_model.notifier_nodeInserteAfter.add(this, &QOakModel::onNodeInserteAfter);
+    m_model.notifier_nodeRemoveBefore.add(this, &QOakModel::onNodeRemoveBefore);
+    m_model.notifier_nodeRemoveAfter.add(this, &QOakModel::onNodeRemoveAfter);
+    m_model.notifier_nodeMoveBefore.add(this, &QOakModel::onNodeMoveBefore);
+    m_model.notifier_nodeMoveAfter.add(this, &QOakModel::onNodeMoveAfter);
+    m_model.notifier_nodeCloneBefore.add(this, &QOakModel::onNodeCloneBefore);
+    m_model.notifier_nodeCloneAfter.add(this, &QOakModel::onNodeCloneAfter);
     updateEnabledActions();
 }
 
@@ -35,10 +43,24 @@ QOakModelBuilderData* QOakModel::builder() const
 }
 
 // =============================================================================
-// (public slots)
+// (public)
 QString QOakModel::name() const
 {
     return m_name;
+}
+
+// =============================================================================
+// (public)
+Oak::Model::OakModel *QOakModel::oakModel()
+{
+    return &m_model;
+}
+
+// =============================================================================
+// (public)
+const Oak::Model::OakModel *QOakModel::oakModel() const
+{
+    return &m_model;
 }
 
 // =============================================================================
@@ -115,18 +137,10 @@ bool QOakModel::saveModelAs(const QString& filePath)
 }
 
 // =============================================================================
-// (public slots)
-void QOakModel::testClick(const QVariant &nodeDataId)
-{
-    Oak::Model::Node node = toNode(nodeDataId);
-    TRACE("testClick(%s)", node.def()->displayName().c_str());
-}
-
-// =============================================================================
 // (private)
 void QOakModel::setBuilder(QOakModelBuilderData* rootNodeDef)
 {
-    TRACE("setRootNodeDef()");
+    //TRACE("setRootNodeDef()");
     m_builder = rootNodeDef;
 
     m_model.setRootNodeDef(m_builder->create());
@@ -153,7 +167,7 @@ void QOakModel::onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex)
 {
     Oak::Model::Node node = nIndex.node(m_model.rootNode());
     if (node.isNull()) { return; }
-    QModelIndex index = createModelIndex(nIndex.lastNodeIndex().index(), 0, node);
+    QModelIndex index = createModelIndex(node);
     dataChanged(index, index, QVector<int>() << Qt::DisplayRole << QOakModel::VariantValue);
 }
 
@@ -163,8 +177,70 @@ void QOakModel::onKeyLeafChanged(const Oak::Model::NodeIndex& nIndex)
 {
     Oak::Model::Node node = nIndex.node(m_model.rootNode());
     if (node.isNull()) { return; }
-    QModelIndex index = createModelIndex(nIndex.lastNodeIndex().index(), 0, node);
+    QModelIndex index = createModelIndex(node);
     dataChanged(index, index, QVector<int>() <<  QOakModel::KeyValue);
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeInserteBefore(const Oak::Model::NodeIndex &nIndex)
+{
+    TRACE("onNodeInserteBefore(%s)\n",nIndex.toString().c_str());
+    Oak::Model::Node pNode = nIndex.nodeParent(m_model.rootNode());
+    if (pNode.isNull()) { return; }
+    QModelIndex pIndex = createModelIndex(pNode);
+    int i = nIndex.lastNodeIndex().index();
+    beginInsertRows(pIndex, i, i);
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeInserteAfter(const Oak::Model::NodeIndex &nIndex)
+{
+    TRACE("onNodeInserteAfter(%s)\n",nIndex.toString().c_str());
+    endInsertRows();
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeRemoveBefore(const Oak::Model::NodeIndex &nIndex)
+{
+    TRACE("onNodeRemoveBefore(%s)\n",nIndex.toString().c_str());
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeRemoveAfter(const Oak::Model::NodeIndex &nIndex)
+{
+
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeMoveBefore(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
+{
+
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeMoveAfter(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
+{
+
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeCloneBefore(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
+{
+
+}
+
+// =============================================================================
+// (public)
+void QOakModel::onNodeCloneAfter(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
+{
+
 }
 
 // =============================================================================
@@ -173,10 +249,9 @@ QModelIndex QOakModel::index(int row, int column, const QModelIndex &parent) con
 {
     if (m_model.isNull()) { return QModelIndex(); }
 
-    Oak::Model::Node parentNode = toNode(parent);
-    Oak::Model::Node node = parentNode.childAt(row);
-    ASSERT(!node.isNull());
-    return createModelIndex(row, column, node);
+    Oak::Model::Node newParentNode = toNode(parent);
+    ASSERT(!newParentNode.isNull());
+    return createModelIndex(row, column, newParentNode);
 }
 
 // =============================================================================
@@ -185,13 +260,14 @@ QModelIndex QOakModel::parent(const QModelIndex &child) const
 {
     if (m_model.isNull()) { return QModelIndex(); }
 
-    Oak::Model::Node childNode = toNode(child);
-    Oak::Model::Node parentNode = childNode.parent();
-    ASSERT(!parentNode.isNull());
-    if (parentNode == m_model.rootNode()) {
+    Oak::Model::Node newNode = toParentNode(child);
+    if (newNode == m_model.rootNode()) {
         return QModelIndex();
     }
-    return createModelIndex(child.row(), child.column(), parentNode);
+    Oak::Model::Node newParentNode = newNode.parent();
+    ASSERT(!newParentNode.isNull());
+    int index = newParentNode.childIndex(newNode);
+    return createModelIndex(index, child.column(), newParentNode);
 }
 
 // =============================================================================
@@ -199,13 +275,7 @@ QModelIndex QOakModel::parent(const QModelIndex &child) const
 QModelIndex QOakModel::sibling(int row, int column, const QModelIndex &idx) const
 {
     if (m_model.isNull()) { return QModelIndex(); }
-
-    Oak::Model::Node node= toNode(idx);
-    if (row != idx.row()) {
-        Oak::Model::Node parentNode = node.parent();
-        node = parentNode.childAt(row);
-    }
-    return createModelIndex(row, column, node);
+    return createIndex(row, column, idx.internalPointer());
 }
 
 // =============================================================================
@@ -276,8 +346,6 @@ QVariant QOakModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(node.variantLeaf().value<std::string>());
         }
         return QString();
-    case NodeDataId:
-        return toNodeDataId(index);
     default:
         break;
     }
@@ -329,20 +397,30 @@ QHash<int, QByteArray> QOakModel::roleNames() const
     result.insert(Name, QByteArrayLiteral("name"));
     result.insert(KeyValue, QByteArrayLiteral("keyValue"));
     result.insert(VariantValue, QByteArrayLiteral("variantValue"));
-    result.insert(NodeDataId, QByteArrayLiteral("nodeDataId"));
     return result;
 }
 
 // =============================================================================
 // (public)
-QModelIndex QOakModel::createModelIndex(int row, int column, const Oak::Model::Node& node) const
+QModelIndex QOakModel::createModelIndex(const Oak::Model::Node &node) const
 {
-    return createIndex(row, column, node.nodeData().internalPtr());
+    Oak::Model::Node pNode = node.parent();
+    ASSERT(!pNode.isNull());
+    int index = pNode.childIndex(node);
+    ASSERT(index >= 0);
+    return createModelIndex(index, 0, pNode);
 }
 
 // =============================================================================
 // (public)
-Oak::Model::Node QOakModel::toNode(const QModelIndex &index) const
+QModelIndex QOakModel::createModelIndex(int row, int column, const Oak::Model::Node& parentNode) const
+{
+    return createIndex(row, column, parentNode.nodeData().internalPtr());
+}
+
+// =============================================================================
+// (public)
+Oak::Model::Node QOakModel::toParentNode(const QModelIndex &index) const
 {
     if (!index.isValid()) {
         return m_model.rootNode();
@@ -352,18 +430,12 @@ Oak::Model::Node QOakModel::toNode(const QModelIndex &index) const
 
 // =============================================================================
 // (public)
-Oak::Model::Node QOakModel::toNode(const QVariant& nodeDataId) const
+Oak::Model::Node QOakModel::toNode(const QModelIndex &index) const
 {
-    void *ptr = reinterpret_cast<void*>(nodeDataId.value<intptr_t>());
-    if (ptr == nullptr) {
+    if (!index.isValid()) {
         return m_model.rootNode();
     }
-    return m_model.nodeFromDataPtr(ptr);
-}
-
-// =============================================================================
-// (public)
-QVariant QOakModel::toNodeDataId(const QModelIndex& index) const
-{
-    return QVariant::fromValue(reinterpret_cast<intptr_t>(index.internalPointer()));
+    Oak::Model::Node pNode = m_model.nodeFromDataPtr(index.internalPointer());
+    if (pNode.isNull()) { return Oak::Model::Node(); }
+    return pNode.childAt(index.row());
 }

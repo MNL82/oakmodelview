@@ -39,7 +39,7 @@ bool ModelBuilderData::validateModel()
 NodeDefSPtr ModelBuilderData::createModel()
 {
     if (validateModel()) {
-        TRACE("OakModel is valid");
+        //TRACE("OakModel is valid");
     } else {
         TRACE("OakModel is NOT valid");
         for (const std::string &errorMessage: errorMessages)

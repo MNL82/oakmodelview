@@ -189,7 +189,9 @@ public:
     virtual int containerCount(bool includeBase = true, bool includeDerived = false) const;
     virtual bool hasContainer(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
     virtual const ContainerDef& container(int index, bool includeBase = true, bool includeDerived = false) const;
-    const ContainerDef &container(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
+    virtual const ContainerDef &container(const std::string &_name, bool includeBase = true, bool includeDerived = false) const;
+
+    virtual int containerIndex(const std::string &_name, bool includeBase = true) const;
 
     virtual const ContainerDef& container(const NodeData &childNodeData, bool includeBase = true, bool includeDerived = false) const;
 

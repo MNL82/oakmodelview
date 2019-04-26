@@ -38,8 +38,7 @@ public:
     enum Roles  {
         Name = Qt::UserRole + 1,
         KeyValue = Qt::UserRole + 2,
-        VariantValue = Qt::UserRole + 3,
-        NodeDataId = Qt::UserRole + 100
+        VariantValue = Qt::UserRole + 3
     };
     Q_ENUM(Roles)
 
@@ -47,6 +46,9 @@ public:
 
     QOakModelBuilderData* builder() const;
     QString name() const;
+
+    Oak::Model::OakModel *oakModel();
+    const Oak::Model::OakModel *oakModel() const;
 
 public slots:
     void setName(QString name);
@@ -56,14 +58,20 @@ public slots:
     bool saveModel();
     bool saveModelAs(const QString &filePath);
 
-    void testClick(const QVariant& nodeDataId);
-
-
 protected:
     void setBuilder(QOakModelBuilderData* rootNodeDef);
     void updateEnabledActions();
+
     void onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex);
     void onKeyLeafChanged(const Oak::Model::NodeIndex& nIndex);
+    void onNodeInserteBefore(const Oak::Model::NodeIndex& nIndex);
+    void onNodeInserteAfter(const Oak::Model::NodeIndex& nIndex);
+    void onNodeRemoveBefore(const Oak::Model::NodeIndex& nIndex);
+    void onNodeRemoveAfter(const Oak::Model::NodeIndex& nIndex);
+    void onNodeMoveBefore(const Oak::Model::NodeIndex& sourceNodeIndex, const Oak::Model::NodeIndex& targetNodeIndex);
+    void onNodeMoveAfter(const Oak::Model::NodeIndex& sourceNodeIndex, const Oak::Model::NodeIndex& targetNodeIndex);
+    void onNodeCloneBefore(const Oak::Model::NodeIndex& sourceNodeIndex, const Oak::Model::NodeIndex& targetNodeIndex);
+    void onNodeCloneAfter(const Oak::Model::NodeIndex& sourceNodeIndex, const Oak::Model::NodeIndex& targetNodeIndex);
 
 signals:
     void dataLoaded();
@@ -115,10 +123,11 @@ public:
 //    virtual void revert() override;
 
 public:
-    QModelIndex createModelIndex(int row, int column, const Oak::Model::Node &node) const;
+    QModelIndex createModelIndex(const Oak::Model::Node &node) const;
+    QModelIndex createModelIndex(int row, int column, const Oak::Model::Node &parentNode) const;
+
+    Oak::Model::Node toParentNode(const QModelIndex &index) const;
     Oak::Model::Node toNode(const QModelIndex &index) const;
-    Oak::Model::Node toNode(const QVariant &nodeDataId) const;
-    QVariant toNodeDataId(const QModelIndex &index) const;
 
 
 };

@@ -392,9 +392,23 @@ void OakModel::onNodeRemoveBefore(const NodeIndex &nodeIndex) const
 
 // =============================================================================
 // (protected)
+void OakModel::onNodeInserteBefore(const NodeIndex &nodeIndex) const
+{
+    notifier_nodeInserteBefore.trigger(nodeIndex);
+}
+
+// =============================================================================
+// (protected)
 void OakModel::onNodeInserteAfter(const NodeIndex &nodeIndex) const
 {
     notifier_nodeInserteAfter.trigger(nodeIndex);
+}
+
+// =============================================================================
+// (protected)
+void OakModel::onNodeMoveBefore(const NodeIndex &sourceNodeIndex, const NodeIndex &targetNodeIndex) const
+{
+    notifier_nodeMoveBefore.trigger(sourceNodeIndex, targetNodeIndex);
 }
 
 // =============================================================================
@@ -414,9 +428,9 @@ void OakModel::onNodeMoveAfter(const NodeIndex &sourceNodeIndex, const NodeIndex
 
 // =============================================================================
 // (protected)
-void OakModel::onNodeMoveBefore(const NodeIndex &sourceNodeIndex, const NodeIndex &targetNodeIndex) const
+void OakModel::onNodeCloneBefore(const NodeIndex &sourceNodeIndex, const NodeIndex &targetNodeIndex) const
 {
-    notifier_nodeMoveBefore.trigger(sourceNodeIndex, targetNodeIndex);
+    notifier_nodeCloneBefore.trigger(sourceNodeIndex, targetNodeIndex);
 }
 
 // =============================================================================

@@ -10,16 +10,14 @@
 
 #pragma once
 
-#include "QOakModel.h"
+#include "QOakAbstractNodeModel.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class QOakNodeProxyModel : public QAbstractItemModel
+class QOakNodeProxyModel : public QOakAbstractNodeModel
 {
     Q_OBJECT
-
-    Q_PROPERTY(QModelIndex sourceModelItem READ sourceModelItem WRITE setSourceModelItem NOTIFY sourceModelItemChanged)
 
 public:
     enum Roles  {
@@ -34,8 +32,6 @@ public:
 
     QOakNodeProxyModel(QObject *parent = nullptr);
     virtual ~QOakNodeProxyModel() override;
-
-    bool isNull() const;
 
     // Basic functiona6lity:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
@@ -56,25 +52,13 @@ public:
 
     virtual QHash<int, QByteArray> roleNames() const override;
 
-    QModelIndex sourceModelItem() const;
-
     const Oak::Model::Leaf& toLeaf(const QModelIndex &index) const;
 
-public slots:
-    void setSourceModelItem(QModelIndex sourceModelItem);
-
 protected:
+    virtual void sourceModelConnect() override;
+    virtual void sourceModelDisconnect() override;
+    virtual void sourceItemChanged() override;
+
     void onLeafValueChanged(const Oak::Model::NodeIndex& nIndex, const std::string &str);
     void onVariantLeafChanged(const Oak::Model::NodeIndex& nIndex);
-
-    void clearModel();
-
-signals:
-    void sourceModelItemChanged(QModelIndex sourceModelItem);
-
-protected:
-    QModelIndex m_sourceModelItem;
-    const QOakModel * m_sourceModel = nullptr;
-    Oak::Model::Node m_node;
-    Oak::Model::NodeIndexUPtr m_nodeIndexUPtr;
 };

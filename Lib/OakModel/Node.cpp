@@ -17,8 +17,7 @@
 #include "OakModelServiceFunctions.h"
 #include "QueryBuilder.h"
 
-#include "../ServiceFunctions/Assert.h"
-
+#include "../ServiceFunctions/Trace.h"
 
 namespace Oak::Model {
 
@@ -500,7 +499,16 @@ Node Node::insertChild(const std::string &name, int &index) const
 {
     ASSERT(m_def);
     const auto& container = m_def->container(name);
+    if (m_model) {
+        if (!container.canInsertNode(m_nodeData, index)) { return Node(); }
+        NodeIndexUPtr iIndex = NodeIndex::create(*this);
+        iIndex->lastNodeIndex().setChildNodeIndex(new NodeIndex(container.containerDef()->name(), index));
+        m_model->onNodeInserteBefore(*iIndex.get());
+    }
+
     NodeData nodeData = container.insertNode(m_nodeData, index);
+    TRACE("Child node inserted\n");
+
     Node childNode(container.containerDef(), nodeData, m_model);
     if (m_model && !childNode.isNull()) {
         NodeIndexUPtr iIndex = NodeIndex::create(childNode);
@@ -533,6 +541,14 @@ Node Node::cloneChild(int& index, const Node &cloneNode) const
     if (m_model) {
         // Cash data needed to notify change
         NodeIndexUPtr sourceNodeIndex = NodeIndex::create(cloneNode);
+
+        {
+            if (!m_def->containerGroup().canCloneNode(m_nodeData, index, cloneNode.nodeData())) { return Node(); }
+            NodeIndexUPtr targetNodeIndex = NodeIndex::create(*this);
+            targetNodeIndex->lastNodeIndex().setChildNodeIndex(new NodeIndex(index));
+            m_model->onNodeCloneBefore(*sourceNodeIndex.get(), *targetNodeIndex.get());
+        }
+
         // Perform the cloneing
         Node node = Node(cloneNode.m_def, m_def->containerGroup().cloneNode(m_nodeData, index, cloneNode.m_nodeData), m_model);
 
@@ -557,9 +573,16 @@ Node Node::cloneChild(const std::string &name, int &index, const Node &cloneNode
     if (m_model) {
         // Cash data needed to notify change
         NodeIndexUPtr sourceNodeIndex = NodeIndex::create(cloneNode);
+        const ContainerDef &container = m_def->container(name);
+        {
+            if (!container.canCloneNode(m_nodeData, index, cloneNode.nodeData())) { return Node(); }
+            NodeIndexUPtr targetNodeIndex = NodeIndex::create(*this);
+            targetNodeIndex->lastNodeIndex().setChildNodeIndex(new NodeIndex(container.containerDef()->name(), index));
+            m_model->onNodeCloneBefore(*sourceNodeIndex.get(), *targetNodeIndex.get());
+        }
 
         // Perform the cloneing
-        Node node = Node(cloneNode.m_def, m_def->container(name).cloneNode(m_nodeData, index, cloneNode.m_nodeData), m_model);
+        Node node = Node(cloneNode.m_def, container.cloneNode(m_nodeData, index, cloneNode.nodeData()), m_model);
 
         // Notify everyone if cloning did not fail
         if (!node.isNull()) {
