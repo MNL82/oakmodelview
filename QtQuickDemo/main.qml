@@ -17,7 +17,7 @@ Window {
     visible: true
     width: 800
     height: 600
-    title: qsTr("Testing Qt Quick 2")
+    title: qsTr("OakModelView Qt Quick Demo")
 
     ContinuousChromatographyModel {
         id: oakModelId
