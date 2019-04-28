@@ -35,7 +35,7 @@ OakView::OakView(QWidget* parent)
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     setDragDropMode(QAbstractItemView::DragDrop);
 
-    connect(this, SIGNAL(currentNodeChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(onCurrentQNodeChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(onCurrentQNodeChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 }
 
 // =============================================================================
@@ -524,7 +524,10 @@ void OakView::onCurrentQNodeChanged(QTreeWidgetItem *current, QTreeWidgetItem *p
 {
     Q_UNUSED(previous);
     if (current) {
-        m_model->setCurrentNode(indexFromWidget(current)->node(m_model->rootNode()));
+        Model::NodeIndexUPtr nodeIndex = indexFromWidget(current);
+        if (nodeIndex) {
+            m_model->setCurrentNode(nodeIndex->node(m_model->rootNode()));
+        }
     }
 
 }
