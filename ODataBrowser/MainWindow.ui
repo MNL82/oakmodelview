@@ -20,7 +20,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="Oak::View::OakView" name="OakView">
+      <widget class="Oak::View::QtWidgets::OakView" name="OakView">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -61,7 +61,7 @@
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="Oak::View::NodeDataView" name="NodeDataView">
+          <widget class="Oak::View::QtWidgets::NodeDataView" name="NodeDataView">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -96,7 +96,7 @@
    <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
   </widget>
-  <widget class="Oak::View::ActionToolBar" name="toolBar_ModelActions">
+  <widget class="Oak::View::QtWidgets::ActionToolBar" name="toolBar_ModelActions">
    <property name="windowTitle">
     <string>toolBar_2</string>
    </property>
@@ -170,18 +170,18 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>Oak::View::NodeDataView</class>
+   <class>Oak::View::QtWidgets::NodeDataView</class>
    <extends>QWidget</extends>
    <header location="global">NodeDataView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>Oak::View::OakView</class>
+   <class>Oak::View::QtWidgets::OakView</class>
    <extends>QTreeWidget</extends>
    <header location="global">OakView.h</header>
   </customwidget>
   <customwidget>
-   <class>Oak::View::ActionToolBar</class>
+   <class>Oak::View::QtWidgets::ActionToolBar</class>
    <extends>QToolBar</extends>
    <header location="global">ActionToolBar.h</header>
   </customwidget>
