@@ -185,7 +185,7 @@ Node NodeIndex::node(const Node &rootNode, int depth) const
     if (isNull()) { return rootNode; }
     Node node = (m_name.empty()) ? rootNode.childAt(m_index) : rootNode.childAt(m_name, m_index);
     if (!m_childIndex || depth == 1 || node.isNull()) {
-        ASSERT(depth == 1 || depth < -1);
+        ASSERT(depth == 1 || depth <= -1);
         return node;
     }
     return m_childIndex->node(node, --depth);
