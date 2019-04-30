@@ -27,8 +27,6 @@ public:
     ~MainWindow();
 
 private:
-    NodeDefSPtr createModel();
-
     QByteArray hashFromFile(const QString &file) const;
 
 private slots:

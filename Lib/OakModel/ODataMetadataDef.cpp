@@ -14,6 +14,7 @@
 #include "ContainerDefBuilder.h"
 #include "LeafDefBuilder.h"
 #include "LeafQuery.h"
+#include "QueryBuilder.h"
 #include <memory>
 
 
@@ -38,7 +39,13 @@ void ODataMetadataDef::createModelDesign()
             ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("xmlns:edmx")));
 
     auto dataServices = NDB::create("edmx:DataServices")
-        ->setDisplayName("DataSercices");
+        ->setDisplayName("DataSercices")
+        ->addLeafDef(VDB::create(UnionType::String, "xmlns:m")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("xmlns:m")))
+        ->addLeafDef(VDB::create(UnionType::String, "DataServiceVersion")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("m:DataServiceVersion")))
+        ->addLeafDef(VDB::create(UnionType::String, "m:MaxDataServiceVersion")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("m:MaxDataServiceVersion")));
 
     edmx->addContainerDef(CDB::create(dataServices, 1, 1));
 
@@ -52,26 +59,45 @@ void ODataMetadataDef::createModelDesign()
 
     auto entityType = NDB::create("EntityType")
         ->addKeyLeaf(VDB::create(UnionType::String, "Name")
-            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Name")));
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Name")))
+        ->addLeafDef(VDB::create(UnionType::String, "KeyProperty")
+            ->setOptionsQuery(QB::createChildren("Property")->leafSPtr("Name"))
+            ->setSetting(OPTION_ONLY, true)
+            ->setXMLValueRef(Oak::XML::RefFactory::MakeValueRef("Key;PropertyRef", "Name")))
+        ->addLeafDef(VDB::create(UnionType::String, "BaseType")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("BaseType"))
+            ->setOptionsQuery(QB::createSiblings()->leafSPtr("Name"))
+            ->setOptionsExcludedQuery(QB::createLeaf("Name")))
+        ->addLeafDef(VDB::create(UnionType::Bool, "m:HasStream")
+            ->setDefaultValue(false)
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("m:HasStream")));
 
     schema->addContainerDef(CDB::create(entityType));
 
-    auto propertyKey = NDB::create("PropertyRef")
-        ->setDisplayName("Property Key")
-        ->addKeyLeaf(VDB::create(UnionType::String, "Name")
-            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Name")));
+//    auto propertyKey = NDB::create("PropertyRef")
+//        ->setDisplayName("Property Key")
+//        ->addKeyLeaf(VDB::create(UnionType::String, "Name")
+//            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Name")));
 
-    entityType->addContainerDef(CDB::create(propertyKey)
-        ->setElementListRef(Oak::XML::ListRef(Oak::XML::ChildRef::MakeUPtr("Key"), "PropertyRef")));
+//    entityType->addContainerDef(CDB::create(propertyKey)
+//        ->setElementListRef(Oak::XML::ListRef(Oak::XML::ChildRef::MakeUPtr("Key"), "PropertyRef")));
 
     auto property = NDB::create("Property")
         ->addKeyLeaf(VDB::create(UnionType::String, "Name")
+            ->setSetting(UNIQUE, true)
             ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Name")))
         ->addLeafDef(VDB::create(UnionType::String, "Type")
             ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Type")))
         ->addLeafDef(VDB::create(UnionType::Bool, "Nullable")
             ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Nullable"))
-            ->setDefaultValue(true));
+            ->setDefaultValue(true))
+            ->addLeafDef(VDB::create(UnionType::String, "m:FC_TargetPath")
+                ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("m:FC_TargetPath")))
+            ->addLeafDef(VDB::create(UnionType::String, "m:FC_ContentKind")
+                ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("m:FC_ContentKind")))
+            ->addLeafDef(VDB::create(UnionType::Bool, "m:FC_KeepInContent")
+                ->setDefaultValue(false)
+                ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("m:FC_KeepInContent")));
 
     entityType->addContainerDef(CDB::create(property));
 
@@ -79,7 +105,13 @@ void ODataMetadataDef::createModelDesign()
         ->addKeyLeaf(VDB::create(UnionType::String, "Name")
             ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Name")))
         ->addLeafDef(VDB::create(UnionType::String, "Type")
-            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Type")));
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Type")))
+        ->addLeafDef(VDB::create(UnionType::String, "Relationship")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("Relationship")))
+        ->addLeafDef(VDB::create(UnionType::String, "ToRole")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("ToRole")))
+        ->addLeafDef(VDB::create(UnionType::String, "FromRole")
+            ->setXMLValueRef(Oak::XML::ValueRef::MakeUPtr("FromRole")));
 
     entityType->addContainerDef(CDB::create(navigationProperty));
 
