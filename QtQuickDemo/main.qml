@@ -171,9 +171,9 @@ Window {
                                 id: treeViewId
                                 anchors.fill: parent
                                 model: oakModelId
-                                spacing: 1
+                                spacing: 0
                                 indent: 10
-                                itemHeight: 26
+                                itemHeight: 30
                             }
 
                         }

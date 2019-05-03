@@ -23,7 +23,7 @@ QOakToolBarModel::QOakToolBarModel(QObject *parent)
 // (public slots)
 void QOakToolBarModel::trigger(int index)
 {
-    TRACE("ToolButton triggered: %i\n", index);
+    //TRACE("ToolButton triggered: %i\n", index);
     for (QOakToolButton *button: a_buttons)
     {
         if (index < button->count()) {

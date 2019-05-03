@@ -185,7 +185,7 @@ void QOakModel::onKeyLeafChanged(const Oak::Model::NodeIndex& nIndex)
 // (public)
 void QOakModel::onNodeInserteBefore(const Oak::Model::NodeIndex &nIndex)
 {
-    TRACE("onNodeInserteBefore(%s)\n",nIndex.toString().c_str());
+    //TRACE("onNodeInserteBefore(%s)\n",nIndex.toString().c_str());
     Oak::Model::Node pNode = nIndex.nodeParent(m_model.rootNode());
     if (pNode.isNull()) { return; }
     QModelIndex pIndex = createModelIndex(pNode);
@@ -197,7 +197,8 @@ void QOakModel::onNodeInserteBefore(const Oak::Model::NodeIndex &nIndex)
 // (public)
 void QOakModel::onNodeInserteAfter(const Oak::Model::NodeIndex &nIndex)
 {
-    TRACE("onNodeInserteAfter(%s)\n",nIndex.toString().c_str());
+    Q_UNUSED(nIndex)
+    //TRACE("onNodeInserteAfter(%s)\n",nIndex.toString().c_str());
     endInsertRows();
 }
 

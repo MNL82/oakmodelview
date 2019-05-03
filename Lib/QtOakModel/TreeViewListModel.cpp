@@ -88,10 +88,12 @@ void TreeViewListModel::setDelegateHeight(int delegateHeight)
 // (public slots)
 void TreeViewListModel::setParentModelIndex(const QModelIndex &parentModelIndex)
 {
-    if (m_parentModelIndex == parentModelIndex) { return; }
+    QModelIndex compareIndex = parentModelIndex.sibling(parentModelIndex.row(), 0);
+
+    if (m_parentModelIndex == compareIndex) { return; }
 
     onModelAboutToBeReset();
-    m_parentModelIndex = parentModelIndex;
+    m_parentModelIndex = compareIndex;
     onModelReset();
 
     emit parentModelIndexChanged(m_parentModelIndex);
@@ -243,6 +245,14 @@ QModelIndex TreeViewListModel::parent(const QModelIndex &index) const
 
 // =============================================================================
 // (public)
+QModelIndex TreeViewListModel::sibling(int row, int column, const QModelIndex &idx) const
+{
+    Q_UNUSED(idx)
+    return createIndex(row, column);
+}
+
+// =============================================================================
+// (public)
 int TreeViewListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
@@ -274,7 +284,7 @@ QVariant TreeViewListModel::data(const QModelIndex &index, int role) const
     }
     case Expanded: {
         bool expanded = m_childModelMap.contains(index.row()) && m_childModelMap[index.row()]->shown();
-        TRACE("Expanded: %s\n", expanded ? "true" : "false");
+        //TRACE("Expanded: %s\n", expanded ? "true" : "false");
         return expanded;
     }
     case IsCurrent: {
@@ -304,7 +314,7 @@ bool TreeViewListModel::setData(const QModelIndex &index, const QVariant &value,
         bool expanded = value.toBool();
         ASSERT(m_childModelMap.contains(index.row()));
         m_childModelMap[index.row()]->setShown(expanded);
-        TRACE("SetExpanded: %s\n", expanded ? "true" : "false");
+        //TRACE("SetExpanded: %s\n", expanded ? "true" : "false");
         dataChanged(index, index, QVector<int>() <<  Expanded);
         return true;
     }

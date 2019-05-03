@@ -507,7 +507,7 @@ Node Node::insertChild(const std::string &name, int &index) const
     }
 
     NodeData nodeData = container.insertNode(m_nodeData, index);
-    TRACE("Child node inserted\n");
+    //TRACE("Child node inserted\n");
 
     Node childNode(container.containerDef(), nodeData, m_model);
     if (m_model && !childNode.isNull()) {

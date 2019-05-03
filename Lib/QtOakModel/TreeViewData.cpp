@@ -161,6 +161,9 @@ void TreeViewData::modelConnect()
     if (m_model == nullptr) { return; }
     connect(m_model, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
     connect(m_model, SIGNAL(modelReset()), this, SLOT(onModelReset()));
+
+    connect(m_model, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)), this, SLOT(onRowsAboutToBeInserted(const QModelIndex &, int, int)));
+    connect(m_model, SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SLOT(onRowsInserted(const QModelIndex &, int, int)));
 }
 
 // =============================================================================
@@ -170,6 +173,35 @@ void TreeViewData::modelDisconnect()
     if (m_model == nullptr) { return; }
     disconnect(m_model, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
     disconnect(m_model, SIGNAL(modelReset()), this, SLOT(onModelReset()));
+
+    disconnect(m_model, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)), this, SLOT(onRowsAboutToBeInserted(const QModelIndex &, int, int)));
+    disconnect(m_model, SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SLOT(onRowsInserted(const QModelIndex &, int, int)));
+}
+
+// =============================================================================
+// (protected)
+TreeViewListModel *TreeViewData::modelFromIndex(const QModelIndex &index)
+{
+    if (m_rootListModel->isNull()) { return nullptr; }
+
+    // Make sure the index is of column 0 (To avoid false negative)
+    QModelIndex compareIndex = index.sibling(index.row(), 0);
+
+    // Define a lamda function for recursive search fo a model that match
+    std::function<TreeViewListModel *(TreeViewListModel *)> findModel;
+    findModel = [compareIndex, &findModel](TreeViewListModel *model)->TreeViewListModel* {
+        if (model->parentModelIndex() == compareIndex) { return model; }
+        TreeViewListModel *modelMatch;
+        for (TreeViewListModel *childModel: model->m_childModelMap.values())
+        {
+            modelMatch = findModel(childModel);
+            if (modelMatch != nullptr) { return modelMatch; }
+        }
+        return nullptr;
+    };
+
+    // Execute the search
+    return findModel(m_rootListModel);
 }
 
 // =============================================================================
@@ -189,3 +221,63 @@ void TreeViewData::onModelReset()
         m_rootListModel->onModelReset();
     }
 }
+
+// =============================================================================
+// (protected slots)
+void TreeViewData::onRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+{
+    TreeViewListModel *modelMatch = modelFromIndex(parent);
+    if (modelMatch == nullptr) { return; }
+    modelMatch->beginInsertRows(parent, start, end);
+}
+
+//// =============================================================================
+//// (protected slots)
+//void TreeViewData::onRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow)
+//{
+
+//}
+
+//// =============================================================================
+//// (protected slots)
+//void TreeViewData::onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+//{
+
+//}
+
+// =============================================================================
+// (protected slots)
+void TreeViewData::onRowsInserted(const QModelIndex &parent, int first, int last)
+{
+    TreeViewListModel *modelMatch = modelFromIndex(parent);
+    if (modelMatch) {
+        // Update existing model
+        modelMatch->endInsertRows();
+        modelMatch->layoutChanged();
+        modelMatch->updateDelegateHeight();
+    } else {
+        modelMatch = modelFromIndex(parent.parent());
+        if (modelMatch) {
+            if (m_model->rowCount(parent) == last - first + 1) {
+                // Item of parent model now has children
+                QModelIndex index = modelMatch->index(parent.row(), parent.column(), QModelIndex());
+                modelMatch->dataChanged(index, index,  QVector<int>() << TreeViewListModel::HasChildren);
+            }
+        }
+    }
+
+}
+
+//// =============================================================================
+//// (protected slots)
+//void TreeViewData::onRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row)
+//{
+
+//}
+
+//// =============================================================================
+//// (protected slots)
+//void TreeViewData::onRowsRemoved(const QModelIndex &parent, int first, int last)
+//{
+
+//}

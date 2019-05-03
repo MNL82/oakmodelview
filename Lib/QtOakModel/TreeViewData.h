@@ -68,10 +68,18 @@ protected:
     void modelConnect();
     void modelDisconnect();
 
+    TreeViewListModel *modelFromIndex(const QModelIndex &index);
+
 protected slots:
     void onModelAboutToBeReset();
     void onModelReset();
 
+    void onRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
+//    void onRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow);
+//    void onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+    void onRowsInserted(const QModelIndex &parent, int first, int last);
+//    void onRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row);
+//    void onRowsRemoved(const QModelIndex &parent, int first, int last);
 
 protected:
     int m_spacing = 0;
