@@ -277,18 +277,6 @@ QVariant TreeViewListModel::data(const QModelIndex &index, int role) const
         TRACE("Expanded: %s\n", expanded ? "true" : "false");
         return expanded;
     }
-    case ViewHeight: {
-        int height = m_delegateHeight;
-        if (m_childModelMap.contains(index.row())) {
-            height += m_childModelMap[index.row()]->modelHeight();
-        }
-        return height;
-    }
-    case OakModel:
-        if (m_childModelMap.contains(index.row())) {
-            return QVariant::fromValue<TreeViewListModel*>(m_childModelMap[index.row()]);
-        }
-        return QVariant::fromValue<TreeViewListModel*>(nullptr);
     case IsCurrent: {
         bool isCurrent = m_data->currentIndex() == refModel()->index(index.row(), index.column(), m_parentModelIndex);
         //TRACE("CurrentIndex %s:%i value:%i\n", data(index).toString().toStdString().c_str(), index.row(), isCurrent ? 1 : 0);
@@ -317,13 +305,9 @@ bool TreeViewListModel::setData(const QModelIndex &index, const QVariant &value,
         ASSERT(m_childModelMap.contains(index.row()));
         m_childModelMap[index.row()]->setShown(expanded);
         TRACE("SetExpanded: %s\n", expanded ? "true" : "false");
-        dataChanged(index, index, QVector<int>() <<  Expanded << ViewHeight);
+        dataChanged(index, index, QVector<int>() <<  Expanded);
         return true;
     }
-    case ViewHeight:
-        return false;
-    case OakModel:
-        return false;
     case IsCurrent: {
         bool isCurrent = value.toBool();
         if (isCurrent) {
@@ -349,8 +333,6 @@ QHash<int, QByteArray> TreeViewListModel::roleNames() const
     QHash<int, QByteArray> result = refModel()->roleNames();
     result.insert(HasChildren, QByteArrayLiteral("hasChildren"));
     result.insert(Expanded, QByteArrayLiteral("expanded"));
-    result.insert(ViewHeight, QByteArrayLiteral("viewHeight"));
-    result.insert(OakModel, QByteArrayLiteral("oakModel"));
     result.insert(IsCurrent, QByteArrayLiteral("isCurrent"));
     result.insert(RefModelIndex, QByteArrayLiteral("refModelIndex"));
     return result;

@@ -106,7 +106,7 @@ Item {
             item.model.parentModelIndex = refModelIndex;
             treeListViewId.model.addChildModel(index, item.model)
 
-            delegateId.height = Qt.binding(function() { return oakModel.delegateHeight });
+            delegateId.height = Qt.binding(function() { return item.model.delegateHeight });
         }
     }
 }

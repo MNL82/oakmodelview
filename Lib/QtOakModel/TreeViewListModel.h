@@ -33,10 +33,8 @@ public:
     enum Roles  {
         HasChildren = Qt::UserRole + 300,
         Expanded = Qt::UserRole + 301,
-        ViewHeight = Qt::UserRole + 302,
-        OakModel = Qt::UserRole + 303,
-        IsCurrent = Qt::UserRole + 304,
-        RefModelIndex = Qt::UserRole + 305
+        IsCurrent = Qt::UserRole + 302,
+        RefModelIndex = Qt::UserRole + 303
     };
     Q_ENUM(Roles)
 
