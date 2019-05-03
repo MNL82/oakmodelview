@@ -20,6 +20,7 @@ INCLUDEPATH += \
     ../OakModel
 
 include(ToolBar.pri)
+include(TreeView.pri)
 
 HEADERS += \
     QContainerDefBuilderData.h \

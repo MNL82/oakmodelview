@@ -20,6 +20,23 @@ QOakAbstractNodeModel::QOakAbstractNodeModel(QObject *parent)
 
 }
 
+//// =============================================================================
+//// (public)
+//QOakAbstractNodeModel::QOakAbstractNodeModel(const QOakAbstractNodeModel &other)
+//{
+//    if (other.QObject::parent()) {
+//        QObject::setParent(other.QObject::parent());
+//    }
+//    m_node = other.m_node;
+//    if (other.m_nodeIndexUPtr) {
+//        m_nodeIndexUPtr = std::make_unique<Oak::Model::NodeIndex>(*other.m_nodeIndexUPtr.get());
+//    }
+
+//    m_sourceItem = other.m_sourceItem;
+
+//    m_sourceModel = other.m_sourceModel;
+//}
+
 // =============================================================================
 // (public)
 QOakAbstractNodeModel::~QOakAbstractNodeModel()

@@ -38,6 +38,7 @@ DISTFILES += \
     expandArrow_32.png
 
 include(Delegates.pri)
+include(Views.pri)
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir

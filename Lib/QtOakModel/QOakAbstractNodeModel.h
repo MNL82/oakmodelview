@@ -23,6 +23,7 @@ class QOakAbstractNodeModel : public QAbstractItemModel
 
 public:
     QOakAbstractNodeModel(QObject *parent = nullptr);
+    //QOakAbstractNodeModel(const QOakAbstractNodeModel &other);
     virtual ~QOakAbstractNodeModel() override;
 
     virtual bool isNull() const;

@@ -152,8 +152,8 @@ QVariant QOakNodeProxyModel::data(const QModelIndex &index, int role) const
 bool QOakNodeProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (isNull()) { return false; }
-    if (role != Qt::EditRole) { return false; }
     if (!index.isValid()) { return false; }
+    if (role != Qt::EditRole) { return false; }
 
     const Oak::Model::Leaf &leaf = toLeaf(index);
     if (leaf.isNull()) { return false; }

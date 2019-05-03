@@ -85,7 +85,7 @@ Window {
                     imageSource: "images/folder_64.png"
                     toolTip: "Load test file"
                     onClicked: {
-                        oakModelId.loadModel("C:/dev/oakmodelview/QtQuickTest/Test.xml");
+                        oakModelId.loadModel("C:/dev/oakmodelview/QtQuickDemo/Test.xml");
                     }
                 }
             }
@@ -99,6 +99,7 @@ Window {
                 anchors.fill: parent
                 spacing: 0
 
+
                 Item { // Tree View and ToolBar
                     Layout.fillHeight: true
                     implicitWidth: 250
@@ -107,60 +108,75 @@ Window {
                         anchors.fill: parent
                         spacing: 0
 
-                        QQC1.TreeView {
+//                        QQC1.TreeView {
 
-                            id: treeViewId
+//                            id: treeViewId
+//                            Layout.fillHeight: true
+//                            implicitWidth: 250
+//                            model: oakModelId
+
+//                            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+//                            verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
+
+
+//                            rowDelegate: Rectangle {
+//                                color: (styleData.selected) ? "#c0c0ff" : (styleData.row % 2 == 0) ? "#f8f8f8" : "#f0f0f0"
+//                                height: 30
+//                            }
+
+//                            onWidthChanged: {
+//                                console.log("Width: " + width);
+//                            }
+
+//                            style: TreeViewStyle {
+//        //                        scrollBarBackground: Rectangle {
+//        //                            color: "blue"
+//        //                        }
+
+//                                branchDelegate: Item {
+//        //                            id: branchId
+//        //                            width: 10
+//        //                            height: 20
+//        //                            MouseArea {
+//        //                                anchors.fill: parent
+//        //                                acceptedButtons: Qt.LeftButton
+//        //                                onClicked: {
+//        //                                    if (styleData.isExpanded) {
+//        //                                        treeViewId.collapse(styleData.index);
+//        //                                    } else {
+//        //                                        treeViewId.expand(styleData.index);
+//        //                                    }
+//        //                                }
+//        //                            }
+//        //                            Rectangle {
+//        //                                anchors.fill: parent
+//        //                                color: "red"
+//        //                            }
+//                                }
+//                            }
+
+//                            QQC1.TableViewColumn {
+//                                title: "Name"
+//                                role: "display"
+//                                resizable: false
+//                            }
+//                            itemDelegate: OakTreeViewDelegate { view: treeViewId }
+//                        } // TreeView end
+
+                        Rectangle {
+                            color: "#aaaaaa"
                             Layout.fillHeight: true
-                            implicitWidth: 250
-                            model: oakModelId
-
-                            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-                            verticalScrollBarPolicy: Qt.ScrollBarAlwaysOn
-
-
-                            rowDelegate: Rectangle {
-                                color: (styleData.selected) ? "#c0c0ff" : (styleData.row % 2 == 0) ? "#f8f8f8" : "#f0f0f0"
-                                height: 30
+                            Layout.fillWidth: true
+                            TreeView {
+                                id: treeViewId
+                                anchors.fill: parent
+                                model: oakModelId
+                                spacing: 1
+                                indent: 10
+                                itemHeight: 26
                             }
 
-                            onWidthChanged: {
-                                console.log("Width: " + width);
-                            }
-
-                            style: TreeViewStyle {
-        //                        scrollBarBackground: Rectangle {
-        //                            color: "blue"
-        //                        }
-
-                                branchDelegate: Item {
-        //                            id: branchId
-        //                            width: 10
-        //                            height: 20
-        //                            MouseArea {
-        //                                anchors.fill: parent
-        //                                acceptedButtons: Qt.LeftButton
-        //                                onClicked: {
-        //                                    if (styleData.isExpanded) {
-        //                                        treeViewId.collapse(styleData.index);
-        //                                    } else {
-        //                                        treeViewId.expand(styleData.index);
-        //                                    }
-        //                                }
-        //                            }
-        //                            Rectangle {
-        //                                anchors.fill: parent
-        //                                color: "red"
-        //                            }
-                                }
-                            }
-
-                            QQC1.TableViewColumn {
-                                title: "Name"
-                                role: "display"
-                                resizable: false
-                            }
-                            itemDelegate: OakTreeViewDelegate { view: treeViewId }
-                        } // TreeView end
+                        }
 
                         Rectangle {
                             Layout.fillWidth: true
@@ -203,7 +219,7 @@ Window {
 
 
 
-                Rectangle {
+                Rectangle { // Leaf editors
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.margins: 4
