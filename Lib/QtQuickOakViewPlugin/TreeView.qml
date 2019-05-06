@@ -12,6 +12,8 @@ Item {
     property int indent: 10;    // Used only in the qml
     property alias currentIndex: treeViewDataId.currentIndex; // Used from both sides
 
+    property int maxDepth: -1;
+
     clip: true
     height: treeListViewId.model.delegateHeight;
 

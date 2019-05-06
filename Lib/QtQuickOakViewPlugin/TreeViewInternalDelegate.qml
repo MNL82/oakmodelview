@@ -45,11 +45,11 @@ Item {
 
         Item {
             id: buttonItemId
-            visible: hasChildren
+            visible: hasChildren && (treeViewId.maxDepth < 0 || treeViewId.maxDepth > treeListViewId.depth + 1);
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            width: hasChildren ? height : 0
+            width: buttonItemId.visible ? height : 0
 
             Button {
                 id: expandButtonId
