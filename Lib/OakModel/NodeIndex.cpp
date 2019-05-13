@@ -272,6 +272,10 @@ NodeIndexUPtr NodeIndex::create(const Node &_node, bool namedIndex)
     Node cNode = _node;
     Node pNode = cNode.parent();
 
+    if (pNode.isNull()) {
+        return NodeIndexUPtr(new NodeIndex());
+    }
+
     NodeIndex *cIndex = nullptr;
     NodeIndex *pIndex = nullptr;
     while(!pNode.isNull()) {
