@@ -104,6 +104,8 @@ protected slots:
 //    void onRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row);
     void onRowsRemoved(const QModelIndex &parent, int first, int last);
 
+    void onTreeModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+
 signals:
     void rootModelIndexChanged(const QModelIndex &rootModelIndex);
     void treeModelChanged(QAbstractItemModel * treeModel);

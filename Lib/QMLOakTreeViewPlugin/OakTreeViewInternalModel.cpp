@@ -264,6 +264,8 @@ void OakTreeViewInternalModel::modelConnect()
 
     connect(m_treeModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), this, SLOT(onRowsAboutToBeRemoved(const QModelIndex &, int, int)));
     connect(m_treeModel, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(onRowsRemoved(const QModelIndex &, int, int)));
+
+    connect(m_treeModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this, SLOT(onTreeModelDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 }
 
 // =============================================================================
@@ -279,6 +281,8 @@ void OakTreeViewInternalModel::modelDisconnect()
 
     disconnect(m_treeModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), this, SLOT(onRowsAboutToBeRemoved(const QModelIndex &, int, int)));
     disconnect(m_treeModel, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(onRowsRemoved(const QModelIndex &, int, int)));
+
+    disconnect(m_treeModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)), this, SLOT(onTreeModelDataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)));
 }
 
 // =============================================================================
@@ -442,4 +446,23 @@ void OakTreeViewInternalModel::onRowsRemoved(const QModelIndex &parent, int firs
             pNodeData->removeChildNodeData(nodeData->localRowInParent(), nodeData->localRowInParent());
         }
     }
+}
+
+// =============================================================================
+// (protected slots)
+void OakTreeViewInternalModel::onTreeModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    QModelIndex parent = topLeft.parent();
+    if (parent != bottomRight.parent()) {
+        TRACE("Changes to/from must be siblings");
+        return;
+    }
+    OakTreeViewNodeData *nodeData = findNodeData(parent);
+    if (!nodeData) { return; }
+
+    int gFirstRow, gLastRow;
+    std::tie(gFirstRow, gLastRow) = nodeData->localToGlobalRows(topLeft.row(), bottomRight.row());
+    QModelIndex gTopLeft = index(gFirstRow, topLeft.column(), QModelIndex());
+    QModelIndex gBottomRight = index(gLastRow, bottomRight.column(), QModelIndex());
+    emit dataChanged(gTopLeft, gBottomRight, roles);
 }
