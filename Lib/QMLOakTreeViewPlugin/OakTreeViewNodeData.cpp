@@ -8,15 +8,15 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "TreeViewNodeData.h"
+#include "OakTreeViewNodeData.h"
 
-#include "TreeViewInternalModel.h"
+#include "OakTreeViewInternalModel.h"
 
 #include "Trace.h"
 
 // =============================================================================
 // (public)
-TreeViewNodeData::TreeViewNodeData(TreeViewInternalModel *model)
+OakTreeViewNodeData::OakTreeViewNodeData(OakTreeViewInternalModel *model)
 {
     ASSERT(model);
     ASSERT(model->isValid());
@@ -35,7 +35,7 @@ TreeViewNodeData::TreeViewNodeData(TreeViewInternalModel *model)
 
 // =============================================================================
 // (public)
-TreeViewNodeData::TreeViewNodeData(int firstRow, const QModelIndex &modelIndex, TreeViewNodeData *parent)
+OakTreeViewNodeData::OakTreeViewNodeData(int firstRow, const QModelIndex &modelIndex, OakTreeViewNodeData *parent)
 {
     ASSERT(parent);
     m_parent = parent;
@@ -54,9 +54,9 @@ TreeViewNodeData::TreeViewNodeData(int firstRow, const QModelIndex &modelIndex, 
 
 // =============================================================================
 // (public)
-TreeViewNodeData::~TreeViewNodeData()
+OakTreeViewNodeData::~OakTreeViewNodeData()
 {
-    for(TreeViewNodeData *cNode: m_childNodes)
+    for(OakTreeViewNodeData *cNode: m_childNodes)
     {
         delete cNode;
     }
@@ -65,14 +65,14 @@ TreeViewNodeData::~TreeViewNodeData()
 
 // =============================================================================
 // (public)
-bool TreeViewNodeData::expanded() const
+bool OakTreeViewNodeData::expanded() const
 {
     return m_expanded;
 }
 
 // =============================================================================
 // (public)
-bool TreeViewNodeData::setExpanded(bool value)
+bool OakTreeViewNodeData::setExpanded(bool value)
 {
     if (m_expanded == value) { return false; }
     m_expanded = value;
@@ -81,59 +81,59 @@ bool TreeViewNodeData::setExpanded(bool value)
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::depth() const
+int OakTreeViewNodeData::depth() const
 {
     return m_depth;
 }
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::firstRow() const
+int OakTreeViewNodeData::firstRow() const
 {
     return m_firstRow;
 }
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::lastRow() const
+int OakTreeViewNodeData::lastRow() const
 {
     return m_firstRow + m_rowCount - 1;
 }
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::rowCountDirect() const
+int OakTreeViewNodeData::rowCountDirect() const
 {
     return m_rowCountDirect;
 }
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::rowCount() const
+int OakTreeViewNodeData::rowCount() const
 {
     return m_rowCount;
 }
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::localRowInParent() const
+int OakTreeViewNodeData::localRowInParent() const
 {
     return m_localRowInParent;
 }
 
 // =============================================================================
 // (public)
-const QModelIndex &TreeViewNodeData::treeModelIndex() const
+const QModelIndex &OakTreeViewNodeData::treeModelIndex() const
 {
     return m_treeModelIndex;
 }
 
 // =============================================================================
 // (public)
-void TreeViewNodeData::updateFirstRow(int change)
+void OakTreeViewNodeData::updateFirstRow(int change)
 {
     m_firstRow += change;
-    for (TreeViewNodeData *cNode: m_childNodes)
+    for (OakTreeViewNodeData *cNode: m_childNodes)
     {
         cNode->updateFirstRow(change);
     }
@@ -141,9 +141,9 @@ void TreeViewNodeData::updateFirstRow(int change)
 
 // =============================================================================
 // (public)
-void TreeViewNodeData::updateGlobalRowCount(int globalRow, int change)
+void OakTreeViewNodeData::updateGlobalRowCount(int globalRow, int change)
 {
-    for (TreeViewNodeData *cNode: m_childNodes)
+    for (OakTreeViewNodeData *cNode: m_childNodes)
     {
         if (cNode->firstRow() > globalRow) {
             cNode->updateFirstRow(change);
@@ -157,10 +157,10 @@ void TreeViewNodeData::updateGlobalRowCount(int globalRow, int change)
 
 // =============================================================================
 // (public)
-void TreeViewNodeData::updateLocalRowData(int globalRow, int change)
+void OakTreeViewNodeData::updateLocalRowData(int globalRow, int change)
 {
     m_rowCountDirect += change;
-    for (TreeViewNodeData *cNode: m_childNodes)
+    for (OakTreeViewNodeData *cNode: m_childNodes)
     {
         if (cNode->firstRow() > globalRow + 1) {
             cNode->m_localRowInParent += change;;
@@ -170,11 +170,11 @@ void TreeViewNodeData::updateLocalRowData(int globalRow, int change)
 
 // =============================================================================
 // (public)
-void TreeViewNodeData::removeChildNodeData(int first, int last)
+void OakTreeViewNodeData::removeChildNodeData(int first, int last)
 {
     for (int i = 0; i < m_childNodes.size(); i++)
     {
-        TreeViewNodeData *childNode = m_childNodes[i];
+        OakTreeViewNodeData *childNode = m_childNodes[i];
         if (childNode->localRowInParent() >= first &&
             childNode->localRowInParent() <= last) {
             m_childNodes.removeAt(i);
@@ -186,19 +186,19 @@ void TreeViewNodeData::removeChildNodeData(int first, int last)
 
 // =============================================================================
 // (public)
-bool TreeViewNodeData::containsRow(int globalRow) const
+bool OakTreeViewNodeData::containsRow(int globalRow) const
 {
     return globalRow >= m_firstRow && globalRow < (m_firstRow + m_rowCount);
 }
 
 // =============================================================================
 // (public)
-bool TreeViewNodeData::expanded(int globalRow) const
+bool OakTreeViewNodeData::expanded(int globalRow) const
 {
     int row = globalRow - m_firstRow;
     ASSERT(row >= 0);
     ASSERT(row < m_rowCount);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         if (cNode->treeModelIndex().row() == row) {
             return cNode->expanded();
         }
@@ -222,12 +222,12 @@ bool TreeViewNodeData::expanded(int globalRow) const
 
 // =============================================================================
 // (public)
-bool TreeViewNodeData::setExpanded(const QModelIndex &treeModelIndex, int globalRow, bool value)
+bool OakTreeViewNodeData::setExpanded(const QModelIndex &treeModelIndex, int globalRow, bool value)
 {
     int row = globalRow - m_firstRow;
     ASSERT(row >= 0);
     ASSERT(row < m_rowCount);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         if (cNode->treeModelIndex() == treeModelIndex) {
             // Data Node already exist (state changed)
             if (cNode->expanded() == value) { return false; }
@@ -265,7 +265,7 @@ bool TreeViewNodeData::setExpanded(const QModelIndex &treeModelIndex, int global
     ASSERT(m_model->treeModel()->hasChildren(treeModelIndex));
 
     // Create a new TreeViewNodeData for the first time expanded node
-    TreeViewNodeData *cNode = new TreeViewNodeData(globalRow+1, treeModelIndex, this);
+    OakTreeViewNodeData *cNode = new OakTreeViewNodeData(globalRow+1, treeModelIndex, this);
     auto it = m_childNodes.begin();
     while (it != m_childNodes.end()) {
         if ((*it)->firstRow() > cNode->firstRow()) {
@@ -285,12 +285,12 @@ bool TreeViewNodeData::setExpanded(const QModelIndex &treeModelIndex, int global
 
 // =============================================================================
 // (public)
-QModelIndex TreeViewNodeData::treeModelIndex(int globalRow, int column) const
+QModelIndex OakTreeViewNodeData::treeModelIndex(int globalRow, int column) const
 {
     int row = globalRow - m_firstRow;
     ASSERT(row >= 0);
     ASSERT(row < m_rowCount);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         // Ignore collapesed nodes
         if (!cNode->expanded()) { continue; }
 
@@ -310,12 +310,12 @@ QModelIndex TreeViewNodeData::treeModelIndex(int globalRow, int column) const
 
 // =============================================================================
 // (public)
-const TreeViewNodeData *TreeViewNodeData::parentNodeData(int globalRow) const
+const OakTreeViewNodeData *OakTreeViewNodeData::parentNodeData(int globalRow) const
 {
     int row = globalRow - m_firstRow;
     ASSERT(row >= 0);
     ASSERT(row < m_rowCount);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         // Ignore collapesed nodes
         if (!cNode->expanded()) { continue; }
 
@@ -334,12 +334,12 @@ const TreeViewNodeData *TreeViewNodeData::parentNodeData(int globalRow) const
 
 // =============================================================================
 // (public)
-TreeViewNodeData *TreeViewNodeData::parentNodeData(int globalRow)
+OakTreeViewNodeData *OakTreeViewNodeData::parentNodeData(int globalRow)
 {
     int row = globalRow - m_firstRow;
     ASSERT(row >= 0);
     ASSERT(row < m_rowCount);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         // Ignore collapesed nodes
         if (!cNode->expanded()) { continue; }
 
@@ -358,9 +358,9 @@ TreeViewNodeData *TreeViewNodeData::parentNodeData(int globalRow)
 
 // =============================================================================
 // (public)
-TreeViewNodeData *TreeViewNodeData::childNodeData(const QModelIndex &index)
+OakTreeViewNodeData *OakTreeViewNodeData::childNodeData(const QModelIndex &index)
 {
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         if (cNode->treeModelIndex() == index) {
             return cNode;
         }
@@ -370,12 +370,12 @@ TreeViewNodeData *TreeViewNodeData::childNodeData(const QModelIndex &index)
 
 // =============================================================================
 // (public)
-int TreeViewNodeData::localToGlobalRow(int row) const
+int OakTreeViewNodeData::localToGlobalRow(int row) const
 {
     int globalRow = m_firstRow + row;
     ASSERT(row >= 0);
     ASSERT(row < m_rowCount+1);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         // Ignore collapesed nodes
         if (!cNode->expanded()) { continue; }
 
@@ -390,14 +390,14 @@ int TreeViewNodeData::localToGlobalRow(int row) const
 
 // =============================================================================
 // (public)
-std::tuple<int,int> TreeViewNodeData::localToGlobalRows(int first, int last)
+std::tuple<int,int> OakTreeViewNodeData::localToGlobalRows(int first, int last)
 {
     ASSERT(last >= first);
     int gFirst = m_firstRow + first;
     int gLast = m_firstRow + last;
     ASSERT(first >= 0);
     ASSERT(first < m_rowCount+1);
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         // Ignore collapesed nodes
         if (!cNode->expanded()) { continue; }
 
@@ -415,14 +415,14 @@ std::tuple<int,int> TreeViewNodeData::localToGlobalRows(int first, int last)
 
 // =============================================================================
 // (public)
-void TreeViewNodeData::updateTreeModelIndexes(const QModelIndex &newTreeModelIndex)
+void OakTreeViewNodeData::updateTreeModelIndexes(const QModelIndex &newTreeModelIndex)
 {
     if (newTreeModelIndex != m_treeModelIndex) {
         TRACE("TreeModelIndex changed!\n");
     }
     m_treeModelIndex = newTreeModelIndex;
     //TRACE("Node key value: %s\n", m_treeModelIndex.data(QOakModel::KeyValue).toString().toStdString().c_str());
-    for(TreeViewNodeData *cNode: m_childNodes) {
+    for(OakTreeViewNodeData *cNode: m_childNodes) {
         QModelIndex i = m_model->treeModel()->index(cNode->localRowInParent(), 0, newTreeModelIndex);
         if (!i.isValid()) {
             i = m_model->treeModel()->index(cNode->localRowInParent(), 0, newTreeModelIndex);

@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "TreeViewInternalModel.h"
+#include "OakTreeViewInternalModel.h"
 
 #include "Trace.h"
 
@@ -16,7 +16,7 @@
 
 // =============================================================================
 // (public)
-TreeViewInternalModel::TreeViewInternalModel(QObject *parent)
+OakTreeViewInternalModel::OakTreeViewInternalModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
 
@@ -24,7 +24,7 @@ TreeViewInternalModel::TreeViewInternalModel(QObject *parent)
 
 // =============================================================================
 // (public)
-bool TreeViewInternalModel::isValid() const
+bool OakTreeViewInternalModel::isValid() const
 {
     if (m_treeModel == nullptr) { return false; }
     if (m_rootModelIndex.isValid() && m_rootModelIndex.model() != m_treeModel) { return false; }
@@ -33,28 +33,28 @@ bool TreeViewInternalModel::isValid() const
 
 // =============================================================================
 // (public)
-const QModelIndex &TreeViewInternalModel::rootModelIndex() const
+const QModelIndex &OakTreeViewInternalModel::rootModelIndex() const
 {
     return m_rootModelIndex;
 }
 
 // =============================================================================
 // (public)
-QAbstractItemModel *TreeViewInternalModel::treeModel() const
+QAbstractItemModel *OakTreeViewInternalModel::treeModel() const
 {
     return m_treeModel;
 }
 
 // =============================================================================
 // (public)
-int TreeViewInternalModel::currentGlobalRow() const
+int OakTreeViewInternalModel::currentGlobalRow() const
 {
     return m_currentGlobalRow;
 }
 
 // =============================================================================
 // (public)
-QModelIndex TreeViewInternalModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex OakTreeViewInternalModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     if (!isValid()) { return QModelIndex(); }
@@ -64,7 +64,7 @@ QModelIndex TreeViewInternalModel::index(int row, int column, const QModelIndex 
 
 // =============================================================================
 // (public)
-QModelIndex TreeViewInternalModel::parent(const QModelIndex &index) const
+QModelIndex OakTreeViewInternalModel::parent(const QModelIndex &index) const
 {
     Q_UNUSED(index)
     return QModelIndex();
@@ -72,10 +72,10 @@ QModelIndex TreeViewInternalModel::parent(const QModelIndex &index) const
 
 // =============================================================================
 // (public)
-QModelIndex TreeViewInternalModel::sibling(int row, int column, const QModelIndex &idx) const
+QModelIndex OakTreeViewInternalModel::sibling(int row, int column, const QModelIndex &idx) const
 {
     if (!isValid()) { return QModelIndex(); }
-    TreeViewNodeData *nodeData = static_cast<TreeViewNodeData*>(idx.internalPointer());
+    OakTreeViewNodeData *nodeData = static_cast<OakTreeViewNodeData*>(idx.internalPointer());
     ASSERT(nodeData);
     if (nodeData->containsRow(row)) {
         auto * pNodeData = nodeData->parentNodeData(row);
@@ -88,7 +88,7 @@ QModelIndex TreeViewInternalModel::sibling(int row, int column, const QModelInde
 
 // =============================================================================
 // (public)
-int TreeViewInternalModel::rowCount(const QModelIndex &parent) const
+int OakTreeViewInternalModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     int count = isValid() ? m_rootNodeData->rowCount() : 0;
@@ -98,7 +98,7 @@ int TreeViewInternalModel::rowCount(const QModelIndex &parent) const
 
 // =============================================================================
 // (public)
-int TreeViewInternalModel::columnCount(const QModelIndex &parent) const
+int OakTreeViewInternalModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return isValid() ? m_treeModel->columnCount(m_rootModelIndex) : 0;
@@ -106,12 +106,12 @@ int TreeViewInternalModel::columnCount(const QModelIndex &parent) const
 
 // =============================================================================
 // (public)
-QVariant TreeViewInternalModel::data(const QModelIndex &index, int role) const
+QVariant OakTreeViewInternalModel::data(const QModelIndex &index, int role) const
 {
     if (!isValid()) { return QVariant(); }
     ASSERT(index.isValid());
 
-    const TreeViewNodeData *nodeData = static_cast<const TreeViewNodeData*>(index.internalPointer());
+    const OakTreeViewNodeData *nodeData = static_cast<const OakTreeViewNodeData*>(index.internalPointer());
     ASSERT(nodeData);
 
     switch (role) {
@@ -133,12 +133,12 @@ QVariant TreeViewInternalModel::data(const QModelIndex &index, int role) const
 
 // =============================================================================
 // (public)
-bool TreeViewInternalModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool OakTreeViewInternalModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (!isValid()) { return false; }
     ASSERT(index.isValid());
 
-    TreeViewNodeData *nodeData = static_cast<TreeViewNodeData*>(index.internalPointer());
+    OakTreeViewNodeData *nodeData = static_cast<OakTreeViewNodeData*>(index.internalPointer());
     ASSERT(nodeData);
 
     switch (role) {
@@ -164,7 +164,7 @@ bool TreeViewInternalModel::setData(const QModelIndex &index, const QVariant &va
 
 // =============================================================================
 // (public)
-QHash<int, QByteArray> TreeViewInternalModel::roleNames() const
+QHash<int, QByteArray> OakTreeViewInternalModel::roleNames() const
 {
     if (!isValid()) { return QHash<int, QByteArray>(); }
     QHash<int, QByteArray> result = treeModel()->roleNames();
@@ -177,7 +177,7 @@ QHash<int, QByteArray> TreeViewInternalModel::roleNames() const
 
 // =============================================================================
 // (public slots)
-void TreeViewInternalModel::setRootModelIndex(const QModelIndex &rootModelIndex)
+void OakTreeViewInternalModel::setRootModelIndex(const QModelIndex &rootModelIndex)
 {
     if (m_rootModelIndex == rootModelIndex) { return; }
 
@@ -189,7 +189,7 @@ void TreeViewInternalModel::setRootModelIndex(const QModelIndex &rootModelIndex)
 
 // =============================================================================
 // (public slots)
-void TreeViewInternalModel::setTreeModel(QAbstractItemModel *treeModel)
+void OakTreeViewInternalModel::setTreeModel(QAbstractItemModel *treeModel)
 {
     if (m_treeModel == treeModel) { return; }
 
@@ -205,7 +205,7 @@ void TreeViewInternalModel::setTreeModel(QAbstractItemModel *treeModel)
 
 // =============================================================================
 // (public slots)
-void TreeViewInternalModel::setCurrentGlobalRow(int currentGlobalRow)
+void OakTreeViewInternalModel::setCurrentGlobalRow(int currentGlobalRow)
 {
     if (m_currentGlobalRow != currentGlobalRow) {
         m_currentGlobalRow = currentGlobalRow;
@@ -213,7 +213,7 @@ void TreeViewInternalModel::setCurrentGlobalRow(int currentGlobalRow)
     }
 
     if (isValid() && currentGlobalRow >= 0) {
-        TreeViewNodeData *nodeData = m_rootNodeData->parentNodeData(currentGlobalRow);
+        OakTreeViewNodeData *nodeData = m_rootNodeData->parentNodeData(currentGlobalRow);
 
         ASSERT(nodeData);
         QModelIndex treeModelIndex = nodeData->treeModelIndex(currentGlobalRow, 0);
@@ -229,7 +229,7 @@ void TreeViewInternalModel::setCurrentGlobalRow(int currentGlobalRow)
 
 // =============================================================================
 // (public slots)
-void TreeViewInternalModel::updateCurrentGlobalRow(int currentGlobalRow)
+void OakTreeViewInternalModel::updateCurrentGlobalRow(int currentGlobalRow)
 {
     if (m_currentGlobalRow != currentGlobalRow) {
         m_currentGlobalRow = currentGlobalRow;
@@ -237,7 +237,7 @@ void TreeViewInternalModel::updateCurrentGlobalRow(int currentGlobalRow)
     }
 
     if (isValid() && currentGlobalRow >= 0) {
-        TreeViewNodeData *nodeData = m_rootNodeData->parentNodeData(currentGlobalRow);
+        OakTreeViewNodeData *nodeData = m_rootNodeData->parentNodeData(currentGlobalRow);
 
         ASSERT(nodeData);
         QModelIndex treeModelIndex = nodeData->treeModelIndex(currentGlobalRow, 0);
@@ -253,7 +253,7 @@ void TreeViewInternalModel::updateCurrentGlobalRow(int currentGlobalRow)
 
 // =============================================================================
 // (protected)
-void TreeViewInternalModel::modelConnect()
+void OakTreeViewInternalModel::modelConnect()
 {
     if (m_treeModel == nullptr) { return; }
     connect(m_treeModel, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
@@ -268,7 +268,7 @@ void TreeViewInternalModel::modelConnect()
 
 // =============================================================================
 // (protected)
-void TreeViewInternalModel::modelDisconnect()
+void OakTreeViewInternalModel::modelDisconnect()
 {
     if (m_treeModel == nullptr) { return; }
     disconnect(m_treeModel, SIGNAL(modelAboutToBeReset()), this, SLOT(onModelAboutToBeReset()));
@@ -283,17 +283,17 @@ void TreeViewInternalModel::modelDisconnect()
 
 // =============================================================================
 // (protected)
-void TreeViewInternalModel::resetInternateNodeData()
+void OakTreeViewInternalModel::resetInternateNodeData()
 {
     if (m_rootNodeData) { delete m_rootNodeData; }
     if (isValid()) {
-        m_rootNodeData = new TreeViewNodeData(this);
+        m_rootNodeData = new OakTreeViewNodeData(this);
     }
 }
 
 // =============================================================================
 // (protected)
-void TreeViewInternalModel::updateTreeModelIndexes()
+void OakTreeViewInternalModel::updateTreeModelIndexes()
 {
     // TODO: Make sure the rootModelIndex can not get out of skope too?
     m_rootNodeData->updateTreeModelIndexes(m_rootModelIndex);
@@ -301,7 +301,7 @@ void TreeViewInternalModel::updateTreeModelIndexes()
 
 // =============================================================================
 // (protected)
-TreeViewNodeData *TreeViewInternalModel::findNodeData(const QModelIndex &treeModelIndex) const
+OakTreeViewNodeData *OakTreeViewInternalModel::findNodeData(const QModelIndex &treeModelIndex) const
 {
     QList<QModelIndex> parentList;
     QModelIndex cIndex = treeModelIndex;
@@ -310,7 +310,7 @@ TreeViewNodeData *TreeViewInternalModel::findNodeData(const QModelIndex &treeMod
         parentList.push_back(cIndex);
         cIndex = cIndex.parent();
     }
-    TreeViewNodeData *cNodeData = m_rootNodeData;
+    OakTreeViewNodeData *cNodeData = m_rootNodeData;
     auto it = parentList.rbegin();
     while (it != parentList.rend()) {
         cNodeData = cNodeData->childNodeData(*it);
@@ -322,14 +322,14 @@ TreeViewNodeData *TreeViewInternalModel::findNodeData(const QModelIndex &treeMod
 
 // =============================================================================
 // (protected slots)
-void TreeViewInternalModel::onModelAboutToBeReset()
+void OakTreeViewInternalModel::onModelAboutToBeReset()
 {
     beginResetModel();
 }
 
 // =============================================================================
 // (protected slots)
-void TreeViewInternalModel::onModelReset()
+void OakTreeViewInternalModel::onModelReset()
 {
     resetInternalData();
     resetInternateNodeData();
@@ -338,10 +338,10 @@ void TreeViewInternalModel::onModelReset()
 
 // =============================================================================
 // (protected slots)
-void TreeViewInternalModel::onRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+void OakTreeViewInternalModel::onRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
 {
     if (!isValid()) { return; }
-    TreeViewNodeData *nodeData = findNodeData(parent);
+    OakTreeViewNodeData *nodeData = findNodeData(parent);
     if (!nodeData) { return; }
     int globalRow = nodeData->localToGlobalRow(start);
 
@@ -350,10 +350,10 @@ void TreeViewInternalModel::onRowsAboutToBeInserted(const QModelIndex &parent, i
 
 // =============================================================================
 // (protected slots)
-void TreeViewInternalModel::onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+void OakTreeViewInternalModel::onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
 {
     if (!isValid()) { return; }
-    TreeViewNodeData *nodeData = findNodeData(parent);
+    OakTreeViewNodeData *nodeData = findNodeData(parent);
     if (!nodeData) { return; }
 
     int gFirst, gLast;
@@ -365,10 +365,10 @@ void TreeViewInternalModel::onRowsAboutToBeRemoved(const QModelIndex &parent, in
 
 // =============================================================================
 // (protected slots)
-void TreeViewInternalModel::onRowsInserted(const QModelIndex &parent, int first, int last)
+void OakTreeViewInternalModel::onRowsInserted(const QModelIndex &parent, int first, int last)
 {
     if (!isValid()) { return; }
-    TreeViewNodeData *nodeData = findNodeData(parent);
+    OakTreeViewNodeData *nodeData = findNodeData(parent);
     if (!nodeData) {
         // Check if hasChildren changed for parent
         if (m_treeModel->rowCount(parent) == last - first + 1) {
@@ -394,20 +394,20 @@ void TreeViewInternalModel::onRowsInserted(const QModelIndex &parent, int first,
 
 // =============================================================================
 // (protected slots)
-void TreeViewInternalModel::onRowsRemoved(const QModelIndex &parent, int first, int last)
+void OakTreeViewInternalModel::onRowsRemoved(const QModelIndex &parent, int first, int last)
 {
     if (!isValid()) { return; }
 
     // Check if hasChildren changed for parent
     if (!m_treeModel->hasChildren(parent)) {
-        TreeViewNodeData *pNodeData = findNodeData(parent.parent());
+        OakTreeViewNodeData *pNodeData = findNodeData(parent.parent());
         if (pNodeData) {
             QModelIndex i = index(pNodeData->localToGlobalRow(parent.row()), 0, QModelIndex());
             dataChanged(i, i, QVector<int>() << HasChildrenRole);
         }
     }
 
-    TreeViewNodeData *nodeData = findNodeData(parent);
+    OakTreeViewNodeData *nodeData = findNodeData(parent);
     if (!nodeData) { return; }
 
     int gFirst, gLast;
@@ -437,7 +437,7 @@ void TreeViewInternalModel::onRowsRemoved(const QModelIndex &parent, int first, 
     updateCurrentGlobalRow(nextCurrentRow);
 
     if (!m_treeModel->hasChildren(parent)) {
-        TreeViewNodeData *pNodeData = findNodeData(parent.parent());
+        OakTreeViewNodeData *pNodeData = findNodeData(parent.parent());
         if (pNodeData) {
             pNodeData->removeChildNodeData(nodeData->localRowInParent(), nodeData->localRowInParent());
         }

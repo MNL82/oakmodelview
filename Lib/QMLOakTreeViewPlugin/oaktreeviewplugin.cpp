@@ -10,12 +10,12 @@
 
 #include "oaktreeviewplugin.h"
 
-#include "TreeViewInternalModel.h"
+#include "OakTreeViewInternalModel.h"
 
 #include <qqml.h>
 
 void OakTreeViewPlugin::registerTypes(const char *uri)
 {
     Q_UNUSED(uri)
-    qmlRegisterType<TreeViewInternalModel>("Oak.TreeView", 1, 0, "TreeViewInternalModel");
+    qmlRegisterType<OakTreeViewInternalModel>("Oak.TreeView", 1, 0, "OakTreeViewInternalModel");
 }

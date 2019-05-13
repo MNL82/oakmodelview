@@ -19,16 +19,16 @@ DEFINES += NOMINMAX
 DESTDIR += ../Plugins/Oak/TreeView
 	
 HEADERS += \
+    OakTreeViewInternalModel.h \
+    OakTreeViewNodeData.h \
     oaktreeviewplugin.h \
     Assert.h \
-    Trace.h \
-    TreeViewInternalModel.h \
-    TreeViewNodeData.h
+    Trace.h
 
 SOURCES += \
-    oaktreeviewplugin.cpp \
-    TreeViewInternalModel.cpp \
-    TreeViewNodeData.cpp
+    OakTreeViewInternalModel.cpp \
+    OakTreeViewNodeData.cpp \
+    oaktreeviewplugin.cpp
 
 DISTFILES += \
     OakTreeView.qml \

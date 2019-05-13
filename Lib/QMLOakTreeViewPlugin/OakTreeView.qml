@@ -23,7 +23,7 @@ Rectangle {
 
         anchors.fill: parent
 
-        model: TreeViewInternalModel {
+        model: OakTreeViewInternalModel {
             id: internalModelId
             currentGlobalRow: listViewId.currentIndex
             onCurrentGlobalRowForceUpdate: {

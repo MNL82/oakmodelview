@@ -13,17 +13,17 @@
 #include <vector>
 #include <QModelIndex>
 
-class TreeViewInternalModel;
+class OakTreeViewInternalModel;
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class TreeViewNodeData
+class OakTreeViewNodeData
 {
 public:
-    TreeViewNodeData(TreeViewInternalModel *model);
-    TreeViewNodeData(int firstRow, const QModelIndex &modelIndex, TreeViewNodeData *parent = nullptr);
-    ~TreeViewNodeData();
+    OakTreeViewNodeData(OakTreeViewInternalModel *model);
+    OakTreeViewNodeData(int firstRow, const QModelIndex &modelIndex, OakTreeViewNodeData *parent = nullptr);
+    ~OakTreeViewNodeData();
 
     bool expanded() const;
     bool setExpanded(bool value);
@@ -48,22 +48,20 @@ public:
 
     QModelIndex treeModelIndex(int globalRow, int column) const;
 
-    const TreeViewNodeData *parentNodeData(int globalRow) const;
-    TreeViewNodeData *parentNodeData(int globalRow);
+    const OakTreeViewNodeData *parentNodeData(int globalRow) const;
+    OakTreeViewNodeData *parentNodeData(int globalRow);
 
-    TreeViewNodeData *childNodeData(const QModelIndex &index);
+    OakTreeViewNodeData *childNodeData(const QModelIndex &index);
 
     int localToGlobalRow(int row) const;
     std::tuple<int,int> localToGlobalRows(int first, int last);
 
     void updateTreeModelIndexes(const QModelIndex &newTreeModelIndex);
 
-
-
 protected:
-    TreeViewNodeData *m_parent = nullptr;
-    TreeViewInternalModel * m_model;
-    QList<TreeViewNodeData*> m_childNodes;
+    OakTreeViewNodeData *m_parent = nullptr;
+    OakTreeViewInternalModel * m_model;
+    QList<OakTreeViewNodeData*> m_childNodes;
     bool m_expanded = true;
     int m_depth;
     int m_firstRow;

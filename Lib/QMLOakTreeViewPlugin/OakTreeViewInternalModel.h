@@ -12,12 +12,12 @@
 
 #include <QAbstractItemModel>
 
-#include "TreeViewNodeData.h"
+#include "OakTreeViewNodeData.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class TreeViewInternalModel : public QAbstractItemModel
+class OakTreeViewInternalModel : public QAbstractItemModel
 {
     Q_OBJECT
 
@@ -36,7 +36,7 @@ public:
         ModelIndexRole = Qt::UserRole + 303
     };
 
-    TreeViewInternalModel(QObject *parent = nullptr);
+    OakTreeViewInternalModel(QObject *parent = nullptr);
 
     bool isValid() const;
 
@@ -91,7 +91,7 @@ protected:
     void resetInternateNodeData();
     void updateTreeModelIndexes();
 
-    TreeViewNodeData * findNodeData(const QModelIndex &treeModelIndex) const;
+    OakTreeViewNodeData * findNodeData(const QModelIndex &treeModelIndex) const;
 
 protected slots:
     void onModelAboutToBeReset();
@@ -116,11 +116,11 @@ signals:
 protected:
     QAbstractItemModel * m_treeModel = nullptr;
     QModelIndex m_rootModelIndex;
-    TreeViewNodeData * m_rootNodeData = nullptr;
+    OakTreeViewNodeData * m_rootNodeData = nullptr;
 
     int m_currentGlobalRow;
     QModelIndex m_currentTreeModelIndex;
 
-    friend class TreeViewNodeData;
+    friend class OakTreeViewNodeData;
 };
 
