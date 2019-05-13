@@ -22,8 +22,8 @@
 #include "QValueOptionsBuilderData.h"
 #include "QOakToolbarModel.h"
 #include "QOakToolButtonAddChild.h"
-#include "TreeViewData.h"
-#include "TreeViewListModel.h"
+#include "QOakToolButtonRemove.h"
+#include "TreeViewInternalModel.h"
 
 #include <qqml.h>
 
@@ -43,6 +43,6 @@ void OakModePlugin::registerTypes(const char *uri)
     qmlRegisterType<QOakToolBarModel>("Oak.Model", 1, 0, "OakToolBarModel");
     qmlRegisterType<QOakToolButton>("Oak.Model", 1, 0, "OakToolButton");
     qmlRegisterType<QOakToolButtonAddChild>("Oak.Model", 1, 0, "OakToolButtonAddChild");
-    qmlRegisterType<TreeViewData>("Oak.Model", 1, 0, "TreeViewData");
-    qmlRegisterType<TreeViewListModel>("Oak.Model", 1, 0, "TreeViewListModel");
+    qmlRegisterType<QOakToolButtonRemove>("Oak.Model", 1, 0, "OakToolButtonRemove");
+    qmlRegisterType<TreeViewInternalModel>("Oak.Model", 1, 0, "TreeViewInternalModel");
 }

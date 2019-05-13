@@ -39,6 +39,7 @@ DISTFILES += \
 
 include(Delegates.pri)
 include(Views.pri)
+include(ToolBars.pri)
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir

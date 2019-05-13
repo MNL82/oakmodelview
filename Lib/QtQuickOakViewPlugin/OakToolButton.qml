@@ -6,7 +6,6 @@ ToolButton {
     property alias toolTip: toolTipId.text
     property alias imageSource: imageId.source
 
-    enabled: oakModelID.saveActionEnabled
     Image {
         id: imageId
         anchors.fill: parent

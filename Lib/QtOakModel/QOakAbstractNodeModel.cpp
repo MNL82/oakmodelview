@@ -94,7 +94,6 @@ const Oak::Model::OakModel *QOakAbstractNodeModel::sourceOakModel() const
 void QOakAbstractNodeModel::setSourceItem(QModelIndex _sourceItem)
 {
     //TRACE("QOakToolBarModel::setSourceItem\n");
-    if (m_sourceItem == _sourceItem) { return; }
 
     // 1. The model of the index have to be the QOakModel
     const QOakModel *newModel = qobject_cast<const QOakModel*>(_sourceItem.model());
@@ -104,6 +103,8 @@ void QOakAbstractNodeModel::setSourceItem(QModelIndex _sourceItem)
     if (newModel != nullptr) {
         newNode = newModel->toNode(_sourceItem);
     }
+
+    if (newNode == m_node) { return; }
 
     // 3. Calculate the NodeIndex the process events faster
     Oak::Model::NodeIndexUPtr newNodeIndex = Oak::Model::NodeIndex::create(newNode);

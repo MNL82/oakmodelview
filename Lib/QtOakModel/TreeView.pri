@@ -7,11 +7,11 @@
 # See accompanying file LICENSE in the root folder.
 
 HEADERS += \
-    $$PWD/TreeViewData.h \
-    $$PWD/TreeViewListModel.h
+    $$PWD/TreeViewInternalModel.h \
+    $$PWD/TreeViewNodeData.h
 
 
 SOURCES += \
-    $$PWD/TreeViewData.cpp \
-    $$PWD/TreeViewListModel.cpp
+    $$PWD/TreeViewInternalModel.cpp \
+    $$PWD/TreeViewNodeData.cpp
 

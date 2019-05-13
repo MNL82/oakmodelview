@@ -27,8 +27,7 @@ class QOakToolBarModel : public QOakAbstractNodeModel
 
 public:
     enum Roles  {
-        ToolTip = Qt::UserRole + 10,
-        Icon = Qt::UserRole + 11,
+        ImagePath = Qt::UserRole + 11,
         Color = Qt::UserRole + 12,
         Enabled = Qt::UserRole + 13
     };

@@ -28,6 +28,7 @@ void QOakToolBarModel::trigger(int index)
     {
         if (index < button->count()) {
             button->trigger(index);
+            return;
         }
         index -= button->count();
     }
@@ -119,6 +120,7 @@ bool QOakToolBarModel::hasChildren(const QModelIndex &parent) const
 // (public)
 QVariant QOakToolBarModel::data(const QModelIndex &index, int role) const
 {
+    //TRACE("data(%i, %i)\n", index.row(), role);
     if (isNull()) { return QVariant(); }
     if (!index.isValid()) { return QVariant(); }
 
@@ -148,9 +150,7 @@ Qt::ItemFlags QOakToolBarModel::flags(const QModelIndex &index) const
 QHash<int, QByteArray> QOakToolBarModel::roleNames() const
 {
     QHash<int, QByteArray> result = QAbstractItemModel::roleNames();
-    result.insert(QOakModel::Name, QByteArrayLiteral("name"));
-    result.insert(QOakToolBarModel::ToolTip, QByteArrayLiteral("toolTip"));
-    result.insert(QOakToolBarModel::Icon, QByteArrayLiteral("icon"));
+    result.insert(QOakToolBarModel::ImagePath, QByteArrayLiteral("imagePath"));
     result.insert(QOakToolBarModel::Color, QByteArrayLiteral("color"));
     result.insert(QOakToolBarModel::Enabled, QByteArrayLiteral("enabled"));
     return result;

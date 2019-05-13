@@ -10,71 +10,41 @@
 
 #pragma once
 
-#include "QOakAbstractNodeModel.h"
+#include <QAbstractItemModel>
 
-class TreeViewData;
+#include "TreeViewNodeData.h"
 
 // =============================================================================
 // Class definition
 // =============================================================================
-class TreeViewListModel : public QAbstractItemModel
+class TreeViewInternalModel : public QAbstractItemModel
 {
     Q_OBJECT
 
-    // Output
-    Q_PROPERTY(int delegateHeight READ delegateHeight WRITE setDelegateHeight NOTIFY delegateHeightChanged)
-    Q_PROPERTY(bool shown READ shown WRITE setShown NOTIFY shownChanged)
+    Q_PROPERTY(QModelIndex rootModelIndex READ rootModelIndex WRITE setRootModelIndex NOTIFY rootModelIndexChanged)
+    Q_PROPERTY(QAbstractItemModel *treeModel READ treeModel WRITE setTreeModel NOTIFY treeModelChanged)
 
-    // Indput
-    Q_PROPERTY(QModelIndex parentModelIndex READ parentModelIndex WRITE setParentModelIndex NOTIFY parentModelIndexChanged)
-    Q_PROPERTY(TreeViewData * treeViewData READ treeViewData WRITE setTreeViewData NOTIFY treeViewDataChanged)
+
+    Q_PROPERTY(int currentGlobalRow READ currentGlobalRow WRITE setCurrentGlobalRow NOTIFY currentGlobalRowChanged)
+    Q_PROPERTY(QModelIndex currentTreeModelIndex MEMBER m_currentTreeModelIndex NOTIFY currentTreeModelIndexChanged)
 
 public:
     enum Roles  {
-        HasChildren = Qt::UserRole + 300,
-        Expanded = Qt::UserRole + 301,
-        IsCurrent = Qt::UserRole + 302,
-        RefModelIndex = Qt::UserRole + 303
+        HasChildrenRole = Qt::UserRole + 300,
+        ExpandedRole = Qt::UserRole + 301,
+        DepthRole = Qt::UserRole + 302,
+        ModelIndexRole = Qt::UserRole + 303
     };
-    Q_ENUM(Roles)
 
-    TreeViewListModel(QObject *parent = nullptr);
-    virtual ~TreeViewListModel() override;
+    TreeViewInternalModel(QObject *parent = nullptr);
 
-    bool isNull() const;
+    bool isValid() const;
 
-    bool shown() const;
-    int delegateHeight() const;
-    QModelIndex parentModelIndex() const;
-    TreeViewData * treeViewData() const;
+    const QModelIndex &rootModelIndex() const;
+    QAbstractItemModel * treeModel() const;
 
+    int currentGlobalRow() const;
 
-public slots:
-    void setShown(bool shown);
-    void setDelegateHeight(int delegateHeight);
-    void setParentModelIndex(const QModelIndex &parentModelIndex);
-    void setTreeViewData(TreeViewData * treeViewData);
-
-    void addChildModel(int row, TreeViewListModel *model);
-
-signals:
-    void shownChanged(bool shown);
-    void parentModelIndexChanged(QModelIndex parentModelIndex);
-    void delegateHeightChanged(int delegateHeight);
-    void treeViewDataChanged(TreeViewData * treeViewData);
-
-protected:
-    int modelHeight() const;
-    TreeViewListModel * childModel(int row) const;
-    QAbstractItemModel *refModel() const;
-
-protected slots:
-    void onModelAboutToBeReset();
-    void onModelReset();
-    void updateDelegateHeight(bool recursive = false);
-    void onCurrentIndexChanged(const QModelIndex &currentIndex);
-
-public:
     virtual QModelIndex index(int row, int column, const QModelIndex& parent) const override;
     virtual QModelIndex parent(const QModelIndex& index) const override;
     virtual QModelIndex sibling(int row, int column, const QModelIndex& idx) const override;
@@ -107,17 +77,50 @@ public:
 //    virtual QSize span(const QModelIndex& index) const override;
     virtual QHash<int, QByteArray> roleNames() const override;
 
+public slots:
+    void setRootModelIndex(const QModelIndex &rootModelIndex);
+    void setTreeModel(QAbstractItemModel * treeModel);
+
+    void setCurrentGlobalRow(int currentGlobalRow);
+    void updateCurrentGlobalRow(int currentGlobalRow);
+
 protected:
-    bool m_shown = false;
-    int m_delegateHeight = 30;
-    QModelIndex m_parentModelIndex;
-    int m_currentIndexRow = -1;
+    void modelConnect();
+    void modelDisconnect();
 
-    TreeViewData * m_data = nullptr;
+    void resetInternateNodeData();
+    void updateTreeModelIndexes();
 
-    QMap<int, TreeViewListModel *> m_childModelMap;
+    TreeViewNodeData * findNodeData(const QModelIndex &treeModelIndex) const;
 
-    friend class TreeViewData;
+protected slots:
+    void onModelAboutToBeReset();
+    void onModelReset();
+
+    void onRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
+//    void onRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow);
+    void onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+    void onRowsInserted(const QModelIndex &parent, int first, int last);
+//    void onRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row);
+    void onRowsRemoved(const QModelIndex &parent, int first, int last);
+
+signals:
+    void rootModelIndexChanged(const QModelIndex &rootModelIndex);
+    void treeModelChanged(QAbstractItemModel * treeModel);
+
+    void currentTreeModelIndexChanged(QModelIndex currentTreeModelIndex);
+
+    void currentGlobalRowChanged(int currentGlobalRow);
+    void currentGlobalRowForceUpdate(int currentGlobalRow);
+
+protected:
+    QAbstractItemModel * m_treeModel = nullptr;
+    QModelIndex m_rootModelIndex;
+    TreeViewNodeData * m_rootNodeData = nullptr;
+
+    int m_currentGlobalRow;
+    QModelIndex m_currentTreeModelIndex;
+
+    friend class TreeViewNodeData;
 };
 
-Q_DECLARE_METATYPE(TreeViewListModel*);

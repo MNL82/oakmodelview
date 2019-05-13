@@ -1,4 +1,2 @@
 DISTFILES += \
-    $$PWD/TreeListView.qml \
-    $$PWD/TreeView.qml \
-    $$PWD/TreeViewInternalDelegate.qml
+    $$PWD/TreeView.qml

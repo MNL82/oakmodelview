@@ -8,7 +8,7 @@
  * See accompanying file LICENSE in the root folder.
  */
 
-#include "QOakToolButtonAddChild.h"
+#include "QOakToolButtonRemove.h"
 
 #include "QOakToolbarModel.h"
 
@@ -16,7 +16,7 @@
 
 // =============================================================================
 // (public)
-QOakToolButtonAddChild::QOakToolButtonAddChild(QObject *parent)
+QOakToolButtonRemove::QOakToolButtonRemove(QObject *parent)
     : QOakToolButton(parent)
 {
 
@@ -24,55 +24,58 @@ QOakToolButtonAddChild::QOakToolButtonAddChild(QObject *parent)
 
 // =============================================================================
 // (public)
-int QOakToolButtonAddChild::count() const
+int QOakToolButtonRemove::count() const
 {
     if (m_toolBarModel->node().isNull()) { return 0; }
-    return m_toolBarModel->node().def()->containerCount();
+    return 1;
 }
 
 // =============================================================================
 // (public)
-QVariant QOakToolButtonAddChild::data(int index, int role) const
+QVariant QOakToolButtonRemove::data(int index, int role) const
 {
-    const Oak::Model::NodeDef * cDef = m_toolBarModel->node().def()->childDef(index);
+    Q_UNUSED(index)
+    const Oak::Model::NodeDef * def = m_toolBarModel->node().def();
 
     switch(role)
     {
     case Qt::DisplayRole:
-        return QString::fromStdString(cDef->name());
+        return QString::fromStdString(def->name());
     case Qt::ToolTipRole: {
-        QString toolTip = tr("Add child ") + cDef->displayName().c_str();
+        QString toolTip = tr("Remove ") + def->displayName().c_str();
         return toolTip;
     }
     case QOakToolBarModel::ImagePath:
-        return "add_32.png";
+        return "delete_32.png";
     case QOakToolBarModel::Color:
-        if (cDef->hasColor()) {
-            Oak::Model::Color color = cDef->color();
+        if (def->hasColor()) {
+            Oak::Model::Color color = def->color();
             return toQColor(color);
         }
         break;
-    case QOakToolBarModel::Enabled:
-        int i = -1;
-        return m_toolBarModel->node().canInsertChild(cDef->name(), i);
+    case QOakToolBarModel::Enabled: {
+        Oak::Model::Node parent = m_toolBarModel->node().parent();
+        int i = parent.childIndex(m_toolBarModel->node());
+        return parent.canRemoveChild(i);
+    }
     }
     return QVariant();
 }
 
 // =============================================================================
 // (public)
-void QOakToolButtonAddChild::sourceModelConnect()
+void QOakToolButtonRemove::sourceModelConnect()
 {
     const auto *model = m_toolBarModel->sourceOakModel();
-    model->notifier_nodeInserteAfter.add(this, &QOakToolButtonAddChild::onNodeInserteAfter);
-    model->notifier_nodeRemoveAfter.add(this, &QOakToolButtonAddChild::onNodeRemoveAfter);
-    model->notifier_nodeMoveAfter.add(this, &QOakToolButtonAddChild::onNodeMoveAfter);
-    model->notifier_nodeCloneAfter.add(this, &QOakToolButtonAddChild::onNodeCloneAfter);
+    model->notifier_nodeInserteAfter.add(this, &QOakToolButtonRemove::onNodeInserteAfter);
+    model->notifier_nodeRemoveAfter.add(this, &QOakToolButtonRemove::onNodeRemoveAfter);
+    model->notifier_nodeMoveAfter.add(this, &QOakToolButtonRemove::onNodeMoveAfter);
+    model->notifier_nodeCloneAfter.add(this, &QOakToolButtonRemove::onNodeCloneAfter);
 }
 
 // =============================================================================
 // (public)
-void QOakToolButtonAddChild::sourceModelDisconnect()
+void QOakToolButtonRemove::sourceModelDisconnect()
 {
     const auto *model = m_toolBarModel->sourceOakModel();
     model->notifier_nodeInserteAfter.remove(this);
@@ -83,34 +86,17 @@ void QOakToolButtonAddChild::sourceModelDisconnect()
 
 // =============================================================================
 // (public)
-void QOakToolButtonAddChild::trigger(int index)
+void QOakToolButtonRemove::trigger(int index)
 {
-    const std::string &name = m_toolBarModel->node().def()->container(index).containerDef()->name();
-    int i = -1;
-    m_toolBarModel->node().insertChild(name, i);
+    Q_UNUSED(index)
+    Oak::Model::Node parent = m_toolBarModel->node().parent();
+    int i = parent.childIndex(m_toolBarModel->node());
+    parent.removeChild(i);
 }
 
 // =============================================================================
 // (public)
-void QOakToolButtonAddChild::onNodeInserteAfter(const Oak::Model::NodeIndex &nodeIndex)
-{
-    // Node index not set
-    if (!m_toolBarModel || !m_toolBarModel->nodeIndex()) { return; }
-    // Do nothing if the change is not related to the child of the node
-    if (m_toolBarModel->nodeIndex()->depth()+1 != nodeIndex.depth()) { return; }
-    if (!nodeIndex.contains(*m_toolBarModel->nodeIndex())) { return; }
-
-    // Find the button that might have changed
-    int index = m_toolBarModel->node().def()->containerIndex(nodeIndex.lastNodeIndex().name());
-    if (index == -1) { return; }
-
-    // Emit the signal that the button have changed(it might not have...)
-    emit buttonChanged(index, QVector<int>() << QOakToolBarModel::Enabled);
-}
-
-// =============================================================================
-// (public)
-void QOakToolButtonAddChild::onNodeRemoveAfter(const Oak::Model::NodeIndex &nodeIndex)
+void QOakToolButtonRemove::onNodeInserteAfter(const Oak::Model::NodeIndex &nodeIndex)
 {
     // Node index not set
     if (!m_toolBarModel || !m_toolBarModel->nodeIndex()) { return; }
@@ -128,7 +114,25 @@ void QOakToolButtonAddChild::onNodeRemoveAfter(const Oak::Model::NodeIndex &node
 
 // =============================================================================
 // (public)
-void QOakToolButtonAddChild::onNodeMoveAfter(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
+void QOakToolButtonRemove::onNodeRemoveAfter(const Oak::Model::NodeIndex &nodeIndex)
+{
+    // Node index not set
+    if (!m_toolBarModel || !m_toolBarModel->nodeIndex()) { return; }
+    // Do nothing if the change is not related to the child of the node
+    if (m_toolBarModel->nodeIndex()->depth()+1 != nodeIndex.depth()) { return; }
+    if (!nodeIndex.contains(*m_toolBarModel->nodeIndex())) { return; }
+
+    // Find the button that might have changed
+    int index = m_toolBarModel->node().def()->containerIndex(nodeIndex.lastNodeIndex().name());
+    if (index == -1) { return; }
+
+    // Emit the signal that the button have changed(it might not have...)
+    emit buttonChanged(index, QVector<int>() << QOakToolBarModel::Enabled);
+}
+
+// =============================================================================
+// (public)
+void QOakToolButtonRemove::onNodeMoveAfter(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
 {
    // Node index not set
    if (!m_toolBarModel || !m_toolBarModel->nodeIndex()) { return; }
@@ -148,7 +152,7 @@ void QOakToolButtonAddChild::onNodeMoveAfter(const Oak::Model::NodeIndex &source
 
 // =============================================================================
 // (public)
-void QOakToolButtonAddChild::onNodeCloneAfter(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
+void QOakToolButtonRemove::onNodeCloneAfter(const Oak::Model::NodeIndex &sourceNodeIndex, const Oak::Model::NodeIndex &targetNodeIndex)
 {
     Q_UNUSED(sourceNodeIndex)
 

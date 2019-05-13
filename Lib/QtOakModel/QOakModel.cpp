@@ -206,14 +206,20 @@ void QOakModel::onNodeInserteAfter(const Oak::Model::NodeIndex &nIndex)
 // (public)
 void QOakModel::onNodeRemoveBefore(const Oak::Model::NodeIndex &nIndex)
 {
-    TRACE("onNodeRemoveBefore(%s)\n",nIndex.toString().c_str());
+    //TRACE("onNodeRemoveBefore(%s)\n",nIndex.toString().c_str());
+    Oak::Model::Node pNode = nIndex.nodeParent(m_model.rootNode());
+    if (pNode.isNull()) { return; }
+    QModelIndex pIndex = createModelIndex(pNode);
+    int i = nIndex.lastNodeIndex().index();
+    beginRemoveRows(pIndex, i, i);
 }
 
 // =============================================================================
 // (public)
 void QOakModel::onNodeRemoveAfter(const Oak::Model::NodeIndex &nIndex)
 {
-
+    Q_UNUSED(nIndex)
+    endRemoveRows();
 }
 
 // =============================================================================

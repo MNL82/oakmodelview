@@ -26,7 +26,7 @@ Window {
 
     OakNodeProxyModel {
         id: oakNodeModelId
-        sourceItem: treeViewId.currentIndex
+        sourceItem: treeViewId.currentItem
     }
 
     FileDialog {
@@ -118,9 +118,9 @@ Window {
                                 anchors.fill: parent
                                 model: oakModelId
                                 spacing: 0
-                                indent: 10
-                                itemHeight: 30
-                                maxDepth: -1
+                                //indent: 10
+//                                itemHeight: 30
+//                                maxDepth: -1
                             }
 
                         }
@@ -131,35 +131,57 @@ Window {
                             implicitHeight: 30
                             //visible: selectedToolBarModelId.rowCount() !== 0
 
-                            ListView {
-                                id: selectionToolBarId
-                                anchors.fill: parent
-                                orientation: ListView.Horizontal
-                                spacing: 4
+                            ToolBarSelection {
+                                height: 22
+                                sourceItem: treeViewId.currentItem
+//                                buttons: [
+//                                    OakToolButtonAddChild {
 
-                                model: OakToolBarModel {
-                                    id: selectedToolBarModelId
-
-                                    sourceItem: treeViewId.currentIndex
-
-                                    buttons: [
-                                        OakToolButtonAddChild {
-
-                                        }
-
-                                    ]
-
-                                }
-                                delegate: ToolButton {
-                                    implicitWidth: 30
-                                    implicitHeight: 30
-                                    onClicked: selectedToolBarModelId.trigger(index)
-                                    Text {
-                                        anchors.fill: parent
-                                        text: name
-                                    }
-                                }
+//                                    }
+//                                ]
                             }
+
+//                            ListView {
+//                                id: selectionToolBarId
+//                                anchors.fill: parent
+//                                orientation: ListView.Horizontal
+//                                spacing: 4
+
+//                                model: OakToolBarModel {
+//                                    id: selectedToolBarModelId
+
+//                                    sourceItem: treeViewId.currentIndex
+
+//                                    buttons: [
+//                                        OakToolButtonAddChild {
+
+//                                        }
+
+//                                    ]
+
+//                                }
+//                                delegate: ToolButton {
+//                                    implicitWidth: 30
+//                                    implicitHeight: 30
+//                                    onClicked: selectedToolBarModelId.trigger(index)
+//                                    Text {
+//                                        anchors.fill: parent
+//                                        text: name
+//                                    }
+//                                    Image {
+//                                        id: imageId
+//                                        anchors.fill: parent
+//                                        anchors.margins: parent.height/7
+//                                        source: imagePath
+//                                        fillMode: Image.PreserveAspectFit
+//                                        layer.enabled: !parent.enabled
+//                                        layer.effect: Desaturate {
+//                                            desaturation: 1
+//                                            Behavior on desaturation { NumberAnimation { easing.type: Easing.InOutQuad } }
+//                                        }
+//                                    }
+//                                }
+//                            }
                         }
                     }
                 }
