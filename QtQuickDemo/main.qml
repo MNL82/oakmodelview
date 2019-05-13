@@ -11,6 +11,7 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import Oak.Model 1.0
 import Oak.View 1.0
+import Oak.TreeView 1.0
 
 Window {
     id: windowId
@@ -113,7 +114,7 @@ Window {
                             color: "#aaaaaa"
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            TreeView {
+                            OakTreeView {
                                 id: treeViewId
                                 anchors.fill: parent
                                 model: oakModelId

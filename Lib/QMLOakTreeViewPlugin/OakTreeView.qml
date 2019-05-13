@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.5
-import Oak.Model 1.0
+import Oak.TreeView 1.0
 
 Rectangle {
     id: treeViewId
@@ -92,7 +92,7 @@ Rectangle {
                             height: Math.min(parent.height, 12)
                             anchors.centerIn: parent
                             rotation: expanded ? 0 : -90;
-                            source: "expandArrow_32.png"
+                            source: "expandArrow.png"
                         }
 
                         text: (arrowStyle) ? "" : ( expanded ) ? "-" : "+"

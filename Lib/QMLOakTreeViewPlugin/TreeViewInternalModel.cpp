@@ -10,7 +10,7 @@
 
 #include "TreeViewInternalModel.h"
 
-#include "../ServiceFunctions/Trace.h"
+#include "Trace.h"
 
 #include <QTimer>
 
@@ -148,7 +148,7 @@ bool TreeViewInternalModel::setData(const QModelIndex &index, const QVariant &va
         bool expanded = value.toBool();
         QModelIndex treeModelIndex = nodeData->treeModelIndex(index.row(), index.column());
         if (nodeData->setExpanded(treeModelIndex, index.row(), expanded)) {
-            dataChanged(index, index, QVector<int>() <<  ExpandedRole);
+            dataChanged(index, index, QVector<int>() << ExpandedRole);
         }
         return true;
     }
@@ -369,11 +369,23 @@ void TreeViewInternalModel::onRowsInserted(const QModelIndex &parent, int first,
 {
     if (!isValid()) { return; }
     TreeViewNodeData *nodeData = findNodeData(parent);
-    if (!nodeData) { return; }
+    if (!nodeData) {
+        // Check if hasChildren changed for parent
+        if (m_treeModel->rowCount(parent) == last - first + 1) {
+            nodeData = findNodeData(parent.parent());
+            if (nodeData) {
+                QModelIndex i = index(nodeData->localToGlobalRow(parent.row()), 0, QModelIndex());
+                dataChanged(i, i, QVector<int>() << HasChildrenRole);
+            }
+        }
+        return;
+    }
     int globalRow = nodeData->localToGlobalRow(first);
 
-    nodeData->updateLocalRowData(globalRow, last - first + 1);
-    nodeData->updateGlobalRowCount(globalRow, last - first + 1);
+    int insertCount = last - first + 1;
+
+    nodeData->updateLocalRowData(globalRow, insertCount);
+    nodeData->updateGlobalRowCount(globalRow, insertCount);
     updateTreeModelIndexes();
 
     endInsertRows();
@@ -385,6 +397,16 @@ void TreeViewInternalModel::onRowsInserted(const QModelIndex &parent, int first,
 void TreeViewInternalModel::onRowsRemoved(const QModelIndex &parent, int first, int last)
 {
     if (!isValid()) { return; }
+
+    // Check if hasChildren changed for parent
+    if (!m_treeModel->hasChildren(parent)) {
+        TreeViewNodeData *pNodeData = findNodeData(parent.parent());
+        if (pNodeData) {
+            QModelIndex i = index(pNodeData->localToGlobalRow(parent.row()), 0, QModelIndex());
+            dataChanged(i, i, QVector<int>() << HasChildrenRole);
+        }
+    }
+
     TreeViewNodeData *nodeData = findNodeData(parent);
     if (!nodeData) { return; }
 
@@ -413,4 +435,11 @@ void TreeViewInternalModel::onRowsRemoved(const QModelIndex &parent, int first, 
 
     endRemoveRows();
     updateCurrentGlobalRow(nextCurrentRow);
+
+    if (!m_treeModel->hasChildren(parent)) {
+        TreeViewNodeData *pNodeData = findNodeData(parent.parent());
+        if (pNodeData) {
+            pNodeData->removeChildNodeData(nodeData->localRowInParent(), nodeData->localRowInParent());
+        }
+    }
 }

@@ -11,33 +11,28 @@ CONFIG += plugin
 CONFIG += c++1z
 QT += qml quick
 
-TARGET = oakviewplugin
+TARGET = oaktreeviewplugin
 
 DEFINES += XML_BACKEND
 DEFINES += NOMINMAX
 
-DESTDIR += ../Plugins/Oak/View
-
-INCLUDEPATH += \
-    . \
-    .. \
-    ../OakXML \
-    ../OakModel \
-    ../QtOakModel
-
+DESTDIR += ../Plugins/Oak/TreeView
 	
 HEADERS += \
-    oakmodelplugin.h
+    oaktreeviewplugin.h \
+    Assert.h \
+    Trace.h \
+    TreeViewInternalModel.h \
+    TreeViewNodeData.h
 
 SOURCES += \
-    oakmodelplugin.cpp
+    oaktreeviewplugin.cpp \
+    TreeViewInternalModel.cpp \
+    TreeViewNodeData.cpp
 
 DISTFILES += \
-    OakToolButton.qml \
-    OakToolTip.qml
-
-include(Delegates.pri)
-include(ToolBars.pri)
+    OakTreeView.qml \
+    expandArrow.png
 
 # Make the qmldir file visible in the Project tree
 OTHER_FILES += qmldir
@@ -57,24 +52,8 @@ COPIES += \
 TARGET = $$qtLibraryTarget($$TARGET)
 
 CONFIG(debug, debug|release) {
-    win32:POST_TARGETDEPS = \
-        ../OakXMLd.lib \
-        ../OakModeld.lib \
-        ../Plugins\Oak\Model\oakmodelplugind.lib
-    win32:LIBS = \
-        ../OakXMLd.lib \
-        ../OakModeld.lib \
-        ../Plugins\Oak\Model\oakmodelplugind.lib
     OBJECTS_DIR = ./debug
 } else {
-    win32:POST_TARGETDEPS = \
-        ../OakXML.lib \
-        ../OakModel.lib \
-        ../Plugins\Oak\Model\oakmodelplugin.lib
-    win32:LIBS = \
-        ../OakXML.lib \
-        ../OakModel.lib \
-        ../Plugins\Oak\Model\oakmodelplugin.lib
     OBJECTS_DIR = ./release
 }
 

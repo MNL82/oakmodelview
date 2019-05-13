@@ -8,5 +8,4 @@ EditOakDelegate 1.0 EditOakDelegate.qml
 OptionsOakDelegate 1.0 OptionsOakDelegate.qml
 OakTreeViewDelegate 1.0 OakTreeViewDelegate.qml
 ToolBarSelection 1.0 ToolBarSelection.qml
-TreeView 1.0 TreeView.qml
 plugin oakviewplugin

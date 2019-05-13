@@ -1,0 +1,3 @@
+module Oak.TreeView
+OakTreeView 1.0 OakTreeView.qml
+plugin oaktreeviewplugin

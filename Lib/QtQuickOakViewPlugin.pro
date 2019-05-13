@@ -5,7 +5,8 @@ SUBDIRS += sub_OakXML \
            sub_OakModel \
            sub_QtOakModel \
            sub_QtQuickOakModelPlugin \
-           sub_QtQuickOakViewPlugin
+           sub_QtQuickOakViewPlugin \
+           sub_QMLOakTreeViewPlugin
 
 sub_OakXML.file      = OakXML/OakXML.pro
 
@@ -20,3 +21,5 @@ sub_QtQuickOakModelPlugin = sub_OakXML sub_OakModel sub_QtOakModel
 
 sub_QtQuickOakViewPlugin.file     = QtQuickOakViewPlugin/QtQuickOakViewPlugin.pro
 sub_QtQuickOakViewPlugin.depends  = sub_OakXML sub_OakModel sub_QtQuickOakModelPlugin
+
+sub_QMLOakTreeViewPlugin.file      = QMLOakTreeViewPlugin/QMLOakTreeViewPlugin.pro

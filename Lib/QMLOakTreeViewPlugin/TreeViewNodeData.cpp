@@ -12,7 +12,7 @@
 
 #include "TreeViewInternalModel.h"
 
-#include "../ServiceFunctions/Trace.h"
+#include "Trace.h"
 
 // =============================================================================
 // (public)
