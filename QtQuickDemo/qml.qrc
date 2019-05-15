@@ -6,6 +6,6 @@
         <file>images/save-as-64.png</file>
         <file>images/save_64.png</file>
         <file>main.cpp</file>
-        <file>ContinuousChromatographyModel.qml</file>
+        <file>TaskTrackerModel.qml</file>
     </qresource>
 </RCC>

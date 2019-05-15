@@ -22,7 +22,7 @@ SOURCES += \
 RESOURCES += qml.qrc
 
 DISTFILES += main.qml \
-    ContinuousChromatographyModel.qml
+    TaskTrackerModel.qml
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

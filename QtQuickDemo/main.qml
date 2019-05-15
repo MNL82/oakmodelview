@@ -20,9 +20,8 @@ Window {
     height: 600
     title: qsTr("OakModelView Qt Quick Demo")
 
-    ContinuousChromatographyModel {
+    TaskTrackerModel {
         id: oakModelId
-
     }
 
     OakNodeProxyModel {
@@ -82,14 +81,14 @@ Window {
                     toolTip: "Save As file"
                     onClicked: saveAsModelDialogId.open()
                 }
-                OakToolButton {
-                    enabled: true
-                    imageSource: "images/folder_64.png"
-                    toolTip: "Load test file"
-                    onClicked: {
-                        oakModelId.loadModel("C:/dev/oakmodelview/QtQuickDemo/Test.xml");
-                    }
-                }
+//                OakToolButton {
+//                    enabled: true
+//                    imageSource: "images/folder_64.png"
+//                    toolTip: "Load test file"
+//                    onClicked: {
+//                        oakModelId.loadModel("C:/dev/oakmodelview/QtQuickDemo/Test.xml");
+//                    }
+//                }
             }
         }
 
