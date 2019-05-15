@@ -40,6 +40,9 @@ Node::Node(const NodeDef* nodeDef, const NodeData &nodeData, const OakModel* mod
         m_def = nodeDef;
     } else {
         m_def = nodeDef->validVariant(nodeData);
+        ASSERT(m_def);
+        // A valid variant was not found
+        // It can be caused by a default variantValue that have not matching variant
     }
 }
 

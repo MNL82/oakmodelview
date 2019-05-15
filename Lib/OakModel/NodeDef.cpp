@@ -1017,6 +1017,23 @@ void NodeDef::getChildDefList(std::vector<const NodeDef *> &cList, bool includeB
 
 // =============================================================================
 // (public)
+void NodeDef::removeParentDefs(std::vector<const NodeDef *> &cList, bool includeThis) const
+{
+    if (cList.empty()) { return; }
+    if (includeThis) {
+        auto it = std::find(cList.begin(), cList.end(), this);
+        if (it != cList.end()) {
+            cList.erase(it);
+        }
+    }
+    for (const ContainerDef *cDef: m_parentContainerDefs)
+    {
+        cDef->hostDef()->removeParentDefs(cList, true);
+    }
+}
+
+// =============================================================================
+// (public)
 const ContainerGroupDef& NodeDef::containerGroup() const
 {
     if (!m_containerGroup) {

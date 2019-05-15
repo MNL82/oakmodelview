@@ -206,6 +206,8 @@ public:
     std::vector<const NodeDef *> childDefList(bool includeBase = true, bool includeDerived = false) const;
     void getChildDefList(std::vector<const NodeDef *> &cList, bool includeBase = true, bool includeDerived = false) const;
 
+    void removeParentDefs(std::vector<const NodeDef *> &cList, bool includeThis = true) const;
+
     virtual const ContainerGroupDef& containerGroup() const;
 protected:
     std::vector<ContainerDefUPtr> m_containerList;

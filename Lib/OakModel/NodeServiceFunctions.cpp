@@ -33,6 +33,7 @@ void findOptionQueries(const NodeDef *def, std::vector<NodeLeafDefPair> &queryLi
 
     if (recursive) {
         std::vector<const NodeDef *> childNodeDefList = def->childDefList(true, true);
+        def->removeParentDefs(childNodeDefList, true);
 
         for (const NodeDef *cDef: childNodeDefList)
         {
